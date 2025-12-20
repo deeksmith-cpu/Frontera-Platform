@@ -44,10 +44,11 @@ export default function Solution() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-[#06b6d4]">The Platform</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            Four AI Agents. One Transformation System.
+            Product Model Coaching with Agents That Work for You
           </h2>
           <p className="mt-6 text-lg leading-8 text-slate-600">
-            Frontera is more than a learning tool — it&apos;s a transformation system. Every module is modular,
+            Frontera is more than a framework, more than a concept — it&apos;s a tailored coaching platform,
+            personalised to your customers, markets and business outcomes. Every component is modular,
             intelligent, and interconnected — forming an end-to-end product operating model from strategy to execution.
           </p>
         </div>
