@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 
 export default function Footer() {
   const navigation = {
@@ -36,8 +37,8 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* Brand */}
           <div className="space-y-6">
-            <Link href="/" className="text-2xl font-bold text-white">
-              Frontera
+            <Link href="/">
+              <Logo variant="light" />
             </Link>
             <p className="text-sm leading-6 text-slate-400 max-w-xs">
               AI-powered product strategy coaching for enterprise transformations.

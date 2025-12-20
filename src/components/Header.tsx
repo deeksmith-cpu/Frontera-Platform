@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Logo from "./Logo";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,9 +14,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <span className="text-2xl font-bold tracking-tight">
-                <span className="text-[#1e3a8a]">Frontera</span>
-              </span>
+              <Logo variant="dark" />
             </Link>
           </div>
 
