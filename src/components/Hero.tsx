@@ -15,7 +15,7 @@ export default function Hero() {
           {/* Badge */}
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#06b6d4]/30 bg-[#06b6d4]/10 px-4 py-1.5">
             <span className="h-2 w-2 rounded-full bg-[#06b6d4] animate-pulse" />
-            <span className="text-sm font-medium text-[#22d3ee]">AI-Powered Product Strategy</span>
+            <span className="text-sm font-medium text-[#22d3ee]">Built by Product Leaders, Not Theorists</span>
           </div>
 
           {/* Main headline */}
@@ -26,11 +26,17 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* Subheadline */}
+          {/* Subheadline - more aggressive, executive-focused */}
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-            70% of enterprise transformations fail to deliver expected value.
-            Frontera&apos;s AI coaching platform gives your teams the strategic guidance
-            they need to build products that drive real business outcomes.
+            Big consultancies have had their day. Their static PowerPoints, one-off workshops,
+            and transformation theatre don&apos;t deliver results.{" "}
+            <span className="text-white font-medium">This is not consultancy.</span>{" "}
+            This is the product model platform of the future.
+          </p>
+
+          {/* Tagline */}
+          <p className="mt-6 text-[#06b6d4] font-semibold text-lg">
+            From Strategy to Outcomes.
           </p>
 
           {/* Stats row */}
@@ -40,12 +46,12 @@ export default function Hero() {
               <div className="mt-1 text-sm text-slate-400">Transformations Fail</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">£2.3M</div>
-              <div className="mt-1 text-sm text-slate-400">Average Cost Overrun</div>
+              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">£Ms</div>
+              <div className="mt-1 text-sm text-slate-400">Wasted on Consultants</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">18mo</div>
-              <div className="mt-1 text-sm text-slate-400">Typical Delay</div>
+              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">2yr</div>
+              <div className="mt-1 text-sm text-slate-400">Reboot Cycle</div>
             </div>
           </div>
 
