@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Edit Onboarding | Frontera",
   description: "Edit your onboarding information.",
