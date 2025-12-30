@@ -57,10 +57,10 @@ export default function Header() {
           {/* CTA */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
             <Link
-              href="#cta"
+              href="/onboarding"
               className="rounded-full bg-[#1e3a8a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1e2a5e] transition-all duration-200 hover:shadow-lg"
             >
-              Book a Demo
+              Get Started
             </Link>
           </div>
         </div>
@@ -98,11 +98,11 @@ export default function Header() {
                 Case Studies
               </Link>
               <Link
-                href="#cta"
+                href="/onboarding"
                 className="block mt-4 text-center rounded-full bg-[#1e3a8a] px-6 py-3 text-base font-semibold text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Book a Demo
+                Get Started
               </Link>
             </div>
           </div>
