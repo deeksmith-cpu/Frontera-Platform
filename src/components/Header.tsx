@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Logo from "./Logo";
 
 export default function Header() {
@@ -54,14 +55,39 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* CTA */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
-            <Link
-              href="/onboarding"
-              className="rounded-full bg-[#1e3a8a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1e2a5e] transition-all duration-200 hover:shadow-lg"
-            >
-              Get Started
-            </Link>
+          {/* CTA + Auth */}
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4">
+            <SignedOut>
+              <Link
+                href="/sign-in"
+                className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/onboarding"
+                className="rounded-full bg-[#1e3a8a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1e2a5e] transition-all duration-200 hover:shadow-lg"
+              >
+                Get Started
+              </Link>
+            </SignedOut>
+
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors"
+              >
+                Dashboard
+              </Link>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    avatarBox: "h-9 w-9",
+                  },
+                }}
+              />
+            </SignedIn>
           </div>
         </div>
 
@@ -97,13 +123,32 @@ export default function Header() {
               >
                 Case Studies
               </Link>
-              <Link
-                href="/onboarding"
-                className="block mt-4 text-center rounded-full bg-[#1e3a8a] px-6 py-3 text-base font-semibold text-white"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Get Started
-              </Link>
+              <SignedOut>
+                <Link
+                  href="/sign-in"
+                  className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/onboarding"
+                  className="block mt-4 text-center rounded-full bg-[#1e3a8a] px-6 py-3 text-base font-semibold text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Get Started
+                </Link>
+              </SignedOut>
+
+              <SignedIn>
+                <Link
+                  href="/dashboard"
+                  className="block px-3 py-2 text-base font-medium text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Go to Dashboard
+                </Link>
+              </SignedIn>
             </div>
           </div>
         )}

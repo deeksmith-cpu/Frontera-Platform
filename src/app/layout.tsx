@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./providers";
 import { PostHogPageView } from "./PostHogPageView";
 
@@ -38,13 +39,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <PostHogProvider>
-          <PostHogPageView />
-          {children}
-        </PostHogProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className="scroll-smooth">
+        <body className={`${inter.variable} font-sans antialiased`}>
+          <PostHogProvider>
+            <PostHogPageView />
+            {children}
+          </PostHogProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

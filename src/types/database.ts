@@ -11,6 +11,90 @@ export type SuccessMetric =
   | "revenue"
   | "client_growth";
 
+// Agent types for conversations
+export type AgentType = "strategy_coach" | "product_coach" | "team_coach" | "general";
+
+// Output types for strategic documents
+export type OutputType =
+  | "strategy_document"
+  | "roadmap"
+  | "okr_framework"
+  | "team_charter"
+  | "transformation_plan"
+  | "assessment_report"
+  | "custom";
+
+// Client tier levels
+export type ClientTier = "pilot" | "standard" | "enterprise";
+
+// Client record (linked to Clerk Organization)
+export interface Client {
+  id: string;
+  clerk_org_id: string;
+  company_name: string;
+  slug: string;
+  industry: string | null;
+  company_size: string | null;
+  strategic_focus: string | null;
+  pain_points: string | null;
+  target_outcomes: string | null;
+  branding: Record<string, unknown>;
+  settings: {
+    timezone: string;
+    language: string;
+    features: Record<string, boolean>;
+  };
+  tier: ClientTier;
+  created_at: string;
+  updated_at: string;
+  onboarding_id: string | null;
+}
+
+// Conversation record (agent chat history)
+export interface Conversation {
+  id: string;
+  clerk_org_id: string;
+  clerk_user_id: string;
+  title: string | null;
+  agent_type: AgentType;
+  framework_state: Record<string, unknown>;
+  context_summary: string | null;
+  status: "active" | "archived" | "completed";
+  created_at: string;
+  updated_at: string;
+  last_message_at: string;
+}
+
+// Conversation message record
+export interface ConversationMessage {
+  id: string;
+  conversation_id: string;
+  clerk_org_id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  metadata: Record<string, unknown>;
+  token_count: number | null;
+  created_at: string;
+}
+
+// Strategic output record (generated documents)
+export interface StrategicOutput {
+  id: string;
+  clerk_org_id: string;
+  clerk_user_id: string;
+  conversation_id: string | null;
+  title: string;
+  output_type: OutputType;
+  content: Record<string, unknown>;
+  content_markdown: string | null;
+  version: number;
+  parent_id: string | null;
+  status: "draft" | "review" | "approved" | "archived";
+  created_at: string;
+  updated_at: string;
+}
+
+// Client onboarding record (public lead gen)
 export interface ClientOnboarding {
   id: string;
   created_at: string;
@@ -47,6 +131,26 @@ export interface Database {
         Row: ClientOnboarding;
         Insert: Omit<ClientOnboarding, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<ClientOnboarding, "id" | "created_at">>;
+      };
+      clients: {
+        Row: Client;
+        Insert: Omit<Client, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Client, "id" | "created_at">>;
+      };
+      conversations: {
+        Row: Conversation;
+        Insert: Omit<Conversation, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Conversation, "id" | "created_at">>;
+      };
+      conversation_messages: {
+        Row: ConversationMessage;
+        Insert: Omit<ConversationMessage, "id" | "created_at">;
+        Update: never; // Messages are immutable
+      };
+      strategic_outputs: {
+        Row: StrategicOutput;
+        Insert: Omit<StrategicOutput, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<StrategicOutput, "id" | "created_at">>;
       };
     };
   };
