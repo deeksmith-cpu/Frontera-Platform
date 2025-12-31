@@ -1,24 +1,51 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Header from "@/components/Header";
 
 export default async function DashboardPage() {
-  const { userId, orgId } = await auth();
+  const { userId, orgId, orgRole } = await auth();
   const user = await currentUser();
 
   if (!userId) {
     redirect("/sign-in");
   }
 
+  // Get organization details if user is in an org
+  let orgName = null;
+  if (orgId) {
+    try {
+      const clerk = await clerkClient();
+      const org = await clerk.organizations.getOrganization({ organizationId: orgId });
+      orgName = org.name;
+    } catch {
+      orgName = null;
+    }
+  }
+
+  // Format role for display
+  const displayRole = orgRole?.replace("org:", "").replace("_", " ") || "Member";
+  const formattedRole = displayRole.charAt(0).toUpperCase() + displayRole.slice(1);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <Header />
+      <div className="max-w-7xl mx-auto px-6 py-12 pt-24">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">
             Welcome, {user?.firstName || "User"}
           </h1>
-          <p className="text-slate-600 mt-2">
-            Your Frontera dashboard
-          </p>
+          {orgName && (
+            <p className="text-slate-600 mt-2">
+              <span className="font-medium text-slate-700">{orgName}</span>
+              <span className="mx-2">·</span>
+              <span className="text-slate-500">{formattedRole}</span>
+            </p>
+          )}
+          {!orgName && (
+            <p className="text-slate-600 mt-2">
+              Your Frontera dashboard
+            </p>
+          )}
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
