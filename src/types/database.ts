@@ -11,6 +11,19 @@ export type SuccessMetric =
   | "revenue"
   | "client_growth";
 
+export type OnboardingStatus =
+  | "draft"
+  | "submitted"
+  | "approved"
+  | "rejected"
+  | "provisioned";
+
+export type InvitationStatus =
+  | "sent"
+  | "accepted"
+  | "expired"
+  | "revoked";
+
 // Agent types for conversations
 export type AgentType = "strategy_coach" | "product_coach" | "team_coach" | "general";
 
@@ -120,8 +133,17 @@ export interface ClientOnboarding {
   timeline_expectations?: string;
 
   // Status
-  status: "draft" | "submitted" | "reviewed";
+  status: OnboardingStatus;
   current_step: number;
+
+  // Admin workflow fields
+  reviewed_by?: string;
+  reviewed_at?: string;
+  review_notes?: string;
+  invitation_status?: InvitationStatus;
+  invitation_sent_at?: string;
+  invitation_email?: string;
+  provisioned_org_id?: string;
 }
 
 export interface Database {
