@@ -219,6 +219,11 @@ export async function POST(
     }
 
     // 3. Create invitation for the applicant
+    // Get the base URL for redirects
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ||
+                    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+                    "http://localhost:3000";
+
     let invitation;
     try {
       invitation = await clerk.organizations.createOrganizationInvitation({
@@ -226,6 +231,7 @@ export async function POST(
         emailAddress: email,
         role: "org:admin",
         inviterUserId: userId,
+        redirectUrl: `${baseUrl}/dashboard`,
       });
     } catch (err: unknown) {
       console.error("Failed to send invitation:", err);
