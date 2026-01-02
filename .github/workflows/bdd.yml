@@ -1,0 +1,99 @@
+name: BDD Tests
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Cucumber tags to run (e.g., @smoke, @messaging)'
+        required: false
+        default: ''
+        type: string
+  # Run on release branches
+  push:
+    branches:
+      - 'release/**'
+  # Optional: Run on PR with specific label
+  pull_request:
+    types: [labeled]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  bdd-tests:
+    name: BDD Tests
+    runs-on: ubuntu-latest
+    # Only run if manually triggered, release branch, or has 'bdd' label
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'bdd'))
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+          NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+
+      - name: Start application
+        run: npm run start &
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Wait for application
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run BDD tests
+        run: |
+          if [ -n "${{ github.event.inputs.tags }}" ]; then
+            npm run test:bdd -- --tags "${{ github.event.inputs.tags }}"
+          else
+            npm run test:bdd
+          fi
+        env:
+          BASE_URL: http://localhost:3000
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+          HEADLESS: true
+
+      - name: Upload Cucumber report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cucumber-report
+          path: |
+            cucumber-report.html
+            cucumber-report.json
+          retention-days: 30
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: bdd-screenshots
+          path: screenshots/
+          retention-days: 7

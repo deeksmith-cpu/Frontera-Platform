@@ -50,7 +50,8 @@
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "wait-on": "^9.0.3"
   },
   "optionalDependencies": {
     "@rollup/rollup-win32-arm64-msvc": "^4.54.0"
