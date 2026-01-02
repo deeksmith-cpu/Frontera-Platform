@@ -64,16 +64,34 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Placeholder cards */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-2">Strategy Coach</h3>
+          {/* Strategy Coach */}
+          <Link
+            href="/dashboard/strategy-coach"
+            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all group"
+          >
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="font-semibold text-slate-900">Strategy Coach</h3>
+              <svg
+                className="w-5 h-5 text-slate-400 group-hover:text-[#1e3a8a] transition-colors"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
+              </svg>
+            </div>
             <p className="text-sm text-slate-600 mb-4">
               Get AI-powered guidance on your product strategy transformation.
             </p>
-            <span className="inline-block px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full">
-              Coming Soon
+            <span className="inline-block px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
+              Active
             </span>
-          </div>
+          </Link>
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <h3 className="font-semibold text-slate-900 mb-2">Documents</h3>
