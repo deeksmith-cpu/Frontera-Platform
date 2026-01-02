@@ -162,10 +162,78 @@ return new Response(stream, {
 
 ## Testing
 
-No test framework currently configured. When adding tests:
-- Use Vitest for unit tests
-- Use Playwright for E2E tests
-- Mock Clerk and Supabase for isolated testing
+### Test Framework Stack
+- **Unit/Integration**: Vitest with React Testing Library
+- **E2E**: Playwright (multi-browser)
+- **BDD**: Cucumber with Gherkin syntax
+- **Coverage Target**: 90%+
+
+### Test Commands
+
+```bash
+npm run test           # Run all unit/integration tests
+npm run test:unit      # Run unit tests only
+npm run test:integration  # Run integration tests only
+npm run test:watch     # Watch mode
+npm run test:ui        # Vitest UI
+npm run test:coverage  # Generate coverage report
+npm run test:e2e       # Run Playwright E2E tests
+npm run test:e2e:ui    # Playwright UI mode
+npm run test:bdd       # Run Cucumber BDD tests
+```
+
+### Test Directory Structure
+
+```
+tests/
+├── unit/              # Unit tests (mirror src/ structure)
+├── integration/       # API route integration tests
+├── e2e/              # Playwright E2E tests
+│   ├── pages/        # Page Object Models
+│   └── specs/        # Test specifications
+├── bdd/              # Cucumber BDD tests
+│   ├── features/     # Gherkin .feature files
+│   └── step-definitions/
+├── mocks/            # Shared mock utilities
+│   ├── anthropic.ts  # Anthropic SDK mock
+│   ├── supabase.ts   # Supabase mock
+│   ├── clerk.ts      # Clerk mock
+│   └── factories/    # Test data factories
+└── helpers/          # Test utilities
+```
+
+### Mock Utilities
+
+Import mocks from `tests/mocks`:
+
+```typescript
+import { mockClerkModule, mockSupabaseModule, mockAnthropicModule } from 'tests/mocks';
+import { createMockConversation, createMockClient } from 'tests/mocks/factories';
+```
+
+### Writing Tests
+
+**Unit test pattern:**
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from 'tests/helpers/test-utils';
+
+describe('ComponentName', () => {
+  it('should render correctly', () => {
+    render(<ComponentName />);
+    expect(screen.getByText('Expected Text')).toBeInTheDocument();
+  });
+});
+```
+
+**BDD feature file:**
+```gherkin
+Feature: Strategy Coach Conversation
+  Scenario: Starting a new conversation
+    Given I am logged in as an organization admin
+    When I click "New Conversation"
+    Then I should see a personalized welcome message
+```
 
 ## Deployment
 
