@@ -210,8 +210,8 @@ export default function ChatInterface({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full max-w-4xl mx-auto">
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="h-full max-w-4xl mx-auto overflow-y-auto">
           <MessageList
             messages={messages}
             streamingContent={streamingContent}
