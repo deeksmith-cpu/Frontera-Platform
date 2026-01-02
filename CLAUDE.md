@@ -240,3 +240,62 @@ Feature: Strategy Coach Conversation
 Deployed to Vercel with automatic deployments on push to `master`.
 
 Environment variables must be configured in Vercel project settings.
+
+---
+
+## Test Framework Implementation Status
+
+> **Last Updated**: January 2, 2026
+> **Blocking Issue**: Windows ARM64 requires Visual C++ Redistributable installation
+
+### Phase 1: Foundation (COMPLETED)
+
+| File | Status |
+|------|--------|
+| `vitest.config.mts` | Created - ESM config with 90% coverage thresholds |
+| `playwright.config.ts` | Created - Multi-browser E2E config |
+| `cucumber.mjs` | Created - BDD/Gherkin configuration |
+| `tests/mocks/anthropic.ts` | Created - Anthropic SDK mock with streaming |
+| `tests/mocks/supabase.ts` | Created - Supabase query builder mock |
+| `tests/mocks/clerk.ts` | Created - Clerk auth/user/org mocks |
+| `tests/mocks/posthog.ts` | Created - PostHog analytics mock |
+| `tests/mocks/factories/conversation.factory.ts` | Created - Test data factories |
+| `tests/mocks/factories/client.factory.ts` | Created - Client test data |
+| `tests/mocks/index.ts` | Created - Mock exports |
+| `tests/helpers/setup.ts` | Created - Vitest setup with jest-dom |
+| `tests/helpers/test-utils.tsx` | Created - React Testing Library wrapper |
+| `package.json` | Updated - Test scripts added |
+
+### Phase 2: Unit Tests (IN PROGRESS)
+
+| File | Status |
+|------|--------|
+| `tests/unit/lib/agents/strategy-coach/framework-state.test.ts` | Written - 59 comprehensive tests |
+| `tests/unit/lib/agents/strategy-coach/client-context.test.ts` | Pending |
+| `tests/unit/lib/agents/strategy-coach/system-prompt.test.ts` | Pending |
+| `tests/unit/lib/agents/strategy-coach/index.test.ts` | Pending |
+
+### Pending Phases
+
+- **Phase 3**: Integration tests (API routes)
+- **Phase 4**: Component tests (React components)
+- **Phase 5**: E2E tests (Playwright)
+- **Phase 6**: BDD tests (Cucumber/Gherkin)
+- **Phase 7**: CI/CD pipeline
+
+### Blocking Issue Resolution
+
+Tests cannot run due to `@rollup/rollup-win32-arm64-msvc` native binary issue on Windows ARM64.
+
+**Fix Required:**
+1. Install ARM64 Visual C++ Redistributable: `winget install -e --id Microsoft.VCRedist.2015+.arm64`
+2. Reboot system
+3. Clean reinstall: `rm -rf node_modules && rm package-lock.json && npm cache clean --force && npm install`
+4. Run tests: `npm run test:unit`
+
+### Resume Instructions
+
+After VC++ installation and reboot:
+1. Run `npm run test:unit` to verify framework-state.test.ts passes
+2. Continue with remaining Phase 2 tests (client-context, system-prompt, index)
+3. Proceed to Phase 3 integration tests
