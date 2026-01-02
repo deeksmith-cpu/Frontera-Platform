@@ -1,0 +1,174 @@
+# Frontera Platform
+
+Frontera is a B2B SaaS platform that provides AI-powered strategic coaching for enterprise product transformation. It helps organizations bridge the gap between strategic vision and operational execution.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Authentication**: Clerk (with organizations support)
+- **Database**: Supabase (PostgreSQL)
+- **AI**: Anthropic Claude API (claude-sonnet-4-20250514)
+- **Analytics**: PostHog
+- **Deployment**: Vercel
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   │   ├── conversations/ # Strategy Coach chat API
+│   │   ├── admin/        # Admin endpoints
+│   │   ├── organizations/ # Org member management
+│   │   └── webhooks/     # Clerk webhooks
+│   ├── dashboard/        # Authenticated dashboard pages
+│   │   ├── strategy-coach/ # AI coaching interface
+│   │   ├── team/         # Team management
+│   │   └── admin/        # Admin panel
+│   ├── onboarding/       # Client onboarding wizard
+│   ├── sign-in/          # Clerk sign-in
+│   └── sign-up/          # Clerk sign-up
+├── components/            # React components
+│   └── strategy-coach/   # Chat interface components
+├── lib/                   # Shared utilities
+│   ├── agents/           # AI agent implementations
+│   │   └── strategy-coach/ # Strategy Coach agent
+│   └── analytics/        # PostHog tracking
+├── hooks/                 # Custom React hooks
+├── types/                 # TypeScript type definitions
+│   └── database.ts       # Supabase schema types
+└── middleware.ts          # Clerk auth middleware
+```
+
+## Key Features
+
+### Strategy Coach (Primary Feature)
+AI-powered coaching agent that guides users through product strategy transformation using the "Product Strategy Research Playbook" methodology:
+- **Three Research Pillars**: Macro Market, Customer, Colleague
+- **Strategic Flow Canvas**: Structured strategy development
+- **Strategic Bets**: Hypothesis-driven planning format
+
+Location: `src/lib/agents/strategy-coach/`
+
+### Client Onboarding
+Multi-step wizard for new client applications with admin approval workflow.
+
+### Organization Management
+Clerk-based multi-tenant architecture with team invitations and role management.
+
+## Environment Variables
+
+Required variables (see `.env.example`):
+
+```
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+CLERK_WEBHOOK_SECRET=
+
+# Anthropic API (Strategy Coach)
+ANTHROPIC_API_KEY=
+
+# PostHog Analytics
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=
+```
+
+## Common Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+## Database Schema
+
+Key tables in Supabase:
+
+| Table | Purpose |
+|-------|---------|
+| `clients` | Organization profiles (linked to Clerk org) |
+| `client_onboarding` | Onboarding applications |
+| `conversations` | Strategy Coach chat sessions |
+| `conversation_messages` | Individual chat messages |
+| `strategic_outputs` | Generated strategy documents |
+
+Types defined in `src/types/database.ts`.
+
+## Architecture Decisions
+
+### Authentication Flow
+- Clerk handles all auth with organization support
+- `clerk_org_id` is the foreign key linking to Supabase data
+- Middleware protects `/dashboard/*` routes
+
+### AI Agent Pattern
+- Agents in `src/lib/agents/` are stateless functions
+- Conversation state stored in `framework_state` JSONB column
+- Streaming responses via ReadableStream API
+
+### API Design
+- All API routes under `src/app/api/`
+- Use Supabase service role for server-side operations
+- Clerk `auth()` for user context
+
+## Coding Conventions
+
+- Use TypeScript strict mode
+- Prefer server components; use `"use client"` only when needed
+- Tailwind for all styling (no CSS modules)
+- API routes return JSON with `{ error: string }` on failure
+- Use Clerk's `auth()` and `currentUser()` for authentication
+
+## Important Patterns
+
+### Supabase Admin Client
+```typescript
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Missing Supabase config");
+  return createClient(url, key);
+}
+```
+
+### Protected API Route
+```typescript
+export async function POST(req: NextRequest) {
+  const { userId, orgId } = await auth();
+  if (!userId || !orgId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  // ... handler logic
+}
+```
+
+### Streaming AI Response
+```typescript
+const { stream, getUsage } = await streamMessage(context, state, history, message);
+return new Response(stream, {
+  headers: { "Content-Type": "text/plain; charset=utf-8" }
+});
+```
+
+## Testing
+
+No test framework currently configured. When adding tests:
+- Use Vitest for unit tests
+- Use Playwright for E2E tests
+- Mock Clerk and Supabase for isolated testing
+
+## Deployment
+
+Deployed to Vercel with automatic deployments on push to `master`.
+
+Environment variables must be configured in Vercel project settings.
