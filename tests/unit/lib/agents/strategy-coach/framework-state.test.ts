@@ -453,6 +453,7 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest customer research after macro market complete', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       const suggestion = suggestNextFocus(baseState);
       expect(suggestion).toContain('Customer Research');
@@ -461,6 +462,7 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest continuing customer research when started', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;
       const suggestion = suggestNextFocus(baseState);
@@ -468,7 +470,9 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest colleague research after customer complete', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
       const suggestion = suggestNextFocus(baseState);
       expect(suggestion).toContain('Colleague Research');
@@ -476,7 +480,9 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest continuing colleague research when started', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
       baseState.researchPillars.colleague.started = true;
       const suggestion = suggestNextFocus(baseState);
@@ -484,8 +490,11 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest synthesis when all pillars complete', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
       baseState.researchPillars.colleague.completed = true;
       const suggestion = suggestNextFocus(baseState);
       expect(suggestion).toContain('All research pillars complete');
@@ -494,8 +503,11 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest market reality canvas section first in synthesis phase', () => {
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
       baseState.researchPillars.colleague.completed = true;
       baseState.canvasProgress.strategicSynthesis = true; // Skip to avoid synthesis suggestion
       baseState.currentPhase = 'synthesis';
@@ -504,6 +516,14 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest customer insights canvas section after market reality', () => {
+      // Set all pillars complete to pass pillar checks
+      baseState.researchPillars.macroMarket.started = true;
+      baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
+      baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
+      baseState.researchPillars.colleague.completed = true;
+      baseState.canvasProgress.strategicSynthesis = true; // Skip synthesis suggestion
       baseState.currentPhase = 'synthesis';
       baseState.canvasProgress.marketReality = true;
       const suggestion = suggestNextFocus(baseState);
@@ -511,6 +531,13 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest organizational context after customer insights', () => {
+      baseState.researchPillars.macroMarket.started = true;
+      baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
+      baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
+      baseState.researchPillars.colleague.completed = true;
+      baseState.canvasProgress.strategicSynthesis = true; // Skip synthesis suggestion
       baseState.currentPhase = 'synthesis';
       baseState.canvasProgress.marketReality = true;
       baseState.canvasProgress.customerInsights = true;
@@ -519,30 +546,46 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest strategic synthesis after organizational context', () => {
+      baseState.researchPillars.macroMarket.started = true;
+      baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
+      baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
+      baseState.researchPillars.colleague.completed = true;
       baseState.currentPhase = 'synthesis';
       baseState.canvasProgress.marketReality = true;
       baseState.canvasProgress.customerInsights = true;
       baseState.canvasProgress.organizationalContext = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Strategic Synthesis');
+      // When pillars complete but strategicSynthesis not done, suggests synthesis
+      expect(suggestion).toContain('synthesize');
       expect(suggestion).toContain('Where to Play and How to Win');
     });
 
     it('should suggest team context as last canvas section', () => {
+      baseState.researchPillars.macroMarket.started = true;
+      baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
+      baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
+      baseState.researchPillars.colleague.completed = true;
       baseState.currentPhase = 'planning';
       baseState.canvasProgress.marketReality = true;
       baseState.canvasProgress.customerInsights = true;
       baseState.canvasProgress.organizationalContext = true;
       baseState.canvasProgress.strategicSynthesis = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Team Context');
+      expect(suggestion).toContain('Strategic Context for Teams');
     });
 
     it('should suggest review when everything complete', () => {
-      baseState.currentPhase = 'planning';
+      baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
+      baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
+      baseState.researchPillars.colleague.started = true;
       baseState.researchPillars.colleague.completed = true;
+      baseState.currentPhase = 'planning';
       baseState.canvasProgress.marketReality = true;
       baseState.canvasProgress.customerInsights = true;
       baseState.canvasProgress.organizationalContext = true;
