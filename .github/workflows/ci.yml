@@ -8,6 +8,8 @@ on:
 
 env:
   NODE_VERSION: '20'
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   lint:
@@ -111,12 +113,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Vercel CLI
+        run: npm i -g vercel
+
+      - name: Pull Vercel environment variables
+        run: vercel env pull .env.local --yes --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Build application
         run: npm run build
-        env:
-          # Provide dummy env vars for build
-          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
-          NEXT_PUBLIC_POSTHOG_KEY: phc_placeholder
-          NEXT_PUBLIC_POSTHOG_HOST: https://app.posthog.com

@@ -397,25 +397,20 @@ E2E_TEST_EMAIL=test@example.com E2E_TEST_PASSWORD=password npm run test:bdd
 
 **Required GitHub Secrets:**
 ```
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
+# Vercel Integration (pulls all env vars automatically)
+VERCEL_TOKEN          # From https://vercel.com/account/tokens
+VERCEL_ORG_ID         # From .vercel/project.json or Vercel dashboard
+VERCEL_PROJECT_ID     # From .vercel/project.json or Vercel dashboard
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-CLERK_SECRET_KEY
-
-# Anthropic
-ANTHROPIC_API_KEY
-
-# PostHog
-NEXT_PUBLIC_POSTHOG_KEY
-NEXT_PUBLIC_POSTHOG_HOST
-
-# E2E Testing
+# E2E Testing (test-specific, not in Vercel)
 E2E_TEST_EMAIL
 E2E_TEST_PASSWORD
+```
+
+**Local Development:**
+```bash
+# Pull env vars from Vercel to local
+vercel env pull .env.local
 ```
 
 ### Combined Test Summary
