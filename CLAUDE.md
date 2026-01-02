@@ -186,20 +186,26 @@ npm run test:bdd       # Run Cucumber BDD tests
 
 ```
 tests/
-├── unit/              # Unit tests (mirror src/ structure)
-├── integration/       # API route integration tests
-├── e2e/              # Playwright E2E tests
-│   ├── pages/        # Page Object Models
-│   └── specs/        # Test specifications
-├── bdd/              # Cucumber BDD tests
-│   ├── features/     # Gherkin .feature files
-│   └── step-definitions/
-├── mocks/            # Shared mock utilities
-│   ├── anthropic.ts  # Anthropic SDK mock
-│   ├── supabase.ts   # Supabase mock
-│   ├── clerk.ts      # Clerk mock
-│   └── factories/    # Test data factories
-└── helpers/          # Test utilities
+├── unit/                    # Unit tests (mirror src/ structure)
+│   ├── lib/                 # Library unit tests
+│   └── components/          # Component unit tests
+├── integration/             # API route integration tests
+│   └── api/                 # API endpoint tests
+├── e2e/                     # Playwright E2E tests
+│   ├── pages/               # Page Object Models
+│   ├── fixtures/            # Test fixtures
+│   └── specs/               # Test specifications
+├── bdd/                     # Cucumber BDD tests
+│   ├── features/            # Gherkin .feature files
+│   │   └── strategy-coach/  # Feature-specific scenarios
+│   ├── step-definitions/    # Step implementation
+│   └── support/             # World class and hooks
+├── mocks/                   # Shared mock utilities
+│   ├── anthropic.ts         # Anthropic SDK mock
+│   ├── supabase.ts          # Supabase mock
+│   ├── clerk.ts             # Clerk mock
+│   └── factories/           # Test data factories
+└── helpers/                 # Test utilities
 ```
 
 ### Mock Utilities
@@ -334,20 +340,48 @@ Environment variables must be configured in Vercel project settings.
 E2E_TEST_EMAIL=test@example.com E2E_TEST_PASSWORD=password npm run test:e2e
 ```
 
+### Phase 6: BDD Tests (COMPLETED)
+
+| File | Status |
+|------|--------|
+| `cucumber.mjs` | Updated - TSX loader configuration |
+| `tests/bdd/support/world.ts` | Created - Custom World class with Playwright |
+| `tests/bdd/support/hooks.ts` | Created - Before/After hooks with screenshots |
+| `tests/bdd/step-definitions/common.steps.ts` | Created - Auth and navigation steps |
+| `tests/bdd/step-definitions/conversations.steps.ts` | Created - Conversation management steps |
+| `tests/bdd/step-definitions/messaging.steps.ts` | Created - Messaging functionality steps |
+| `tests/bdd/step-definitions/methodology.steps.ts` | Created - Coaching methodology steps |
+
+**Feature Files:**
+| File | Scenarios |
+|------|-----------|
+| `conversations.feature` | 6 scenarios |
+| `messaging.feature` | 9 scenarios |
+| `navigation.feature` | 6 scenarios |
+| `coaching-methodology.feature` | 9 scenarios |
+
+**Total: 30 scenarios, 171 steps**
+
+**Running BDD Tests:**
+```bash
+# Requires app running and E2E credentials
+E2E_TEST_EMAIL=test@example.com E2E_TEST_PASSWORD=password npm run test:bdd
+```
+
 ### Combined Test Summary
 
 - **Unit Tests (lib)**: 158 passing
 - **Component Tests**: 86 passing
 - **Integration Tests**: 41 passing
 - **E2E Tests**: 96 defined (requires running app)
-- **Total Automated**: 285 passing + 96 E2E
+- **BDD Tests**: 30 scenarios, 171 steps (requires running app)
+- **Total Automated**: 285 passing + 96 E2E + 30 BDD scenarios
 
 ### Pending Phases
 
-- **Phase 6**: BDD tests (Cucumber/Gherkin)
 - **Phase 7**: CI/CD pipeline
 
 ### Next Steps
 
-1. Write BDD feature files with Cucumber
-2. Set up CI/CD pipeline for test automation
+1. Set up CI/CD pipeline for test automation
+2. Configure GitHub Actions for test execution

@@ -1,6 +1,7 @@
 export default {
   paths: ['tests/bdd/features/**/*.feature'],
-  import: ['tests/bdd/step-definitions/**/*.ts', 'tests/bdd/support/**/*.ts'],
+  require: ['tests/bdd/step-definitions/**/*.ts', 'tests/bdd/support/**/*.ts'],
+  requireModule: ['tsx'],
   format: [
     'progress-bar',
     ['html', 'cucumber-report.html'],
