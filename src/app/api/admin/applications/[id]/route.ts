@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Check if user is a Frontera super admin
 async function isSuperAdmin(userId: string): Promise<boolean> {
@@ -117,6 +118,19 @@ export async function PATCH(
         { status: 500 }
       );
     }
+
+    // Track application approval/rejection
+    const eventName = status === "approved"
+      ? "admin_application_approved"
+      : "admin_application_rejected";
+
+    await trackEvent(eventName, userId, {
+      application_id: id,
+      company_name: data.company_name,
+      industry: data.industry,
+      company_size: data.company_size,
+      has_review_notes: !!review_notes,
+    });
 
     return NextResponse.json({ success: true, application: data });
   } catch (err) {
@@ -279,6 +293,16 @@ export async function POST(
       console.error("Failed to create client record:", clientError);
       // Don't fail - the webhook might create it anyway
     }
+
+    // Track application provisioned
+    await trackEvent("admin_application_provisioned", userId, {
+      application_id: id,
+      organization_id: organization.id,
+      invitation_id: invitation.id,
+      invitation_email: email,
+      company_name: application.company_name,
+      industry: application.industry,
+    });
 
     return NextResponse.json({
       success: true,

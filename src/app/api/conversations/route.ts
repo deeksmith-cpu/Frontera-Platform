@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Database, Conversation } from "@/types/database";
 import { initializeFrameworkState } from "@/lib/agents/strategy-coach/framework-state";
-import { trackServerEvent } from "@/lib/analytics/strategy-coach";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Supabase client with service role for server operations
 function getSupabaseAdmin() {
@@ -58,6 +58,14 @@ export async function GET(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Track conversation list viewed
+    await trackEvent("strategy_coach_conversations_listed", userId, {
+      org_id: orgId,
+      conversation_count: data?.length || 0,
+      has_archived: data?.some((c) => c.status === "archived") || false,
+      agent_type: agentType,
+    });
 
     return NextResponse.json({ conversations: data });
   } catch (err) {
@@ -143,18 +151,24 @@ export async function POST(req: NextRequest) {
 
     const conversation = conversationData as Conversation;
 
-    // Track analytics (server-side)
-    try {
-      await trackServerEvent("strategy_coach_conversation_started", userId, {
-        conversation_id: conversation.id,
-        agent_type,
-        org_id: orgId,
-        user_id: userId,
-      });
-    } catch (analyticsError) {
-      // Don't fail the request if analytics fails
-      console.error("Analytics error:", analyticsError);
-    }
+    // Load client context for enhanced tracking
+    const { data: clientData } = await supabase
+      .from("clients")
+      .select("industry, company_size, strategic_focus, pain_points, previous_attempts")
+      .eq("clerk_org_id", orgId)
+      .single();
+
+    // Track conversation started with enhanced context
+    await trackEvent("strategy_coach_conversation_started", userId, {
+      org_id: orgId,
+      conversation_id: conversation.id,
+      agent_type,
+      client_industry: clientData?.industry || "unknown",
+      client_company_size: clientData?.company_size || "unknown",
+      strategic_focus: clientData?.strategic_focus || "unknown",
+      has_pain_points: clientData?.pain_points && clientData.pain_points.length > 0,
+      has_previous_attempts: !!clientData?.previous_attempts,
+    });
 
     return NextResponse.json({ conversation }, { status: 201 });
   } catch (err) {

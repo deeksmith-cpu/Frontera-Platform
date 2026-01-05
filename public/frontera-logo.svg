@@ -21,14 +21,6 @@
       stroke-linecap="round"
     />
 
-    <!-- Teal accent - top curve -->
-    <path
-      d="M24 12C26.5 12 28 13.5 28 16"
-      stroke="#06b6d4"
-      stroke-width="3"
-      stroke-linecap="round"
-    />
-
     <!-- Coral accent - arrow -->
     <path
       d="M26 20L30 20M30 20L27 17M30 20L27 23"

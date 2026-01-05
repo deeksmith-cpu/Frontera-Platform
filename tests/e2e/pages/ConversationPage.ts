@@ -170,7 +170,7 @@ export class ConversationPage extends BasePage {
   /**
    * Get conversation title
    */
-  async getTitle(): Promise<string | null> {
+  async getConversationTitle(): Promise<string | null> {
     return this.conversationTitle.textContent();
   }
 

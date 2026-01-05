@@ -1,0 +1,2151 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\deeks\\frontera-platform\\playwright.config.ts",
+    "rootDir": "C:/Users/deeks/frontera-platform/tests/e2e/specs",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/deeks/frontera-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/deeks/frontera-platform/tests/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/deeks/frontera-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/deeks/frontera-platform/tests/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/deeks/frontera-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/deeks/frontera-platform/tests/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/deeks/frontera-platform/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/deeks/frontera-platform/tests/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 6,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "strategy-coach.spec.ts",
+      "file": "strategy-coach.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Strategy Coach Page",
+          "file": "strategy-coach.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Page Layout",
+              "file": "strategy-coach.spec.ts",
+              "line": 4,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display page title and coaching journey",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-24f45792051be20bbbc4",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 5,
+                  "column": 9
+                },
+                {
+                  "title": "should show all four coaching phases",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-a7766613060f824150d5",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 10,
+                  "column": 9
+                },
+                {
+                  "title": "should display breadcrumb navigation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-89867857df1866a3deea",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 15,
+                  "column": 9
+                },
+                {
+                  "title": "should have new session button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-856b57021496a4bb7e00",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 21,
+                  "column": 9
+                },
+                {
+                  "title": "should display page title and coaching journey",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-6f6c29c24f8dbfb323ac",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 5,
+                  "column": 9
+                },
+                {
+                  "title": "should show all four coaching phases",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-345b3aefaee3e8f2b198",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 10,
+                  "column": 9
+                },
+                {
+                  "title": "should display breadcrumb navigation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-48f94c43fac4618534bd",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 15,
+                  "column": 9
+                },
+                {
+                  "title": "should have new session button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-172da88e7916a8fa7866",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 21,
+                  "column": 9
+                },
+                {
+                  "title": "should display page title and coaching journey",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-0e44e41c65d6d76887a8",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 5,
+                  "column": 9
+                },
+                {
+                  "title": "should show all four coaching phases",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-8d2ad863e1f4916c3bfe",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 10,
+                  "column": 9
+                },
+                {
+                  "title": "should display breadcrumb navigation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-0298c3c310e9b0986cdc",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 15,
+                  "column": 9
+                },
+                {
+                  "title": "should have new session button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-37f1d684da535a57f587",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 21,
+                  "column": 9
+                },
+                {
+                  "title": "should display page title and coaching journey",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-c44f28579a5207582bdd",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 5,
+                  "column": 9
+                },
+                {
+                  "title": "should show all four coaching phases",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-30224616d91ff2c46657",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 10,
+                  "column": 9
+                },
+                {
+                  "title": "should display breadcrumb navigation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-8948be4db122a01cdace",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 15,
+                  "column": 9
+                },
+                {
+                  "title": "should have new session button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-0af46d728d2fd071014b",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 21,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Empty State",
+              "file": "strategy-coach.spec.ts",
+              "line": 28,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should show empty state when no conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-64a1437545f76f41b948",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 29,
+                  "column": 9
+                },
+                {
+                  "title": "should show empty state when no conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-055394f9883e6df23e4d",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 29,
+                  "column": 9
+                },
+                {
+                  "title": "should show empty state when no conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-9cc591288efd6aef1f53",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 29,
+                  "column": 9
+                },
+                {
+                  "title": "should show empty state when no conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-ed14228c6315bf763005",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 29,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Conversation List",
+              "file": "strategy-coach.spec.ts",
+              "line": 45,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display conversation cards when conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-7e835fda86ba2fe961cc",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 46,
+                  "column": 9
+                },
+                {
+                  "title": "should show phase badge on conversation cards",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-5f38d2096677a728694a",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 56,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation cards when conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-52bd8ac692f4f0030e8c",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 46,
+                  "column": 9
+                },
+                {
+                  "title": "should show phase badge on conversation cards",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-a55739a188b9a7e05a20",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 56,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation cards when conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-4f10cff3079ed9892545",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 46,
+                  "column": 9
+                },
+                {
+                  "title": "should show phase badge on conversation cards",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-444f7091697cdb3b51c3",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 56,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation cards when conversations exist",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-d2f6369e1085f55ba56f",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 46,
+                  "column": 9
+                },
+                {
+                  "title": "should show phase badge on conversation cards",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-181af12270f9e3b9fa97",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 56,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Navigation",
+              "file": "strategy-coach.spec.ts",
+              "line": 68,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should navigate to new conversation when clicking start button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-10c95635da82ad9c1e92",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 69,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to existing conversation when clicking card",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-f9ed5591056b4321331b",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 77,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to new conversation when clicking start button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-576ae9994e2435fe5dfd",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 69,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to existing conversation when clicking card",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-b60f16a1b4322a0a6a23",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 77,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to new conversation when clicking start button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-ec3876dd8afb60e6b87d",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 69,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to existing conversation when clicking card",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-b0c7f1fc62a45a5d06b4",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 77,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to new conversation when clicking start button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-4eda903a44a17930945d",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 69,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate to existing conversation when clicking card",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-3c9b8dc6239898eb3192",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 77,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Conversation Page",
+          "file": "strategy-coach.spec.ts",
+          "line": 90,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Page Layout",
+              "file": "strategy-coach.spec.ts",
+              "line": 91,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display conversation title",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-8c1af0e4720509ac4aa6",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 92,
+                  "column": 9
+                },
+                {
+                  "title": "should display back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-21d63c233fe53583f298",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 101,
+                  "column": 9
+                },
+                {
+                  "title": "should display message input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-7a9fc5cbf764ba40ba0e",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 108,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation title",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-18649935d4c7070642fd",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 92,
+                  "column": 9
+                },
+                {
+                  "title": "should display back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-4e20f47e8f2e0027f5fb",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 101,
+                  "column": 9
+                },
+                {
+                  "title": "should display message input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-e93ad27a96ed55b23ff6",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 108,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation title",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-02b529d3072c04eb222a",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 92,
+                  "column": 9
+                },
+                {
+                  "title": "should display back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-eeaf7db386059fd4ec81",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 101,
+                  "column": 9
+                },
+                {
+                  "title": "should display message input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-5218f5011669d672f43d",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 108,
+                  "column": 9
+                },
+                {
+                  "title": "should display conversation title",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-bc24bbda7ca91ab30e3b",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 92,
+                  "column": 9
+                },
+                {
+                  "title": "should display back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-4a2327983437afbf72ea",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 101,
+                  "column": 9
+                },
+                {
+                  "title": "should display message input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-2c68848ddbf1b8504bff",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 108,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Opening Message",
+              "file": "strategy-coach.spec.ts",
+              "line": 117,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should receive opening message for new conversation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-2d17a92362bc251a31c5",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 118,
+                  "column": 9
+                },
+                {
+                  "title": "should receive opening message for new conversation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-b1754a8fd04805ab8361",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 118,
+                  "column": 9
+                },
+                {
+                  "title": "should receive opening message for new conversation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-ac222945ab16c66b3666",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 118,
+                  "column": 9
+                },
+                {
+                  "title": "should receive opening message for new conversation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-e603026a09581a376d0e",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 118,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Message Input",
+              "file": "strategy-coach.spec.ts",
+              "line": 132,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should allow typing in input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-654e01a0d5f03863c67d",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 133,
+                  "column": 9
+                },
+                {
+                  "title": "should clear input after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-2dd99802c41e2a81cd32",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 142,
+                  "column": 9
+                },
+                {
+                  "title": "should disable input while streaming",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-fb102192d8c980cbc59b",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 153,
+                  "column": 9
+                },
+                {
+                  "title": "should allow typing in input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-510d4abb0f91602f7f8f",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 133,
+                  "column": 9
+                },
+                {
+                  "title": "should clear input after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-7161549d70ea8bb85272",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 142,
+                  "column": 9
+                },
+                {
+                  "title": "should disable input while streaming",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-0f0a9e1146560740dd01",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 153,
+                  "column": 9
+                },
+                {
+                  "title": "should allow typing in input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-a4c22683b66dcd8581f1",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 133,
+                  "column": 9
+                },
+                {
+                  "title": "should clear input after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-b78a7fcacd8f8ea3d59a",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 142,
+                  "column": 9
+                },
+                {
+                  "title": "should disable input while streaming",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-995bccad38b753204813",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 153,
+                  "column": 9
+                },
+                {
+                  "title": "should allow typing in input",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-bd80cb8a7a61762907d9",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 133,
+                  "column": 9
+                },
+                {
+                  "title": "should clear input after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-9c22a9620761bf23978a",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 142,
+                  "column": 9
+                },
+                {
+                  "title": "should disable input while streaming",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-db8a81519ce4d8bbbc13",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 153,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Message Display",
+              "file": "strategy-coach.spec.ts",
+              "line": 172,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display user message after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-5b2ca0e08ce697482b1f",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 173,
+                  "column": 9
+                },
+                {
+                  "title": "should receive assistant response",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-234c30f8d6aeef53a661",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 185,
+                  "column": 9
+                },
+                {
+                  "title": "should update message count in header",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-281d3edf20d7aa61f19a",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 200,
+                  "column": 9
+                },
+                {
+                  "title": "should display user message after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-d5b34133920f24716098",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 173,
+                  "column": 9
+                },
+                {
+                  "title": "should receive assistant response",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-9a24ec402ea7725b82d7",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 185,
+                  "column": 9
+                },
+                {
+                  "title": "should update message count in header",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-a031f9ec0da7f94332b2",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 200,
+                  "column": 9
+                },
+                {
+                  "title": "should display user message after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-da752c7a15eb579cafff",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 173,
+                  "column": 9
+                },
+                {
+                  "title": "should receive assistant response",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-cce53fc53dbf23cd6a94",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 185,
+                  "column": 9
+                },
+                {
+                  "title": "should update message count in header",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-67192a18be2cb058ea66",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 200,
+                  "column": 9
+                },
+                {
+                  "title": "should display user message after sending",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-626fc40599d5bcf6b5b0",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 173,
+                  "column": 9
+                },
+                {
+                  "title": "should receive assistant response",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-5560b7bfba391984049c",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 185,
+                  "column": 9
+                },
+                {
+                  "title": "should update message count in header",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-6e882118f406f87214f1",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 200,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Navigation",
+              "file": "strategy-coach.spec.ts",
+              "line": 216,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should navigate back to list when clicking back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-d54a830052874bae493e",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 217,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate back to list when clicking back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-efd150ba9ea27438c831",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 217,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate back to list when clicking back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-7c54569fe7528ffc66ca",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 217,
+                  "column": 9
+                },
+                {
+                  "title": "should navigate back to list when clicking back button",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-cb7479155fc8b5ae3e79",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 217,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Keyboard Shortcuts",
+              "file": "strategy-coach.spec.ts",
+              "line": 228,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should send message on Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-024bd834bbdb48ae03bd",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 229,
+                  "column": 9
+                },
+                {
+                  "title": "should not send on Shift+Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-aeaef5867906580e87a5",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 241,
+                  "column": 9
+                },
+                {
+                  "title": "should send message on Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-1e96eb5b88430b92b3d8",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 229,
+                  "column": 9
+                },
+                {
+                  "title": "should not send on Shift+Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-17a61391264edb2b5554",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 241,
+                  "column": 9
+                },
+                {
+                  "title": "should send message on Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-e83d74d1dfe6c24af4e6",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 229,
+                  "column": 9
+                },
+                {
+                  "title": "should not send on Shift+Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-a08aebfc1e71bb2b7ac7",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 241,
+                  "column": 9
+                },
+                {
+                  "title": "should send message on Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-6665a0f21ec92a660de2",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 229,
+                  "column": 9
+                },
+                {
+                  "title": "should not send on Shift+Enter",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "9d17f2bab97e6e384ff5-d8a9a46eaea9785697ec",
+                  "file": "strategy-coach.spec.ts",
+                  "line": 241,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Accessibility",
+          "file": "strategy-coach.spec.ts",
+          "line": 256,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should have accessible button labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-9725abe1f3b4e0a2bd40",
+              "file": "strategy-coach.spec.ts",
+              "line": 257,
+              "column": 7
+            },
+            {
+              "title": "should have accessible form elements",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-35f39b6b726acc2b485b",
+              "file": "strategy-coach.spec.ts",
+              "line": 264,
+              "column": 7
+            },
+            {
+              "title": "should have accessible button labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-fa4e3b9cd97627aac22e",
+              "file": "strategy-coach.spec.ts",
+              "line": 257,
+              "column": 7
+            },
+            {
+              "title": "should have accessible form elements",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-d1c0152a0bc8bd4d94e0",
+              "file": "strategy-coach.spec.ts",
+              "line": 264,
+              "column": 7
+            },
+            {
+              "title": "should have accessible button labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-f8e13c46b840311bdc63",
+              "file": "strategy-coach.spec.ts",
+              "line": 257,
+              "column": 7
+            },
+            {
+              "title": "should have accessible form elements",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-ea8012a559b5e39fcc31",
+              "file": "strategy-coach.spec.ts",
+              "line": 264,
+              "column": 7
+            },
+            {
+              "title": "should have accessible button labels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-e0916b4323e4dad69548",
+              "file": "strategy-coach.spec.ts",
+              "line": 257,
+              "column": 7
+            },
+            {
+              "title": "should have accessible form elements",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d17f2bab97e6e384ff5-74d04530b077cebd32f8",
+              "file": "strategy-coach.spec.ts",
+              "line": 264,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-02T11:19:13.364Z",
+    "duration": 105.2299999999999,
+    "expected": 0,
+    "skipped": 96,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

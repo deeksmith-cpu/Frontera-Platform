@@ -5,7 +5,24 @@
       "Bash(npm run build:*)",
       "Bash(git ls-tree:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:posthog.com)",
+      "WebSearch",
+      "Bash(npm search:*)",
+      "Bash(npm view:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(ls:*)",
+      "Skill(frontend-design:frontend-design)",
+      "Bash(taskkill /F /PID 25676)",
+      "Bash(curl:*)",
+      "Bash(taskkill //F //PID 25676)",
+      "Bash(CLAUDE.md)",
+      "Bash(rm:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

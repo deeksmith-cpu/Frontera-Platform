@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Check if user is a Frontera super admin
 async function isSuperAdmin(userId: string): Promise<boolean> {
@@ -59,6 +60,12 @@ export async function GET(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Track admin viewing applications
+    await trackEvent("admin_applications_viewed", userId, {
+      application_count: data?.length || 0,
+      status_filter: status || "all",
+    });
 
     return NextResponse.json({ applications: data });
   } catch (err) {

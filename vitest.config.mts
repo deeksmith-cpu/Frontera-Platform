@@ -14,6 +14,7 @@ export default defineConfig({
     include: [
       'tests/unit/**/*.test.{ts,tsx}',
       'tests/integration/**/*.test.{ts,tsx}',
+      'tests/evals/**/*.eval.{ts,tsx}',
     ],
     exclude: ['node_modules', 'tests/e2e', 'tests/bdd'],
     coverage: {
@@ -41,7 +42,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       'tests': path.resolve(__dirname, './tests'),
     },
-    testTimeout: 10000,
+    testTimeout: 60000,  // Increased for LLM API calls
     hookTimeout: 10000,
   },
 });

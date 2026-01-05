@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import type { SignInFormData } from "@/types/auth";
 
@@ -15,11 +15,19 @@ export default function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn, setActive, isLoaded } = useSignIn();
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
   const [formData, setFormData] = useState<SignInFormData>(INITIAL_FORM_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Redirect if already signed in
+  useEffect(() => {
+    if (userLoaded && isSignedIn) {
+      router.push("/dashboard");
+    }
+  }, [userLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (searchParams.get("registered") === "true") {

@@ -5,12 +5,29 @@ import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useUser, useOrganization } from '@clerk/nextjs'
 
+// Initialize PostHog immediately (before component mounts)
+if (typeof window !== 'undefined') {
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
+  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
+
+  if (key && !(posthog as any).__loaded) {
+    posthog.init(key, {
+      api_host: host,
+      person_profiles: 'identified_only',
+      capture_pageview: false,
+    })
+  }
+}
+
 function PostHogUserIdentifier() {
   const { user, isSignedIn } = useUser()
   const { organization } = useOrganization()
   const posthogClient = usePostHog()
 
   useEffect(() => {
+    // Only run if PostHog is loaded
+    if (!(posthog as any).__loaded) return
+
     if (isSignedIn && user) {
       // Identify user in PostHog
       posthogClient.identify(user.id, {
@@ -37,14 +54,6 @@ function PostHogUserIdentifier() {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-      person_profiles: 'identified_only',
-      capture_pageview: false,
-    })
-  }, [])
-
   return (
     <PHProvider client={posthog}>
       <PostHogUserIdentifier />

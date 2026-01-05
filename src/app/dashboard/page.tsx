@@ -44,130 +44,222 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       <Header />
-      <div className="max-w-7xl mx-auto px-6 py-12 pt-24">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
-            Welcome, {user?.firstName || "User"}
-          </h1>
-          {orgName && (
-            <p className="text-slate-600 mt-2">
-              <span className="font-medium text-slate-700">{orgName}</span>
-              <span className="mx-2">·</span>
-              <span className="text-slate-500">{formattedRole}</span>
-            </p>
-          )}
-          {!orgName && (
-            <p className="text-slate-600 mt-2">
-              Your Frontera dashboard
-            </p>
-          )}
-        </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Strategy Coach */}
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a]/5 via-transparent to-cyan-500/5 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-6 py-16 pt-32">
+          <div className="relative">
+            <h1 className="text-5xl font-bold text-slate-900 mb-4">
+              Welcome back, {user?.firstName || "User"}
+            </h1>
+            {orgName && (
+              <div className="flex items-center gap-3 text-lg">
+                <span className="font-semibold text-[#1e3a8a]">{orgName}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                <span className="text-slate-600">{formattedRole}</span>
+              </div>
+            )}
+            {!orgName && (
+              <p className="text-lg text-slate-600">
+                Your strategic transformation command center
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Dashboard Content */}
+      <div className="max-w-7xl mx-auto px-6 pb-16">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {/* Strategy Coach - Featured Card */}
           <Link
             href="/dashboard/strategy-coach"
-            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all group"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#06b6d4] hover:-translate-y-1"
           >
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="font-semibold text-slate-900">Strategy Coach</h3>
-              <svg
-                className="w-5 h-5 text-slate-400 group-hover:text-[#1e3a8a] transition-colors"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#06b6d4]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="relative p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-[#1e3a8a] to-[#06b6d4] rounded-xl shadow-lg">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                    />
+                  </svg>
+                </div>
+                <svg
+                  className="w-6 h-6 text-slate-400 group-hover:text-[#1e3a8a] group-hover:translate-x-1 transition-all duration-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Strategy Coach</h3>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                AI-powered guidance for your product strategy transformation journey.
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-semibold text-green-700">Active & Ready</span>
+              </div>
             </div>
-            <p className="text-sm text-slate-600 mb-4">
-              Get AI-powered guidance on your product strategy transformation.
-            </p>
-            <span className="inline-block px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-              Active
-            </span>
           </Link>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-2">Documents</h3>
-            <p className="text-sm text-slate-600 mb-4">
-              View and manage your strategic outputs and documents.
-            </p>
-            <span className="inline-block px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full">
-              Coming Soon
-            </span>
+          {/* Documents - Coming Soon Card */}
+          <div className="group relative overflow-hidden bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-md border border-slate-200">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8" />
+            <div className="relative p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-amber-100 to-amber-50 rounded-xl">
+                  <svg
+                    className="w-7 h-7 text-amber-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Documents</h3>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                View and manage your strategic outputs, frameworks, and insights.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-800 rounded-full font-semibold text-sm">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                Coming Soon
+              </div>
+            </div>
           </div>
 
+          {/* Team Management Card */}
           <Link
             href="/dashboard/team"
-            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all group"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#06b6d4] hover:-translate-y-1"
           >
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="font-semibold text-slate-900">Team</h3>
-              <svg
-                className="w-5 h-5 text-slate-400 group-hover:text-[#1e3a8a] transition-colors"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#1e3a8a]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="relative p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-[#06b6d4] to-[#1e3a8a] rounded-xl shadow-lg">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                    />
+                  </svg>
+                </div>
+                <svg
+                  className="w-6 h-6 text-slate-400 group-hover:text-[#1e3a8a] group-hover:translate-x-1 transition-all duration-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Team</h3>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                Manage your organization members, roles, and permissions.
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-semibold text-green-700">Active & Ready</span>
+              </div>
             </div>
-            <p className="text-sm text-slate-600 mb-4">
-              Manage your organization members and permissions.
-            </p>
-            <span className="inline-block px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-              Active
-            </span>
           </Link>
 
           {/* Admin Panel - Only visible to Frontera super admins */}
           {isAdmin && (
             <Link
               href="/dashboard/admin"
-              className="bg-gradient-to-br from-[#1e3a8a] to-[#1e2a5e] rounded-xl shadow-sm border border-[#1e3a8a] p-6 hover:shadow-lg transition-all group"
+              className="group relative overflow-hidden bg-gradient-to-br from-[#1e3a8a] to-[#1e2a5e] rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-[#1e3a8a] hover:border-[#06b6d4] hover:-translate-y-1 lg:col-span-2"
             >
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-white">Admin Panel</h3>
-                <svg
-                  className="w-5 h-5 text-white/60 group-hover:text-white transition-colors"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-                  />
-                </svg>
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
+              <div className="relative p-8">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl shadow-lg">
+                    <svg
+                      className="w-8 h-8 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                      />
+                    </svg>
+                  </div>
+                  <svg
+                    className="w-6 h-6 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-3">Admin Panel</h3>
+                <p className="text-white/90 leading-relaxed mb-6 text-lg">
+                  Review client applications, manage provisioning, and oversee the Frontera platform.
+                </p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#1e3a8a] rounded-full font-bold text-sm shadow-lg">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Frontera Administrator
+                </div>
               </div>
-              <p className="text-sm text-white/80 mb-4">
-                Review applications and manage client provisioning.
-              </p>
-              <span className="inline-block px-3 py-1 text-xs font-medium text-[#1e3a8a] bg-white rounded-full">
-                Frontera Admin
-              </span>
             </Link>
           )}
         </div>
 
         {/* Debug info - only shown in development */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="mt-12 p-4 bg-slate-100 rounded-lg text-sm text-slate-600">
-            <p><strong>User ID:</strong> {userId}</p>
-            <p><strong>Org ID:</strong> {orgId || "No organization selected"}</p>
+          <div className="mt-12 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200 text-sm text-slate-600">
+            <p className="font-mono"><strong>User ID:</strong> {userId}</p>
+            <p className="font-mono"><strong>Org ID:</strong> {orgId || "No organization selected"}</p>
           </div>
         )}
       </div>

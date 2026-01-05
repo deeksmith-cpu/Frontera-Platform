@@ -15,7 +15,15 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:bdd": "cucumber-js"
+    "test:bdd": "cucumber-js",
+    "test:evals": "vitest run tests/evals",
+    "test:evals:watch": "vitest watch tests/evals",
+    "test:evals:quality": "vitest run tests/evals/strategy-coach/quality",
+    "test:evals:context": "vitest run tests/evals/strategy-coach/context",
+    "test:evals:methodology": "vitest run tests/evals/strategy-coach/methodology",
+    "test:evals:conversational": "vitest run tests/evals/strategy-coach/conversational",
+    "test:evals:safety": "vitest run tests/evals/strategy-coach/safety",
+    "test:all": "npm run test && npm run test:e2e && npm run test:bdd && npm run test:evals"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

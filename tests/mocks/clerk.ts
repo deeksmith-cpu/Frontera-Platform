@@ -58,7 +58,7 @@ export const mockMembership = {
 // Create mock clerk client
 export const createMockClerkClient = () => ({
   users: {
-    createUser: vi.fn().mockResolvedValue({ id: 'user_new123', ...mockCurrentUser }),
+    createUser: vi.fn().mockResolvedValue({ ...mockCurrentUser, id: 'user_new123' }),
     getUser: vi.fn().mockResolvedValue(mockCurrentUser),
     updateUser: vi.fn().mockResolvedValue(mockCurrentUser),
     deleteUser: vi.fn().mockResolvedValue({}),

@@ -1,4 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { PostHogAI } from "@posthog/ai";
+import { getPostHogServer } from "@/lib/analytics/posthog-server";
 import { ClientContext, loadClientContext } from "./client-context";
 import { FrameworkState, initializeFrameworkState } from "./framework-state";
 import { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
@@ -8,13 +10,32 @@ import type { ConversationMessage } from "@/types/database";
 const MODEL = "claude-sonnet-4-20250514";
 const MAX_TOKENS = 4096;
 
-// Initialize Anthropic client
+/**
+ * Get Anthropic client wrapped with PostHog AI observability
+ * This automatically tracks all LLM calls with token usage, latency, and cost
+ */
 function getAnthropicClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error("ANTHROPIC_API_KEY environment variable is not set");
   }
-  return new Anthropic({ apiKey });
+
+  // Create base Anthropic client
+  const baseClient = new Anthropic({ apiKey });
+
+  // Wrap with PostHog AI SDK for automatic tracking
+  // This creates automatic 'ai_request' events with token usage and cost
+  const posthog = getPostHogServer();
+  const wrappedClient = PostHogAI.wrapAnthropic(baseClient, {
+    posthog,
+    tags: {
+      agent_type: "strategy_coach",
+      model: MODEL,
+      environment: process.env.NODE_ENV || "development",
+    },
+  });
+
+  return wrappedClient as unknown as Anthropic;
 }
 
 /**

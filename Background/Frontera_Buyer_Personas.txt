@@ -1,0 +1,125 @@
+Frontera Buyer Personas
+Research-Based Customer Archetypes for Enterprise Product Transformation
+Persona Summary Overview
+Five key buyer personas representing primary decision-makers and influencers in enterprise product transformation initiatives.
+PersonaRolePrimary PainDecision StyleBest ApproachSarah Chen
+The Reformation LeaderChief Product & Technology OfficerStrategy disconnected from execution. Inherited £4.2M failed transformation.Evidence-based, risk-aware. Needs proof before commitment.Aberdeen case study, 30-day pilot, outcome-based pricingJames Rodriguez
+The Skeptical VeteranChief Digital OfficerTransformation fatigue. Survived 4 failed initiatives, £8M+ wasted.Highly skeptical, slow but deliberate. Sustainability over speed.Validate skepticism, 12+ month data, transparent pricing, extended pilotMaya Okonkwo
+The Ambitious OperatorVP of ProductPMs lack strategic coaching. £2.3M consultancy frameworks unused by teams.Fast-moving, network-dependent. Team adoption over leadership approval.Platform demo, peer connections, team adoption metrics, immediate accessTom Aldridge
+The Change-Weary PractitionerHead of EngineeringConstant failed process changes. Engineers cynical about transformation.Protective skeptic. Needs to see engineering value, not overhead.Address skepticism, show overhead reduction, bottom-up adoptionRichard Thornton
+The Board-Appointed FixerChief Transformation Officer (Interim)£12M previous transformation failed. Must deliver or company fails.Fast, decisive, outcome-focused. Speed to outcomes critical.Board briefing, fast pilot, 6-month outcomes, peer-level engagementReal Personas
+
+Persona 3: The Ambitious Operator
+Maya Okonkwo, VP of Product
+Demographics
+• Age: 36
+• Location: Edinburgh, UK
+• Education: Computer Science + Design, MBA in progress
+• Years in Role: 11 months
+• Company: B2B SaaS, 3,500 employees
+• Reports to: CPO (who reports to CEO)
+• Team size: 85 product managers, designers
+Professional Background
+Came from high-growth startup with successful exit, now in first enterprise role experiencing culture shock from startup pace. Promoted rapidly due to potential but must now prove herself at enterprise scale. Currently accountable for £2.3M consultancy spend that delivered frameworks nobody uses. Must show ROI or risk career stall.
+Goals & Motivations
+• Primary: Prove she can operate at enterprise scale
+• Accelerate product velocity without sacrificing quality
+• Build world-class product org that attracts top talent
+• Make consultancy investment show actual returns
+• Personal: Advance to CPO within 24 months
+Top Pain Points
+• Product managers lack strategic coaching (9/10 impact, daily)
+• Frameworks from consultants not landing with teams (10/10 impact, constant)
+• Can't attract startup-caliber talent with current methods (8/10 impact, weekly)
+• Strategy gets lost in translation to teams (9/10 impact, daily)
+• Measuring 'busy-ness' not outcomes (9/10 impact, weekly)
+Jobs-to-be-Done
+When I'm trying to build a modern product organization in a traditional enterprise
+I want to embed best-in-class methods that teams actually use
+So I can prove enterprise can move with startup velocity and advance my career
+Buying Behavior
+• Decision-making style: Fast-moving, research-intensive, network-dependent
+• Budget authority: £250K direct, £500K+ with CPO approval
+• Timeline: Urgent (12 months to show transformation results)
+• Evaluation criteria: Team adoption > leadership approval, velocity > perfection
+Success Metrics
+• Product manager capability scores improve 50%+
+• Time-to-market reduced by 40%
+• Team engagement scores reach 85%+
+• Attract 10+ senior PMs from top tech companies
+• Product success rate (outcomes achieved) doubles
+Defining Quote
+"I came from a world where we shipped weekly, learned fast, and pivoted quickly. Now I'm surrounded by frameworks that look good on slides but don't help my PMs make better decisions. I need something that works in the flow—something my team will actually use because it makes their jobs easier, not harder. And I need it yesterday."
+Emotional State
+• Primary emotion: Determined but overwhelmed
+• Pressure level: 10/10 (proving herself constantly)
+• Optimism: 7/10 (believes transformation possible with right approach)
+• Trust in vendors: 5/10 (open-minded but needs proof)
+Best Approach for Frontera
+• Lead with platform demo (show don't tell)
+• Connect her to peer product leaders using Frontera
+• Emphasize team adoption metrics from Aberdeen
+• Offer immediate access (30-day pilot)
+• Position as competitive advantage for talent attraction
+
+
+Persona 4: The Change-Weary Practitioner
+Tom Aldridge, Head of Engineering
+Demographics
+• Age: 44
+• Location: Bristol, UK
+• Education: Computer Science degree
+• Years in Role: 6 years
+• Company: Healthcare technology, 6,200 employees
+• Reports to: CTO
+• Team size: 320 engineers, architects, engineering managers
+Professional Background
+20+ years as engineer, last 10 in leadership. Survived 3 'agile transformations' that were all abandoned within months. Deeply skeptical of product/process changes but respected by engineers. Seen as blocker by product leadership but values pragmatism over innovation theater.
+Goals & Motivations
+• Primary: Protect his teams from disruptive, failing initiatives
+• Deliver technical excellence without flavor-of-the-month distractions
+• Build engineering capability sustainably
+• Improve product-engineering collaboration (but skeptical of 'product thinking')
+• Personal: Maintain team morale and retention
+Top Pain Points
+• Constant process changes that don't stick (9/10 impact, quarterly)
+• Engineers cynical about 'transformation' (10/10 impact, constant)
+• Product-engineering tension from misaligned priorities (8/10 impact, weekly)
+• Time wasted on training that doesn't apply (9/10 impact, monthly)
+• Teams reverting to 'safe' waterfall approaches (8/10 impact, constant)
+Jobs-to-be-Done
+When I'm asked to adopt another new framework or process
+I want to understand if it will genuinely help my teams or just create more overhead
+So I can protect my teams from waste while staying open to genuine improvements
+Buying Behavior
+• Decision-making style: Highly skeptical, needs to see engineering value
+• Budget authority: Limited (£50K), must make case to CTO
+• Timeline: Will slow things down until convinced
+• Evaluation criteria: Reduces overhead > adds it, engineering-friendly
+Success Metrics
+• Engineers see value (adoption without mandate)
+• Reduced rework from unclear requirements
+• Better product-engineering collaboration
+• No decrease in velocity or quality
+• Team retention improves
+• Less time in 'alignment meetings'
+Defining Quote
+"I've been through Scrum training three times. Had two SAFe rollouts. Sat through countless workshops about 'outcome-driven development.' Meanwhile, my engineers just want clear requirements, aligned priorities, and to build great software. Every transformation adds overhead without solving the real problem: product and engineering aren't speaking the same language. Fix that, and I'm interested. Add more process, and I'll resist."
+Emotional State
+• Primary emotion: Protective skepticism
+• Pressure level: 6/10 (used to resisting change)
+• Optimism: 3/10 (assumes this will fail like others)
+• Trust in vendors: 2/10 (especially 'product consultants')
+Best Approach for Frontera
+• Address his skepticism directly (validate past experiences)
+• Show how Frontera reduces overhead, not adds it
+• Demonstrate product-engineering alignment benefits
+• Let engineers see it first (bottom-up adoption)
+• Focus on competency framework for engineering capability
+• Show Aberdeen's engineering engagement metrics
+
+
+Complete Persona Details
+Comprehensive profiles for all five buyer personas including demographics, professional background, goals, pain points, buying behavior, success metrics, and recommended engagement strategies.
+
+

@@ -1,0 +1,58 @@
+<svg width="500" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon -->
+  <g transform="translate(10, 10)">
+    <!-- Rounded square background -->
+    <rect width="100" height="100" rx="20" fill="#0f172a"/>
+
+    <!-- White F - vertical bar -->
+    <path
+      d="M28 78 V28 C28 24 31 21 35 21 H55"
+      stroke="#ffffff"
+      stroke-width="9"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+
+    <!-- White F - middle horizontal bar -->
+    <path
+      d="M28 52 H50"
+      stroke="#ffffff"
+      stroke-width="9"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <!-- Orange curved element -->
+    <path
+      d="M55 28 C75 28 80 40 80 52 C80 64 75 78 55 78"
+      stroke="#f97316"
+      stroke-width="8"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <!-- Orange arrow chevron 1 -->
+    <path
+      d="M65 52 L78 40 M65 52 L78 64"
+      stroke="#f97316"
+      stroke-width="7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+
+    <!-- Orange arrow chevron 2 -->
+    <path
+      d="M78 52 L90 41 M78 52 L90 63"
+      stroke="#f97316"
+      stroke-width="6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </g>
+
+  <!-- Text "Frontera" -->
+  <text x="130" y="75" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" fill="#0f172a" letter-spacing="-1">Frontera</text>
+</svg>

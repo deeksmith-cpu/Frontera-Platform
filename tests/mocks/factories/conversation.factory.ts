@@ -130,7 +130,7 @@ export const createMockConversation = (
     clerk_user_id: 'user_test123',
     title: 'Test Strategy Session',
     agent_type: 'strategy_coach' as AgentType,
-    framework_state: createMockFrameworkState(),
+    framework_state: createMockFrameworkState() as unknown as Record<string, unknown>,
     context_summary: null,
     status: 'active',
     created_at: new Date().toISOString(),

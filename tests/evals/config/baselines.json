@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0-initial",
+  "timestamp": "2026-01-05T00:00:00Z",
+  "model": "claude-sonnet-4-20250514",
+  "systemPromptVersion": "v1.0.0",
+  "note": "Initial baseline - will be updated after first eval run",
+  "metrics": {
+    "relevance": {
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "hallucination": {
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "toneAdherence": {
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "completeness": {
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  },
+  "testCases": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "failureRate": 0.0
+  }
+}

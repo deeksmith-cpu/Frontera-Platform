@@ -49,10 +49,36 @@ export default async function AdminPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-[#1e3a8a] flex items-center justify-center">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-[#1e3a8a] flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                    />
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold text-slate-900">Admin Panel</h1>
+              </div>
+              <p className="text-slate-600">
+                Review and manage client onboarding applications
+              </p>
+            </div>
+            <Link
+              href="/dashboard/admin/landing-comparison"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors text-sm font-medium"
+            >
               <svg
-                className="w-5 h-5 text-white"
+                className="w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
@@ -61,15 +87,12 @@ export default async function AdminPage() {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                  d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z"
                 />
               </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-slate-900">Admin Panel</h1>
+              Compare Landing Pages
+            </Link>
           </div>
-          <p className="text-slate-600">
-            Review and manage client onboarding applications
-          </p>
         </div>
 
         {/* Content */}

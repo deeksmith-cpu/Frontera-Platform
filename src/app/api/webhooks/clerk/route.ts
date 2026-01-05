@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { createClient } from "@supabase/supabase-js";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Create admin client at runtime (bypasses RLS)
 function getSupabaseAdmin() {
@@ -15,6 +16,7 @@ function getSupabaseAdmin() {
 }
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   const payload = await req.text();
   const headers = {
     "svix-id": req.headers.get("svix-id") || "",
@@ -44,6 +46,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Track webhook received
+  await trackEvent("webhook_received", "system", {
+    webhook_type: "clerk",
+    event_type: event.type,
+    svix_id: headers["svix-id"],
+  });
+
   // Get Supabase admin client
   const supabaseAdmin = getSupabaseAdmin();
 
@@ -72,6 +81,13 @@ export async function POST(req: NextRequest) {
       }
 
       console.log(`Created client record for org: ${id}`);
+
+      // Track org created
+      await trackEvent("webhook_org_created", "system", {
+        organization_id: id,
+        organization_name: name,
+        processing_duration_ms: Date.now() - startTime,
+      });
     } catch (err) {
       console.error("Database error:", err);
       return NextResponse.json(

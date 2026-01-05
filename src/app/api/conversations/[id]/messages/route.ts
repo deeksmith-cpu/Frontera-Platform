@@ -9,7 +9,7 @@ import {
   type FrameworkState,
 } from "@/lib/agents/strategy-coach";
 import { generateOpeningMessage } from "@/lib/agents/strategy-coach/system-prompt";
-import { trackServerEvent } from "@/lib/analytics/strategy-coach";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Supabase client with service role
 function getSupabaseAdmin() {
@@ -131,7 +131,7 @@ export async function POST(
     }
 
     // Save the user message
-    const { error: insertError } = await supabase
+    const { data: userMessageData, error: insertError } = await supabase
       .from("conversation_messages")
       .insert({
         conversation_id: conversationId,
@@ -140,10 +140,24 @@ export async function POST(
         content: message,
         metadata: {},
         token_count: Math.ceil(message.length / 4),
-      });
+      })
+      .select()
+      .single();
 
     if (insertError) {
       console.error("Failed to save user message:", insertError);
+    }
+
+    // Track message sent
+    if (userMessageData) {
+      await trackEvent("strategy_coach_message_sent", userId, {
+        org_id: orgId,
+        conversation_id: conversationId,
+        message_id: userMessageData.id,
+        message_length: message.length,
+        framework_phase: frameworkState.currentPhase,
+        pillar_context: frameworkState.currentPillar,
+      });
     }
 
     // Convert messages to chat history format
@@ -170,20 +184,28 @@ export async function POST(
         // Save the assistant message after streaming completes
         try {
           const usage = await getUsage();
+          const streamDuration = Date.now() - startTime;
 
-          await supabase.from("conversation_messages").insert({
-            conversation_id: conversationId,
-            clerk_org_id: orgId,
-            role: "assistant",
-            content: fullResponse,
-            metadata: {
-              input_tokens: usage.inputTokens,
-              output_tokens: usage.outputTokens,
-            },
-            token_count: usage.outputTokens,
-          });
+          const { data: assistantMessageData } = await supabase
+            .from("conversation_messages")
+            .insert({
+              conversation_id: conversationId,
+              clerk_org_id: orgId,
+              role: "assistant",
+              content: fullResponse,
+              metadata: {
+                input_tokens: usage.inputTokens,
+                output_tokens: usage.outputTokens,
+              },
+              token_count: usage.outputTokens,
+            })
+            .select()
+            .single();
 
           // Update conversation last_message_at and increment message count
+          const previousPhase = frameworkState.currentPhase;
+          const previousPillar = frameworkState.currentPillar;
+
           const updatedState = {
             ...frameworkState,
             totalMessageCount: (frameworkState.totalMessageCount || 0) + 2,
@@ -198,17 +220,65 @@ export async function POST(
             })
             .eq("id", conversationId);
 
-          // Track analytics
-          const latencyMs = Date.now() - startTime;
-          await trackServerEvent("strategy_coach_response_received", userId, {
-            conversation_id: conversationId,
-            org_id: orgId,
-            latency_ms: latencyMs,
-            input_tokens: usage.inputTokens,
-            output_tokens: usage.outputTokens,
-            total_tokens: usage.inputTokens + usage.outputTokens,
-            framework_phase: frameworkState.currentPhase,
-          });
+          // Track message received
+          if (assistantMessageData) {
+            await trackEvent("strategy_coach_message_received", userId, {
+              org_id: orgId,
+              conversation_id: conversationId,
+              message_id: assistantMessageData.id,
+              response_length: fullResponse.length,
+              streaming_duration_ms: streamDuration,
+              framework_phase: updatedState.currentPhase,
+              phase_changed: updatedState.currentPhase !== previousPhase,
+            });
+          }
+
+          // Track phase transition
+          if (updatedState.currentPhase !== previousPhase) {
+            await trackEvent("strategy_coach_phase_transitioned", userId, {
+              org_id: orgId,
+              conversation_id: conversationId,
+              from_phase: previousPhase,
+              to_phase: updatedState.currentPhase,
+              message_count_in_phase: updatedState.totalMessageCount || 0,
+            });
+          }
+
+          // Track pillar activation
+          if (updatedState.currentPillar !== previousPillar) {
+            await trackEvent("strategy_coach_pillar_activated", userId, {
+              org_id: orgId,
+              conversation_id: conversationId,
+              pillar: updatedState.currentPillar,
+              progress: updatedState.researchProgress?.[updatedState.currentPillar || "macroMarket"] || 0,
+            });
+          }
+
+          // Track canvas updates
+          if (updatedState.strategicFlowCanvas) {
+            const canvasSectionsFilled = Object.keys(updatedState.strategicFlowCanvas).filter(
+              (k) => (updatedState.strategicFlowCanvas as any)[k]
+            ).length;
+
+            await trackEvent("strategy_coach_canvas_updated", userId, {
+              org_id: orgId,
+              conversation_id: conversationId,
+              canvas_sections_filled: canvasSectionsFilled,
+              total_canvas_sections: 6,
+            });
+          }
+
+          // Track strategic bet creation
+          const previousBetCount = frameworkState.strategicBets?.length || 0;
+          const newBetCount = updatedState.strategicBets?.length || 0;
+          if (newBetCount > previousBetCount && updatedState.strategicBets) {
+            await trackEvent("strategy_coach_bet_created", userId, {
+              org_id: orgId,
+              conversation_id: conversationId,
+              bet_count: newBetCount,
+              bet_name: updatedState.strategicBets[newBetCount - 1]?.name || "Unknown",
+            });
+          }
         } catch (err) {
           console.error("Error saving assistant message:", err);
         }
@@ -229,18 +299,26 @@ export async function POST(
   } catch (err) {
     console.error("Error in message handler:", err);
 
-    // Track error
+    // Track streaming error
     const { userId, orgId } = await auth();
+    const { id: conversationId } = await params;
+
     if (userId) {
-      try {
-        await trackServerEvent("strategy_coach_llm_error", userId, {
-          org_id: orgId,
-          error_type: err instanceof Error ? err.name : "Unknown",
-          error_message: err instanceof Error ? err.message : String(err),
-        });
-      } catch {
-        // Ignore analytics errors
-      }
+      const { data: conversationData } = await getSupabaseAdmin()
+        .from("conversations")
+        .select("framework_state")
+        .eq("id", conversationId)
+        .single();
+
+      const frameworkState = conversationData?.framework_state as any;
+
+      await trackEvent("strategy_coach_streaming_error", userId, {
+        org_id: orgId || "unknown",
+        conversation_id: conversationId,
+        error_type: err instanceof Error ? err.name : "Unknown",
+        error_message: err instanceof Error ? err.message : String(err),
+        framework_phase: frameworkState?.currentPhase || "unknown",
+      });
     }
 
     return new Response(

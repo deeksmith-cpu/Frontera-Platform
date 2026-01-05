@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Conversation, ConversationMessage } from "@/types/database";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Supabase client with service role
 function getSupabaseAdmin() {
@@ -60,6 +61,27 @@ export async function GET(
         { error: "Failed to fetch messages" },
         { status: 500 }
       );
+    }
+
+    const messageCount = messages?.length || 0;
+    const frameworkState = conversation.framework_state as any;
+
+    // Track conversation viewed
+    await trackEvent("strategy_coach_conversation_viewed", userId, {
+      org_id: orgId,
+      conversation_id: id,
+      message_count: messageCount,
+      is_archived: conversation.status === "archived",
+      framework_state_phase: frameworkState?.currentPhase || "discovery",
+    });
+
+    // Track conversation resumed if it has messages
+    if (messageCount > 0) {
+      await trackEvent("strategy_coach_conversation_resumed", userId, {
+        org_id: orgId,
+        conversation_id: id,
+        messages_since_last_visit: messageCount,
+      });
     }
 
     return NextResponse.json({
@@ -128,6 +150,36 @@ export async function PATCH(
         { error: "Failed to update conversation" },
         { status: 500 }
       );
+    }
+
+    // Get message count for tracking
+    const { count: messageCount } = await supabase
+      .from("conversation_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("conversation_id", id);
+
+    // Track conversation updated
+    await trackEvent("strategy_coach_conversation_updated", userId, {
+      org_id: orgId,
+      conversation_id: id,
+      updated_fields: Object.keys(updates),
+      archived: updates.status === "archived",
+    });
+
+    // Track conversation completed if moved to planning and archived
+    const newFrameworkState = updates.framework_state as any;
+    if (newFrameworkState?.currentPhase === "planning" && updates.status === "archived") {
+      const conversationAge = conversation
+        ? new Date().getTime() - new Date(conversation.created_at).getTime()
+        : 0;
+      const durationHours = Math.round(conversationAge / (1000 * 60 * 60) * 10) / 10;
+
+      await trackEvent("strategy_coach_conversation_completed", userId, {
+        org_id: orgId,
+        conversation_id: id,
+        total_messages: messageCount || 0,
+        duration_hours: durationHours,
+      });
     }
 
     return NextResponse.json({ conversation });

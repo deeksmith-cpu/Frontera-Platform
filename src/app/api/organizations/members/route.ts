@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // GET: List all organization members
 export async function GET() {
@@ -35,6 +36,12 @@ export async function GET() {
         };
       })
     );
+
+    // Track member list viewed
+    await trackEvent("team_members_listed", userId, {
+      org_id: orgId,
+      member_count: members.length,
+    });
 
     return NextResponse.json({ members });
   } catch (err) {
@@ -90,6 +97,14 @@ export async function POST(req: NextRequest) {
       emailAddress: email,
       role,
       inviterUserId: userId,
+    });
+
+    // Track member invitation
+    await trackEvent("team_member_invited", userId, {
+      org_id: orgId,
+      invitation_email: email,
+      role: role,
+      invitation_id: invitation.id,
     });
 
     return NextResponse.json({

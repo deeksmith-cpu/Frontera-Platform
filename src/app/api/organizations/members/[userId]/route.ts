@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // PATCH: Update member role
 export async function PATCH(
@@ -51,6 +52,13 @@ export async function PATCH(
       role,
     });
 
+    // Track role update
+    await trackEvent("team_member_role_updated", currentUserId, {
+      org_id: orgId,
+      target_user_id: targetUserId,
+      new_role: role,
+    });
+
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     console.error("Failed to update role:", err);
@@ -100,6 +108,12 @@ export async function DELETE(
     await clerk.organizations.deleteOrganizationMembership({
       organizationId: orgId,
       userId: targetUserId,
+    });
+
+    // Track member removal
+    await trackEvent("team_member_removed", currentUserId, {
+      org_id: orgId,
+      removed_user_id: targetUserId,
     });
 
     return NextResponse.json({ success: true });

@@ -1,0 +1,3732 @@
+[
+  {
+    "description": "  As a product leader\n  I want the coach to follow the Product Strategy Research Playbook\n  So that I receive structured and effective strategic guidance",
+    "elements": [
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-starts-with-discovery-phase",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Coach starts with discovery phase",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "the conversation should be in the \"discovery\" phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:25"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "the coach should ask about my organization context",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:39"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "the coach should explore my strategic challenges",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:52"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-guides-through-research-pillars",
+        "keyword": "Scenario",
+        "line": 16,
+        "name": "Coach guides through research pillars",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 17,
+            "name": "I have completed the discovery phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:70"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "the conversation should move to the \"research\" phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:91"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Pillar",
+                      "Focus"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Macro Market",
+                      "Industry trends"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Customer",
+                      "User needs and behaviors"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Colleague",
+                      "Internal capabilities"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "And ",
+            "line": 19,
+            "name": "the coach should introduce the three research pillars:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:103"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-helps-with-macro-market-research",
+        "keyword": "Scenario",
+        "line": 25,
+        "name": "Coach helps with macro market research",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 26,
+            "name": "I am in the research phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:121"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 27,
+            "name": "I discuss macro market topics",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:136"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Topic"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Industry trends"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Competitive forces"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Market dynamics"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Technology shifts"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 28,
+            "name": "the coach should ask about:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:169"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-helps-with-customer-research",
+        "keyword": "Scenario",
+        "line": 35,
+        "name": "Coach helps with customer research",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 36,
+            "name": "I am in the research phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:121"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "I discuss customer research",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:147"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Topic"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Customer segments"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "User pain points"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Jobs to be done"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Buying behaviors"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "the coach should ask about:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:169"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-helps-with-colleague-research",
+        "keyword": "Scenario",
+        "line": 45,
+        "name": "Coach helps with colleague research",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 46,
+            "name": "I am in the research phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:121"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 47,
+            "name": "I discuss colleague research",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:158"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Topic"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Team capabilities"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Organizational culture"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Internal processes"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Resource constraints"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 48,
+            "name": "the coach should ask about:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:169"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-guides-to-synthesis-phase",
+        "keyword": "Scenario",
+        "line": 55,
+        "name": "Coach guides to synthesis phase",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 56,
+            "name": "I have completed research on all three pillars",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:188"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 57,
+            "name": "the conversation should move to the \"synthesis\" phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:91"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 58,
+            "name": "the coach should help synthesize insights",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:201"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 59,
+            "name": "the coach should help formulate strategic bets",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:213"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-helps-create-strategic-bets",
+        "keyword": "Scenario",
+        "line": 61,
+        "name": "Coach helps create strategic bets",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 62,
+            "name": "I am in the synthesis phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:234"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 63,
+            "name": "I work on strategic bets",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:247"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Element",
+                      "Description"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "If we",
+                      "Action or investment"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "We will",
+                      "Expected capability"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Which enables",
+                      "Customer or business outcome"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Leading to",
+                      "Strategic impact"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 64,
+            "name": "the coach should guide me through the format:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:258"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;coach-guides-to-planning-phase",
+        "keyword": "Scenario",
+        "line": 71,
+        "name": "Coach guides to planning phase",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 72,
+            "name": "I have formulated strategic bets",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:277"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 73,
+            "name": "the conversation should move to the \"planning\" phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:91"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 74,
+            "name": "the coach should help create action plans",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:288"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 75,
+            "name": "the coach should discuss implementation priorities",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:300"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-methodology;phase-indicator-shows-current-phase",
+        "keyword": "Scenario",
+        "line": 77,
+        "name": "Phase indicator shows current phase",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have started a new coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 78,
+            "name": "the conversation is in the \"research\" phase",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:322"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 79,
+            "name": "I view the conversation in the list",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:347"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 80,
+            "name": "I should see the phase badge showing \"Research\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\methodology.steps.ts:354"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@methodology",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "strategy-coach-methodology",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Strategy Coach Methodology",
+    "tags": [
+      {
+        "name": "@strategy-coach",
+        "line": 1
+      },
+      {
+        "name": "@methodology",
+        "line": 1
+      }
+    ],
+    "uri": "tests\\bdd\\features\\strategy-coach\\coaching-methodology.feature"
+  },
+  {
+    "description": "  As a product leader\n  I want to have coaching conversations with an AI strategy coach\n  So that I can develop effective product strategies",
+    "elements": [
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;view-strategy-coach-page",
+        "keyword": "Scenario",
+        "line": 12,
+        "name": "View Strategy Coach page",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "I should see the page title \"Strategy Coach\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:68"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I should see the coaching journey with 4 phases",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:84"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "I should see the \"Start New Strategy Session\" button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:73"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          },
+          {
+            "name": "@smoke",
+            "line": 11
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;view-coaching-journey-phases",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "View coaching journey phases",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Phase",
+                      "Description"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Discovery",
+                      "Understand context"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Research",
+                      "Explore pillars"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Synthesis",
+                      "Strategic bets"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Planning",
+                      "Action plans"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I should see the following phases:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:92"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          },
+          {
+            "name": "@smoke",
+            "line": 17
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;start-a-new-conversation",
+        "keyword": "Scenario",
+        "line": 26,
+        "name": "Start a new conversation",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 27,
+            "name": "I click the \"Start New Strategy Session\" button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:49"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 28,
+            "name": "I should be redirected to a new conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:121"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "I should see the chat interface",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:129"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 30,
+            "name": "I should receive an opening message from the coach",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:134"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;view-empty-state-when-no-conversations-exist",
+        "keyword": "Scenario",
+        "line": 32,
+        "name": "View empty state when no conversations exist",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 33,
+            "name": "I have no previous conversations",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:11"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 34,
+            "name": "I should see the empty state message \"No coaching sessions yet\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:99"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 35,
+            "name": "I should see the \"Start New Strategy Session\" button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:73"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;view-list-of-previous-conversations",
+        "keyword": "Scenario",
+        "line": 37,
+        "name": "View list of previous conversations",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "Title",
+                      "Phase",
+                      "Messages"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Q4 Strategy Review",
+                      "Research",
+                      "15"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Product Roadmap",
+                      "Discovery",
+                      "5"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Given ",
+            "line": 38,
+            "name": "I have the following conversations:",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:16"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 42,
+            "name": "I should see \"Previous Sessions\" heading",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:103"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 43,
+            "name": "I should see 2 conversation cards",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:107"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 44,
+            "name": "I should see conversation \"Q4 Strategy Review\" with phase \"Research\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:114"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 45,
+            "name": "I should see conversation \"Product Roadmap\" with phase \"Discovery\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:114"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-conversations;open-an-existing-conversation",
+        "keyword": "Scenario",
+        "line": 47,
+        "name": "Open an existing conversation",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 48,
+            "name": "I have a conversation titled \"Q4 Strategy Review\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:29"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 49,
+            "name": "I click on the conversation \"Q4 Strategy Review\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:53"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 50,
+            "name": "I should be redirected to that conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:125"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 51,
+            "name": "I should see the conversation title \"Q4 Strategy Review\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:146"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 52,
+            "name": "I should see the previous messages",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:151"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@conversations",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "strategy-coach-conversations",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Strategy Coach Conversations",
+    "tags": [
+      {
+        "name": "@strategy-coach",
+        "line": 1
+      },
+      {
+        "name": "@conversations",
+        "line": 1
+      }
+    ],
+    "uri": "tests\\bdd\\features\\strategy-coach\\conversations.feature"
+  },
+  {
+    "description": "  As a product leader\n  I want to send and receive messages with the AI coach\n  So that I can get strategic guidance through conversation",
+    "elements": [
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;send-a-message-to-the-coach",
+        "keyword": "Scenario",
+        "line": 13,
+        "name": "Send a message to the coach",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I type \"What should I focus on for my product strategy?\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "I click the send button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:53"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "my message should appear in the chat",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:74"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 17,
+            "name": "I should see a streaming indicator",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:80"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "I should receive a response from the coach",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:92"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          },
+          {
+            "name": "@smoke",
+            "line": 12
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;send-message-using-enter-key",
+        "keyword": "Scenario",
+        "line": 20,
+        "name": "Send message using Enter key",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 21,
+            "name": "I type \"Tell me about market research\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 22,
+            "name": "I press Enter",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:57"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 23,
+            "name": "my message should appear in the chat",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:74"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 24,
+            "name": "I should receive a response from the coach",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:92"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;add-new-line-using-shift+enter",
+        "keyword": "Scenario",
+        "line": 26,
+        "name": "Add new line using Shift+Enter",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 27,
+            "name": "I type \"First line\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 28,
+            "name": "I press Shift+Enter",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:62"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "I type \"Second line\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 30,
+            "name": "the input should contain both lines",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:104"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "the message should not be sent",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:111"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;input-is-disabled-while-streaming",
+        "keyword": "Scenario",
+        "line": 33,
+        "name": "Input is disabled while streaming",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 34,
+            "name": "I send a message \"Explain the research pillars\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:67"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "the input field should be disabled",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:119"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "the send button should show a loading state",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:129"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "the response is complete",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:151"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "the input field should be enabled",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:124"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 39,
+            "name": "the send button should be ready",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:135"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;message-count-updates-after-sending",
+        "keyword": "Scenario",
+        "line": 41,
+        "name": "Message count updates after sending",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 42,
+            "name": "there are 5 messages in the conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:16"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 43,
+            "name": "I send a message \"New question\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:67"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 44,
+            "name": "the response is complete",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:151"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 45,
+            "name": "the message count should show \"7 messages\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:161"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;clear-input-after-sending",
+        "keyword": "Scenario",
+        "line": 47,
+        "name": "Clear input after sending",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 48,
+            "name": "I type \"My question here\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 49,
+            "name": "I click the send button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:53"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 50,
+            "name": "the input field should be empty",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:145"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;cannot-send-empty-message",
+        "keyword": "Scenario",
+        "line": 52,
+        "name": "Cannot send empty message",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 53,
+            "name": "the input field is empty",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:29"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 54,
+            "name": "the send button should be disabled",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:140"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 55,
+            "name": "I type \"   \"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:48"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 56,
+            "name": "the send button should be disabled",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:140"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;view-message-timestamps",
+        "keyword": "Scenario",
+        "line": 58,
+        "name": "View message timestamps",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 59,
+            "name": "I view a message in the chat",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:174"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 60,
+            "name": "I should see a relative timestamp like \"Just now\" or \"5m ago\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:167"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-messaging;auto-scroll-to-new-messages",
+        "keyword": "Scenario",
+        "line": 62,
+        "name": "Auto-scroll to new messages",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I have an active coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:35"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I am on the conversation page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 63,
+            "name": "there are many messages in the conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:23"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 64,
+            "name": "I receive a new message from the coach",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:180"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 65,
+            "name": "the chat should scroll to show the new message",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:192"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@messaging",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "strategy-coach-messaging",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Strategy Coach Messaging",
+    "tags": [
+      {
+        "name": "@strategy-coach",
+        "line": 1
+      },
+      {
+        "name": "@messaging",
+        "line": 1
+      }
+    ],
+    "uri": "tests\\bdd\\features\\strategy-coach\\messaging.feature"
+  },
+  {
+    "description": "  As a product leader\n  I want to navigate between conversations and pages\n  So that I can easily access my coaching sessions",
+    "elements": [
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;navigate-from-dashboard-to-strategy-coach",
+        "keyword": "Scenario",
+        "line": 10,
+        "name": "Navigate from dashboard to Strategy Coach",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 11,
+            "name": "I am on the dashboard",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:42"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 12,
+            "name": "I navigate to Strategy Coach",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:61"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "I should be on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:51"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I should see the breadcrumb showing \"Dashboard > Strategy Coach\"",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:79"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;navigate-back-from-conversation-to-list",
+        "keyword": "Scenario",
+        "line": 16,
+        "name": "Navigate back from conversation to list",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 17,
+            "name": "I am in a coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:41"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "I click the back button",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:57"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I should be on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:51"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 20,
+            "name": "I should see my previous conversations",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:157"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;navigate-using-breadcrumb",
+        "keyword": "Scenario",
+        "line": 22,
+        "name": "Navigate using breadcrumb",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 23,
+            "name": "I am on the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:46"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 24,
+            "name": "I click \"Dashboard\" in the breadcrumb",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:79"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "I should be on the dashboard page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:55"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;conversation-persists-after-navigation",
+        "keyword": "Scenario",
+        "line": 27,
+        "name": "Conversation persists after navigation",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 28,
+            "name": "I am in a coaching conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:41"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "I have sent some messages",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\messaging.steps.ts:34"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 30,
+            "name": "I navigate back to the conversation list",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:69"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "I open the same conversation",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:74"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 32,
+            "name": "I should see all my previous messages",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:161"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;redirect-to-sign-in-when-not-authenticated",
+        "keyword": "Scenario",
+        "line": 35,
+        "name": "Redirect to sign-in when not authenticated",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 36,
+            "name": "I am not logged in",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:31"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "I try to access the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:65"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "I should be redirected to the sign-in page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:59"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          },
+          {
+            "name": "@authentication",
+            "line": 34
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "strategy-coach-navigation;redirect-to-dashboard-when-no-organization",
+        "keyword": "Scenario",
+        "line": 41,
+        "name": "Redirect to dashboard when no organization",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am logged in as an organization member",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:10"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 42,
+            "name": "I am logged in without an organization",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:37"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 43,
+            "name": "I try to access the Strategy Coach page",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\conversations.steps.ts:65"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 44,
+            "name": "I should be redirected to the dashboard",
+            "match": {
+              "location": "tests\\bdd\\step-definitions\\common.steps.ts:63"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@strategy-coach",
+            "line": 1
+          },
+          {
+            "name": "@navigation",
+            "line": 1
+          },
+          {
+            "name": "@authentication",
+            "line": 40
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "strategy-coach-navigation",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Strategy Coach Navigation",
+    "tags": [
+      {
+        "name": "@strategy-coach",
+        "line": 1
+      },
+      {
+        "name": "@navigation",
+        "line": 1
+      }
+    ],
+    "uri": "tests\\bdd\\features\\strategy-coach\\navigation.feature"
+  }
+]

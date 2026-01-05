@@ -40,20 +40,22 @@ export default function Header() {
           </div>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex lg:gap-x-10">
-            <Link href="/#problem" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
-              Why Frontera
-            </Link>
-            <Link href="/#solution" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
-              Platform
-            </Link>
-            <Link href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
-              Pricing
-            </Link>
-            <Link href="/#testimonial" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
-              Case Studies
-            </Link>
-          </div>
+          <SignedOut>
+            <div className="hidden lg:flex lg:gap-x-10">
+              <Link href="/#problem" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+                Why Frontera
+              </Link>
+              <Link href="/#solution" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+                Platform
+              </Link>
+              <Link href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+                Pricing
+              </Link>
+              <Link href="/#testimonial" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+                Case Studies
+              </Link>
+            </div>
+          </SignedOut>
 
           {/* CTA + Auth */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4">
@@ -101,34 +103,37 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="lg:hidden">
             <div className="space-y-1 pb-4">
-              <Link
-                href="/#problem"
-                className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Why Frontera
-              </Link>
-              <Link
-                href="/#solution"
-                className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Platform
-              </Link>
-              <Link
-                href="/#pricing"
-                className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/#testimonial"
-                className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Case Studies
-              </Link>
+              <SignedOut>
+                <Link
+                  href="/#problem"
+                  className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Why Frontera
+                </Link>
+                <Link
+                  href="/#solution"
+                  className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Platform
+                </Link>
+                <Link
+                  href="/#pricing"
+                  className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="/#testimonial"
+                  className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Case Studies
+                </Link>
+              </SignedOut>
+
               <SignedOut>
                 <Link
                   href="/sign-in"
