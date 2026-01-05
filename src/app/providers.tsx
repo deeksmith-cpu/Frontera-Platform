@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
   const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
 
-  if (key && !(posthog as any).__loaded) {
+  if (key && !(posthog as unknown as { __loaded?: boolean }).__loaded) {
     posthog.init(key, {
       api_host: host,
       person_profiles: 'identified_only',
@@ -26,7 +26,7 @@ function PostHogUserIdentifier() {
 
   useEffect(() => {
     // Only run if PostHog is loaded
-    if (!(posthog as any).__loaded) return
+    if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return
 
     if (isSignedIn && user) {
       // Identify user in PostHog

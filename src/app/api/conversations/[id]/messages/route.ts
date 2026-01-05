@@ -156,7 +156,6 @@ export async function POST(
         message_id: userMessageData.id,
         message_length: message.length,
         framework_phase: frameworkState.currentPhase,
-        pillar_context: frameworkState.currentPillar,
       });
     }
 
@@ -168,8 +167,7 @@ export async function POST(
       clientContext,
       frameworkState,
       chatHistory,
-      message,
-      userName
+      message
     );
 
     // Create a transform stream to collect the full response
@@ -204,7 +202,6 @@ export async function POST(
 
           // Update conversation last_message_at and increment message count
           const previousPhase = frameworkState.currentPhase;
-          const previousPillar = frameworkState.currentPillar;
 
           const updatedState = {
             ...frameworkState,
@@ -244,39 +241,17 @@ export async function POST(
             });
           }
 
-          // Track pillar activation
-          if (updatedState.currentPillar !== previousPillar) {
-            await trackEvent("strategy_coach_pillar_activated", userId, {
-              org_id: orgId,
-              conversation_id: conversationId,
-              pillar: updatedState.currentPillar,
-              progress: updatedState.researchProgress?.[updatedState.currentPillar || "macroMarket"] || 0,
-            });
-          }
-
-          // Track canvas updates
-          if (updatedState.strategicFlowCanvas) {
-            const canvasSectionsFilled = Object.keys(updatedState.strategicFlowCanvas).filter(
-              (k) => (updatedState.strategicFlowCanvas as any)[k]
-            ).length;
-
-            await trackEvent("strategy_coach_canvas_updated", userId, {
-              org_id: orgId,
-              conversation_id: conversationId,
-              canvas_sections_filled: canvasSectionsFilled,
-              total_canvas_sections: 6,
-            });
-          }
-
           // Track strategic bet creation
           const previousBetCount = frameworkState.strategicBets?.length || 0;
           const newBetCount = updatedState.strategicBets?.length || 0;
           if (newBetCount > previousBetCount && updatedState.strategicBets) {
+            const latestBet = updatedState.strategicBets[newBetCount - 1];
             await trackEvent("strategy_coach_bet_created", userId, {
               org_id: orgId,
               conversation_id: conversationId,
               bet_count: newBetCount,
-              bet_name: updatedState.strategicBets[newBetCount - 1]?.name || "Unknown",
+              bet_belief: latestBet?.belief?.substring(0, 100) || "Unknown",
+              pillar_source: latestBet?.pillarSource || "unknown",
             });
           }
         } catch (err) {
@@ -310,7 +285,7 @@ export async function POST(
         .eq("id", conversationId)
         .single();
 
-      const frameworkState = conversationData?.framework_state as any;
+      const frameworkState = conversationData?.framework_state as FrameworkState | null;
 
       await trackEvent("strategy_coach_streaming_error", userId, {
         org_id: orgId || "unknown",

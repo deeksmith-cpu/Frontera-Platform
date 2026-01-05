@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { PostHogAI } from "@posthog/ai";
+import { Anthropic as PostHogAnthropic } from "@posthog/ai";
 import { getPostHogServer } from "@/lib/analytics/posthog-server";
 import { ClientContext, loadClientContext } from "./client-context";
 import { FrameworkState, initializeFrameworkState } from "./framework-state";
@@ -20,19 +20,12 @@ function getAnthropicClient(): Anthropic {
     throw new Error("ANTHROPIC_API_KEY environment variable is not set");
   }
 
-  // Create base Anthropic client
-  const baseClient = new Anthropic({ apiKey });
-
-  // Wrap with PostHog AI SDK for automatic tracking
+  // Create PostHog-wrapped Anthropic client for automatic tracking
   // This creates automatic 'ai_request' events with token usage and cost
   const posthog = getPostHogServer();
-  const wrappedClient = PostHogAI.wrapAnthropic(baseClient, {
+  const wrappedClient = new PostHogAnthropic({
+    apiKey,
     posthog,
-    tags: {
-      agent_type: "strategy_coach",
-      model: MODEL,
-      environment: process.env.NODE_ENV || "development",
-    },
   });
 
   return wrappedClient as unknown as Anthropic;
@@ -107,13 +100,12 @@ export async function sendMessage(
   context: ClientContext,
   frameworkState: FrameworkState,
   conversationHistory: ChatMessage[],
-  userMessage: string,
-  userName?: string
+  userMessage: string
 ): Promise<StrategyCoachResponse> {
   const anthropic = getAnthropicClient();
 
   // Build the system prompt
-  const systemPrompt = buildSystemPrompt(context, frameworkState, userName);
+  const systemPrompt = buildSystemPrompt(context, frameworkState);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
@@ -155,7 +147,6 @@ export async function streamMessage(
   frameworkState: FrameworkState,
   conversationHistory: ChatMessage[],
   userMessage: string,
-  userName?: string
 ): Promise<{
   stream: ReadableStream<Uint8Array>;
   getUsage: () => Promise<{ inputTokens: number; outputTokens: number }>;
@@ -163,7 +154,7 @@ export async function streamMessage(
   const anthropic = getAnthropicClient();
 
   // Build the system prompt
-  const systemPrompt = buildSystemPrompt(context, frameworkState, userName);
+  const systemPrompt = buildSystemPrompt(context, frameworkState);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
@@ -182,11 +173,8 @@ export async function streamMessage(
     messages,
   });
 
-  // Track usage
-  let inputTokens = 0;
-  let outputTokens = 0;
-
   // Convert Anthropic stream to web ReadableStream
+  // Note: Token usage is automatically tracked by PostHog AI SDK wrapper
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -196,16 +184,6 @@ export async function streamMessage(
             const delta = event.delta;
             if ("text" in delta) {
               controller.enqueue(encoder.encode(delta.text));
-            }
-          } else if (event.type === "message_delta") {
-            // Capture final usage stats
-            if (event.usage) {
-              outputTokens = event.usage.output_tokens;
-            }
-          } else if (event.type === "message_start") {
-            // Capture input tokens
-            if (event.message.usage) {
-              inputTokens = event.message.usage.input_tokens;
             }
           }
         }

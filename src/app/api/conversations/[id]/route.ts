@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import type { Conversation, ConversationMessage } from "@/types/database";
+import type { FrameworkState } from "@/lib/agents/strategy-coach/framework-state";
 import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Supabase client with service role
@@ -64,7 +64,7 @@ export async function GET(
     }
 
     const messageCount = messages?.length || 0;
-    const frameworkState = conversation.framework_state as any;
+    const frameworkState = conversation.framework_state as FrameworkState | null;
 
     // Track conversation viewed
     await trackEvent("strategy_coach_conversation_viewed", userId, {
@@ -167,7 +167,7 @@ export async function PATCH(
     });
 
     // Track conversation completed if moved to planning and archived
-    const newFrameworkState = updates.framework_state as any;
+    const newFrameworkState = updates.framework_state as FrameworkState | undefined;
     if (newFrameworkState?.currentPhase === "planning" && updates.status === "archived") {
       const conversationAge = conversation
         ? new Date().getTime() - new Date(conversation.created_at).getTime()

@@ -7,8 +7,7 @@ import { FrameworkState, getProgressSummary, suggestNextFocus } from "./framewor
  */
 export function buildSystemPrompt(
   context: ClientContext,
-  state: FrameworkState,
-  userName?: string
+  state: FrameworkState
 ): string {
   const sections: string[] = [];
 

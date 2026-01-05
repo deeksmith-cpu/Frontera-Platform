@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import type { Database, Conversation } from "@/types/database";
+import type { Conversation } from "@/types/database";
 import { initializeFrameworkState } from "@/lib/agents/strategy-coach/framework-state";
 import { trackEvent } from "@/lib/analytics/posthog-server";
 
