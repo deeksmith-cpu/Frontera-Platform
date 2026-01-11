@@ -23,8 +23,11 @@ export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
   useEffect(() => {
     if (!conversation) return;
 
+    // Capture conversation in a const to avoid TS18048 errors in async closure
+    const currentConversation = conversation;
+
     async function fetchMessages() {
-      const response = await fetch(`/api/conversations/${conversation.id}`);
+      const response = await fetch(`/api/conversations/${currentConversation.id}`);
       if (response.ok) {
         const data = await response.json();
         const fetchedMessages = data.messages || [];
@@ -33,7 +36,7 @@ export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
         // If no messages exist, request the opening message
         if (fetchedMessages.length === 0) {
           try {
-            const openingResponse = await fetch(`/api/conversations/${conversation.id}/messages`, {
+            const openingResponse = await fetch(`/api/conversations/${currentConversation.id}/messages`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ message: '' }),
@@ -44,7 +47,7 @@ export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
               if (openingData.content) {
                 const openingMessage: Message = {
                   id: `opening-${Date.now()}`,
-                  conversation_id: conversation.id,
+                  conversation_id: currentConversation.id,
                   clerk_org_id: orgId,
                   role: 'assistant',
                   content: openingData.content,
