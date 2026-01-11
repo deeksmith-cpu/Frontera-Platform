@@ -2,6 +2,7 @@
 
 import { CanvasHeader } from './CanvasHeader';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
+import { DiscoverySection } from './DiscoverySection';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
@@ -32,22 +33,41 @@ export function CanvasPanel({ conversation, userId, orgId }: CanvasPanelProps) {
       <CanvasHeader />
       <HorizontalProgressStepper currentPhase={currentPhase} />
       <div className="canvas-content flex-1 overflow-y-auto p-10">
-        {/* Phase content will go here */}
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">
-            Welcome to Product Strategy Coach
-          </h1>
-          <p className="text-lg text-slate-600 mb-8">
-            Let's navigate your strategic terrain together. Current phase: <span className="font-semibold text-indigo-600">{currentPhase}</span>
-          </p>
-
-          {/* Placeholder content - will be replaced with actual phase sections */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-8">
-            <p className="text-slate-600">
-              Phase-specific content will appear here. Building in progress...
+        {/* Render phase-specific content */}
+        {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} />}
+        {currentPhase === 'research' && (
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">3Cs Research Phase</h1>
+            <p className="text-lg text-slate-600 mb-8">
+              Explore your strategic territories: Company, Customer, Competitor
             </p>
+            <div className="bg-white rounded-2xl border border-slate-200 p-8">
+              <p className="text-slate-600">Territory cards coming soon...</p>
+            </div>
           </div>
-        </div>
+        )}
+        {currentPhase === 'synthesis' && (
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">Synthesis Phase</h1>
+            <p className="text-lg text-slate-600 mb-8">
+              Triangulate insights and identify strategic opportunities
+            </p>
+            <div className="bg-white rounded-2xl border border-slate-200 p-8">
+              <p className="text-slate-600">Synthesis engine coming soon...</p>
+            </div>
+          </div>
+        )}
+        {currentPhase === 'bets' && (
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">Strategic Bets Phase</h1>
+            <p className="text-lg text-slate-600 mb-8">
+              Formulate hypothesis-driven strategic bets
+            </p>
+            <div className="bg-white rounded-2xl border border-slate-200 p-8">
+              <p className="text-slate-600">Strategic bets framework coming soon...</p>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
