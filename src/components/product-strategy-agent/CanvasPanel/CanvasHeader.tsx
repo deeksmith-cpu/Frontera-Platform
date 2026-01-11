@@ -1,8 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
+import type { Database } from '@/types/database';
 
-export function CanvasHeader() {
+type Conversation = Database['public']['Tables']['conversations']['Row'];
+
+interface CanvasHeaderProps {
+  conversation: Conversation;
+  onPhaseChange?: () => void;
+}
+
+export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps) {
+  const [isChangingPhase, setIsChangingPhase] = useState(false);
+
   const handleExport = () => {
     console.log('Export clicked');
     // TODO: Implement export modal (deferred to post-MVP)
@@ -16,6 +27,46 @@ export function CanvasHeader() {
   const handleGenerateInsights = () => {
     console.log('Generate insights clicked');
     // TODO: Implement synthesis generation
+  };
+
+  // TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation for testing
+  const handleNextPhase = async () => {
+    setIsChangingPhase(true);
+
+    const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+    const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
+
+    // Cycle through phases: discovery → research → synthesis → bets → discovery
+    const phaseOrder: Array<'discovery' | 'research' | 'synthesis' | 'bets'> = ['discovery', 'research', 'synthesis', 'bets'];
+    const currentIndex = phaseOrder.indexOf(currentPhase as 'discovery' | 'research' | 'synthesis' | 'bets');
+    const nextPhase = phaseOrder[(currentIndex + 1) % phaseOrder.length];
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/phase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          phase: nextPhase,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update phase');
+      }
+
+      // Reload the page to show new phase
+      if (onPhaseChange) {
+        onPhaseChange();
+      } else {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error updating phase:', error);
+      alert('Failed to change phase. Please try again.');
+    } finally {
+      setIsChangingPhase(false);
+    }
   };
 
   return (
@@ -36,6 +87,16 @@ export function CanvasHeader() {
       </div>
 
       <div className="canvas-controls flex gap-3">
+        {/* TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation */}
+        <button
+          onClick={handleNextPhase}
+          disabled={isChangingPhase}
+          className="canvas-btn text-sm py-2.5 px-5 bg-amber-500 border border-amber-600 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-amber-600 hover:shadow-md font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Temporary: Cycle through phases for testing"
+        >
+          {isChangingPhase ? 'Switching...' : '🔄 Next Phase (TEST)'}
+        </button>
+
         <button
           onClick={handleExport}
           className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"

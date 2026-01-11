@@ -31,7 +31,7 @@ export function CanvasPanel({ conversation, userId, orgId }: CanvasPanelProps) {
 
   return (
     <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden h-full">
-      <CanvasHeader />
+      <CanvasHeader conversation={conversation} />
       <HorizontalProgressStepper currentPhase={currentPhase} />
       <div className="canvas-content flex-1 overflow-y-auto p-10">
         {/* Render phase-specific content */}
