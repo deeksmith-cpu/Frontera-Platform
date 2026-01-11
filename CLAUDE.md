@@ -46,9 +46,17 @@ src/
 
 ### Strategy Coach (Primary Feature)
 AI-powered coaching agent that guides users through product strategy transformation using the "Product Strategy Research Playbook" methodology:
-- **Three Research Pillars**: Macro Market, Customer, Colleague
-- **Strategic Flow Canvas**: Structured strategy development
-- **Strategic Bets**: Hypothesis-driven planning format
+
+**Methodology**: 4-phase journey - Discovery → 3Cs Research → Synthesis → Strategic Bets
+- **Discovery**: Context setting with document upload and strategic baseline
+- **3Cs Research**: Company, Customer, Competitor territory mapping
+- **Synthesis**: Cross-pillar insight generation and strategic opportunity identification
+- **Strategic Bets**: Hypothesis-driven planning with evidence linking
+
+**Design Reference**:
+- PRD v2.1: `Background/Product_Strategy_Agent_PRD_v2.1.md`
+- Implementation Prompts: `Background/Frontera_Claude_Code_Prompts_v2.md`
+- Mockup: `/dashboard/strategy-coach-v2`
 
 Location: `src/lib/agents/strategy-coach/`
 

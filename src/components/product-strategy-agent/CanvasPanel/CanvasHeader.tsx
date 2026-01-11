@@ -1,0 +1,60 @@
+'use client';
+
+import Image from 'next/image';
+
+export function CanvasHeader() {
+  const handleExport = () => {
+    console.log('Export clicked');
+    // TODO: Implement export modal (deferred to post-MVP)
+  };
+
+  const handleShare = () => {
+    console.log('Share clicked');
+    // TODO: Implement share functionality (deferred to post-MVP)
+  };
+
+  const handleGenerateInsights = () => {
+    console.log('Generate insights clicked');
+    // TODO: Implement synthesis generation
+  };
+
+  return (
+    <header className="canvas-header py-5 px-10 border-b border-slate-100 bg-white flex justify-between items-center flex-shrink-0">
+      <div className="flex items-center gap-6">
+        <Image
+          src="/frontera-logo-white.jpg"
+          alt="Frontera"
+          width={120}
+          height={40}
+          className="h-10 w-auto"
+        />
+        <div>
+          <h2 className="canvas-title text-xl font-bold text-slate-900">
+            Product Strategy Coach
+          </h2>
+        </div>
+      </div>
+
+      <div className="canvas-controls flex gap-3">
+        <button
+          onClick={handleExport}
+          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+        >
+          Export
+        </button>
+        <button
+          onClick={handleShare}
+          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+        >
+          Share
+        </button>
+        <button
+          onClick={handleGenerateInsights}
+          className="canvas-btn primary text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold"
+        >
+          Generate Insights
+        </button>
+      </div>
+    </header>
+  );
+}

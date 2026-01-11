@@ -120,7 +120,45 @@ export default async function DashboardPage() {
             </div>
           </Link>
 
-          {/* Strategy Coach v2 - New Canvas Interface */}
+          {/* Product Strategy Agent - Functional MVP */}
+          <Link
+            href="/dashboard/product-strategy-agent"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-[#1e3a8a] hover:border-[#06b6d4] hover:-translate-y-1"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#06b6d4]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="relative p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-[#1e3a8a] to-[#06b6d4] rounded-xl shadow-lg">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+                    />
+                  </svg>
+                </div>
+                <span className="px-3 py-1 bg-gradient-to-r from-[#1e3a8a] to-[#06b6d4] text-white text-xs font-bold rounded-full uppercase tracking-wide">
+                  MVP
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Product Strategy Agent</h3>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                Guided 4-phase strategy development with AI coaching, 3Cs research, and strategic synthesis.
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-semibold text-green-700">Active Development</span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Strategy Coach v2 - Design Mockup Reference */}
           <Link
             href="/dashboard/strategy-coach-v2"
             className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-[#C73E1D] hover:border-[#D97917] hover:-translate-y-1"
@@ -144,16 +182,16 @@ export default async function DashboardPage() {
                   </svg>
                 </div>
                 <span className="px-3 py-1 bg-[#C73E1D] text-white text-xs font-bold rounded-full uppercase tracking-wide">
-                  New
+                  Mockup
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-3">Strategy Coach v2</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Strategy Coach v2 Mockup</h3>
               <p className="text-slate-600 leading-relaxed mb-6">
-                Visual 3Cs canvas interface with interactive strategic framework and real-time synthesis.
+                Design reference for visual 3Cs canvas interface with interactive strategic framework.
               </p>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                <span className="text-sm font-semibold text-amber-700">Beta Preview</span>
+                <span className="text-sm font-semibold text-amber-700">Design Reference</span>
               </div>
             </div>
           </Link>
