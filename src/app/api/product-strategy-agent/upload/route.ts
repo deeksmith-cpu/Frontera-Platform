@@ -131,11 +131,15 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Upload to Supabase Storage
+      // TODO: Upload to Supabase Storage (requires 'strategy-materials' bucket)
+      // For MVP testing, we'll skip actual file upload and just store metadata
       const fileExt = file.name.split('.').pop();
       const fileName = `${conversation_id}/${Date.now()}.${fileExt}`;
-      const fileBuffer = await file.arrayBuffer();
 
+      // Temporary: Skip storage upload for MVP testing
+      // In production, uncomment the storage upload code below
+      /*
+      const fileBuffer = await file.arrayBuffer();
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('strategy-materials')
         .upload(fileName, fileBuffer, {
@@ -151,10 +155,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('strategy-materials')
         .getPublicUrl(fileName);
+      */
+
+      // Temporary placeholder URL for MVP testing
+      const urlData = { publicUrl: `/uploads/${fileName}` };
 
       // Create uploaded_materials record
       const { data: material, error: materialError } = await supabase
