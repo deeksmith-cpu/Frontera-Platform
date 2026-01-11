@@ -40,6 +40,50 @@ Phase progression should be driven by:
 
 ---
 
+## 📦 Storage Bypass for File Upload
+
+**Added**: January 11, 2026
+**Purpose**: Enable file upload testing without setting up Supabase Storage bucket
+**When to Remove**: After creating 'strategy-materials' bucket in Supabase Storage
+
+### Files to Update:
+
+1. **src/app/api/product-strategy-agent/upload/route.ts**
+   - Uncomment the storage upload code (lines ~141-160)
+   - Remove the placeholder URL code (line ~164)
+   - Test file upload with real storage
+
+### Steps to Enable Real Storage:
+
+1. **Create Storage Bucket in Supabase**:
+   - Go to Storage in Supabase dashboard
+   - Create new bucket: `strategy-materials`
+   - Set to **private** (not public)
+
+2. **Configure RLS Policies**:
+   ```sql
+   -- Allow authenticated users to upload files
+   CREATE POLICY "Users can upload to their org's folder"
+   ON storage.objects FOR INSERT
+   WITH CHECK (
+     bucket_id = 'strategy-materials' AND
+     auth.role() = 'authenticated'
+   );
+
+   -- Allow users to read their org's files
+   CREATE POLICY "Users can read their org's files"
+   ON storage.objects FOR SELECT
+   USING (
+     bucket_id = 'strategy-materials' AND
+     auth.role() = 'authenticated'
+   );
+   ```
+
+3. **Uncomment Storage Code** in upload route
+4. **Test End-to-End** with real file upload
+
+---
+
 ## 📋 Checklist Before Production:
 
 - [ ] Remove "Next Phase (TEST)" button from CanvasHeader
@@ -47,6 +91,9 @@ Phase progression should be driven by:
 - [ ] Implement agent-driven phase progression
 - [ ] Add phase transition confirmations
 - [ ] Test phase flow end-to-end with agent logic
+- [ ] **Create 'strategy-materials' bucket in Supabase Storage**
+- [ ] **Uncomment storage upload code in upload route**
+- [ ] **Test file upload with real storage**
 - [ ] Update BUILD_STATUS.md to remove temporary feature notes
 - [ ] Delete this REMOVE_AFTER_MVP_TESTING.md file
 
