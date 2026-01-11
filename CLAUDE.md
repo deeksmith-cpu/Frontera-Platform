@@ -121,11 +121,246 @@ Types defined in `src/types/database.ts`.
 - Use Supabase service role for server-side operations
 - Clerk `auth()` for user context
 
+## Design Principles
+
+> **Last Updated**: January 11, 2026
+> **Based On**: Strategy Coach v2 Mockup - Finalized Design
+
+### Visual Identity
+
+Frontera's design system creates a professional, confident, and modern aesthetic that balances trust with innovation. The design communicates strategic depth through careful use of color, typography, and spatial relationships.
+
+### Color Palette
+
+**Primary Colors:**
+- **Indigo** (`#1e3a8a` / `indigo-600`): Primary brand color, represents depth and strategic thinking
+- **Cyan** (`#06b6d4` / `cyan-600`): Secondary brand color, represents innovation and clarity
+- **Gradient**: `from-indigo-600 to-cyan-600` for primary actions and brand elements
+
+**Neutral Colors:**
+- **Slate 900** (`text-slate-900`): Primary text, headings
+- **Slate 700** (`text-slate-700`): Secondary text, body content
+- **Slate 600** (`text-slate-600`): Metadata, labels
+- **Slate 500** (`text-slate-500`): Muted text
+- **Slate 400** (`text-slate-400`): Placeholder text, timestamps
+- **Slate 200** (`border-slate-200`): Standard borders
+- **Slate 100** (`border-slate-100`): Subtle dividers
+- **Slate 50** (`bg-slate-50`): Subtle backgrounds
+
+**Accent Colors:**
+- **Emerald** (`emerald-600`, `emerald-50`): Success states, discovery phase indicators
+- **Amber** (`amber-600`, `amber-50`): Warning states, research phase indicators
+- **Purple** (`purple-600`, `purple-50`): Synthesis phase indicators
+- **Cyan** (`cyan-600`, `cyan-50`): Active states, planning phase indicators
+
+**Usage Guidelines:**
+- Use indigo-to-cyan gradients for primary CTAs and brand elements (logos, buttons)
+- Use slate for all text and borders (never pure black/gray)
+- Use phase-specific colors (emerald, amber, purple, cyan) only for status indicators
+- Maintain WCAG AA contrast ratios: slate-900 on white for body text
+
+### Typography
+
+**Font Stack:**
+- System font stack via Tailwind defaults (optimized for performance)
+
+**Hierarchy:**
+- **Headings**: `font-bold` with appropriate text sizes
+  - H1: `text-2xl font-bold` (24px, 600 weight)
+  - H2: `text-xl font-bold` (20px, 600 weight)
+  - H3: `text-lg font-bold` (18px, 600 weight)
+- **Body**: `text-sm` (14px) with `leading-relaxed` (1.625 line-height)
+- **Labels**: `text-xs font-semibold uppercase tracking-wider` (12px, 600 weight, uppercase, wide letter spacing)
+- **Metadata**: `text-xs text-slate-400` (12px, muted)
+
+**Text Patterns:**
+- Use `font-semibold` (600 weight) for emphasis and interactive elements
+- Use `uppercase tracking-wider` for labels and metadata to create hierarchy
+- Use `leading-relaxed` for body text to improve readability
+- Use `whitespace-pre-wrap` for preserving formatting in chat messages
+
+### Border Radius
+
+**Consistent Rounding:**
+- **Cards/Tiles**: `rounded-2xl` (16px) - primary content containers
+- **Buttons/Inputs**: `rounded-xl` (12px) - interactive elements
+- **Badges/Pills**: `rounded-full` - status indicators, tags
+- **Avatars**: `rounded-xl` (12px) - user/agent avatars
+
+**Never use:**
+- `rounded` (4px) - too subtle for our design language
+- `rounded-lg` (8px) - creates inconsistency
+
+### Spacing & Layout
+
+**Padding:**
+- **Containers**: `p-6` (24px) - standard container padding
+- **Large Sections**: `py-5 px-10` (20px vertical, 40px horizontal) - headers
+- **Compact Elements**: `py-1.5 px-3` (6px vertical, 12px horizontal) - badges
+- **Buttons**: `py-2.5 px-5` (10px vertical, 20px horizontal) - standard buttons
+
+**Gaps:**
+- **Section Spacing**: `gap-6` (24px) - between major sections
+- **Element Spacing**: `gap-3` (12px) - between related elements
+- **Inline Elements**: `gap-2` or `gap-2.5` (8px/10px) - icons with text
+- **Tight Spacing**: `space-y-2` (8px) - stacked text elements
+
+**Layout Patterns:**
+- Use flexbox for all layouts (`flex`, `flex-col`)
+- Use `flex-shrink-0` for fixed-height headers/footers
+- Use `flex-1 min-h-0 overflow-hidden` for scrollable content areas
+- Use `h-full overflow-hidden` on parent containers to constrain flex children
+
+### Interactive States
+
+**Hover Effects:**
+- **Scale**: `hover:scale-105` (5% growth) - primary buttons
+- **Scale**: `hover:scale-110` (10% growth) - avatars, icons
+- **Shadow**: `hover:shadow-lg` - buttons, cards
+- **Background**: `hover:bg-slate-50` - secondary buttons
+- **Border**: `hover:border-cyan-300` - inputs, secondary buttons
+
+**Focus States:**
+- **Border**: `focus:border-cyan-400` - active element indication
+- **Ring**: `focus:ring-2 focus:ring-cyan-100` - accessibility outline
+- **Outline**: `focus:outline-none` - remove default browser outline (replace with custom ring)
+
+**Disabled States:**
+- **Opacity**: `disabled:opacity-50` or `disabled:opacity-40`
+- **Cursor**: `disabled:cursor-not-allowed`
+- **Hover Reset**: `disabled:hover:scale-100 disabled:hover:shadow-none`
+
+**Transitions:**
+- **Duration**: `duration-300` (300ms) - all transitions
+- **Properties**: `transition-all` - comprehensive state changes
+- **Specific**: `transition-transform` - when only transforming
+
+### Component Patterns
+
+**Avatars:**
+```tsx
+<div className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-md">
+  <Image src="/frontera-logo-F.jpg" alt="Frontera" width={32} height={32} className="w-full h-full object-cover" />
+</div>
+```
+
+**Primary Buttons:**
+```tsx
+<button className="text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold">
+  Action
+</button>
+```
+
+**Secondary Buttons:**
+```tsx
+<button className="text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold">
+  Action
+</button>
+```
+
+**Text Inputs/Textareas:**
+```tsx
+<textarea className="w-full text-sm p-4 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400" />
+```
+
+**Status Badges:**
+```tsx
+<div className="inline-flex items-center gap-2 text-xs text-cyan-600 py-1.5 px-3 bg-cyan-50 rounded-full tracking-wide font-semibold">
+  <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse" />
+  <span>Status</span>
+</div>
+```
+
+**Loading Indicators:**
+```tsx
+<div className="flex items-center gap-2.5 text-slate-600 text-sm">
+  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
+  <span className="text-xs uppercase tracking-wide font-semibold">Loading...</span>
+</div>
+```
+
+**Content Cards:**
+```tsx
+<div className="bg-white border border-slate-100 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:border-cyan-200">
+  {/* Card content */}
+</div>
+```
+
+### Image Usage
+
+**Logo Usage:**
+- Main header logo: `/frontera-logo-white.jpg` (full horizontal logo)
+- Chat avatar logo: `/frontera-logo-F.jpg` (F icon only)
+- Always use Next.js `Image` component for optimization
+- Apply `w-full h-full object-cover` for proper sizing in containers
+
+**Image Optimization:**
+```tsx
+import Image from 'next/image';
+
+<Image
+  src="/frontera-logo-F.jpg"
+  alt="Frontera"
+  width={32}
+  height={32}
+  className="w-full h-full object-cover"
+/>
+```
+
+### Accessibility
+
+**ARIA Labels:**
+- Use semantic HTML (`<header>`, `<main>`, `<aside>`, `<nav>`)
+- Add `alt` text to all images
+- Use `aria-label` for icon-only buttons
+
+**Keyboard Navigation:**
+- Ensure all interactive elements are focusable
+- Maintain logical tab order
+- Provide visible focus indicators (cyan ring)
+
+**Color Contrast:**
+- All text meets WCAG AA standards
+- Slate-900 on white: 14.47:1 (AAA)
+- Slate-700 on white: 8.59:1 (AAA)
+- Indigo-600 on white: 8.57:1 (AAA)
+
+### Animation Guidelines
+
+**Acceptable Animations:**
+- `animate-pulse` - loading states, status dots
+- `hover:scale-105` / `hover:scale-110` - interactive feedback
+- `transition-all duration-300` - state changes
+
+**Avoid:**
+- Excessive motion (causes accessibility issues)
+- Animations longer than 300ms
+- Animations on initial page load (except loading states)
+
+### Design Checklist
+
+When creating new components, ensure:
+
+- [ ] Colors use slate palette (not gray/black)
+- [ ] Interactive elements use indigo-to-cyan gradient or cyan accents
+- [ ] Border radius is `rounded-xl`, `rounded-2xl`, or `rounded-full`
+- [ ] Hover states include scale and/or shadow effects
+- [ ] Focus states use cyan ring (`focus:ring-cyan-100`)
+- [ ] Disabled states reduce opacity and prevent interaction
+- [ ] All transitions use `duration-300`
+- [ ] Typography uses `font-semibold` for emphasis
+- [ ] Labels use `uppercase tracking-wider`
+- [ ] Spacing uses consistent gap/padding values (2, 2.5, 3, 6)
+- [ ] Images use Next.js Image component
+- [ ] Semantic HTML is used
+- [ ] WCAG AA contrast is maintained
+
 ## Coding Conventions
 
 - Use TypeScript strict mode
 - Prefer server components; use `"use client"` only when needed
 - Tailwind for all styling (no CSS modules)
+- Follow design principles above for all UI components
 - API routes return JSON with `{ error: string }` on failure
 - Use Clerk's `auth()` and `currentUser()` for authentication
 

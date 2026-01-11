@@ -80,20 +80,13 @@ ${nextFocus}
 Where would you like to pick up?`;
   }
 
-  // New conversation - guided discovery opening
-  const focusSummary = context.strategicFocusDescription;
-  const painSummary = context.painPoints
-    ? truncateForOpening(context.painPoints)
-    : "improving product transformation outcomes";
-  const outcomeSummary = context.targetOutcomes
-    ? truncateForOpening(context.targetOutcomes)
-    : "achieving sustainable product-led growth";
-
+  // New conversation - concise opening (context shown in canvas)
   return `Welcome, ${name}. I'm your Strategy Coach from Frontera, here to guide ${company} through your product strategy transformation.
 
-I've reviewed your organization's profile and understand your focus is on ${focusSummary}. I see you've identified challenges around ${painSummary}, and you're targeting ${outcomeSummary}.
+Let's explore your strategic landscape together.
 
-Let's explore your strategic landscape together. I'll guide you through our Product Strategy Research methodology, starting with understanding the market forces shaping your transformation.
+I'll guide you through our Product Strategy Research methodology, starting with understanding the market forces shaping your transformation.
+
 
 **What competitive dynamics or market shifts are making product transformation urgent for ${company} right now?**`;
 }
