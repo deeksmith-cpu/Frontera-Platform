@@ -73,6 +73,8 @@ export interface Conversation {
   framework_state: Record<string, unknown>;
   context_summary: string | null;
   status: "active" | "archived" | "completed";
+  session_name: string | null;
+  current_phase: "discovery" | "research" | "synthesis" | "bets" | null;
   created_at: string;
   updated_at: string;
   last_message_at: string;
@@ -146,6 +148,60 @@ export interface ClientOnboarding {
   provisioned_org_id?: string;
 }
 
+// Phase progress tracking for Product Strategy Agent
+export interface PhaseProgress {
+  id: string;
+  conversation_id: string;
+  phase: "discovery" | "research" | "synthesis" | "bets";
+  status: "pending" | "in_progress" | "completed";
+  progress_pct: number;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Uploaded materials for Discovery phase
+export interface UploadedMaterial {
+  id: string;
+  conversation_id: string;
+  filename: string;
+  file_type: string;
+  file_url: string | null;
+  file_size: number | null;
+  extracted_context: Record<string, unknown>;
+  processing_status: "pending" | "processing" | "completed" | "failed";
+  uploaded_at: string;
+  processed_at: string | null;
+}
+
+// Territory insights for 3Cs Research
+export interface TerritoryInsight {
+  id: string;
+  conversation_id: string;
+  territory: "company" | "customer" | "competitor";
+  research_area: string;
+  responses: Record<string, unknown>;
+  status: "unexplored" | "in_progress" | "mapped";
+  updated_at: string;
+  created_at: string;
+}
+
+// Synthesis outputs (opportunities, insights, strategic bets)
+export interface SynthesisOutput {
+  id: string;
+  conversation_id: string;
+  output_type: "opportunity" | "insight" | "strategic_bet";
+  title: string;
+  description: string | null;
+  evidence: Array<Record<string, unknown>>;
+  confidence_level: "low" | "medium" | "high" | null;
+  hypothesis: string | null;
+  success_criteria: Array<Record<string, unknown>>;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -173,6 +229,26 @@ export interface Database {
         Row: StrategicOutput;
         Insert: Omit<StrategicOutput, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<StrategicOutput, "id" | "created_at">>;
+      };
+      phase_progress: {
+        Row: PhaseProgress;
+        Insert: Omit<PhaseProgress, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<PhaseProgress, "id" | "created_at">>;
+      };
+      uploaded_materials: {
+        Row: UploadedMaterial;
+        Insert: Omit<UploadedMaterial, "id" | "uploaded_at">;
+        Update: Partial<Omit<UploadedMaterial, "id" | "uploaded_at">>;
+      };
+      territory_insights: {
+        Row: TerritoryInsight;
+        Insert: Omit<TerritoryInsight, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<TerritoryInsight, "id" | "created_at">>;
+      };
+      synthesis_outputs: {
+        Row: SynthesisOutput;
+        Insert: Omit<SynthesisOutput, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<SynthesisOutput, "id" | "created_at">>;
       };
     };
   };

@@ -8,31 +8,32 @@
 
 ## ✅ Completed
 
-### Day 1 - Foundation
+### Day 1 - Foundation & Database Schema
 - [x] Created new dashboard tile "Product Strategy Agent"
 - [x] Updated dashboard to keep "Strategy Coach v2" mockup as design reference
 - [x] Created `/dashboard/product-strategy-agent` route
 - [x] Created `ProductStrategyAgentInterface` component with 25/75 two-panel layout
 - [x] Set up component directory structure
+- [x] Created `HorizontalProgressStepper` component with 4 phases
+- [x] Integrated stepper into CanvasPanel
+- [x] Copied and adapted CoachingPanel components from mockup
+- [x] Created CanvasPanel base structure
+- [x] Created CanvasHeader component
+- [x] **Created Supabase migration `005_product_strategy_agent.sql`**
+- [x] **Updated TypeScript database types for new tables**
 
 ---
 
 ## 🚧 In Progress
 
-### Day 1 - Horizontal Progress Stepper
-- [ ] Create `HorizontalProgressStepper` component
-- [ ] Integrate stepper into CanvasPanel
-- [ ] Test phase transitions
+### Day 2 - Discovery Phase
+- [ ] Build Discovery Section with upload UI
+- [ ] Create upload API route
+- [ ] Integrate Supabase Storage
 
 ---
 
 ## 📋 Pending (Week 1)
-
-### Day 1-2: Database & Components
-- [ ] Create Supabase migration for MVP schema
-- [ ] Copy and adapt CoachingPanel components from mockup
-- [ ] Create CanvasPanel base structure
-- [ ] Create CanvasHeader component
 
 ### Day 2-3: Document Upload
 - [ ] Build Discovery Section with upload UI
