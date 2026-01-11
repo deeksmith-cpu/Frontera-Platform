@@ -37,7 +37,7 @@ export function CanvasHeader({ conversation }: CanvasHeaderProps) {
         />
         <div>
           <h2 className="canvas-title text-xl font-bold text-slate-900">
-            Navigating to your Product Strategy
+            Product Strategy Coach
           </h2>
         </div>
       </div>
