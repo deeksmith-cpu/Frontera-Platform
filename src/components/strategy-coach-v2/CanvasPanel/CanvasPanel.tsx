@@ -23,12 +23,14 @@ export function CanvasPanel({ conversation, userId, orgId }: CanvasPanelProps) {
   }
 
   // Extract current phase from framework_state
-  const frameworkState = conversation.framework_state as any;
-  const currentPhase = frameworkState?.currentPhase || 'discovery';
+  const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+  const phase = frameworkState?.currentPhase as string | undefined;
+  const currentPhase: 'discovery' | 'research' | 'synthesis' | 'planning' =
+    (phase === 'research' || phase === 'synthesis' || phase === 'planning') ? phase : 'discovery';
 
   return (
     <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden">
-      <CanvasHeader conversation={conversation} />
+      <CanvasHeader />
       <JourneyIndicator currentPhase={currentPhase} />
       <div className="canvas-content flex-1 overflow-y-auto p-10">
         <ThreeCsCanvas conversation={conversation} userId={userId} orgId={orgId} />

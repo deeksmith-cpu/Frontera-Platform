@@ -10,8 +10,8 @@ interface SessionHeaderProps {
 
 export function SessionHeader({ conversation }: SessionHeaderProps) {
   // Extract phase from framework_state
-  const frameworkState = conversation.framework_state as any;
-  const currentPhase = frameworkState?.currentPhase || 'discovery';
+  const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+  const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
 
   // Map phases to display labels
   const phaseLabels: Record<string, string> = {

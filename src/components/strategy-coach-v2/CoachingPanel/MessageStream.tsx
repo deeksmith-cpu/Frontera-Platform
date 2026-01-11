@@ -26,7 +26,7 @@ export function MessageStream({ messages, isLoading }: MessageStreamProps) {
       {messages.length === 0 && !isLoading && (
         <div className="text-center text-slate-500 text-sm py-12">
           <p className="mb-2 font-semibold">Welcome to your strategy session.</p>
-          <p>Let's begin by exploring your strategic context.</p>
+          <p>Let&apos;s begin by exploring your strategic context.</p>
         </div>
       )}
       {messages.map((message) => (

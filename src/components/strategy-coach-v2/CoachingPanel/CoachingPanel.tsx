@@ -15,7 +15,7 @@ interface CoachingPanelProps {
   orgId: string;
 }
 
-export function CoachingPanel({ conversation, userId, orgId }: CoachingPanelProps) {
+export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,7 +63,7 @@ export function CoachingPanel({ conversation, userId, orgId }: CoachingPanelProp
     }
 
     fetchMessages();
-  }, [conversation?.id, orgId]);
+  }, [conversation, orgId]);
 
   if (!conversation) {
     return (

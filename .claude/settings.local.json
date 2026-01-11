@@ -22,7 +22,10 @@
       "Bash(taskkill //F //PID 25676)",
       "Bash(CLAUDE.md)",
       "Bash(rm:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(node scripts/clear-messages.mjs:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
     ]
   }
 }

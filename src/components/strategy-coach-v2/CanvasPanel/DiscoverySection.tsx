@@ -34,12 +34,12 @@ export function DiscoverySection({ conversation }: DiscoverySectionProps) {
   };
 
   // Extract context from conversation
-  const frameworkState = (conversation.framework_state as any) || {};
-  const context = frameworkState.context || {};
+  const frameworkState = (conversation.framework_state as Record<string, unknown>) || {};
+  const context = (frameworkState.context as Record<string, string>) || {};
 
   // Check if we have any context to display
-  const hasContext = context.companyName || context.industry || context.companySize ||
-                     context.strategicFocus || context.painPoints || context.targetOutcomes;
+  const hasContext = Boolean(context.companyName || context.industry || context.companySize ||
+                     context.strategicFocus || context.painPoints || context.targetOutcomes);
 
   return (
     <section className="discovery-section mb-16">

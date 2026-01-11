@@ -120,6 +120,44 @@ export default async function DashboardPage() {
             </div>
           </Link>
 
+          {/* Strategy Coach v2 - New Canvas Interface */}
+          <Link
+            href="/dashboard/strategy-coach-v2"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-[#C73E1D] hover:border-[#D97917] hover:-translate-y-1"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#C73E1D]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="relative p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-gradient-to-br from-[#C73E1D] to-[#D97917] rounded-xl shadow-lg">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+                    />
+                  </svg>
+                </div>
+                <span className="px-3 py-1 bg-[#C73E1D] text-white text-xs font-bold rounded-full uppercase tracking-wide">
+                  New
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Strategy Coach v2</h3>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                Visual 3Cs canvas interface with interactive strategic framework and real-time synthesis.
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-sm font-semibold text-amber-700">Beta Preview</span>
+              </div>
+            </div>
+          </Link>
+
           {/* Documents - Coming Soon Card */}
           <div className="group relative overflow-hidden bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-md border border-slate-200">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8" />

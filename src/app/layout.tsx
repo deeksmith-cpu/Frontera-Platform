@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Crimson_Pro, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./providers";
@@ -8,6 +8,21 @@ import { PostHogPageView } from "./PostHogPageView";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+// Strategy Coach v2 Fonts
+const crimsonPro = Crimson_Pro({
+  subsets: ["latin"],
+  weight: ["300", "400", "600"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -41,7 +56,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="scroll-smooth">
-        <body className={`${inter.variable} font-sans antialiased`}>
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+        </head>
+        <body className={`${inter.variable} ${crimsonPro.variable} ${ibmPlexMono.variable} font-sans antialiased`}>
           <PostHogProvider>
             <PostHogPageView />
             {children}

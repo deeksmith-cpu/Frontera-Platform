@@ -39,8 +39,8 @@ export function SynthesisTeaser() {
               Strategic Synthesis Awaits
             </h4>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Once you've mapped your strategic terrain across Company, Customer, and Competitor pillars,
-              we'll synthesize cross-pillar insights to identify strategic opportunities and validated problems.
+              Once you&apos;ve mapped your strategic terrain across Company, Customer, and Competitor pillars,
+              we&apos;ll synthesize cross-pillar insights to identify strategic opportunities and validated problems.
             </p>
 
             <div className="grid grid-cols-3 gap-4 mb-5">

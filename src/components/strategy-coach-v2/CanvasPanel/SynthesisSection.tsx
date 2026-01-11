@@ -11,13 +11,23 @@ interface SynthesisSectionProps {
   completedPillars: number;
 }
 
+interface Opportunity {
+  id: string;
+  title: string;
+  description: string;
+  type: 'market_opportunity' | 'validated_problem' | 'org_readiness';
+  evidenceCount: number;
+  confidence: 'low' | 'medium' | 'high';
+  score: number;
+}
+
 export function SynthesisSection({ conversation, completedPillars }: SynthesisSectionProps) {
   // Extract synthesis from framework_state
-  const frameworkState = (conversation.framework_state as any) || {};
-  const synthesis = frameworkState.synthesis || { opportunities: [] };
+  const frameworkState = (conversation.framework_state as Record<string, unknown>) || {};
+  const synthesis = (frameworkState.synthesis as { opportunities: Opportunity[] }) || { opportunities: [] };
 
   // Mock opportunities for demo (in production these come from AI synthesis)
-  const mockOpportunities = synthesis.opportunities.length > 0 ? synthesis.opportunities : [
+  const mockOpportunities: Opportunity[] = synthesis.opportunities.length > 0 ? synthesis.opportunities : [
     {
       id: 'opp1',
       title: 'Consolidator Platform Suite',

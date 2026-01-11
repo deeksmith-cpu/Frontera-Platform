@@ -26,12 +26,12 @@ interface PillarState {
   }>;
 }
 
-export function ThreeCsCanvas({ conversation, userId, orgId }: ThreeCsCanvasProps) {
+export function ThreeCsCanvas({ conversation }: ThreeCsCanvasProps) {
   const [activePillar, setActivePillar] = useState<'company' | 'customer' | 'competitor' | null>(null);
 
   // Extract pillar states from framework_state
-  const frameworkState = (conversation.framework_state as any) || {};
-  const pillars = frameworkState.pillars || {
+  const frameworkState = (conversation.framework_state as Record<string, unknown>) || {};
+  const pillars = (frameworkState.pillars as Record<string, PillarState>) || {
     company: { status: 'pending', progress: 0, insights: [] },
     customer: { status: 'pending', progress: 0, insights: [] },
     competitor: { status: 'pending', progress: 0, insights: [] },

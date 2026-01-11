@@ -30,6 +30,7 @@
     "@clerk/nextjs": "^6.36.5",
     "@posthog/ai": "^7.3.0",
     "@supabase/supabase-js": "^2.89.0",
+    "date-fns": "^4.1.0",
     "next": "^15.5.9",
     "posthog-js": "^1.311.0",
     "posthog-node": "^5.18.1",

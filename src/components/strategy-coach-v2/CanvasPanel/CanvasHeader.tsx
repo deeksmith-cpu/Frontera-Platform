@@ -9,7 +9,7 @@ interface CanvasHeaderProps {
   conversation: Conversation;
 }
 
-export function CanvasHeader({ conversation }: CanvasHeaderProps) {
+export function CanvasHeader() {
   const handleExport = () => {
     console.log('Export clicked');
     // TODO: Implement export modal
