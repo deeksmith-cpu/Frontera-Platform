@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
+// Route segment config for file uploads
+export const runtime = 'nodejs';
+export const maxDuration = 30; // 30 seconds max
+
 // Initialize Supabase Admin Client
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -90,7 +94,17 @@ export async function POST(req: NextRequest) {
 
     // Handle file upload
     if (contentType.includes('multipart/form-data')) {
-      const formData = await req.formData();
+      let formData;
+      try {
+        formData = await req.formData();
+      } catch (formError) {
+        console.error('FormData parsing error:', formError);
+        return NextResponse.json(
+          { error: 'Failed to parse form data. Please try again with a smaller file.' },
+          { status: 400 }
+        );
+      }
+
       const file = formData.get('file') as File;
       const conversation_id = formData.get('conversation_id') as string;
 
