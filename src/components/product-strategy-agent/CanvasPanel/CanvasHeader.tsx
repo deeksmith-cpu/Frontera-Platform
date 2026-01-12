@@ -30,16 +30,23 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
   };
 
   // TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation for testing
-  const handleNextPhase = async () => {
+  const changePhase = async (direction: 'next' | 'prev') => {
     setIsChangingPhase(true);
 
     const frameworkState = conversation.framework_state as Record<string, unknown> | null;
     const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
 
-    // Cycle through phases: discovery → research → synthesis → bets → discovery
     const phaseOrder: Array<'discovery' | 'research' | 'synthesis' | 'bets'> = ['discovery', 'research', 'synthesis', 'bets'];
     const currentIndex = phaseOrder.indexOf(currentPhase as 'discovery' | 'research' | 'synthesis' | 'bets');
-    const nextPhase = phaseOrder[(currentIndex + 1) % phaseOrder.length];
+
+    let newIndex: number;
+    if (direction === 'next') {
+      newIndex = (currentIndex + 1) % phaseOrder.length;
+    } else {
+      newIndex = (currentIndex - 1 + phaseOrder.length) % phaseOrder.length;
+    }
+
+    const targetPhase = phaseOrder[newIndex];
 
     try {
       const response = await fetch('/api/product-strategy-agent/phase', {
@@ -47,7 +54,7 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           conversation_id: conversation.id,
-          phase: nextPhase,
+          phase: targetPhase,
         }),
       });
 
@@ -69,6 +76,9 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
     }
   };
 
+  const handleNextPhase = () => changePhase('next');
+  const handlePreviousPhase = () => changePhase('prev');
+
   return (
     <header className="canvas-header py-5 px-10 border-b border-slate-100 bg-white flex justify-between items-center flex-shrink-0">
       <div className="flex items-center gap-6">
@@ -89,12 +99,20 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
       <div className="canvas-controls flex gap-3">
         {/* TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation */}
         <button
+          onClick={handlePreviousPhase}
+          disabled={isChangingPhase}
+          className="canvas-btn text-sm py-2.5 px-5 bg-slate-500 border border-slate-600 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-slate-600 hover:shadow-md font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Temporary: Go back to previous phase for testing"
+        >
+          {isChangingPhase ? 'Switching...' : '⬅️ Prev Phase (TEST)'}
+        </button>
+        <button
           onClick={handleNextPhase}
           disabled={isChangingPhase}
           className="canvas-btn text-sm py-2.5 px-5 bg-amber-500 border border-amber-600 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-amber-600 hover:shadow-md font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Temporary: Cycle through phases for testing"
+          title="Temporary: Go forward to next phase for testing"
         >
-          {isChangingPhase ? 'Switching...' : '🔄 Next Phase (TEST)'}
+          {isChangingPhase ? 'Switching...' : 'Next Phase ➡️ (TEST)'}
         </button>
 
         <button

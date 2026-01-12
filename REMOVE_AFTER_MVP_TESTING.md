@@ -2,17 +2,17 @@
 
 This file tracks temporary features added for MVP testing that should be removed before production.
 
-## 🔄 Phase Navigation Button
+## 🔄 Phase Navigation Buttons
 
-**Added**: January 11, 2026
+**Added**: January 11-12, 2026
 **Purpose**: Enable easy testing of all phases without manual database updates
 **When to Remove**: After MVP testing is complete and agent-driven phase progression is implemented
 
 ### Files to Update:
 
 1. **src/components/product-strategy-agent/CanvasPanel/CanvasHeader.tsx**
-   - Remove `handleNextPhase` function
-   - Remove "Next Phase (TEST)" button from header controls
+   - Remove `changePhase`, `handleNextPhase`, and `handlePreviousPhase` functions
+   - Remove "Prev Phase (TEST)" and "Next Phase (TEST)" buttons from header controls
    - Remove conversation prop (or keep if needed for other features)
    - Search for: `TODO: REMOVE THIS AFTER MVP TESTING`
 
@@ -86,7 +86,7 @@ Phase progression should be driven by:
 
 ## 📋 Checklist Before Production:
 
-- [ ] Remove "Next Phase (TEST)" button from CanvasHeader
+- [ ] Remove "Prev Phase (TEST)" and "Next Phase (TEST)" buttons from CanvasHeader
 - [ ] Delete `/api/product-strategy-agent/phase` route
 - [ ] Implement agent-driven phase progression
 - [ ] Add phase transition confirmations
@@ -99,4 +99,4 @@ Phase progression should be driven by:
 
 ---
 
-**Last Updated**: January 11, 2026
+**Last Updated**: January 12, 2026
