@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
 import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
+import { FloatingCoachBar } from './FloatingCoachBar';
 import { CompetitorIcon } from '@/components/icons/TerritoryIcons';
 import type { Database } from '@/types/database';
 
@@ -72,6 +73,19 @@ export function CompetitorTerritoryDeepDive({
   const [suggestions, setSuggestions] = useState<QuestionSuggestion[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [suggestionError, setSuggestionError] = useState(false);
+
+  // Floating coach bar state
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
+  const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
+  const activeTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Handle floating bar suggestion apply
+  const handleFloatingBarApply = useCallback((questionIndex: number, text: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionIndex]: (prev[questionIndex] || '') + text,
+    }));
+  }, []);
 
   // Get insights for this territory - memoized to prevent infinite re-renders
   const competitorInsights = useMemo(
@@ -265,8 +279,23 @@ export function CompetitorTerritoryDeepDive({
                       <span className="font-semibold text-base text-slate-900">{question}</span>
                     </div>
                     <textarea
+                      ref={(el) => {
+                        textareaRefs.current[index] = el;
+                        if (activeQuestionIndex === index) {
+                          activeTextareaRef.current = el;
+                        }
+                      }}
                       value={responses[index] || ''}
                       onChange={(e) => handleResponseChange(index, e.target.value)}
+                      onFocus={() => setActiveQuestionIndex(index)}
+                      onBlur={(e) => {
+                        // Delay clearing to allow clicking floating bar
+                        setTimeout(() => {
+                          if (!e.relatedTarget?.closest('.floating-coach-bar')) {
+                            setActiveQuestionIndex(null);
+                          }
+                        }, 200);
+                      }}
                       placeholder="Share your insights here..."
                       rows={5}
                       className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-all"
@@ -287,11 +316,26 @@ export function CompetitorTerritoryDeepDive({
             })}
           </div>
 
+          {/* Floating Coach Bar - appears above active textarea */}
+          {currentArea && (
+            <FloatingCoachBar
+              conversationId={conversation.id}
+              territory="competitor"
+              researchArea={selectedArea || ''}
+              researchAreaTitle={currentArea.title}
+              questions={currentArea.questions}
+              activeQuestionIndex={activeQuestionIndex}
+              existingResponses={responses}
+              onApplySuggestion={handleFloatingBarApply}
+              targetRef={activeTextareaRef}
+            />
+          )}
+
           {/* Action Buttons - Sticky Bottom */}
           <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
             <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
               <div className="flex items-center gap-3">
-                {/* Coach Suggestion Button */}
+                {/* Coach Suggestion Button - for all questions at once */}
                 <button
                   onClick={handleGetSuggestions}
                   disabled={isLoadingSuggestions}
@@ -300,12 +344,12 @@ export function CompetitorTerritoryDeepDive({
                   {isLoadingSuggestions ? (
                     <>
                       <span className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-                      <span>Generating...</span>
+                      <span>Generating All...</span>
                     </>
                   ) : (
                     <>
                       <span className="text-lg">&#10024;</span>
-                      <span>Coach Suggestion</span>
+                      <span>Suggest All Questions</span>
                     </>
                   )}
                 </button>
