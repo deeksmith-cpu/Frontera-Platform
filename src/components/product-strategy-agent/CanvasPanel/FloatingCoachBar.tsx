@@ -50,10 +50,20 @@ export function FloatingCoachBar({
     }
 
     const rect = targetRef.current.getBoundingClientRect();
-    const scrollY = window.scrollY;
+
+    // For position:fixed, use viewport-relative coordinates (no scrollY needed)
+    // Position the bar 52px above the textarea
+    const barHeight = 52;
+    let top = rect.top - barHeight;
+
+    // Ensure the bar stays within viewport bounds
+    if (top < 10) {
+      // If it would go above viewport, position it below the textarea instead
+      top = rect.bottom + 8;
+    }
 
     setPosition({
-      top: rect.top + scrollY - 52, // Position above the textarea
+      top,
       left: rect.left,
       width: rect.width,
     });
