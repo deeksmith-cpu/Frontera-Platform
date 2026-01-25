@@ -188,16 +188,44 @@ export interface TerritoryInsight {
 }
 
 // Synthesis outputs (opportunities, insights, strategic bets)
+// Updated for PRD v2.2 - Playing to Win structured synthesis
 export interface SynthesisOutput {
   id: string;
   conversation_id: string;
-  output_type: "opportunity" | "insight" | "strategic_bet";
-  title: string;
-  description: string | null;
-  evidence: Array<Record<string, unknown>>;
-  confidence_level: "low" | "medium" | "high" | null;
-  hypothesis: string | null;
-  success_criteria: Array<Record<string, unknown>>;
+
+  // Legacy fields (kept for backwards compatibility, now nullable)
+  output_type?: "opportunity" | "insight" | "strategic_bet" | null;
+  title?: string | null;
+  description?: string | null;
+  evidence?: Array<Record<string, unknown>> | null;
+  confidence_level?: "low" | "medium" | "high" | null;
+  hypothesis?: string | null;
+  success_criteria?: Array<Record<string, unknown>> | null;
+
+  // New structured synthesis fields (PRD v2.2)
+  synthesis_content?: string | null;  // Executive narrative summary
+  synthesis_type?: "ai_generated" | "user_edited" | null;
+  executive_summary?: string | null;
+
+  // Structured data arrays (JSONB)
+  opportunities?: Array<Record<string, unknown>> | null;  // StrategicOpportunity[]
+  tensions?: Array<Record<string, unknown>> | null;       // StrategicTension[]
+  ptw_cascades?: Array<Record<string, unknown>> | null;   // PTWCascade[]
+  recommendations?: string[] | null;
+
+  // Metadata
+  metadata?: {
+    model_used?: string;
+    territories_included?: string[];
+    research_areas_count?: number;
+    confidence_level?: "low" | "medium" | "high";
+    generated_at?: string;
+  } | null;
+
+  // User modification tracking
+  user_edited?: boolean;
+  edited_at?: string | null;
+
   created_at: string;
   updated_at: string;
 }

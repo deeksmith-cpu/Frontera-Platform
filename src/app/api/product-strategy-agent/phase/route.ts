@@ -44,25 +44,49 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
+    // Use raw client to avoid type issues
+    const rawSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    // If transitioning to 'bets' phase, verify synthesis exists
+    if (phase === 'bets') {
+      const { data: synthesisData } = await rawSupabase
+        .from('synthesis_outputs')
+        .select('id')
+        .eq('conversation_id', conversation_id)
+        .limit(1)
+        .single();
+
+      if (!synthesisData) {
+        return NextResponse.json(
+          { error: 'Cannot transition to bets phase without completing synthesis first. Please generate strategic synthesis.' },
+          { status: 400 }
+        );
+      }
+    }
 
     // Verify conversation belongs to user's org
-    const { data: conversation, error: convError } = await supabase
+    const { data: convData, error: convError } = await rawSupabase
       .from('conversations')
       .select('id, clerk_org_id, framework_state')
       .eq('id', conversation_id)
       .eq('clerk_org_id', orgId)
       .single();
 
-    if (convError || !conversation) {
+    if (convError || !convData) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
 
-    // Update framework_state with new phase
-    const frameworkState = (conversation.framework_state as Record<string, unknown>) || {};
-    frameworkState.currentPhase = phase;
+    // Extract and update framework_state with new phase
+    const existingState = ((convData as { framework_state: unknown }).framework_state as Record<string, unknown>) || {};
+    const frameworkState = {
+      ...existingState,
+      currentPhase: phase,
+    };
 
-    const { data: updated, error: updateError } = await supabase
+    const { data: updated, error: updateError } = await rawSupabase
       .from('conversations')
       .update({
         framework_state: frameworkState,

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { vi, afterEach } from 'vitest';
+import { vi } from 'vitest';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
@@ -28,9 +28,4 @@ process.env.CLERK_SECRET_KEY = 'test-clerk-secret';
 vi.stubGlobal('crypto', {
   ...crypto,
   randomUUID: () => 'test-uuid-1234-5678-9abc-def012345678',
-});
-
-// Clean up after each test
-afterEach(() => {
-  vi.clearAllMocks();
 });

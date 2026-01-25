@@ -1,5 +1,7 @@
 'use client';
 
+import { CompanyIcon, CustomerIcon, CompetitorIcon, CheckIcon } from '@/components/icons/TerritoryIcons';
+
 interface TerritoryCardProps {
   title: string;
   description: string;
@@ -9,28 +11,40 @@ interface TerritoryCardProps {
 }
 
 export function TerritoryCard({ title, description, status, onClick, territory }: TerritoryCardProps) {
-  // Territory-specific colors
+  // Territory-specific icons
+  const territoryIcons = {
+    company: CompanyIcon,
+    customer: CustomerIcon,
+    competitor: CompetitorIcon,
+  };
+
+  const TerritoryIcon = territoryIcons[territory];
+
+  // Territory-specific bold colors with gradients and shadows
   const territoryColors = {
     company: {
-      bg: 'from-indigo-600 to-indigo-800',
-      border: 'border-indigo-300',
+      bg: 'from-indigo-600 to-indigo-700',
+      border: 'border-indigo-400',
       text: 'text-indigo-600',
       badge: 'bg-indigo-100 text-indigo-700',
-      hover: 'hover:border-indigo-400',
+      hover: 'hover:border-indigo-500 hover:shadow-indigo-xl',
+      shadow: 'shadow-indigo-lg',
     },
     customer: {
-      bg: 'from-cyan-600 to-cyan-800',
-      border: 'border-cyan-300',
-      text: 'text-cyan-600',
-      badge: 'bg-cyan-100 text-cyan-700',
-      hover: 'hover:border-cyan-400',
+      bg: 'from-amber-500 to-amber-600',
+      border: 'border-amber-400',
+      text: 'text-amber-600',
+      badge: 'bg-amber-100 text-amber-700',
+      hover: 'hover:border-amber-500 hover:shadow-amber-xl',
+      shadow: 'shadow-amber-lg',
     },
     competitor: {
-      bg: 'from-purple-600 to-purple-800',
-      border: 'border-purple-300',
+      bg: 'from-purple-600 to-purple-700',
+      border: 'border-purple-400',
       text: 'text-purple-600',
       badge: 'bg-purple-100 text-purple-700',
-      hover: 'hover:border-purple-400',
+      hover: 'hover:border-purple-500 hover:shadow-purple-xl',
+      shadow: 'shadow-purple-lg',
     },
   };
 
@@ -63,12 +77,27 @@ export function TerritoryCard({ title, description, status, onClick, territory }
   return (
     <button
       onClick={onClick}
-      className={`territory-card w-full text-left bg-white rounded-2xl border-2 ${colors.border} ${colors.hover} p-6 transition-all hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${territory}-400`}
+      className={`group territory-card w-full text-left bg-white rounded-2xl border-3 ${colors.border} ${colors.hover} ${colors.shadow} p-8 transition-all hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${territory}-400`}
     >
-      {/* Status Badge */}
-      <div className="flex items-center justify-between mb-4">
-        <span className={`inline-flex items-center gap-2 px-3 py-1 ${statusDisplay.bgColor} ${statusDisplay.textColor} rounded-full text-xs font-semibold uppercase tracking-wide`}>
-          <span className="text-base">{statusDisplay.icon}</span>
+      {/* Icon with Gradient Background */}
+      <div className="mb-6">
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${colors.bg} flex items-center justify-center ${colors.shadow} transition-transform group-hover:scale-105`}>
+          <TerritoryIcon className="text-white" size={32} />
+        </div>
+      </div>
+
+      {/* Title */}
+      <h3 className="text-2xl font-bold text-slate-900 mb-2">{title}</h3>
+
+      {/* Description */}
+      <p className="text-base text-slate-600 leading-relaxed mb-6">{description}</p>
+
+      {/* Status Badge - Positioned at bottom */}
+      <div className="flex items-center justify-between mt-auto">
+        <span className={`inline-flex items-center gap-2 px-3 py-1.5 ${statusDisplay.bgColor} ${statusDisplay.textColor} rounded-full text-xs font-bold uppercase tracking-wide`}>
+          {status === 'unexplored' && '○'}
+          {status === 'in_progress' && <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />}
+          {status === 'mapped' && <CheckIcon className={colors.text} size={14} />}
           {statusDisplay.label}
         </span>
 
@@ -83,29 +112,21 @@ export function TerritoryCard({ title, description, status, onClick, territory }
         )}
       </div>
 
-      {/* Title */}
-      <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
-
-      {/* Description */}
-      <p className="text-sm text-slate-600 leading-relaxed mb-4">{description}</p>
-
-      {/* CTA */}
-      <div className="flex items-center gap-2 text-sm font-semibold">
-        <span className={colors.text}>
-          {status === 'unexplored' && 'Begin Exploration →'}
-          {status === 'in_progress' && 'Continue Mapping →'}
-          {status === 'mapped' && 'Review Insights →'}
-        </span>
-      </div>
-
-      {/* Visual Indicator */}
-      <div className="mt-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+      {/* Visual Progress Indicator */}
+      <div className="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
         <div
-          className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-300`}
+          className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-500`}
           style={{
             width: status === 'unexplored' ? '0%' : status === 'in_progress' ? '50%' : '100%',
           }}
         />
+      </div>
+
+      {/* CTA Hint */}
+      <div className={`mt-3 text-sm font-semibold ${colors.text} opacity-0 group-hover:opacity-100 transition-opacity`}>
+        {status === 'unexplored' && 'Begin Exploration →'}
+        {status === 'in_progress' && 'Continue Mapping →'}
+        {status === 'mapped' && 'Review Insights →'}
       </div>
     </button>
   );

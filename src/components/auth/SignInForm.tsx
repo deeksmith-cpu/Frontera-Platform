@@ -11,29 +11,44 @@ const INITIAL_FORM_DATA: SignInFormData = {
   password: "",
 };
 
+type VerificationStep = "credentials" | "second_factor";
+
 export default function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn, setActive, isLoaded } = useSignIn();
   const { isSignedIn, isLoaded: userLoaded } = useUser();
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<SignInFormData>(INITIAL_FORM_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Redirect if already signed in
+  // 2FA state
+  const [verificationStep, setVerificationStep] = useState<VerificationStep>("credentials");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
+
+  // Prevent hydration mismatch by waiting for client-side mount
   useEffect(() => {
-    if (userLoaded && isSignedIn) {
-      router.push("/dashboard");
+    setMounted(true);
+  }, []);
+
+  // Redirect if already signed in - only after mount
+  useEffect(() => {
+    if (mounted && userLoaded && isSignedIn) {
+      // Use replace instead of push to avoid back button issues
+      router.replace("/dashboard");
     }
-  }, [userLoaded, isSignedIn, router]);
+  }, [mounted, userLoaded, isSignedIn, router]);
 
   useEffect(() => {
-    if (searchParams.get("registered") === "true") {
+    if (mounted && searchParams.get("registered") === "true") {
       setShowSuccess(true);
     }
-  }, [searchParams]);
+  }, [mounted, searchParams]);
 
   const handleOAuthSignIn = async (provider: "oauth_google" | "oauth_microsoft" | "oauth_apple") => {
     if (!isLoaded || !signIn) return;
@@ -79,28 +94,146 @@ export default function SignInForm() {
         password: formData.password,
       });
 
+      console.log("Sign-in result:", {
+        status: result.status,
+        firstFactorVerification: result.firstFactorVerification,
+        secondFactorVerification: result.secondFactorVerification,
+        identifier: result.identifier,
+        supportedFirstFactors: result.supportedFirstFactors,
+        supportedSecondFactors: result.supportedSecondFactors,
+      });
+
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.push("/dashboard");
+      } else if (result.status === "needs_first_factor") {
+        // Password was wrong or first factor verification needed
+        const factors = result.supportedFirstFactors?.map(f => f.strategy).join(", ");
+        setError(`First factor verification needed. Available methods: ${factors || "none"}`);
+      } else if (result.status === "needs_second_factor") {
+        // 2FA is enabled - transition to verification step
+        console.log("Second factor required, supported methods:", result.supportedSecondFactors);
+        setVerificationStep("second_factor");
+        setError(null);
+      } else if (result.status === "needs_identifier") {
+        setError("Please enter your email address");
+      } else if (result.status === "needs_new_password") {
+        setError("Password reset required. Please use the 'Forgot password?' link.");
       } else {
-        // Handle other statuses (2FA, etc.)
-        console.log("Sign in status:", result.status);
-        setError("Additional verification required");
+        // Unknown status
+        setError(`Verification required (status: ${result.status}). Please check your Clerk dashboard settings.`);
       }
     } catch (err: unknown) {
-      const error = err as { errors?: Array<{ message: string; longMessage?: string }> };
-      const message = error.errors?.[0]?.longMessage ||
-                     error.errors?.[0]?.message ||
-                     "Invalid email or password";
-      setError(message);
+      console.error("Sign-in error:", err);
+      const error = err as { errors?: Array<{ code?: string; message: string; longMessage?: string }> };
+      const firstError = error.errors?.[0];
+
+      // Provide more specific error messages based on error code
+      if (firstError?.code === "form_password_incorrect") {
+        setError("Incorrect password. Please try again.");
+      } else if (firstError?.code === "form_identifier_not_found") {
+        setError("No account found with this email. Please sign up first.");
+      } else if (firstError?.code === "session_exists") {
+        setError("You're already signed in. Redirecting...");
+        router.push("/dashboard");
+      } else {
+        const message = firstError?.longMessage ||
+                       firstError?.message ||
+                       "Sign-in failed. Please try again.";
+        setError(message);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Send email verification code for 2FA
+  const handleSendEmailCode = async () => {
+    if (!signIn) return;
+
+    setSendingCode(true);
+    setError(null);
+
+    try {
+      // Prepare the second factor with email code
+      const result = await signIn.prepareSecondFactor({
+        strategy: "email_code",
+      });
+
+      console.log("Email code prepared:", result);
+      setCodeSent(true);
+      setError(null);
+    } catch (err: unknown) {
+      console.error("Error sending email code:", err);
+      const error = err as { errors?: Array<{ message: string; longMessage?: string }> };
+      setError(error.errors?.[0]?.longMessage || error.errors?.[0]?.message || "Failed to send verification code");
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  // Verify the 2FA code
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!signIn || !verificationCode) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: "email_code",
+        code: verificationCode,
+      });
+
+      console.log("Second factor verification result:", result);
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
+      } else {
+        setError(`Verification incomplete (status: ${result.status})`);
+      }
+    } catch (err: unknown) {
+      console.error("Error verifying code:", err);
+      const error = err as { errors?: Array<{ code?: string; message: string; longMessage?: string }> };
+      const firstError = error.errors?.[0];
+
+      if (firstError?.code === "form_code_incorrect") {
+        setError("Incorrect verification code. Please try again.");
+      } else {
+        setError(firstError?.longMessage || firstError?.message || "Verification failed");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Go back to credentials step
+  const handleBackToCredentials = () => {
+    setVerificationStep("credentials");
+    setVerificationCode("");
+    setCodeSent(false);
+    setError(null);
+  };
+
+  const isReady = mounted && isLoaded && userLoaded;
+
   return (
     <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-      <div className="p-6 sm:p-10">
+      {/* Loading state */}
+      {!isReady && (
+        <div className="p-6 sm:p-10 flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main form - hidden until ready */}
+      <div className={`p-6 sm:p-10 ${!isReady ? 'hidden' : ''}`}>
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome back
@@ -122,6 +255,107 @@ export default function SignInForm() {
           </div>
         )}
 
+        {/* Second Factor Verification UI */}
+        {verificationStep === "second_factor" && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-[#1e3a8a]/10 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#1e3a8a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Two-Factor Authentication
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {codeSent
+                  ? `We've sent a verification code to ${formData.email}`
+                  : "Click below to receive a verification code via email"
+                }
+              </p>
+            </div>
+
+            {!codeSent ? (
+              <button
+                type="button"
+                onClick={handleSendEmailCode}
+                disabled={sendingCode}
+                className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25 disabled:opacity-50"
+              >
+                {sendingCode ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Sending code...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Send Verification Code
+                  </>
+                )}
+              </button>
+            ) : (
+              <form onSubmit={handleVerifyCode} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="Enter 6-digit code"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none text-center text-2xl tracking-widest font-mono"
+                    autoFocus
+                    maxLength={6}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={verificationCode.length !== 6 || isLoading}
+                  className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                    verificationCode.length === 6 && !isLoading
+                      ? "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify & Sign In"
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSendEmailCode}
+                  disabled={sendingCode}
+                  className="w-full text-sm text-[#1e3a8a] hover:underline disabled:opacity-50"
+                >
+                  {sendingCode ? "Sending..." : "Resend code"}
+                </button>
+              </form>
+            )}
+
+            <button
+              type="button"
+              onClick={handleBackToCredentials}
+              className="w-full text-sm text-gray-500 hover:text-gray-700"
+            >
+              ← Back to sign in
+            </button>
+          </div>
+        )}
+
+        {/* Credentials Form - only show when not in 2FA step */}
+        {verificationStep === "credentials" && (
+          <>
         {/* OAuth Providers */}
         <div className="space-y-3 mb-6">
           <button
@@ -244,6 +478,8 @@ export default function SignInForm() {
             </Link>
           </p>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

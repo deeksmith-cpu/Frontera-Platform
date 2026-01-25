@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Crimson_Pro, IBM_Plex_Mono } from "next/font/google";
+import { Inter, Crimson_Pro, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./providers";
@@ -23,6 +23,14 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-mono",
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["300", "400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
   display: "swap",
 });
 
@@ -55,13 +63,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="scroll-smooth">
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
-        </head>
-        <body className={`${inter.variable} ${crimsonPro.variable} ${ibmPlexMono.variable} font-sans antialiased`}>
+      <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+        <body className={`${inter.variable} ${crimsonPro.variable} ${ibmPlexMono.variable} ${newsreader.variable} font-sans antialiased`} suppressHydrationWarning>
           <PostHogProvider>
             <PostHogPageView />
             {children}

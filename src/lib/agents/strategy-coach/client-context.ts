@@ -204,3 +204,241 @@ function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength - 3) + "...";
 }
+
+/**
+ * Load territory insights for a conversation to provide research context to the agent.
+ */
+export async function loadTerritoryInsights(conversationId: string): Promise<{
+  company: Array<{ area: string; responses: Record<string, string> }>;
+  customer: Array<{ area: string; responses: Record<string, string> }>;
+  competitor: Array<{ area: string; responses: Record<string, string> }>;
+}> {
+  // Use raw client to avoid type issues
+  const rawSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: insights } = await rawSupabase
+    .from("territory_insights")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .eq("status", "mapped");
+
+  if (!insights || insights.length === 0) {
+    return { company: [], customer: [], competitor: [] };
+  }
+
+  // Type the insights array
+  type InsightRow = { territory: string; research_area: string; responses: unknown };
+  const typedInsights = insights as InsightRow[];
+
+  const company = typedInsights
+    .filter((i) => i.territory === "company")
+    .map((i) => ({
+      area: i.research_area,
+      responses: i.responses as Record<string, string>,
+    }));
+
+  const customer = typedInsights
+    .filter((i) => i.territory === "customer")
+    .map((i) => ({
+      area: i.research_area,
+      responses: i.responses as Record<string, string>,
+    }));
+
+  const competitor = typedInsights
+    .filter((i) => i.territory === "competitor")
+    .map((i) => ({
+      area: i.research_area,
+      responses: i.responses as Record<string, string>,
+    }));
+
+  return { company, customer, competitor };
+}
+
+/**
+ * Structured synthesis output for the coach context.
+ */
+export interface SynthesisContext {
+  executiveSummary: string;
+  opportunities: Array<{
+    title: string;
+    description: string;
+    quadrant: string;
+    opportunityType: string;
+    overallScore: number;
+  }>;
+  tensions: Array<{
+    description: string;
+    impact: string;
+  }>;
+  recommendations: string[];
+  rawContent: string | null;
+}
+
+/**
+ * Load synthesis output for a conversation to provide synthesis context to the agent.
+ * Now returns structured data when available.
+ */
+export async function loadSynthesisOutput(conversationId: string): Promise<SynthesisContext | null> {
+  // Use raw client to avoid type issues
+  const rawSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: synthesis } = await rawSupabase
+    .from("synthesis_outputs")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!synthesis) {
+    return null;
+  }
+
+  // Type the synthesis data
+  type SynthesisRow = {
+    synthesis_content: string | null;
+    executive_summary: string | null;
+    opportunities: Array<{
+      title: string;
+      description: string;
+      quadrant: string;
+      opportunityType: string;
+      scoring: { overallScore: number };
+    }> | null;
+    tensions: Array<{
+      description: string;
+      impact: string;
+    }> | null;
+    recommendations: string[] | null;
+  };
+
+  const typedSynthesis = synthesis as SynthesisRow;
+
+  return {
+    executiveSummary: typedSynthesis.executive_summary || '',
+    opportunities: (typedSynthesis.opportunities || []).map((opp) => ({
+      title: opp.title,
+      description: opp.description,
+      quadrant: opp.quadrant,
+      opportunityType: opp.opportunityType,
+      overallScore: opp.scoring?.overallScore || 0,
+    })),
+    tensions: (typedSynthesis.tensions || []).map((t) => ({
+      description: t.description,
+      impact: t.impact,
+    })),
+    recommendations: typedSynthesis.recommendations || [],
+    rawContent: typedSynthesis.synthesis_content,
+  };
+}
+
+/**
+ * Format territory insights for the system prompt.
+ */
+export function formatTerritoryInsightsForPrompt(insights: {
+  company: Array<{ area: string; responses: Record<string, string> }>;
+  customer: Array<{ area: string; responses: Record<string, string> }>;
+  competitor: Array<{ area: string; responses: Record<string, string> }>;
+}): string {
+  const sections: string[] = [];
+
+  if (insights.company.length > 0) {
+    sections.push("## Research Completed: Company Territory");
+    insights.company.forEach((insight) => {
+      sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
+      Object.entries(insight.responses).forEach(([question, answer]) => {
+        sections.push(`**Q:** ${question}`);
+        sections.push(`**A:** ${answer}`);
+      });
+    });
+  }
+
+  if (insights.customer.length > 0) {
+    sections.push("\n## Research Completed: Customer Territory");
+    insights.customer.forEach((insight) => {
+      sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
+      Object.entries(insight.responses).forEach(([question, answer]) => {
+        sections.push(`**Q:** ${question}`);
+        sections.push(`**A:** ${answer}`);
+      });
+    });
+  }
+
+  if (insights.competitor.length > 0) {
+    sections.push("\n## Research Completed: Market Context Territory");
+    insights.competitor.forEach((insight) => {
+      sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
+      Object.entries(insight.responses).forEach(([question, answer]) => {
+        sections.push(`**Q:** ${question}`);
+        sections.push(`**A:** ${answer}`);
+      });
+    });
+  }
+
+  return sections.join("\n");
+}
+
+/**
+ * Format synthesis output for the system prompt.
+ * Now accepts structured SynthesisContext.
+ */
+export function formatSynthesisForPrompt(synthesis: SynthesisContext): string {
+  const sections: string[] = [];
+
+  sections.push("## Strategic Synthesis Generated");
+  sections.push("");
+
+  // Executive Summary
+  if (synthesis.executiveSummary) {
+    sections.push("### Executive Summary");
+    sections.push(synthesis.executiveSummary);
+    sections.push("");
+  }
+
+  // Strategic Opportunities
+  if (synthesis.opportunities.length > 0) {
+    sections.push("### Strategic Opportunities Identified");
+    synthesis.opportunities.forEach((opp, idx) => {
+      const quadrantLabel = opp.quadrant.toUpperCase();
+      const typeLabel = opp.opportunityType.replace(/_/g, " ");
+      sections.push(`**${idx + 1}. ${opp.title}** (${quadrantLabel} quadrant, ${typeLabel})`);
+      sections.push(`   Score: ${opp.overallScore}/100`);
+      sections.push(`   ${opp.description}`);
+      sections.push("");
+    });
+  }
+
+  // Strategic Tensions
+  if (synthesis.tensions.length > 0) {
+    sections.push("### Strategic Tensions to Address");
+    synthesis.tensions.forEach((tension, idx) => {
+      sections.push(`**${idx + 1}.** [${tension.impact.toUpperCase()} impact] ${tension.description}`);
+    });
+    sections.push("");
+  }
+
+  // Priority Recommendations
+  if (synthesis.recommendations.length > 0) {
+    sections.push("### Priority Recommendations");
+    synthesis.recommendations.forEach((rec, idx) => {
+      sections.push(`${idx + 1}. ${rec}`);
+    });
+    sections.push("");
+  }
+
+  // Coach Guidance
+  sections.push("**Your Role as Coach:**");
+  sections.push("- Reference specific opportunities by name when guiding strategic discussions");
+  sections.push("- Help the client understand quadrant placements (INVEST, EXPLORE, HARVEST, DIVEST)");
+  sections.push("- Challenge or validate findings through coaching dialogue");
+  sections.push("- Guide the client to test key assumptions (What Would Have to Be True)");
+  sections.push("- Facilitate development of Strategic Bets based on top opportunities");
+
+  return sections.join("\n");
+}

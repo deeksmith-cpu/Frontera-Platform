@@ -31,6 +31,39 @@
   --color-silver: var(--silver);
   --color-silver-dark: var(--silver-dark);
   --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  /* Bold Design System - Phase Colors */
+  /* Use Tailwind's default color scale (50-950) for consistency */
+
+  /* Border widths for bold borders */
+  --border-width-3: 3px;
+  --border-width-4: 4px;
+
+  /* Custom shadows with phase colors */
+  --box-shadow-emerald-sm: 0 1px 2px 0 rgb(16 185 129 / 0.1);
+  --box-shadow-emerald-md: 0 4px 6px -1px rgb(16 185 129 / 0.2), 0 2px 4px -2px rgb(16 185 129 / 0.1);
+  --box-shadow-emerald-lg: 0 10px 15px -3px rgb(16 185 129 / 0.3), 0 4px 6px -4px rgb(16 185 129 / 0.2);
+  --box-shadow-emerald-xl: 0 20px 25px -5px rgb(16 185 129 / 0.4), 0 8px 10px -6px rgb(16 185 129 / 0.3);
+
+  --box-shadow-amber-sm: 0 1px 2px 0 rgb(245 158 11 / 0.1);
+  --box-shadow-amber-md: 0 4px 6px -1px rgb(245 158 11 / 0.2), 0 2px 4px -2px rgb(245 158 11 / 0.1);
+  --box-shadow-amber-lg: 0 10px 15px -3px rgb(245 158 11 / 0.3), 0 4px 6px -4px rgb(245 158 11 / 0.2);
+  --box-shadow-amber-xl: 0 20px 25px -5px rgb(245 158 11 / 0.4), 0 8px 10px -6px rgb(245 158 11 / 0.3);
+
+  --box-shadow-purple-sm: 0 1px 2px 0 rgb(147 51 234 / 0.1);
+  --box-shadow-purple-md: 0 4px 6px -1px rgb(147 51 234 / 0.2), 0 2px 4px -2px rgb(147 51 234 / 0.1);
+  --box-shadow-purple-lg: 0 10px 15px -3px rgb(147 51 234 / 0.3), 0 4px 6px -4px rgb(147 51 234 / 0.2);
+  --box-shadow-purple-xl: 0 20px 25px -5px rgb(147 51 234 / 0.4), 0 8px 10px -6px rgb(147 51 234 / 0.3);
+
+  --box-shadow-cyan-sm: 0 1px 2px 0 rgb(6 182 212 / 0.1);
+  --box-shadow-cyan-md: 0 4px 6px -1px rgb(6 182 212 / 0.2), 0 2px 4px -2px rgb(6 182 212 / 0.1);
+  --box-shadow-cyan-lg: 0 10px 15px -3px rgb(6 182 212 / 0.3), 0 4px 6px -4px rgb(6 182 212 / 0.2);
+  --box-shadow-cyan-xl: 0 20px 25px -5px rgb(6 182 212 / 0.4), 0 8px 10px -6px rgb(6 182 212 / 0.3);
+
+  --box-shadow-indigo-sm: 0 1px 2px 0 rgb(79 70 229 / 0.1);
+  --box-shadow-indigo-md: 0 4px 6px -1px rgb(79 70 229 / 0.2), 0 2px 4px -2px rgb(79 70 229 / 0.1);
+  --box-shadow-indigo-lg: 0 10px 15px -3px rgb(79 70 229 / 0.3), 0 4px 6px -4px rgb(79 70 229 / 0.2);
+  --box-shadow-indigo-xl: 0 20px 25px -5px rgb(79 70 229 / 0.4), 0 8px 10px -6px rgb(79 70 229 / 0.3);
 }
 
 /* Base Styles */
@@ -80,6 +113,22 @@ h1, h2, h3, h4, h5, h6 {
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
+}
+
+/* Slide Up Animation for Mobile Bottom Sheet */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
 }
 
 /* Glass Effect for Premium Cards */
@@ -194,4 +243,137 @@ a:focus-visible {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Bold Design System Utility Classes */
+
+/* Bold Borders (border-3, border-4) */
+.border-3 {
+  border-width: var(--border-width-3);
+}
+
+.border-4 {
+  border-width: var(--border-width-4);
+}
+
+/* Colored Shadows */
+.shadow-emerald-sm {
+  box-shadow: var(--box-shadow-emerald-sm);
+}
+
+.shadow-emerald-md {
+  box-shadow: var(--box-shadow-emerald-md);
+}
+
+.shadow-emerald-lg {
+  box-shadow: var(--box-shadow-emerald-lg);
+}
+
+.shadow-emerald-xl {
+  box-shadow: var(--box-shadow-emerald-xl);
+}
+
+.shadow-amber-sm {
+  box-shadow: var(--box-shadow-amber-sm);
+}
+
+.shadow-amber-md {
+  box-shadow: var(--box-shadow-amber-md);
+}
+
+.shadow-amber-lg {
+  box-shadow: var(--box-shadow-amber-lg);
+}
+
+.shadow-amber-xl {
+  box-shadow: var(--box-shadow-amber-xl);
+}
+
+.shadow-purple-sm {
+  box-shadow: var(--box-shadow-purple-sm);
+}
+
+.shadow-purple-md {
+  box-shadow: var(--box-shadow-purple-md);
+}
+
+.shadow-purple-lg {
+  box-shadow: var(--box-shadow-purple-lg);
+}
+
+.shadow-purple-xl {
+  box-shadow: var(--box-shadow-purple-xl);
+}
+
+.shadow-cyan-sm {
+  box-shadow: var(--box-shadow-cyan-sm);
+}
+
+.shadow-cyan-md {
+  box-shadow: var(--box-shadow-cyan-md);
+}
+
+.shadow-cyan-lg {
+  box-shadow: var(--box-shadow-cyan-lg);
+}
+
+.shadow-cyan-xl {
+  box-shadow: var(--box-shadow-cyan-xl);
+}
+
+.shadow-indigo-sm {
+  box-shadow: var(--box-shadow-indigo-sm);
+}
+
+.shadow-indigo-md {
+  box-shadow: var(--box-shadow-indigo-md);
+}
+
+.shadow-indigo-lg {
+  box-shadow: var(--box-shadow-indigo-lg);
+}
+
+.shadow-indigo-xl {
+  box-shadow: var(--box-shadow-indigo-xl);
+}
+
+/* Hover colored shadows */
+.hover\:shadow-emerald-lg:hover {
+  box-shadow: var(--box-shadow-emerald-lg);
+}
+
+.hover\:shadow-emerald-xl:hover {
+  box-shadow: var(--box-shadow-emerald-xl);
+}
+
+.hover\:shadow-amber-lg:hover {
+  box-shadow: var(--box-shadow-amber-lg);
+}
+
+.hover\:shadow-amber-xl:hover {
+  box-shadow: var(--box-shadow-amber-xl);
+}
+
+.hover\:shadow-purple-lg:hover {
+  box-shadow: var(--box-shadow-purple-lg);
+}
+
+.hover\:shadow-purple-xl:hover {
+  box-shadow: var(--box-shadow-purple-xl);
+}
+
+.hover\:shadow-cyan-lg:hover {
+  box-shadow: var(--box-shadow-cyan-lg);
+}
+
+.hover\:shadow-cyan-xl:hover {
+  box-shadow: var(--box-shadow-cyan-xl);
+}
+
+.hover\:shadow-indigo-lg:hover {
+  box-shadow: var(--box-shadow-indigo-lg);
+}
+
+.hover\:shadow-indigo-xl:hover {
+  box-shadow: var(--box-shadow-indigo-xl);
 }

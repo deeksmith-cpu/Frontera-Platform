@@ -1,5 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { Anthropic as PostHogAnthropic } from "@posthog/ai";
 import { getPostHogServer } from "@/lib/analytics/posthog-server";
 import { ClientContext, loadClientContext } from "./client-context";
 import { FrameworkState, initializeFrameworkState } from "./framework-state";
@@ -11,8 +10,8 @@ const MODEL = "claude-sonnet-4-20250514";
 const MAX_TOKENS = 4096;
 
 /**
- * Get Anthropic client wrapped with PostHog AI observability
- * This automatically tracks all LLM calls with token usage, latency, and cost
+ * Get native Anthropic client for streaming support
+ * PostHog tracking is handled manually in streamMessage function
  */
 function getAnthropicClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -20,15 +19,8 @@ function getAnthropicClient(): Anthropic {
     throw new Error("ANTHROPIC_API_KEY environment variable is not set");
   }
 
-  // Create PostHog-wrapped Anthropic client for automatic tracking
-  // This creates automatic 'ai_request' events with token usage and cost
-  const posthog = getPostHogServer();
-  const wrappedClient = new PostHogAnthropic({
-    apiKey,
-    posthog,
-  });
-
-  return wrappedClient as unknown as Anthropic;
+  // Use native Anthropic SDK for full streaming support
+  return new Anthropic({ apiKey });
 }
 
 /**
@@ -100,12 +92,13 @@ export async function sendMessage(
   context: ClientContext,
   frameworkState: FrameworkState,
   conversationHistory: ChatMessage[],
-  userMessage: string
+  userMessage: string,
+  conversationId?: string
 ): Promise<StrategyCoachResponse> {
   const anthropic = getAnthropicClient();
 
   // Build the system prompt
-  const systemPrompt = buildSystemPrompt(context, frameworkState);
+  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
@@ -147,6 +140,7 @@ export async function streamMessage(
   frameworkState: FrameworkState,
   conversationHistory: ChatMessage[],
   userMessage: string,
+  conversationId?: string
 ): Promise<{
   stream: ReadableStream<Uint8Array>;
   getUsage: () => Promise<{ inputTokens: number; outputTokens: number }>;
@@ -154,7 +148,7 @@ export async function streamMessage(
   const anthropic = getAnthropicClient();
 
   // Build the system prompt
-  const systemPrompt = buildSystemPrompt(context, frameworkState);
+  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
@@ -165,6 +159,9 @@ export async function streamMessage(
     { role: "user", content: userMessage },
   ];
 
+  // Track request start time for PostHog
+  const startTime = Date.now();
+
   // Create streaming response
   const streamResponse = await anthropic.messages.stream({
     model: MODEL,
@@ -174,7 +171,6 @@ export async function streamMessage(
   });
 
   // Convert Anthropic stream to web ReadableStream
-  // Note: Token usage is automatically tracked by PostHog AI SDK wrapper
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -197,12 +193,36 @@ export async function streamMessage(
   return {
     stream,
     getUsage: async () => {
-      // Wait for stream to complete to get final usage
-      await streamResponse.finalMessage();
+      // Get final message with usage stats
       const finalMessage = await streamResponse.finalMessage();
+      const inputTokens = finalMessage.usage.input_tokens;
+      const outputTokens = finalMessage.usage.output_tokens;
+      const latency = Date.now() - startTime;
+
+      // Track LLM call in PostHog for analytics
+      try {
+        const posthog = getPostHogServer();
+        posthog.capture({
+          distinctId: 'strategy-coach-agent',
+          event: 'ai_request',
+          properties: {
+            model: MODEL,
+            provider: 'anthropic',
+            input_tokens: inputTokens,
+            output_tokens: outputTokens,
+            total_tokens: inputTokens + outputTokens,
+            latency_ms: latency,
+            conversation_id: conversationId,
+          },
+        });
+      } catch (error) {
+        // Don't fail the request if tracking fails
+        console.error('PostHog tracking error:', error);
+      }
+
       return {
-        inputTokens: finalMessage.usage.input_tokens,
-        outputTokens: finalMessage.usage.output_tokens,
+        inputTokens,
+        outputTokens,
       };
     },
   };

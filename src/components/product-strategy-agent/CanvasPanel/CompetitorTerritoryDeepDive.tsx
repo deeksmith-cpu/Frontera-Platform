@@ -1,0 +1,343 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
+import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
+import { CompetitorIcon } from '@/components/icons/TerritoryIcons';
+import type { Database } from '@/types/database';
+
+type Conversation = Database['public']['Tables']['conversations']['Row'];
+type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
+
+interface QuestionSuggestion {
+  question_index: number;
+  suggestion: string;
+  key_points: string[];
+  sources_hint: string;
+}
+
+interface CompetitorTerritoryDeepDiveProps {
+  conversation: Conversation;
+  territoryInsights: TerritoryInsight[];
+  onBack: () => void;
+  onUpdate: (insights: TerritoryInsight[]) => void;
+}
+
+// Market Context Territory Research Areas (MVP: 3 areas)
+const RESEARCH_AREAS = [
+  {
+    id: 'direct_competitors',
+    title: 'Direct Competitor Landscape',
+    description: 'Who are your primary competitors, and how do they compete for the same customers?',
+    questions: [
+      'Who are your top 3-5 direct competitors, and what makes them your primary competition?',
+      'What are each competitor\'s core value propositions, and how do they differentiate?',
+      'Where do competitors have clear advantages over your current offering?',
+      'What competitive moves or announcements have you observed in the past 12 months?',
+    ],
+  },
+  {
+    id: 'substitute_threats',
+    title: 'Substitute & Adjacent Threats',
+    description: 'What alternative solutions or emerging players could capture your customers\' attention?',
+    questions: [
+      'What non-traditional solutions do customers use to solve the same problems you address?',
+      'What adjacent products or services are expanding into your market space?',
+      'What emerging startups or disruptors are gaining traction with your target customers?',
+      'How might technology shifts (AI, automation, platforms) create new competitive threats?',
+    ],
+  },
+  {
+    id: 'market_forces',
+    title: 'Market Forces & Dynamics',
+    description: 'What broader market trends and forces are reshaping the competitive landscape?',
+    questions: [
+      'What macroeconomic, regulatory, or industry trends are most impacting your market?',
+      'How is the overall market size and growth trajectory evolving?',
+      'What barriers to entry exist, and are they strengthening or weakening?',
+      'What emerging customer expectations or behaviors are changing competitive dynamics?',
+    ],
+  },
+];
+
+export function CompetitorTerritoryDeepDive({
+  conversation,
+  territoryInsights,
+  onBack,
+  onUpdate,
+}: CompetitorTerritoryDeepDiveProps) {
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  const [responses, setResponses] = useState<Record<string, string>>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [suggestions, setSuggestions] = useState<QuestionSuggestion[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [suggestionError, setSuggestionError] = useState(false);
+
+  // Get insights for this territory - memoized to prevent infinite re-renders
+  const competitorInsights = useMemo(
+    () => territoryInsights.filter((t) => t.territory === 'competitor'),
+    [territoryInsights]
+  );
+
+  // Get status for each research area
+  const getAreaStatus = (areaId: string): 'unexplored' | 'in_progress' | 'mapped' => {
+    const insight = competitorInsights.find((i) => i.research_area === areaId);
+    return insight?.status || 'unexplored';
+  };
+
+  // Load existing responses when area is selected and clear suggestions
+  useEffect(() => {
+    if (selectedArea) {
+      const insight = competitorInsights.find((i) => i.research_area === selectedArea);
+      if (insight && insight.responses) {
+        setResponses(insight.responses as Record<string, string>);
+      } else {
+        setResponses({});
+      }
+      // Clear suggestions when area changes
+      setSuggestions([]);
+      setSuggestionError(false);
+    }
+  }, [selectedArea, competitorInsights]);
+
+  const handleResponseChange = (questionIndex: number, value: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionIndex]: value,
+    }));
+  };
+
+  const handleGetSuggestions = async () => {
+    if (!selectedArea) return;
+
+    const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
+    if (!currentArea) return;
+
+    setIsLoadingSuggestions(true);
+    setSuggestionError(false);
+    setSuggestions([]);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/coach-suggestion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: 'competitor',
+          research_area: selectedArea,
+          research_area_title: currentArea.title,
+          questions: currentArea.questions,
+          existing_responses: responses,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get suggestions');
+      }
+
+      const data = await response.json();
+      setSuggestions(data.suggestions || []);
+    } catch (error) {
+      console.error('Error getting suggestions:', error);
+      setSuggestionError(true);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
+  const handleApplySuggestion = (questionIndex: number, text: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionIndex]: (prev[questionIndex] || '') + text,
+    }));
+  };
+
+  const handleSave = async (status: 'in_progress' | 'mapped') => {
+    if (!selectedArea) return;
+
+    setIsSaving(true);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/territories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: 'competitor',
+          research_area: selectedArea,
+          responses,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save responses');
+      }
+
+      const updatedInsight: TerritoryInsight = await response.json();
+
+      // Update parent state
+      const updatedInsights = territoryInsights.filter(
+        (i) => !(i.territory === 'competitor' && i.research_area === selectedArea)
+      );
+      updatedInsights.push(updatedInsight);
+      onUpdate(updatedInsights);
+
+      // If marked as mapped, go back to area selection
+      if (status === 'mapped') {
+        setSelectedArea(null);
+        setResponses({});
+      }
+    } catch (error) {
+      console.error('Error saving responses:', error);
+      alert('Failed to save responses. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Prepare research areas for sidebar
+  const sidebarAreas = RESEARCH_AREAS.map((area) => ({
+    id: area.id,
+    title: area.title,
+    status: getAreaStatus(area.id),
+  }));
+
+  // Auto-select first unexplored area if none selected
+  useEffect(() => {
+    if (!selectedArea) {
+      const firstUnexplored = sidebarAreas.find((a) => a.status === 'unexplored');
+      const firstInProgress = sidebarAreas.find((a) => a.status === 'in_progress');
+      const defaultArea = firstUnexplored || firstInProgress || sidebarAreas[0];
+      setSelectedArea(defaultArea.id);
+    }
+  }, []);
+
+  if (!selectedArea) {
+    return <div>Loading...</div>;
+  }
+
+  // Research area deep dive with sidebar layout
+  const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
+  if (!currentArea) return null;
+
+  return (
+    <div className="competitor-territory-deep-dive flex h-full">
+      {/* Sidebar (25% width) */}
+      <TerritoryDeepDiveSidebar
+        territory="competitor"
+        territoryTitle="Market Context"
+        researchAreas={sidebarAreas}
+        activeAreaId={selectedArea}
+        onSelectArea={setSelectedArea}
+        onBack={onBack}
+      />
+
+      {/* Main Content (75% width) */}
+      <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          {/* Area Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
+                <CompetitorIcon className="text-white" size={24} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900">{currentArea.title}</h2>
+                <p className="text-sm text-slate-600 uppercase tracking-wider font-semibold">Research Area</p>
+              </div>
+            </div>
+            <p className="text-lg text-slate-600 leading-relaxed">{currentArea.description}</p>
+          </div>
+
+          {/* Questions */}
+          <div className="space-y-6">
+            {currentArea.questions.map((question, index) => {
+              const questionSuggestion = suggestions.find((s) => s.question_index === index);
+
+              return (
+                <div key={index} className="question-card bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <label className="block">
+                    <div className="flex items-start gap-3 mb-4">
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded-lg text-sm font-bold flex-shrink-0">
+                        {index + 1}
+                      </span>
+                      <span className="font-semibold text-base text-slate-900">{question}</span>
+                    </div>
+                    <textarea
+                      value={responses[index] || ''}
+                      onChange={(e) => handleResponseChange(index, e.target.value)}
+                      placeholder="Share your insights here..."
+                      rows={5}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-all"
+                    />
+                  </label>
+
+                  {/* Suggestion Panel for this question */}
+                  {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
+                  {suggestionError && index === 0 && <SuggestionPanelError onRetry={handleGetSuggestions} />}
+                  {questionSuggestion && (
+                    <SuggestionPanel
+                      suggestion={questionSuggestion}
+                      onApply={(text) => handleApplySuggestion(index, text)}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Action Buttons - Sticky Bottom */}
+          <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+              <div className="flex items-center gap-3">
+                {/* Coach Suggestion Button */}
+                <button
+                  onClick={handleGetSuggestions}
+                  disabled={isLoadingSuggestions}
+                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 text-purple-700 rounded-xl font-bold hover:border-purple-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoadingSuggestions ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-lg">&#10024;</span>
+                      <span>Coach Suggestion</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Save Progress Button */}
+                <button
+                  onClick={() => handleSave('in_progress')}
+                  disabled={isSaving || Object.keys(responses).length === 0}
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSaving ? 'Saving...' : 'Save Progress'}
+                </button>
+
+                {/* Mark as Mapped Button */}
+                <button
+                  onClick={() => handleSave('mapped')}
+                  disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+                >
+                  {isSaving ? 'Saving...' : 'Mark as Mapped'}
+                </button>
+              </div>
+
+              {Object.keys(responses).length < currentArea.questions.length && (
+                <p className="text-sm text-center text-slate-500 mt-4">
+                  Answer all {currentArea.questions.length} questions to mark this area as mapped
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

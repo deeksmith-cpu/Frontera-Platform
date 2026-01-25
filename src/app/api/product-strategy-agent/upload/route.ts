@@ -29,7 +29,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = getSupabaseAdmin();
+    // Use raw client to avoid type issues
+    const rawSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const contentType = req.headers.get('content-type') || '';
 
     // Handle URL import
@@ -45,7 +49,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Verify conversation belongs to user's org
-      const { data: conversation, error: convError } = await supabase
+      const { data: conversation, error: convError } = await rawSupabase
         .from('conversations')
         .select('id, clerk_org_id')
         .eq('id', conversation_id)
@@ -57,7 +61,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Create uploaded_materials record for URL
-      const { data: material, error: materialError } = await supabase
+      const { data: material, error: materialError } = await rawSupabase
         .from('uploaded_materials')
         .insert({
           conversation_id,
@@ -81,13 +85,13 @@ export async function POST(req: NextRequest) {
 
       // TODO: Trigger background job to fetch and process URL content
       // For now, mark as completed
-      await supabase
+      await rawSupabase
         .from('uploaded_materials')
         .update({
           processing_status: 'completed',
           processed_at: new Date().toISOString(),
         })
-        .eq('id', material.id);
+        .eq('id', (material as { id: string }).id);
 
       return NextResponse.json(material);
     }
@@ -116,7 +120,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Verify conversation belongs to user's org
-      const { data: conversation, error: convError } = await supabase
+      const { data: conversation, error: convError } = await rawSupabase
         .from('conversations')
         .select('id, clerk_org_id')
         .eq('id', conversation_id)
@@ -178,7 +182,7 @@ export async function POST(req: NextRequest) {
       const urlData = { publicUrl: `/uploads/${fileName}` };
 
       // Create uploaded_materials record
-      const { data: material, error: materialError } = await supabase
+      const { data: material, error: materialError } = await rawSupabase
         .from('uploaded_materials')
         .insert({
           conversation_id,
@@ -202,13 +206,13 @@ export async function POST(req: NextRequest) {
 
       // TODO: Trigger background job to extract text and process content
       // For now, mark as completed
-      await supabase
+      await rawSupabase
         .from('uploaded_materials')
         .update({
           processing_status: 'completed',
           processed_at: new Date().toISOString(),
         })
-        .eq('id', material.id);
+        .eq('id', (material as { id: string }).id);
 
       return NextResponse.json(material);
     }

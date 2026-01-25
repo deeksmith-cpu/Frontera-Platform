@@ -13,9 +13,10 @@ interface CoachingPanelProps {
   conversation: Conversation | undefined;
   userId: string;
   orgId: string;
+  onClose?: () => void;
 }
 
-export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
+export function CoachingPanel({ conversation, orgId, onClose }: CoachingPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -143,10 +144,13 @@ export function CoachingPanel({ conversation, orgId }: CoachingPanelProps) {
     }
   };
 
+  // Determine if we're in popup mode (when onClose is provided)
+  const isPopup = !!onClose;
+
   return (
-    <aside className="coaching-panel bg-white border-r border-slate-200 flex flex-col h-full overflow-hidden">
+    <aside className={`coaching-panel bg-white flex flex-col h-full overflow-hidden ${!isPopup ? 'border-r border-slate-200' : ''}`}>
       <div className="flex-shrink-0">
-        <SessionHeader conversation={conversation} />
+        <SessionHeader conversation={conversation} onClose={onClose} isPopup={isPopup} />
       </div>
       <div className="flex-1 min-h-0 overflow-hidden">
         <MessageStream messages={messages} isLoading={isLoading} />

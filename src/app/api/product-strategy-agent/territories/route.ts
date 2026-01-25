@@ -112,8 +112,14 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
+    // Use raw client to avoid type issues
+    const rawSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     // Verify conversation belongs to user's org
-    const { data: conversation, error: convError } = await supabase
+    const { data: conversation, error: convError } = await rawSupabase
       .from('conversations')
       .select('id, clerk_org_id')
       .eq('id', conversation_id)
@@ -125,7 +131,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Upsert territory insight
-    const { data: insight, error: insightError } = await supabase
+    const { data: insight, error: insightError } = await rawSupabase
       .from('territory_insights')
       .upsert(
         {

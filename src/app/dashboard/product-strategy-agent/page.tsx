@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { ProductStrategyAgentInterface } from '@/components/product-strategy-agent/ProductStrategyAgentInterface';
+import { initializeFrameworkState } from '@/lib/agents/strategy-coach/framework-state';
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,36 +33,55 @@ export default async function ProductStrategyAgentPage() {
 
   const supabase = getSupabaseAdmin();
 
+  // Load client context for Discovery section
+  const { data: clientData, error: clientError } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('clerk_org_id', orgId)
+    .single();
+
+  if (clientError) {
+    console.log('Client lookup (may be expected if no client exists):', clientError.message);
+  }
+
   // Get or create active conversation for this org
-  const { data: existingConversations } = await supabase
+  const { data: existingConversations, error: fetchError } = await supabase
     .from('conversations')
     .select('*')
     .eq('clerk_org_id', orgId)
     .order('created_at', { ascending: false })
     .limit(1);
 
+  if (fetchError) {
+    console.error('Error fetching conversations:', fetchError);
+  }
+
   let conversation = existingConversations?.[0];
 
   // If no conversation exists, create one
   if (!conversation) {
-    const { data: newConversation } = await supabase
+    console.log('No existing conversation found, creating new one for org:', orgId);
+    const { data: newConversation, error: insertError } = await supabase
       .from('conversations')
       .insert({
+        clerk_user_id: userId,
         clerk_org_id: orgId,
+        agent_type: 'strategy_coach',
         title: 'New Strategy Session',
-        framework_state: {
-          currentPhase: 'discovery',
-          pillars: {
-            company: { status: 'pending', progress: 0, insights: [] },
-            customer: { status: 'pending', progress: 0, insights: [] },
-            competitor: { status: 'pending', progress: 0, insights: [] },
-          },
-        },
+        framework_state: initializeFrameworkState(),
       })
       .select()
       .single();
 
+    if (insertError) {
+      console.error('Error creating conversation:', insertError);
+    } else {
+      console.log('Created new conversation:', newConversation?.id);
+    }
+
     conversation = newConversation;
+  } else {
+    console.log('Using existing conversation:', conversation.id);
   }
 
   return (
@@ -69,6 +89,7 @@ export default async function ProductStrategyAgentPage() {
       conversation={conversation}
       userId={userId}
       orgId={orgId}
+      clientContext={clientData}
     />
   );
 }

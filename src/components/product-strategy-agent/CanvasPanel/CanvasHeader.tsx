@@ -12,7 +12,7 @@ interface CanvasHeaderProps {
 }
 
 export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps) {
-  const [isChangingPhase, setIsChangingPhase] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleExport = () => {
     console.log('Export clicked');
@@ -24,60 +24,37 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
     // TODO: Implement share functionality (deferred to post-MVP)
   };
 
-  const handleGenerateInsights = () => {
-    console.log('Generate insights clicked');
-    // TODO: Implement synthesis generation
-  };
-
-  // TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation for testing
-  const changePhase = async (direction: 'next' | 'prev') => {
-    setIsChangingPhase(true);
-
-    const frameworkState = conversation.framework_state as Record<string, unknown> | null;
-    const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
-
-    const phaseOrder: Array<'discovery' | 'research' | 'synthesis' | 'bets'> = ['discovery', 'research', 'synthesis', 'bets'];
-    const currentIndex = phaseOrder.indexOf(currentPhase as 'discovery' | 'research' | 'synthesis' | 'bets');
-
-    let newIndex: number;
-    if (direction === 'next') {
-      newIndex = (currentIndex + 1) % phaseOrder.length;
-    } else {
-      newIndex = (currentIndex - 1 + phaseOrder.length) % phaseOrder.length;
-    }
-
-    const targetPhase = phaseOrder[newIndex];
+  const handleGenerateInsights = async () => {
+    setIsGenerating(true);
 
     try {
-      const response = await fetch('/api/product-strategy-agent/phase', {
+      const response = await fetch('/api/product-strategy-agent/synthesis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           conversation_id: conversation.id,
-          phase: targetPhase,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update phase');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate synthesis');
       }
 
-      // Reload the page to show new phase
+      // Success - reload to show synthesis phase
       if (onPhaseChange) {
         onPhaseChange();
       } else {
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error updating phase:', error);
-      alert('Failed to change phase. Please try again.');
+      console.error('Error generating insights:', error);
+      alert(error instanceof Error ? error.message : 'Failed to generate insights. Please try again.');
     } finally {
-      setIsChangingPhase(false);
+      setIsGenerating(false);
     }
   };
 
-  const handleNextPhase = () => changePhase('next');
-  const handlePreviousPhase = () => changePhase('prev');
 
   return (
     <header className="canvas-header py-5 px-10 border-b border-slate-100 bg-white flex justify-between items-center flex-shrink-0">
@@ -97,24 +74,6 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
       </div>
 
       <div className="canvas-controls flex gap-3">
-        {/* TODO: REMOVE THIS AFTER MVP TESTING - Temporary phase navigation */}
-        <button
-          onClick={handlePreviousPhase}
-          disabled={isChangingPhase}
-          className="canvas-btn text-sm py-2.5 px-5 bg-slate-500 border border-slate-600 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-slate-600 hover:shadow-md font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Temporary: Go back to previous phase for testing"
-        >
-          {isChangingPhase ? 'Switching...' : '⬅️ Prev Phase (TEST)'}
-        </button>
-        <button
-          onClick={handleNextPhase}
-          disabled={isChangingPhase}
-          className="canvas-btn text-sm py-2.5 px-5 bg-amber-500 border border-amber-600 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-amber-600 hover:shadow-md font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Temporary: Go forward to next phase for testing"
-        >
-          {isChangingPhase ? 'Switching...' : 'Next Phase ➡️ (TEST)'}
-        </button>
-
         <button
           onClick={handleExport}
           className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
@@ -129,9 +88,20 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
         </button>
         <button
           onClick={handleGenerateInsights}
-          className="canvas-btn primary text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold"
+          disabled={isGenerating}
+          className="canvas-btn primary text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Generate Insights
+          {isGenerating ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Generating...
+            </span>
+          ) : (
+            'Generate Insights'
+          )}
         </button>
       </div>
     </header>

@@ -1,10 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
+import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
+import { CustomerIcon } from '@/components/icons/TerritoryIcons';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
+
+interface QuestionSuggestion {
+  question_index: number;
+  suggestion: string;
+  key_points: string[];
+  sources_hint: string;
+}
 
 interface CustomerTerritoryDeepDiveProps {
   conversation: Conversation;
@@ -65,8 +75,11 @@ export function CustomerTerritoryDeepDive({
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [suggestions, setSuggestions] = useState<QuestionSuggestion[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [suggestionError, setSuggestionError] = useState(false);
 
-  // Load existing responses when area changes
+  // Load existing responses when area changes and clear suggestions
   useEffect(() => {
     if (!selectedArea) {
       setResponses({});
@@ -84,7 +97,56 @@ export function CustomerTerritoryDeepDive({
     } else {
       setResponses({});
     }
+
+    // Clear suggestions when area changes
+    setSuggestions([]);
+    setSuggestionError(false);
   }, [selectedArea, territoryInsights]);
+
+  const handleGetSuggestions = async () => {
+    if (!selectedArea) return;
+
+    const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
+    if (!currentArea) return;
+
+    setIsLoadingSuggestions(true);
+    setSuggestionError(false);
+    setSuggestions([]);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/coach-suggestion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: 'customer',
+          research_area: selectedArea,
+          research_area_title: currentArea.title,
+          questions: currentArea.questions,
+          existing_responses: responses,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get suggestions');
+      }
+
+      const data = await response.json();
+      setSuggestions(data.suggestions || []);
+    } catch (error) {
+      console.error('Error getting suggestions:', error);
+      setSuggestionError(true);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
+  const handleApplySuggestion = (questionKey: string, text: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionKey]: (prev[questionKey] || '') + text,
+    }));
+  };
 
   const handleSave = async (status: 'in_progress' | 'mapped') => {
     if (!selectedArea) return;
@@ -296,29 +358,66 @@ export function CustomerTerritoryDeepDive({
 
       {/* Questions */}
       <div className="space-y-6 mb-8">
-        {currentArea.questions.map((question, index) => (
-          <div key={index} className="bg-white rounded-xl border-2 border-slate-200 p-6">
-            <label className="block mb-3">
-              <div className="flex items-start gap-3 mb-2">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-sm font-bold">
-                  {index + 1}
-                </span>
-                <span className="text-slate-900 font-medium leading-relaxed">{question}</span>
-              </div>
-            </label>
-            <textarea
-              value={responses[`q${index}`] || ''}
-              onChange={(e) => setResponses({ ...responses, [`q${index}`]: e.target.value })}
-              placeholder="Share your insights here..."
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 focus:outline-none transition-all resize-none"
-              rows={4}
-            />
-          </div>
-        ))}
+        {currentArea.questions.map((question, index) => {
+          const questionSuggestion = suggestions.find((s) => s.question_index === index);
+          const questionKey = `q${index}`;
+
+          return (
+            <div key={index} className="bg-white rounded-xl border-2 border-slate-200 p-6">
+              <label className="block mb-3">
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-sm font-bold">
+                    {index + 1}
+                  </span>
+                  <span className="text-slate-900 font-medium leading-relaxed">{question}</span>
+                </div>
+              </label>
+              <textarea
+                value={responses[questionKey] || ''}
+                onChange={(e) => setResponses({ ...responses, [questionKey]: e.target.value })}
+                placeholder="Share your insights here..."
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 focus:outline-none transition-all resize-none"
+                rows={4}
+              />
+
+              {/* Suggestion Panel for this question */}
+              {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
+              {suggestionError && index === 0 && <SuggestionPanelError onRetry={handleGetSuggestions} />}
+              {questionSuggestion && (
+                <SuggestionPanel
+                  suggestion={questionSuggestion}
+                  onApply={(text) => handleApplySuggestion(questionKey, text)}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+      <div className="flex items-center gap-3 pt-6 border-t border-slate-200">
+        {/* Coach Suggestion Button */}
+        <button
+          onClick={handleGetSuggestions}
+          disabled={isLoadingSuggestions}
+          className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-50 to-indigo-50 border-2 border-cyan-200 text-cyan-700 rounded-lg font-semibold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        >
+          {isLoadingSuggestions ? (
+            <>
+              <span className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin" />
+              <span>Generating...</span>
+            </>
+          ) : (
+            <>
+              <span className="text-lg">&#10024;</span>
+              <span>Coach Suggestion</span>
+            </>
+          )}
+        </button>
+
+        <div className="flex-1" />
+
+        {/* Save Progress Button */}
         <button
           onClick={() => handleSave('in_progress')}
           disabled={isSaving}
@@ -326,6 +425,8 @@ export function CustomerTerritoryDeepDive({
         >
           {isSaving ? 'Saving...' : 'Save Progress'}
         </button>
+
+        {/* Mark as Mapped Button */}
         <button
           onClick={() => handleSave('mapped')}
           disabled={isSaving || answeredCount === 0}

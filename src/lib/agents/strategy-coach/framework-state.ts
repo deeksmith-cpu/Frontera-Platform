@@ -114,7 +114,13 @@ export function calculateProgress(state: FrameworkState): {
   const researchProgress = (pillarScores.reduce((a, b) => a + b, 0) / 3) * 100;
 
   // Canvas sections (5 sections, each worth 1/5)
-  const canvas = state.canvasProgress;
+  const canvas = state.canvasProgress || {
+    marketReality: false,
+    customerInsights: false,
+    organizationalContext: false,
+    strategicSynthesis: false,
+    teamContext: false,
+  };
   const canvasSections = [
     canvas.marketReality,
     canvas.customerInsights,

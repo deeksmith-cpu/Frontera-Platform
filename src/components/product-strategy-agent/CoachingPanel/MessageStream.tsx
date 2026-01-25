@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Message } from './Message';
+import { ThinkingIndicator } from './ThinkingIndicator';
 import type { Database } from '@/types/database';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
@@ -19,7 +20,7 @@ export function MessageStream({ messages, isLoading }: MessageStreamProps) {
     if (streamRef.current) {
       streamRef.current.scrollTop = streamRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
     <div ref={streamRef} className="message-stream h-full overflow-y-auto p-6 flex flex-col gap-6 bg-slate-50">
@@ -32,12 +33,7 @@ export function MessageStream({ messages, isLoading }: MessageStreamProps) {
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
-      {isLoading && (
-        <div className="flex items-center gap-2.5 text-slate-600 text-sm">
-          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
-          <span className="text-xs uppercase tracking-wide font-semibold">Coach is thinking...</span>
-        </div>
-      )}
+      {isLoading && <ThinkingIndicator />}
     </div>
   );
 }

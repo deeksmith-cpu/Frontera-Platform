@@ -20,18 +20,30 @@ src/
 ├── app/                    # Next.js App Router pages
 │   ├── api/               # API routes
 │   │   ├── conversations/ # Strategy Coach chat API
+│   │   ├── product-strategy-agent/ # Product Strategy Agent endpoints
+│   │   │   ├── ai-research/  # AI Research Assistant (Claude-powered document discovery)
+│   │   │   ├── materials/    # Uploaded materials management
+│   │   │   ├── phase/        # Phase transition management
+│   │   │   ├── territories/  # Territory insights (Company, Customer, Competitor)
+│   │   │   └── upload/       # File and URL upload handler
 │   │   ├── admin/        # Admin endpoints
 │   │   ├── organizations/ # Org member management
 │   │   └── webhooks/     # Clerk webhooks
 │   ├── dashboard/        # Authenticated dashboard pages
-│   │   ├── strategy-coach/ # AI coaching interface
+│   │   ├── product-strategy-agent/ # Product Strategy Agent interface
 │   │   ├── team/         # Team management
 │   │   └── admin/        # Admin panel
 │   ├── onboarding/       # Client onboarding wizard
 │   ├── sign-in/          # Clerk sign-in
 │   └── sign-up/          # Clerk sign-up
 ├── components/            # React components
-│   └── strategy-coach/   # Chat interface components
+│   └── product-strategy-agent/ # Product Strategy Agent UI components
+│       ├── CanvasPanel/   # Right panel - methodology canvas
+│       │   ├── DiscoverySection.tsx  # Discovery phase with AI Research Assistant
+│       │   ├── ResearchSection.tsx   # Territory mapping (Company, Customer, Competitor)
+│       │   ├── CustomerTerritoryDeepDive.tsx  # Customer territory research areas
+│       │   └── TerritoryDeepDiveSidebar.tsx   # Territory navigation sidebar
+│       └── CoachingPanel/ # Left panel - AI chat interface
 ├── lib/                   # Shared utilities
 │   ├── agents/           # AI agent implementations
 │   │   └── strategy-coach/ # Strategy Coach agent
@@ -47,9 +59,13 @@ src/
 ### Strategy Coach (Primary Feature)
 AI-powered coaching agent that guides users through product strategy transformation using the "Product Strategy Research Playbook" methodology:
 
-**Methodology**: 4-phase journey - Discovery → 3Cs Research → Synthesis → Strategic Bets
-- **Discovery**: Context setting with document upload and strategic baseline
-- **3Cs Research**: Company, Customer, Competitor territory mapping
+**Methodology**: 4-phase journey - Discovery → Map Your Strategic Terrain → Synthesis → Strategic Bets
+- **Discovery**: Context setting with document upload, AI research assistant, and strategic baseline
+  - **Minimum Requirement**: At least 1 document outlining company name & performance
+  - **AI Research Assistant**: Claude-powered document discovery from websites, news articles, and market reports
+  - **Progress Tracking**: Visual checklist showing company context, strategic materials (required), and coaching conversations (recommended)
+  - **Phase Transition**: Clear "Ready to Map Your Terrain" CTA appears when minimum requirements are met
+- **Map Your Strategic Terrain**: Company, Customer, and Competitor territory mapping with deep-dive research areas
 - **Synthesis**: Cross-pillar insight generation and strategic opportunity identification
 - **Strategic Bets**: Hypothesis-driven planning with evidence linking
 
@@ -106,9 +122,19 @@ Key tables in Supabase:
 |-------|---------|
 | `clients` | Organization profiles (linked to Clerk org) |
 | `client_onboarding` | Onboarding applications |
-| `conversations` | Strategy Coach chat sessions |
+| `conversations` | Strategy Coach chat sessions with `current_phase` and `framework_state` |
 | `conversation_messages` | Individual chat messages |
-| `strategic_outputs` | Generated strategy documents |
+| `uploaded_materials` | Discovery phase materials (files, URLs, AI-generated docs) |
+| `phase_progress` | Phase completion tracking (discovery, research, synthesis, bets) |
+| `territory_insights` | 3Cs research responses (company, customer, competitor territories) |
+| `synthesis_outputs` | Generated opportunities, insights, and strategic bets |
+| `strategic_outputs` | Final strategy documents |
+
+**Key Schema Details:**
+- `uploaded_materials.extracted_context`: JSONB field storing document content and metadata
+  - For AI-generated documents: `{ text, source, generated_by, topics }`
+- `conversations.framework_state`: JSONB field tracking methodology state across phases
+- `territory_insights.responses`: JSONB field storing research area question responses
 
 Types defined in `src/types/database.ts`.
 
@@ -363,6 +389,48 @@ When creating new components, ensure:
 - [ ] Semantic HTML is used
 - [ ] WCAG AA contrast is maintained
 
+## UX Patterns
+
+### Discovery Phase Completion Requirements
+The Discovery phase implements progressive disclosure with clear completion criteria:
+
+**Visual Progress Checklist** ([DiscoverySection.tsx:233-328](src/components/product-strategy-agent/CanvasPanel/DiscoverySection.tsx#L233-L328)):
+1. ✅ **Company Strategic Context** - Auto-completed from onboarding
+2. ⚠️ **Strategic Materials** - REQUIRED (minimum 1 document)
+   - Amber highlight with "!" indicator when empty
+   - Green checkmark when documents uploaded
+   - Shows document count: "X documents uploaded"
+3. 💬 **Coaching Conversations** - Recommended (optional)
+
+**Encouragement without Blocking**:
+- Users CAN proceed with minimum requirements (1 document)
+- Prominent messaging encourages additional context for better insights
+- "The more context, the better insights" guidance panel
+
+**Phase Transition CTA** ([DiscoverySection.tsx:383-461](src/components/product-strategy-agent/CanvasPanel/DiscoverySection.tsx#L383-L461)):
+- **Requirements Met**: Green success banner with "Begin Terrain Mapping →" button
+- **Requirements Not Met**: Amber warning banner with:
+  - Clear explanation of minimum requirement
+  - Recommended document types (annual report, strategic plan, etc.)
+  - Link to AI Research Assistant as alternative
+
+### Territory Deep-Dive Navigation
+Research phase uses sidebar navigation pattern for multi-area exploration:
+
+**Sidebar Pattern** ([TerritoryDeepDiveSidebar.tsx](src/components/product-strategy-agent/CanvasPanel/TerritoryDeepDiveSidebar.tsx)):
+- 25% width fixed sidebar
+- Territory-specific color schemes (indigo=company, cyan=customer, purple=competitor)
+- Progress tracking with visual indicators
+- Back to overview navigation
+- Research area cards with status badges (unexplored/in_progress/mapped)
+
+**Deep-Dive Views** ([CustomerTerritoryDeepDive.tsx](src/components/product-strategy-agent/CanvasPanel/CustomerTerritoryDeepDive.tsx)):
+- Two-level navigation: Territory → Research Area → Questions
+- Area selection view shows progress percentage
+- Question view with textarea inputs for each question
+- "Save Progress" vs "Mark as Mapped" dual action buttons
+- Response persistence across navigation
+
 ## Coding Conventions
 
 - Use TypeScript strict mode
@@ -402,6 +470,47 @@ return new Response(stream, {
   headers: { "Content-Type": "text/plain; charset=utf-8" }
 });
 ```
+
+### AI Research Assistant Pattern
+The AI Research Assistant generates synthetic strategic documents using Claude:
+
+```typescript
+// 1. Call Claude to generate documents
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  max_tokens: 4096,
+  messages: [{ role: 'user', content: researchPrompt }],
+});
+
+// 2. Parse response into structured documents
+const discoveredDocs = parseResearchResponse(responseText);
+
+// 3. Store in uploaded_materials with proper schema
+await supabase.from('uploaded_materials').insert({
+  conversation_id,
+  filename: doc.filename,
+  file_type: 'txt',
+  file_url: doc.source_url || null,
+  file_size: doc.content.length,
+  extracted_context: {
+    text: doc.content,
+    source: doc.source_url || 'AI-generated research',
+    generated_by: 'ai_research_assistant',
+    topics: topics,
+  },
+  processing_status: 'completed',
+  processed_at: new Date().toISOString(),
+});
+```
+
+**Key Implementation Details:**
+- Location: `src/app/api/product-strategy-agent/ai-research/route.ts`
+- Uses Claude Sonnet 4 to generate 3-5 synthetic documents (200-400 words each)
+- Prompt includes optional website list and required topics/keywords
+- Response parsing with fallback handling for malformed outputs
+- Documents stored in `uploaded_materials.extracted_context` as JSONB
+- UI: Modal in `DiscoverySection.tsx` with topics input and optional websites list
 
 ## Testing
 

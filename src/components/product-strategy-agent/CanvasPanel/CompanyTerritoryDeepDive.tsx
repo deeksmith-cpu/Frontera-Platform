@@ -1,10 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
+import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
+import { CompanyIcon } from '@/components/icons/TerritoryIcons';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
+
+interface QuestionSuggestion {
+  question_index: number;
+  suggestion: string;
+  key_points: string[];
+  sources_hint: string;
+}
 
 interface CompanyTerritoryDeepDiveProps {
   conversation: Conversation;
@@ -59,9 +69,15 @@ export function CompanyTerritoryDeepDive({
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [suggestions, setSuggestions] = useState<QuestionSuggestion[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [suggestionError, setSuggestionError] = useState(false);
 
-  // Get insights for this territory
-  const companyInsights = territoryInsights.filter((t) => t.territory === 'company');
+  // Get insights for this territory - memoized to prevent infinite re-renders
+  const companyInsights = useMemo(
+    () => territoryInsights.filter((t) => t.territory === 'company'),
+    [territoryInsights]
+  );
 
   // Get status for each research area
   const getAreaStatus = (areaId: string): 'unexplored' | 'in_progress' | 'mapped' => {
@@ -69,7 +85,7 @@ export function CompanyTerritoryDeepDive({
     return insight?.status || 'unexplored';
   };
 
-  // Load existing responses when area is selected
+  // Load existing responses when area is selected and clear suggestions
   useEffect(() => {
     if (selectedArea) {
       const insight = companyInsights.find((i) => i.research_area === selectedArea);
@@ -78,6 +94,9 @@ export function CompanyTerritoryDeepDive({
       } else {
         setResponses({});
       }
+      // Clear suggestions when area changes
+      setSuggestions([]);
+      setSuggestionError(false);
     }
   }, [selectedArea, companyInsights]);
 
@@ -85,6 +104,51 @@ export function CompanyTerritoryDeepDive({
     setResponses((prev) => ({
       ...prev,
       [questionIndex]: value,
+    }));
+  };
+
+  const handleGetSuggestions = async () => {
+    if (!selectedArea) return;
+
+    const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
+    if (!currentArea) return;
+
+    setIsLoadingSuggestions(true);
+    setSuggestionError(false);
+    setSuggestions([]);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/coach-suggestion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: 'company',
+          research_area: selectedArea,
+          research_area_title: currentArea.title,
+          questions: currentArea.questions,
+          existing_responses: responses,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get suggestions');
+      }
+
+      const data = await response.json();
+      setSuggestions(data.suggestions || []);
+    } catch (error) {
+      console.error('Error getting suggestions:', error);
+      setSuggestionError(true);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
+  const handleApplySuggestion = (questionIndex: number, text: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionIndex]: (prev[questionIndex] || '') + text,
     }));
   };
 
@@ -132,190 +196,148 @@ export function CompanyTerritoryDeepDive({
     }
   };
 
-  // Research area selection view
+  // Prepare research areas for sidebar
+  const sidebarAreas = RESEARCH_AREAS.map((area) => ({
+    id: area.id,
+    title: area.title,
+    status: getAreaStatus(area.id),
+  }));
+
+  // Auto-select first unexplored area if none selected
+  useEffect(() => {
+    if (!selectedArea) {
+      const firstUnexplored = sidebarAreas.find((a) => a.status === 'unexplored');
+      const firstInProgress = sidebarAreas.find((a) => a.status === 'in_progress');
+      const defaultArea = firstUnexplored || firstInProgress || sidebarAreas[0];
+      setSelectedArea(defaultArea.id);
+    }
+  }, []);
+
   if (!selectedArea) {
-    return (
-      <div className="company-territory-deep-dive max-w-6xl mx-auto">
-        {/* Header with Back Button */}
-        <div className="mb-8">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800 mb-4 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Territories
-          </button>
-
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">Company Territory</h1>
-              <p className="text-sm text-slate-600">Internal Strategic Context</p>
-            </div>
-          </div>
-
-          <p className="text-lg text-slate-600 leading-relaxed">
-            Explore your organization&apos;s internal landscape across three strategic dimensions.
-            Each research area builds a comprehensive view of your company&apos;s strategic position.
-          </p>
-        </div>
-
-        {/* Research Areas Grid */}
-        <div className="grid grid-cols-1 gap-6">
-          {RESEARCH_AREAS.map((area, index) => {
-            const status = getAreaStatus(area.id);
-            const insight = companyInsights.find((i) => i.research_area === area.id);
-            const responseCount = insight?.responses
-              ? Object.keys(insight.responses as Record<string, string>).length
-              : 0;
-
-            return (
-              <button
-                key={area.id}
-                onClick={() => setSelectedArea(area.id)}
-                className="text-left bg-white rounded-2xl border-2 border-indigo-200 hover:border-indigo-400 p-6 transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg font-bold text-indigo-600">{index + 1}</span>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900">{area.title}</h3>
-                      <p className="text-sm text-slate-600 mt-1">{area.description}</p>
-                    </div>
-                  </div>
-
-                  {/* Status Badge */}
-                  <span
-                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide flex-shrink-0 ${
-                      status === 'mapped'
-                        ? 'bg-indigo-100 text-indigo-700'
-                        : status === 'in_progress'
-                        ? 'bg-amber-100 text-amber-700'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {status === 'mapped' && '●'}
-                    {status === 'in_progress' && '◐'}
-                    {status === 'unexplored' && '○'}
-                    {status === 'mapped' && 'Mapped'}
-                    {status === 'in_progress' && 'In Progress'}
-                    {status === 'unexplored' && 'Unexplored'}
-                  </span>
-                </div>
-
-                {/* Progress Indicator */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-indigo-600 to-indigo-800 transition-all duration-300"
-                      style={{
-                        width: `${(responseCount / area.questions.length) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="text-sm font-semibold text-slate-600">
-                    {responseCount}/{area.questions.length}
-                  </span>
-                </div>
-
-                {/* CTA */}
-                <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-indigo-600">
-                  {status === 'unexplored' && 'Begin Research →'}
-                  {status === 'in_progress' && 'Continue Research →'}
-                  {status === 'mapped' && 'Review Responses →'}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  // Research area deep dive (questions view)
+  // Research area deep dive with sidebar layout
   const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
   if (!currentArea) return null;
 
   return (
-    <div className="company-territory-deep-dive max-w-4xl mx-auto">
-      {/* Header with Back Button */}
-      <div className="mb-8">
-        <button
-          onClick={() => {
-            setSelectedArea(null);
-            setResponses({});
-          }}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800 mb-4 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Research Areas
-        </button>
+    <div className="company-territory-deep-dive flex h-full">
+      {/* Sidebar (25% width) */}
+      <TerritoryDeepDiveSidebar
+        territory="company"
+        territoryTitle="Company Territory"
+        researchAreas={sidebarAreas}
+        activeAreaId={selectedArea}
+        onSelectArea={setSelectedArea}
+        onBack={onBack}
+      />
 
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">{currentArea.title}</h2>
-        <p className="text-slate-600">{currentArea.description}</p>
-      </div>
-
-      {/* Questions */}
-      <div className="space-y-6">
-        {currentArea.questions.map((question, index) => (
-          <div key={index} className="question-card bg-white rounded-2xl border border-slate-200 p-6">
-            <label className="block mb-3">
-              <div className="flex items-start gap-3 mb-3">
-                <span className="inline-flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full text-sm font-bold flex-shrink-0">
-                  {index + 1}
-                </span>
-                <span className="font-semibold text-slate-900">{question}</span>
+      {/* Main Content (75% width) */}
+      <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          {/* Area Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-indigo-lg">
+                <CompanyIcon className="text-white" size={24} />
               </div>
-              <textarea
-                value={responses[index] || ''}
-                onChange={(e) => handleResponseChange(index, e.target.value)}
-                placeholder="Share your insights here..."
-                rows={4}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-              />
-            </label>
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900">{currentArea.title}</h2>
+                <p className="text-sm text-slate-600 uppercase tracking-wider font-semibold">Research Area</p>
+              </div>
+            </div>
+            <p className="text-lg text-slate-600 leading-relaxed">{currentArea.description}</p>
           </div>
-        ))}
-      </div>
 
-      {/* Action Buttons */}
-      <div className="mt-8 flex items-center gap-4">
-        <button
-          onClick={() => handleSave('in_progress')}
-          disabled={isSaving || Object.keys(responses).length === 0}
-          className="flex-1 px-6 py-3 bg-slate-200 text-slate-900 rounded-xl font-semibold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSaving ? 'Saving...' : 'Save Progress'}
-        </button>
-        <button
-          onClick={() => handleSave('mapped')}
-          disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-800 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all"
-        >
-          {isSaving ? 'Saving...' : 'Mark as Mapped'}
-        </button>
-      </div>
+          {/* Questions */}
+          <div className="space-y-6">
+            {currentArea.questions.map((question, index) => {
+              const questionSuggestion = suggestions.find((s) => s.question_index === index);
 
-      {Object.keys(responses).length < currentArea.questions.length && (
-        <p className="text-sm text-center text-slate-500 mt-4">
-          Answer all questions to mark this area as mapped
-        </p>
-      )}
+              return (
+                <div key={index} className="question-card bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <label className="block">
+                    <div className="flex items-start gap-3 mb-4">
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg text-sm font-bold flex-shrink-0">
+                        {index + 1}
+                      </span>
+                      <span className="font-semibold text-base text-slate-900">{question}</span>
+                    </div>
+                    <textarea
+                      value={responses[index] || ''}
+                      onChange={(e) => handleResponseChange(index, e.target.value)}
+                      placeholder="Share your insights here..."
+                      rows={5}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                    />
+                  </label>
+
+                  {/* Suggestion Panel for this question */}
+                  {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
+                  {suggestionError && index === 0 && <SuggestionPanelError onRetry={handleGetSuggestions} />}
+                  {questionSuggestion && (
+                    <SuggestionPanel
+                      suggestion={questionSuggestion}
+                      onApply={(text) => handleApplySuggestion(index, text)}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Action Buttons - Sticky Bottom */}
+          <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+              <div className="flex items-center gap-3">
+                {/* Coach Suggestion Button */}
+                <button
+                  onClick={handleGetSuggestions}
+                  disabled={isLoadingSuggestions}
+                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-50 to-indigo-50 border-2 border-cyan-200 text-indigo-700 rounded-xl font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoadingSuggestions ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-lg">&#10024;</span>
+                      <span>Coach Suggestion</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Save Progress Button */}
+                <button
+                  onClick={() => handleSave('in_progress')}
+                  disabled={isSaving || Object.keys(responses).length === 0}
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSaving ? 'Saving...' : 'Save Progress'}
+                </button>
+
+                {/* Mark as Mapped Button */}
+                <button
+                  onClick={() => handleSave('mapped')}
+                  disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl font-bold hover:shadow-indigo-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-indigo-lg"
+                >
+                  {isSaving ? 'Saving...' : 'Mark as Mapped'}
+                </button>
+              </div>
+
+              {Object.keys(responses).length < currentArea.questions.length && (
+                <p className="text-sm text-center text-slate-500 mt-4">
+                  Answer all {currentArea.questions.length} questions to mark this area as mapped
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

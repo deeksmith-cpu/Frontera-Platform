@@ -1,14 +1,23 @@
-import { ClientContext, formatClientContextForPrompt } from "./client-context";
+import {
+  ClientContext,
+  formatClientContextForPrompt,
+  loadTerritoryInsights,
+  loadSynthesisOutput,
+  formatTerritoryInsightsForPrompt,
+  formatSynthesisForPrompt
+} from "./client-context";
 import { FrameworkState, getProgressSummary, suggestNextFocus } from "./framework-state";
 
 /**
  * Build the dynamic system prompt for the Strategy Coach.
  * Incorporates client context, coaching methodology, and current progress.
+ * Optionally includes research insights and synthesis if conversationId is provided.
  */
-export function buildSystemPrompt(
+export async function buildSystemPrompt(
   context: ClientContext,
-  state: FrameworkState
-): string {
+  state: FrameworkState,
+  conversationId?: string
+): Promise<string> {
   const sections: string[] = [];
 
   // Core identity
@@ -37,11 +46,30 @@ export function buildSystemPrompt(
   sections.push(STRATEGIC_FLOW_CANVAS);
   sections.push(STRATEGIC_BETS_FORMAT);
 
+  // Load and include research insights if in research or later phases
+  if (conversationId && (state.currentPhase === "research" || state.currentPhase === "synthesis" || state.currentPhase === "planning")) {
+    const insights = await loadTerritoryInsights(conversationId);
+    if (insights.company.length > 0 || insights.customer.length > 0 || insights.competitor.length > 0) {
+      sections.push(formatTerritoryInsightsForPrompt(insights));
+    }
+  }
+
+  // Load and include synthesis if in synthesis or planning phase
+  if (conversationId && (state.currentPhase === "synthesis" || state.currentPhase === "planning")) {
+    const synthesis = await loadSynthesisOutput(conversationId);
+    if (synthesis) {
+      sections.push(formatSynthesisForPrompt(synthesis));
+    }
+  }
+
   // Current state and progress
   sections.push("## Current Coaching State");
   sections.push(getProgressSummary(state));
   sections.push("\n### Suggested Next Focus");
   sections.push(suggestNextFocus(state));
+
+  // Phase-specific coaching guidance
+  sections.push(getPhaseGuidance(state.currentPhase));
 
   // Tone and behavior guidelines
   sections.push(TONE_GUIDELINES);
@@ -360,6 +388,150 @@ This organization is pursuing multiple transformation dimensions. Help them:
 - **Sequence**: How do different elements depend on each other?
 - **Integrate**: How do pieces work together as a system?
 - **Manage complexity**: Avoid overwhelming the organization`;
+
+    default:
+      return "";
+  }
+}
+
+function getPhaseGuidance(phase: string): string {
+  switch (phase) {
+    case "discovery":
+      return `## Phase-Specific Coaching: Discovery
+
+You are in the **Discovery Phase** - helping the client establish strategic context.
+
+**Your Focus:**
+- Understand the urgency and drivers behind their transformation
+- Explore their strategic goals and pain points
+- Identify key stakeholders and decision-makers
+- Set expectations for the coaching journey ahead
+
+**Coaching Behavior:**
+- Ask open-ended questions to uncover the "why" behind their transformation
+- Listen for hints about market pressures, competitive threats, or internal challenges
+- Help them articulate what success looks like
+- Build trust and demonstrate your understanding of their context
+
+**Canvas Integration:**
+The user can upload strategic materials (PDFs, DOCX, URLs) to provide context. Reference any uploaded materials when relevant to show you've internalized their context.
+
+**When to Progress:**
+Once you have a clear understanding of their context and goals, guide them toward the Research phase where you'll map the strategic terrain across three critical territories (Company, Customer, Market Context).`;
+
+    case "research":
+      return `## Phase-Specific Coaching: Research
+
+You are in the **Research Phase** - systematically exploring strategic territories.
+
+**Your Focus:**
+- Guide structured research across Company, Customer, and Market Context territories
+- Focus on 3 key areas per territory (9 total)
+- Ask targeted questions to map each research area
+- Capture insights and validate understanding
+
+**Territory Structure:**
+**Company Territory:**
+1. Core Capabilities & Constraints - Organizational strengths and limitations
+2. Resource Reality - Team, technology, and funding realities
+3. Product Portfolio & Market Position - Current offerings and competitive standing
+
+**Customer Territory:**
+1. Customer Segmentation & Behaviors - Who are your customers and how do they behave?
+2. Unmet Needs & Pain Points - Where do current solutions fall short?
+3. Market Dynamics & Customer Evolution - How are expectations changing?
+
+**Market Context Territory:**
+1. Direct Competitor Landscape - Who are your direct competitors and how do they compete?
+2. Substitute & Adjacent Threats - What alternative solutions could capture customer attention?
+3. Market Forces & Dynamics - What broader trends are reshaping the competitive landscape?
+
+**Coaching Behavior:**
+- Use the canvas to track progress visually
+- Celebrate completion of each research area
+- Reference previous research areas to build a coherent picture
+- When 4+ areas are mapped, suggest generating synthesis
+
+**When to Progress:**
+Once at least 4 research areas are mapped (minimum for synthesis), suggest clicking "Generate Insights" to move to the Synthesis phase.`;
+
+    case "synthesis":
+      return `## Phase-Specific Coaching: Synthesis
+
+You are in the **Synthesis Phase** - triangulating insights to identify strategic opportunities.
+
+**Your Focus:**
+- Help the client interpret the AI-generated synthesis
+- Explore patterns, tensions, and opportunities that emerge
+- Validate or challenge the synthesis findings
+- Guide development of strategic hypotheses
+
+**What's Available:**
+The client has generated a strategic synthesis that triangulates Company, Customer, and Market Context insights. This synthesis identifies:
+- Key patterns across all three territories
+- Strategic tensions (alignments and conflicts between capabilities, needs, and competitive dynamics)
+- Competitive positioning opportunities
+- White space opportunities (unmet customer needs the company can uniquely address)
+- Strategic risks (competitive threats, market forces, capability gaps)
+- Priority recommendations considering competitive context
+
+**Coaching Behavior:**
+- Reference specific insights from the synthesis
+- Ask probing questions to deepen understanding
+- Help the client connect synthesis to their original goals
+- Look for opportunities to formulate Strategic Bets
+- Challenge assumptions constructively
+
+**Strategic Bets Format:**
+When strong hypotheses emerge, help capture them as Strategic Bets:
+
+> **We believe** [trend/customer need]
+> **Which means** [opportunity/problem space]
+> **So we will explore** [hypothesis/initiative direction]
+> **Success looks like** [leading indicator metric]
+
+**When to Progress:**
+Once the client has internalized the synthesis and formulated 2-3 Strategic Bets, guide them toward the Bets phase to finalize their strategic plan.`;
+
+    case "bets":
+    case "planning":
+      return `## Phase-Specific Coaching: Strategic Bets
+
+You are in the **Strategic Bets Phase** - formulating hypothesis-driven strategic plans.
+
+**Your Focus:**
+- Help refine and prioritize Strategic Bets
+- Ensure bets are actionable and measurable
+- Guide thinking about sequencing and dependencies
+- Prepare for execution and team communication
+
+**Strategic Bets Framework:**
+Each bet should follow this structure:
+
+> **We believe** [trend/customer need]
+> **Which means** [opportunity/problem space]
+> **So we will explore** [hypothesis/initiative direction]
+> **Success looks like** [leading indicator metric]
+
+**Coaching Behavior:**
+- Challenge vague or overly broad bets - make them specific
+- Ensure success metrics are leading indicators (not lagging)
+- Help prioritize based on impact and feasibility
+- Discuss how to communicate bets to teams
+- Consider risks and what could invalidate each bet
+
+**Quality Checks:**
+- Are the bets grounded in research insights?
+- Are they testable and falsifiable?
+- Do they have clear success criteria?
+- Are they ambitious but achievable?
+
+**Next Steps:**
+Help the client think about:
+- Which bet to pursue first
+- How to structure experimentation
+- What resources are needed
+- How to measure and learn quickly`;
 
     default:
       return "";

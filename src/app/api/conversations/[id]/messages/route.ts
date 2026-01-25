@@ -167,7 +167,8 @@ export async function POST(
       clientContext,
       frameworkState,
       chatHistory,
-      message
+      message,
+      conversationId
     );
 
     // Create a transform stream to collect the full response
