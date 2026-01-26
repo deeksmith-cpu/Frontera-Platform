@@ -355,6 +355,7 @@ Return ONLY the JSON object, no additional text before or after.`;
     if (!parsedSynthesis) {
       // Fallback: save raw response if parsing fails
       console.error('Failed to parse structured synthesis, saving raw response');
+      console.error('Raw response (first 500 chars):', rawResponse.substring(0, 500));
 
       const { data: fallbackOutput, error: fallbackError } = await rawSupabase
         .from('synthesis_outputs')
@@ -397,6 +398,10 @@ Return ONLY the JSON object, no additional text before or after.`;
         warning: 'Synthesis could not be fully parsed into structured format',
       });
     }
+
+    console.log('Synthesis parsed successfully');
+    console.log('Opportunities count:', parsedSynthesis.opportunities.length);
+    console.log('Tensions count:', parsedSynthesis.tensions.length);
 
     // Match evidence to actual insight IDs
     const opportunitiesWithInsightIds = matchEvidenceToInsights(

@@ -73,6 +73,8 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
         );
         if (response.ok) {
           const data = await response.json();
+          console.log('Fetched synthesis data:', data);
+          console.log('Opportunities count:', data.synthesis?.opportunities?.length);
           if (data.success && data.synthesis) {
             setSynthesis(data.synthesis);
           }
@@ -110,6 +112,8 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
       }
 
       if (data.success && data.synthesis) {
+        console.log('Generated synthesis data:', data);
+        console.log('Generated opportunities:', data.synthesis.opportunities);
         setSynthesis(data.synthesis);
       }
     } catch (error) {
