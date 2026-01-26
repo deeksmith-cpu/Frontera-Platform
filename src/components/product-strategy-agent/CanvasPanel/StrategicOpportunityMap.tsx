@@ -175,6 +175,19 @@ export function StrategicOpportunityMap({
                 `}
                 aria-label={`${opp.title} - Score: ${opp.scoring.overallScore}`}
               />
+
+              {/* Shortened Label */}
+              <div
+                className={`
+                  absolute top-full left-1/2 -translate-x-1/2 mt-1
+                  text-[9px] font-medium text-slate-600 whitespace-nowrap
+                  max-w-[80px] truncate text-center
+                  pointer-events-none
+                  ${isSelected || isHovered ? 'text-slate-900 font-semibold' : ''}
+                `}
+              >
+                {opp.title.split(' ').slice(0, 3).join(' ')}
+              </div>
             </div>
           );
         })}
