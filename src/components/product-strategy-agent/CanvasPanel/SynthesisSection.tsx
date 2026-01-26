@@ -39,6 +39,10 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
   // State for generating synthesis
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // State for exporting PDF
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
   // State for UI interactions
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const [expandedOpportunityId, setExpandedOpportunityId] = useState<string | null>(null);
@@ -139,6 +143,48 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
     // TODO: Navigate to source research area
     console.log('Navigate to evidence:', evidence);
   }, []);
+
+  // Handle PDF export
+  const handleExportPDF = useCallback(async () => {
+    setIsExporting(true);
+    setExportError(null);
+
+    try {
+      const response = await fetch(
+        `/api/product-strategy-agent/synthesis/export?conversation_id=${conversation.id}`
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Export failed');
+      }
+
+      // Download the PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Extract filename from Content-Disposition header or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `Strategic-Synthesis-${new Date().toISOString().split('T')[0]}.pdf`;
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="(.+)"/);
+        if (match) filename = match[1];
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error('Export error:', error);
+      setExportError(error instanceof Error ? error.message : 'Export failed');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [conversation.id]);
 
   // Calculate research progress
   const totalMapped = territoryInsights.filter((i) => i.status === 'mapped').length;
@@ -319,8 +365,30 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
             <RecommendationsPanel recommendations={synthesis.recommendations} />
           )}
 
-          {/* Regenerate Button */}
-          <div className="text-center pt-4">
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-4 pt-6">
+            {/* Export PDF Button */}
+            <button
+              onClick={handleExportPDF}
+              disabled={isExporting}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {isExporting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Generating PDF...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Export PDF</span>
+                </>
+              )}
+            </button>
+
+            {/* Regenerate Button */}
             <button
               onClick={handleGenerateSynthesis}
               disabled={isGenerating}
@@ -329,6 +397,13 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
               {isGenerating ? 'Regenerating...' : 'Regenerate Synthesis'}
             </button>
           </div>
+
+          {/* Export Error */}
+          {exportError && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 text-center">
+              {exportError}
+            </div>
+          )}
         </>
       )}
     </div>
