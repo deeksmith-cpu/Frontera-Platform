@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
 import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
 import { FloatingCoachBar } from './FloatingCoachBar';
@@ -24,14 +24,8 @@ interface CustomerTerritoryDeepDiveProps {
   onUpdate: (insights: TerritoryInsight[]) => void;
 }
 
-interface ResearchArea {
-  id: string;
-  title: string;
-  description: string;
-  questions: string[];
-}
-
-const RESEARCH_AREAS: ResearchArea[] = [
+// Customer Territory Research Areas (MVP: 3 areas)
+const RESEARCH_AREAS = [
   {
     id: 'customer_segmentation',
     title: 'Customer Segmentation & Behaviors',
@@ -60,7 +54,7 @@ const RESEARCH_AREAS: ResearchArea[] = [
     description: 'How are customer expectations, behaviors, and the competitive landscape changing over time?',
     questions: [
       'How have customer expectations evolved in the past 2-3 years, and what trends are accelerating?',
-      'What new alternatives or substitutes are customers considering that didn&apos;t exist before?',
+      'What new alternatives or substitutes are customers considering that didn\'t exist before?',
       'How are customer acquisition costs, retention rates, and lifetime value trending in your category?',
       'What external forces (technology, regulation, economics, culture) are reshaping customer needs?',
     ],
@@ -87,36 +81,45 @@ export function CustomerTerritoryDeepDive({
 
   // Handle floating bar suggestion apply
   const handleFloatingBarApply = useCallback((questionIndex: number, text: string) => {
-    const questionKey = `q${questionIndex}`;
     setResponses((prev) => ({
       ...prev,
-      [questionKey]: (prev[questionKey] || '') + text,
+      [questionIndex]: (prev[questionIndex] || '') + text,
     }));
   }, []);
 
-  // Load existing responses when area changes and clear suggestions
+  // Get insights for this territory - memoized to prevent infinite re-renders
+  const customerInsights = useMemo(
+    () => territoryInsights.filter((t) => t.territory === 'customer'),
+    [territoryInsights]
+  );
+
+  // Get status for each research area
+  const getAreaStatus = (areaId: string): 'unexplored' | 'in_progress' | 'mapped' => {
+    const insight = customerInsights.find((i) => i.research_area === areaId);
+    return insight?.status || 'unexplored';
+  };
+
+  // Load existing responses when area is selected and clear suggestions
   useEffect(() => {
-    if (!selectedArea) {
-      setResponses({});
-      return;
+    if (selectedArea) {
+      const insight = customerInsights.find((i) => i.research_area === selectedArea);
+      if (insight && insight.responses) {
+        setResponses(insight.responses as Record<string, string>);
+      } else {
+        setResponses({});
+      }
+      // Clear suggestions when area changes
+      setSuggestions([]);
+      setSuggestionError(false);
     }
+  }, [selectedArea, customerInsights]);
 
-    const existingInsight = territoryInsights.find(
-      (insight) =>
-        insight.territory === 'customer' && insight.research_area === selectedArea
-    );
-
-    if (existingInsight && existingInsight.responses) {
-      const responsesData = existingInsight.responses as Record<string, unknown>;
-      setResponses(responsesData as Record<string, string>);
-    } else {
-      setResponses({});
-    }
-
-    // Clear suggestions when area changes
-    setSuggestions([]);
-    setSuggestionError(false);
-  }, [selectedArea, territoryInsights]);
+  const handleResponseChange = (questionIndex: number, value: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionIndex]: value,
+    }));
+  };
 
   const handleGetSuggestions = async () => {
     if (!selectedArea) return;
@@ -156,10 +159,10 @@ export function CustomerTerritoryDeepDive({
     }
   };
 
-  const handleApplySuggestion = (questionKey: string, text: string) => {
+  const handleApplySuggestion = (questionIndex: number, text: string) => {
     setResponses((prev) => ({
       ...prev,
-      [questionKey]: (prev[questionKey] || '') + text,
+      [questionIndex]: (prev[questionIndex] || '') + text,
     }));
   };
 
@@ -182,303 +185,202 @@ export function CustomerTerritoryDeepDive({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save territory insight');
+        throw new Error('Failed to save responses');
       }
 
-      const updatedInsight = (await response.json()) as TerritoryInsight;
+      const updatedInsight: TerritoryInsight = await response.json();
 
-      // Update parent component with new insight
-      const otherInsights = territoryInsights.filter(
+      // Update parent state
+      const updatedInsights = territoryInsights.filter(
         (i) => !(i.territory === 'customer' && i.research_area === selectedArea)
       );
-      onUpdate([...otherInsights, updatedInsight]);
+      updatedInsights.push(updatedInsight);
+      onUpdate(updatedInsights);
 
-      // If marking as mapped, go back to area selection
+      // If marked as mapped, go back to area selection
       if (status === 'mapped') {
         setSelectedArea(null);
+        setResponses({});
       }
     } catch (error) {
-      console.error('Error saving insight:', error);
-      alert('Failed to save progress. Please try again.');
+      console.error('Error saving responses:', error);
+      alert('Failed to save responses. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const currentArea = RESEARCH_AREAS.find((area) => area.id === selectedArea);
+  // Prepare research areas for sidebar
+  const sidebarAreas = RESEARCH_AREAS.map((area) => ({
+    id: area.id,
+    title: area.title,
+    status: getAreaStatus(area.id),
+  }));
 
-  const getAreaStatus = (areaId: string): 'unexplored' | 'in_progress' | 'mapped' => {
-    const insight = territoryInsights.find(
-      (i) => i.territory === 'customer' && i.research_area === areaId
-    );
-    return insight?.status || 'unexplored';
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'mapped':
-        return 'bg-emerald-100 text-emerald-700 border-emerald-300';
-      case 'in_progress':
-        return 'bg-amber-100 text-amber-700 border-amber-300';
-      default:
-        return 'bg-slate-100 text-slate-500 border-slate-200';
+  // Auto-select first unexplored area if none selected
+  useEffect(() => {
+    if (!selectedArea) {
+      const firstUnexplored = sidebarAreas.find((a) => a.status === 'unexplored');
+      const firstInProgress = sidebarAreas.find((a) => a.status === 'in_progress');
+      const defaultArea = firstUnexplored || firstInProgress || sidebarAreas[0];
+      setSelectedArea(defaultArea.id);
     }
-  };
+  }, []);
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'mapped':
-        return 'Mapped';
-      case 'in_progress':
-        return 'In Progress';
-      default:
-        return 'Unexplored';
-    }
-  };
-
-  // Research Area Selection View
   if (!selectedArea) {
-    const mappedCount = RESEARCH_AREAS.filter((area) => getAreaStatus(area.id) === 'mapped').length;
-    const progressPct = Math.round((mappedCount / RESEARCH_AREAS.length) * 100);
-
-    return (
-      <div className="customer-territory-deep-dive p-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Research Overview
-          </button>
-
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                Customer Territory
-              </h1>
-              <p className="text-lg text-slate-600">
-                Understand customer segments, unmet needs, and evolving market dynamics
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-slate-500 mb-1">Overall Progress</div>
-              <div className="text-2xl font-bold text-slate-900">{progressPct}%</div>
-              <div className="text-sm text-slate-500">{mappedCount} of {RESEARCH_AREAS.length} areas mapped</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-500 to-cyan-600 transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Research Areas */}
-        <div className="space-y-4">
-          {RESEARCH_AREAS.map((area, index) => {
-            const status = getAreaStatus(area.id);
-            const statusColor = getStatusColor(status);
-            const statusLabel = getStatusLabel(status);
-
-            return (
-              <button
-                key={area.id}
-                onClick={() => setSelectedArea(area.id)}
-                className="w-full text-left bg-white rounded-xl border-2 border-slate-200 hover:border-cyan-400 hover:shadow-lg transition-all duration-200 p-6 group"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 text-white flex items-center justify-center font-bold text-sm">
-                      {index + 1}
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-cyan-600 transition-colors">
-                      {area.title}
-                    </h3>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusColor}`}>
-                    {statusLabel}
-                  </span>
-                </div>
-                <p className="text-slate-600 ml-11">{area.description}</p>
-                <div className="mt-4 ml-11 flex items-center gap-2 text-sm text-cyan-600 font-medium">
-                  <span>Explore {area.questions.length} Questions</span>
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  // Question Deep-Dive View
+  // Research area deep dive with sidebar layout
+  const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
   if (!currentArea) return null;
 
-  const areaStatus = getAreaStatus(currentArea.id);
-  const answeredCount = Object.keys(responses).filter((key) => responses[key]?.trim()).length;
-  const areaProgressPct = Math.round((answeredCount / currentArea.questions.length) * 100);
-
   return (
-    <div className="customer-territory-questions p-10 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <button
-          onClick={() => setSelectedArea(null)}
-          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Customer Territory
-        </button>
+    <div className="customer-territory-deep-dive flex h-full">
+      {/* Sidebar (25% width) */}
+      <TerritoryDeepDiveSidebar
+        territory="customer"
+        territoryTitle="Customer Territory"
+        researchAreas={sidebarAreas}
+        activeAreaId={selectedArea}
+        onSelectArea={setSelectedArea}
+        onBack={onBack}
+      />
 
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
-              {currentArea.title}
-            </h1>
-            <p className="text-lg text-slate-600">{currentArea.description}</p>
+      {/* Main Content (75% width) */}
+      <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          {/* Area Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-cyan-700 rounded-2xl flex items-center justify-center shadow-lg">
+                <CustomerIcon className="text-white" size={24} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900">{currentArea.title}</h2>
+                <p className="text-sm text-slate-600 uppercase tracking-wider font-semibold">Research Area</p>
+              </div>
+            </div>
+            <p className="text-lg text-slate-600 leading-relaxed">{currentArea.description}</p>
           </div>
-          <span className={`px-3 py-1.5 rounded-full text-sm font-semibold border ${getStatusColor(areaStatus)}`}>
-            {getStatusLabel(areaStatus)}
-          </span>
-        </div>
 
-        {/* Area Progress */}
-        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-700">Area Progress</span>
-            <span className="text-sm font-bold text-slate-900">{answeredCount} / {currentArea.questions.length} answered</span>
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-500 to-cyan-600 transition-all duration-500"
-              style={{ width: `${areaProgressPct}%` }}
-            />
-          </div>
-        </div>
-      </div>
+          {/* Questions */}
+          <div className="space-y-6">
+            {currentArea.questions.map((question, index) => {
+              const questionSuggestion = suggestions.find((s) => s.question_index === index);
 
-      {/* Questions */}
-      <div className="space-y-6 mb-8">
-        {currentArea.questions.map((question, index) => {
-          const questionSuggestion = suggestions.find((s) => s.question_index === index);
-          const questionKey = `q${index}`;
+              return (
+                <div key={index} className="question-card bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <label className="block">
+                    <div className="flex items-start gap-3 mb-4">
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-cyan-100 text-cyan-600 rounded-lg text-sm font-bold flex-shrink-0">
+                        {index + 1}
+                      </span>
+                      <span className="font-semibold text-base text-slate-900">{question}</span>
+                    </div>
+                    <textarea
+                      ref={(el) => {
+                        textareaRefs.current[index] = el;
+                        if (activeQuestionIndex === index) {
+                          activeTextareaRef.current = el;
+                        }
+                      }}
+                      value={responses[index] || ''}
+                      onChange={(e) => handleResponseChange(index, e.target.value)}
+                      onFocus={() => setActiveQuestionIndex(index)}
+                      onBlur={(e) => {
+                        // Delay clearing to allow clicking floating bar
+                        setTimeout(() => {
+                          if (!e.relatedTarget?.closest('.floating-coach-bar')) {
+                            setActiveQuestionIndex(null);
+                          }
+                        }, 200);
+                      }}
+                      placeholder="Share your insights here..."
+                      rows={5}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-all"
+                    />
+                  </label>
 
-          return (
-            <div key={index} className="bg-white rounded-xl border-2 border-slate-200 p-6">
-              <label className="block mb-3">
-                <div className="flex items-start gap-3 mb-2">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-sm font-bold">
-                    {index + 1}
-                  </span>
-                  <span className="text-slate-900 font-medium leading-relaxed">{question}</span>
+                  {/* Suggestion Panel for this question */}
+                  {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
+                  {suggestionError && index === 0 && <SuggestionPanelError onRetry={handleGetSuggestions} />}
+                  {questionSuggestion && (
+                    <SuggestionPanel
+                      suggestion={questionSuggestion}
+                      onApply={(text) => handleApplySuggestion(index, text)}
+                    />
+                  )}
                 </div>
-              </label>
-              <textarea
-                ref={(el) => {
-                  textareaRefs.current[index] = el;
-                  if (activeQuestionIndex === index) {
-                    activeTextareaRef.current = el;
-                  }
-                }}
-                value={responses[questionKey] || ''}
-                onChange={(e) => setResponses({ ...responses, [questionKey]: e.target.value })}
-                onFocus={() => setActiveQuestionIndex(index)}
-                onBlur={(e) => {
-                  // Delay clearing to allow clicking floating bar
-                  setTimeout(() => {
-                    if (!e.relatedTarget?.closest('.floating-coach-bar')) {
-                      setActiveQuestionIndex(null);
-                    }
-                  }, 200);
-                }}
-                placeholder="Share your insights here..."
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 focus:outline-none transition-all resize-none"
-                rows={4}
-              />
+              );
+            })}
+          </div>
 
-              {/* Suggestion Panel for this question */}
-              {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
-              {suggestionError && index === 0 && <SuggestionPanelError onRetry={handleGetSuggestions} />}
-              {questionSuggestion && (
-                <SuggestionPanel
-                  suggestion={questionSuggestion}
-                  onApply={(text) => handleApplySuggestion(questionKey, text)}
-                />
+          {/* Floating Coach Bar - appears above active textarea */}
+          {currentArea && (
+            <FloatingCoachBar
+              conversationId={conversation.id}
+              territory="customer"
+              researchArea={selectedArea || ''}
+              researchAreaTitle={currentArea.title}
+              questions={currentArea.questions}
+              activeQuestionIndex={activeQuestionIndex}
+              existingResponses={responses}
+              onApplySuggestion={handleFloatingBarApply}
+              targetRef={activeTextareaRef}
+            />
+          )}
+
+          {/* Action Buttons - Sticky Bottom */}
+          <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
+              <div className="flex items-center gap-3">
+                {/* Coach Suggestion Button - for all questions at once */}
+                <button
+                  onClick={handleGetSuggestions}
+                  disabled={isLoadingSuggestions}
+                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-50 to-indigo-50 border-2 border-cyan-200 text-cyan-700 rounded-xl font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoadingSuggestions ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin" />
+                      <span>Generating All...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-lg">&#10024;</span>
+                      <span>Suggest All Questions</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Save Progress Button */}
+                <button
+                  onClick={() => handleSave('in_progress')}
+                  disabled={isSaving || Object.keys(responses).length === 0}
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSaving ? 'Saving...' : 'Save Progress'}
+                </button>
+
+                {/* Mark as Mapped Button */}
+                <button
+                  onClick={() => handleSave('mapped')}
+                  disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-xl font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+                >
+                  {isSaving ? 'Saving...' : 'Mark as Mapped'}
+                </button>
+              </div>
+
+              {Object.keys(responses).length < currentArea.questions.length && (
+                <p className="text-sm text-center text-slate-500 mt-4">
+                  Answer all {currentArea.questions.length} questions to mark this area as mapped
+                </p>
               )}
             </div>
-          );
-        })}
-      </div>
-
-      {/* Floating Coach Bar - appears above active textarea */}
-      {currentArea && (
-        <FloatingCoachBar
-          conversationId={conversation.id}
-          territory="customer"
-          researchArea={selectedArea || ''}
-          researchAreaTitle={currentArea.title}
-          questions={currentArea.questions}
-          activeQuestionIndex={activeQuestionIndex}
-          existingResponses={responses}
-          onApplySuggestion={handleFloatingBarApply}
-          targetRef={activeTextareaRef}
-        />
-      )}
-
-      {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-6 border-t border-slate-200">
-        {/* Coach Suggestion Button - for all questions at once */}
-        <button
-          onClick={handleGetSuggestions}
-          disabled={isLoadingSuggestions}
-          className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-50 to-indigo-50 border-2 border-cyan-200 text-cyan-700 rounded-lg font-semibold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          {isLoadingSuggestions ? (
-            <>
-              <span className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin" />
-              <span>Generating All...</span>
-            </>
-          ) : (
-            <>
-              <span className="text-lg">&#10024;</span>
-              <span>Suggest All Questions</span>
-            </>
-          )}
-        </button>
-
-        <div className="flex-1" />
-
-        {/* Save Progress Button */}
-        <button
-          onClick={() => handleSave('in_progress')}
-          disabled={isSaving}
-          className="px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? 'Saving...' : 'Save Progress'}
-        </button>
-
-        {/* Mark as Mapped Button */}
-        <button
-          onClick={() => handleSave('mapped')}
-          disabled={isSaving || answeredCount === 0}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? 'Saving...' : 'Mark as Mapped'}
-        </button>
+          </div>
+        </div>
       </div>
     </div>
   );
