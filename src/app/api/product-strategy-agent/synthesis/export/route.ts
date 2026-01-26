@@ -116,10 +116,74 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Generate PDF
+    // Generate PDF - with detailed logging for debugging
     console.log('Generating PDF for synthesis:', synthesis.id);
     console.log('Opportunities count:', synthesis.opportunities.length);
     console.log('Tensions count:', synthesis.tensions.length);
+    console.log('Recommendations count:', synthesis.recommendations?.length || 0);
+
+    // Validate and sanitize data - ensure all values are proper strings
+    const sanitizedSynthesis: SynthesisResult = {
+      ...synthesis,
+      executiveSummary: String(synthesis.executiveSummary || ''),
+      recommendations: (synthesis.recommendations || []).map(r =>
+        typeof r === 'string' ? r : (typeof r === 'object' ? JSON.stringify(r) : String(r))
+      ),
+      opportunities: synthesis.opportunities.map(opp => ({
+        ...opp,
+        id: String(opp.id || ''),
+        title: String(opp.title || ''),
+        description: String(opp.description || ''),
+        opportunityType: String(opp.opportunityType || 'where_to_play') as 'where_to_play' | 'how_to_win' | 'capability_gap',
+        quadrant: String(opp.quadrant || 'explore') as 'invest' | 'explore' | 'harvest' | 'divest',
+        confidence: String(opp.confidence || 'medium') as 'low' | 'medium' | 'high',
+        scoring: {
+          marketAttractiveness: Number(opp.scoring?.marketAttractiveness) || 5,
+          capabilityFit: Number(opp.scoring?.capabilityFit) || 5,
+          competitiveAdvantage: Number(opp.scoring?.competitiveAdvantage) || 5,
+          overallScore: Number(opp.scoring?.overallScore) || 50,
+        },
+        ptw: {
+          winningAspiration: String(opp.ptw?.winningAspiration || ''),
+          whereToPlay: String(opp.ptw?.whereToPlay || ''),
+          howToWin: String(opp.ptw?.howToWin || ''),
+          capabilitiesRequired: (opp.ptw?.capabilitiesRequired || []).map(c => String(c)),
+          managementSystems: (opp.ptw?.managementSystems || []).map(m => String(m)),
+        },
+        evidence: (opp.evidence || []).map(ev => ({
+          territory: String(ev.territory || 'company') as 'company' | 'customer' | 'competitor',
+          researchArea: String(ev.researchArea || ''),
+          question: String(ev.question || ''),
+          quote: String(ev.quote || ''),
+          insightId: String(ev.insightId || ''),
+        })),
+        assumptions: (opp.assumptions || []).map(a => ({
+          category: String(a.category || 'customer') as 'customer' | 'company' | 'competitor' | 'economics',
+          assumption: String(a.assumption || ''),
+          testMethod: String(a.testMethod || ''),
+          riskIfFalse: String(a.riskIfFalse || ''),
+        })),
+      })),
+      tensions: synthesis.tensions.map(t => ({
+        ...t,
+        id: String(t.id || ''),
+        description: String(t.description || ''),
+        impact: String(t.impact || 'significant') as 'blocking' | 'significant' | 'minor',
+        alignedEvidence: (t.alignedEvidence || []).map(e => ({
+          insight: String(e.insight || ''),
+          source: String(e.source || ''),
+        })),
+        conflictingEvidence: (t.conflictingEvidence || []).map(e => ({
+          insight: String(e.insight || ''),
+          source: String(e.source || ''),
+        })),
+        resolutionOptions: (t.resolutionOptions || []).map(r => ({
+          option: String(r.option || ''),
+          tradeOff: String(r.tradeOff || ''),
+          recommended: Boolean(r.recommended),
+        })),
+      })),
+    };
 
     // Cast client data for type compatibility
     const typedClient = clientData as unknown as Client | null;
@@ -130,7 +194,7 @@ export async function GET(req: NextRequest) {
 
     // Create the document element - using type assertion for react-pdf compatibility
     const documentElement = React.createElement(SynthesisReportDocument, {
-      synthesis,
+      synthesis: sanitizedSynthesis,
       client: typedClient,
       generatedAt: new Date(),
     });
