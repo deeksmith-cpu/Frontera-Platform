@@ -381,7 +381,12 @@ Return ONLY the JSON object, no additional text before or after.`;
       if (fallbackError) {
         console.error('Error saving fallback synthesis:', fallbackError);
         return NextResponse.json(
-          { error: 'Failed to save synthesis' },
+          {
+            error: 'Failed to save synthesis',
+            details: fallbackError.message,
+            code: fallbackError.code,
+            hint: fallbackError.hint
+          },
           { status: 500 }
         );
       }
@@ -425,7 +430,12 @@ Return ONLY the JSON object, no additional text before or after.`;
     if (saveError) {
       console.error('Error saving synthesis:', saveError);
       return NextResponse.json(
-        { error: 'Failed to save synthesis' },
+        {
+          error: 'Failed to save synthesis',
+          details: saveError.message,
+          code: saveError.code,
+          hint: saveError.hint
+        },
         { status: 500 }
       );
     }

@@ -102,7 +102,10 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        setSynthesisError(data.error || 'Failed to generate synthesis');
+        const errorMsg = data.details
+          ? `${data.error}: ${data.details}`
+          : data.error || 'Failed to generate synthesis';
+        setSynthesisError(errorMsg);
         return;
       }
 
