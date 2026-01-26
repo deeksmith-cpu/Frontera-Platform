@@ -17,11 +17,14 @@ interface CanvasPanelProps {
 }
 
 export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
-  // Extract current phase from framework_state (must be before any early returns for hooks)
+  // Extract current phase and highest phase reached from framework_state (must be before any early returns for hooks)
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const phase = frameworkState?.currentPhase as string | undefined;
+  const highest = frameworkState?.highestPhaseReached as string | undefined;
   const currentPhase: 'discovery' | 'research' | 'synthesis' | 'bets' =
     (phase === 'research' || phase === 'synthesis' || phase === 'bets') ? phase : 'discovery';
+  const highestPhaseReached: 'discovery' | 'research' | 'synthesis' | 'bets' =
+    (highest === 'research' || highest === 'synthesis' || highest === 'bets') ? highest : currentPhase;
 
   // Handle phase navigation via stepper clicks (must be before any early returns)
   const handlePhaseClick = useCallback(async (targetPhase: 'discovery' | 'research' | 'synthesis' | 'bets') => {
@@ -59,7 +62,7 @@ export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
   return (
     <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden h-full">
       <CanvasHeader conversation={conversation} />
-      <HorizontalProgressStepper currentPhase={currentPhase} onPhaseClick={handlePhaseClick} />
+      <HorizontalProgressStepper currentPhase={currentPhase} highestPhaseReached={highestPhaseReached} onPhaseClick={handlePhaseClick} />
       <div className="canvas-content flex-1 overflow-y-auto p-10">
         {/* Render phase-specific content */}
         {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} />}

@@ -79,11 +79,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
 
+    // Phase order for comparison
+    const PHASE_ORDER: Record<string, number> = {
+      discovery: 0,
+      research: 1,
+      synthesis: 2,
+      bets: 3,
+    };
+
     // Extract and update framework_state with new phase
     const existingState = ((convData as { framework_state: unknown }).framework_state as Record<string, unknown>) || {};
+    const currentHighest = existingState.highestPhaseReached as string | undefined;
+
+    // Only update highestPhaseReached if moving to a higher phase than ever before
+    const newHighest = currentHighest && PHASE_ORDER[currentHighest] >= PHASE_ORDER[phase]
+      ? currentHighest
+      : phase;
+
     const frameworkState = {
       ...existingState,
       currentPhase: phase,
+      highestPhaseReached: newHighest,
     };
 
     const { data: updated, error: updateError } = await rawSupabase

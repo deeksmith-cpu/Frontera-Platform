@@ -48,11 +48,15 @@ const STEPS: Step[] = [
 
 interface HorizontalProgressStepperProps {
   currentPhase: 'discovery' | 'research' | 'synthesis' | 'bets';
+  highestPhaseReached?: 'discovery' | 'research' | 'synthesis' | 'bets';
   onPhaseClick?: (phase: 'discovery' | 'research' | 'synthesis' | 'bets') => void;
 }
 
-export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: HorizontalProgressStepperProps) {
+export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, onPhaseClick }: HorizontalProgressStepperProps) {
   const currentIndex = STEPS.findIndex((s) => s.phase === currentPhase);
+  // Use highestPhaseReached if provided, otherwise fall back to current phase
+  const effectiveHighest = highestPhaseReached || currentPhase;
+  const highestIndex = STEPS.findIndex((s) => s.phase === effectiveHighest);
 
   // Helper function to get phase-specific classes
   const getPhaseClasses = (color: string, state: 'current' | 'complete') => {
@@ -109,14 +113,14 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
     <div className="horizontal-stepper py-3 px-4 md:py-4 md:px-8 bg-white border-b border-slate-100">
       <div className="flex items-center justify-between max-w-5xl mx-auto">
         {STEPS.map((step, index) => {
-          const isComplete = index < currentIndex;
           const isCurrent = index === currentIndex;
-          const isLocked = index > currentIndex;
+          const isVisited = index <= highestIndex && !isCurrent; // Any phase reached before (not current)
+          const isLocked = index > highestIndex; // Only lock phases beyond highest reached
           const Icon = step.icon;
           const nextStep = STEPS[index + 1];
 
-          // Clickable if completed or current (not locked/future)
-          const isClickable = (isComplete || isCurrent) && onPhaseClick;
+          // Clickable if visited or current (up to highest phase reached)
+          const isClickable = (isVisited || isCurrent) && onPhaseClick;
 
           return (
             <div key={step.id} className="flex items-center flex-1">
@@ -128,7 +132,7 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
                   className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-sm md:text-base transition-all duration-300 ${
                     isCurrent
                       ? `${getPhaseClasses(step.color, 'current')} text-white scale-110 shadow-lg`
-                      : isComplete
+                      : isVisited
                       ? `${getPhaseClasses(step.color, 'complete')} text-white shadow-md`
                       : 'bg-slate-200 text-slate-500'
                   } ${
@@ -140,7 +144,7 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
                   }`}
                   aria-label={`Go to ${step.label} phase`}
                 >
-                  {isComplete ? (
+                  {isVisited ? (
                     <CheckIcon className="text-white" size={16} />
                   ) : isCurrent ? (
                     <Icon className="text-white" size={16} />
@@ -153,7 +157,7 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
                 <div className="mt-1.5 md:mt-2 text-center">
                   <div
                     className={`text-xs md:text-sm font-bold ${
-                      isCurrent || isComplete ? 'text-slate-900' : 'text-slate-500'
+                      isCurrent || isVisited ? 'text-slate-900' : 'text-slate-500'
                     }`}
                   >
                     {step.label}
@@ -163,7 +167,7 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
                     className={`hidden md:block text-[10px] uppercase tracking-wider font-semibold mt-0.5 ${
                       isCurrent
                         ? getTextColorClass(step.color)
-                        : isComplete
+                        : isVisited
                         ? 'text-slate-500'
                         : 'text-slate-400'
                     }`}
@@ -190,7 +194,7 @@ export function HorizontalProgressStepper({ currentPhase, onPhaseClick }: Horizo
               {index < STEPS.length - 1 && (
                 <div
                   className={`h-0.5 md:h-1 flex-1 mx-1 md:mx-3 mt-[-24px] md:mt-[-32px] transition-all duration-300 rounded-full ${
-                    index < currentIndex
+                    index < highestIndex
                       ? getConnectorGradient(step.color, nextStep.color)
                       : 'bg-slate-200'
                   }`}
