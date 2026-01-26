@@ -1,11 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { renderToBuffer } from '@react-pdf/renderer';
 import React from 'react';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
-import { SynthesisReportDocument } from '@/lib/pdf/synthesis-report';
 
 // =============================================================================
 // Supabase Client
@@ -125,6 +123,10 @@ export async function GET(req: NextRequest) {
 
     // Cast client data for type compatibility
     const typedClient = clientData as unknown as Client | null;
+
+    // Dynamic import to avoid module loading issues
+    const { renderToBuffer } = await import('@react-pdf/renderer');
+    const { SynthesisReportDocument } = await import('@/lib/pdf/synthesis-report');
 
     // Create the document element - using type assertion for react-pdf compatibility
     const documentElement = React.createElement(SynthesisReportDocument, {
