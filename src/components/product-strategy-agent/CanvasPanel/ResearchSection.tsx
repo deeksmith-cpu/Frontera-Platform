@@ -18,6 +18,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
   const [territoryInsights, setTerritoryInsights] = useState<TerritoryInsight[]>([]);
   const [selectedTerritory, setSelectedTerritory] = useState<'company' | 'customer' | 'competitor' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Fetch territory insights on mount
   useEffect(() => {
@@ -60,6 +61,35 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
   const handleBackToOverview = () => {
     setSelectedTerritory(null);
   };
+
+  // Navigate to synthesis phase
+  const handleProceedToSynthesis = async () => {
+    setIsNavigating(true);
+    try {
+      const response = await fetch('/api/product-strategy-agent/phase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          phase: 'synthesis',
+        }),
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.error('Failed to navigate to synthesis phase');
+        setIsNavigating(false);
+      }
+    } catch (error) {
+      console.error('Error navigating to synthesis:', error);
+      setIsNavigating(false);
+    }
+  };
+
+  // Check if all territories are fully mapped
+  const mappedAreasCount = territoryInsights.filter((t) => t.status === 'mapped').length;
+  const allTerritoriesMapped = mappedAreasCount >= 9;
 
   // Deep dive view
   if (selectedTerritory === 'company') {
@@ -147,34 +177,76 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
         </div>
       )}
 
-      {/* Progress Indicator */}
-      <div className="mt-12 p-6 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-2xl border border-indigo-200">
-        <div className="flex items-center gap-4">
-          <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-slate-900 mb-1">Research Progress</h3>
-            <p className="text-sm text-slate-600">
-              Complete all territories to unlock synthesis and strategic insights.
-            </p>
-          </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-indigo-600">
-              {territoryInsights.filter((t) => t.status === 'mapped').length}
-              <span className="text-lg text-slate-400">/9</span>
+      {/* Progress Indicator or Proceed to Synthesis CTA */}
+      {allTerritoriesMapped ? (
+        <div className="mt-12 p-6 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-2xl border-2 border-emerald-300 shadow-lg">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
             </div>
-            <p className="text-xs text-slate-500">Areas Mapped</p>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-slate-900 mb-1">All Territories Mapped!</h3>
+              <p className="text-sm text-slate-600">
+                Your strategic terrain is fully explored. Proceed to synthesis to uncover strategic opportunities and insights.
+              </p>
+            </div>
+            <button
+              onClick={handleProceedToSynthesis}
+              disabled={isNavigating}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all"
+            >
+              {isNavigating ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span>Proceed to Synthesis</span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </>
+              )}
+            </button>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-12 p-6 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-2xl border border-indigo-200">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-slate-900 mb-1">Research Progress</h3>
+              <p className="text-sm text-slate-600">
+                Complete all territories to unlock synthesis and strategic insights.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-indigo-600">
+                {mappedAreasCount}
+                <span className="text-lg text-slate-400">/9</span>
+              </div>
+              <p className="text-xs text-slate-500">Areas Mapped</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
