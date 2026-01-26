@@ -8,9 +8,14 @@
 -- Add new columns to synthesis_outputs table
 -- These support the structured JSON synthesis from the PTW framework
 
--- Make output_type nullable (legacy field)
+-- Make output_type nullable and remove CHECK constraint (legacy field)
 ALTER TABLE synthesis_outputs
   ALTER COLUMN output_type DROP NOT NULL;
+
+-- Drop the CHECK constraint on output_type to allow NULL values
+-- The constraint name follows PostgreSQL's naming convention: table_column_check
+ALTER TABLE synthesis_outputs
+  DROP CONSTRAINT IF EXISTS synthesis_outputs_output_type_check;
 
 -- Make title nullable (legacy field)
 ALTER TABLE synthesis_outputs
