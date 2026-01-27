@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const nextConfig: NextConfig = {
+  // Fix workspace root detection issue (prevents Next.js from using wrong parent directory)
+  outputFileTracingRoot: __dirname,
+  // Opt-out react-pdf from bundling to avoid dual React instance issues
+  // See: https://github.com/diegomura/react-pdf/issues/2994
+  // Note: We can't externalize 'react' itself as it breaks React.cache in server components
+  serverExternalPackages: [
+    '@react-pdf/renderer',
+    '@react-pdf/reconciler',
+    '@react-pdf/layout',
+    '@react-pdf/render',
+    '@react-pdf/pdfkit',
+    '@react-pdf/font',
+    '@react-pdf/primitives',
+    '@react-pdf/fns',
+  ],
   // Performance optimizations
   poweredByHeader: false,
   compress: true,

@@ -512,6 +512,30 @@ await supabase.from('uploaded_materials').insert({
 - Documents stored in `uploaded_materials.extracted_context` as JSONB
 - UI: Modal in `DiscoverySection.tsx` with topics input and optional websites list
 
+### PDF Generation Pattern
+PDF exports use `@react-pdf/renderer` with subprocess isolation to avoid Next.js bundling conflicts.
+
+**Architecture:**
+- **Components**: `src/lib/pdf/{report-name}/` - React components using @react-pdf/renderer
+- **Subprocess**: `scripts/generate-pdf.mjs` - Isolated Node process for PDF rendering
+- **Shared Styles**: `src/lib/pdf/{report-name}/styles.ts` - Design tokens matching Frontera brand
+
+**Adding a new PDF report:**
+1. Create components in `src/lib/pdf/{report-name}/`
+2. Add generation logic to subprocess script or create new script
+3. Create API route that sanitizes data and spawns subprocess
+4. Pass data via stdin (JSON), receive PDF buffer via stdout
+
+**Why subprocess?** Direct @react-pdf/renderer imports cause dual React instance errors in Next.js App Router. Subprocess isolation sidesteps bundler conflicts.
+
+**Data Flow:**
+```
+API Route (sanitize types) → spawn subprocess → JSON to stdin → PDF buffer from stdout → Response
+```
+
+**Current implementations:**
+- Strategic Synthesis Report (`src/lib/pdf/synthesis-report/`)
+
 ## Testing
 
 ### Test Framework Stack

@@ -164,29 +164,19 @@ function OpportunityCard({ opportunity, index }: { opportunity: StrategicOpportu
       {/* PTW Summary (condensed) */}
       <View style={styles.mb8}>
         <Text style={[styles.label, styles.mb4]}>Playing to Win</Text>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 4 }]}>
+        <Text style={[styles.bodySmall, { marginBottom: 2 }]}>
+          {`Aspiration: ${truncate(opportunity.ptw.winningAspiration, 60)}`}
+        </Text>
+        <Text style={[styles.bodySmall, { marginBottom: 2 }]}>
+          {`Where: ${truncate(opportunity.ptw.whereToPlay, 60)}`}
+        </Text>
+        <Text style={[styles.bodySmall, { marginBottom: 2 }]}>
+          {`How: ${truncate(opportunity.ptw.howToWin, 60)}`}
+        </Text>
+        {opportunity.ptw.capabilitiesRequired && opportunity.ptw.capabilitiesRequired.length > 0 && (
           <Text style={styles.bodySmall}>
-            <Text style={{ fontFamily: 'Helvetica-Bold' }}>Aspiration:</Text> {truncate(opportunity.ptw.winningAspiration, 60)}
+            {`Capabilities: ${opportunity.ptw.capabilitiesRequired.slice(0, 3).join(', ')}${opportunity.ptw.capabilitiesRequired.length > 3 ? '...' : ''}`}
           </Text>
-        </View>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 4, marginTop: 2 }]}>
-          <Text style={styles.bodySmall}>
-            <Text style={{ fontFamily: 'Helvetica-Bold' }}>Where:</Text> {truncate(opportunity.ptw.whereToPlay, 60)}
-          </Text>
-        </View>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 4, marginTop: 2 }]}>
-          <Text style={styles.bodySmall}>
-            <Text style={{ fontFamily: 'Helvetica-Bold' }}>How:</Text> {truncate(opportunity.ptw.howToWin, 60)}
-          </Text>
-        </View>
-        {opportunity.ptw.capabilitiesRequired.length > 0 && (
-          <View style={[styles.row, { flexWrap: 'wrap', gap: 4, marginTop: 2 }]}>
-            <Text style={styles.bodySmall}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>Capabilities:</Text>{' '}
-              {opportunity.ptw.capabilitiesRequired.slice(0, 3).join(', ')}
-              {opportunity.ptw.capabilitiesRequired.length > 3 && '...'}
-            </Text>
-          </View>
         )}
       </View>
 
@@ -232,8 +222,7 @@ function OpportunityCard({ opportunity, index }: { opportunity: StrategicOpportu
             <View key={i} style={[styles.bulletItem]}>
               <View style={styles.bullet} />
               <Text style={styles.bulletText}>
-                <Text style={{ fontFamily: 'Helvetica-Bold' }}>[{assumption.category}]</Text>{' '}
-                {truncate(assumption.assumption, 70)}
+                {`[${assumption.category.toUpperCase()}] ${truncate(assumption.assumption, 70)}`}
               </Text>
             </View>
           ))}
@@ -250,31 +239,27 @@ export function OpportunityPages({ opportunities, companyName, startPage = 4 }: 
     pages.push(opportunities.slice(i, i + 2));
   }
 
-  return (
-    <>
-      {pages.map((pageOpportunities, pageIndex) => (
-        <Page key={pageIndex} size="A4" style={styles.page}>
-          {pageIndex === 0 && (
-            <>
-              <Text style={styles.h1}>Strategic Opportunities</Text>
-              <Text style={[styles.body, styles.mb16]}>
-                Detailed analysis of {opportunities.length} identified opportunities with scoring,
-                Playing to Win mapping, and key assumptions.
-              </Text>
-            </>
-          )}
+  // Return array of Page components directly (react-pdf handles arrays)
+  return pages.map((pageOpportunities, pageIndex) => (
+    <Page key={pageIndex} size="A4" style={styles.page}>
+      {pageIndex === 0 && (
+        <View>
+          <Text style={styles.h1}>Strategic Opportunities</Text>
+          <Text style={[styles.body, styles.mb16]}>
+            {`Detailed analysis of ${opportunities.length} identified opportunities with scoring, Playing to Win mapping, and key assumptions.`}
+          </Text>
+        </View>
+      )}
 
-          {pageOpportunities.map((opp, oppIndex) => (
-            <OpportunityCard
-              key={opp.id || oppIndex}
-              opportunity={opp}
-              index={pageIndex * 2 + oppIndex}
-            />
-          ))}
-
-          <PageFooter companyName={companyName} pageNumber={startPage + pageIndex} />
-        </Page>
+      {pageOpportunities.map((opp, oppIndex) => (
+        <OpportunityCard
+          key={opp.id || oppIndex}
+          opportunity={opp}
+          index={pageIndex * 2 + oppIndex}
+        />
       ))}
-    </>
-  );
+
+      <PageFooter companyName={companyName} pageNumber={startPage + pageIndex} />
+    </Page>
+  ));
 }

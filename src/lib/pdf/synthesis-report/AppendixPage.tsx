@@ -111,25 +111,25 @@ export function AppendixPage({ synthesis, companyName, pageNumber }: AppendixPag
           <View style={styles.bulletItem}>
             <View style={[styles.bullet, { backgroundColor: COLORS.emerald[500] }]} />
             <Text style={styles.bulletText}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>INVEST:</Text> High market + High capability - prioritize resources
+              {`INVEST: High market + High capability - prioritize resources`}
             </Text>
           </View>
           <View style={styles.bulletItem}>
             <View style={[styles.bullet, { backgroundColor: COLORS.indigo[500] }]} />
             <Text style={styles.bulletText}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>EXPLORE:</Text> High market + Low capability - build or partner
+              {`EXPLORE: High market + Low capability - build or partner`}
             </Text>
           </View>
           <View style={styles.bulletItem}>
             <View style={[styles.bullet, { backgroundColor: COLORS.amber[500] }]} />
             <Text style={styles.bulletText}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>HARVEST:</Text> Low market + High capability - optimize efficiency
+              {`HARVEST: Low market + High capability - optimize efficiency`}
             </Text>
           </View>
           <View style={styles.bulletItem}>
             <View style={[styles.bullet, { backgroundColor: COLORS.slate[400] }]} />
             <Text style={styles.bulletText}>
-              <Text style={{ fontFamily: 'Helvetica-Bold' }}>DIVEST:</Text> Low market + Low capability - deprioritize
+              {`DIVEST: Low market + Low capability - deprioritize`}
             </Text>
           </View>
         </View>

@@ -13,6 +13,7 @@ interface SynthesisReportProps {
   synthesis: SynthesisResult;
   client: Client | null;
   generatedAt: Date;
+  skipSvg?: boolean; // Debug flag to skip SVG page
 }
 
 /**
@@ -33,12 +34,15 @@ export function SynthesisReportDocument({
   synthesis,
   client,
   generatedAt,
+  skipSvg = false,
 }: SynthesisReportProps) {
   const companyName = client?.company_name;
 
-  // Calculate page numbers
+  // Calculate page numbers (adjust if SVG page is skipped)
+  const mapPageNumber = skipSvg ? 0 : 1;
+  const opportunityStartPage = 3 + mapPageNumber;
   const opportunityPagesCount = Math.ceil(synthesis.opportunities.length / 2);
-  const tensionsPageNumber = 4 + opportunityPagesCount;
+  const tensionsPageNumber = opportunityStartPage + opportunityPagesCount;
   const appendixPageNumber = synthesis.tensions.length > 0 ? tensionsPageNumber + 1 : tensionsPageNumber;
 
   return (
@@ -55,18 +59,20 @@ export function SynthesisReportDocument({
       {/* Page 2: Executive Summary */}
       <ExecutiveSummaryPage synthesis={synthesis} client={client} />
 
-      {/* Page 3: Strategic Opportunity Map */}
-      <StrategicMapPage
-        opportunities={synthesis.opportunities}
-        companyName={companyName}
-      />
+      {/* Page 3: Strategic Opportunity Map (optional SVG) */}
+      {!skipSvg && (
+        <StrategicMapPage
+          opportunities={synthesis.opportunities}
+          companyName={companyName}
+        />
+      )}
 
       {/* Pages 4+: Opportunities (2 per page) */}
-      <OpportunityPages
-        opportunities={synthesis.opportunities}
-        companyName={companyName}
-        startPage={4}
-      />
+      {OpportunityPages({
+        opportunities: synthesis.opportunities,
+        companyName,
+        startPage: opportunityStartPage,
+      })}
 
       {/* Tensions Page (if any) */}
       {synthesis.tensions.length > 0 && (

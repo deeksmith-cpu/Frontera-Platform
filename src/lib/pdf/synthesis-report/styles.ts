@@ -1,4 +1,6 @@
-import { StyleSheet } from '@react-pdf/renderer';
+// Note: We use plain style objects instead of StyleSheet.create() to avoid
+// dual React instance issues when this module is imported dynamically.
+// StyleSheet.create() is optional in react-pdf - plain objects work fine.
 
 // Frontera brand colors
 export const COLORS = {
@@ -77,8 +79,8 @@ export const IMPACT_COLORS = {
   minor: COLORS.slate[500],
 };
 
-// Shared PDF styles
-export const styles = StyleSheet.create({
+// Shared PDF styles (plain objects - react-pdf accepts these directly)
+export const styles = {
   // Page layouts
   page: {
     padding: 40,
@@ -302,7 +304,7 @@ export const styles = StyleSheet.create({
     color: COLORS.slate[700],
     lineHeight: 1.4,
   },
-});
+};
 
 // Helper to get quadrant badge style
 export function getQuadrantBadgeStyle(quadrant: string) {

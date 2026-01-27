@@ -1,9 +1,61 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import React from 'react';
+import { spawn } from 'child_process';
+import path from 'path';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
+
+// =============================================================================
+// PDF Generation via Child Process
+// =============================================================================
+
+interface PdfInput {
+  synthesis: SynthesisResult;
+  client: Client | null;
+  generatedAt: string;
+}
+
+/**
+ * Generate PDF using a standalone Node.js script to avoid
+ * Next.js bundling issues with @react-pdf/renderer.
+ */
+async function generatePdfBuffer(input: PdfInput): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const scriptPath = path.join(process.cwd(), 'scripts', 'generate-pdf.mjs');
+
+    const child = spawn('node', [scriptPath], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    const chunks: Buffer[] = [];
+    const errorChunks: Buffer[] = [];
+
+    child.stdout.on('data', (chunk: Buffer) => {
+      chunks.push(chunk);
+    });
+
+    child.stderr.on('data', (chunk: Buffer) => {
+      errorChunks.push(chunk);
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(Buffer.concat(chunks));
+      } else {
+        const errorMessage = Buffer.concat(errorChunks).toString('utf8');
+        reject(new Error(`PDF generation failed (exit code ${code}): ${errorMessage}`));
+      }
+    });
+
+    child.on('error', (error) => {
+      reject(error);
+    });
+
+    child.stdin.write(JSON.stringify(input));
+    child.stdin.end();
+  });
+}
 
 // =============================================================================
 // Supabase Client
@@ -188,20 +240,17 @@ export async function GET(req: NextRequest) {
     // Cast client data for type compatibility
     const typedClient = clientData as unknown as Client | null;
 
-    // Dynamic import to avoid module loading issues
-    const { renderToBuffer } = await import('@react-pdf/renderer');
-    const { SynthesisReportDocument } = await import('@/lib/pdf/synthesis-report');
+    console.log('Creating PDF via subprocess...');
+    console.log('Client data:', typedClient ? { company_name: typedClient.company_name, industry: typedClient.industry } : null);
 
-    // Create the document element - using type assertion for react-pdf compatibility
-    const documentElement = React.createElement(SynthesisReportDocument, {
+    // Generate PDF using standalone script (runs outside Next.js bundling)
+    const pdfBuffer = await generatePdfBuffer({
       synthesis: sanitizedSynthesis,
       client: typedClient,
-      generatedAt: new Date(),
+      generatedAt: new Date().toISOString(),
     });
 
-    const pdfBuffer = await renderToBuffer(
-      documentElement as unknown as React.ReactElement
-    );
+    console.log('PDF render complete');
 
     // Convert Buffer to Uint8Array for NextResponse compatibility
     const pdfBytes = new Uint8Array(pdfBuffer);
