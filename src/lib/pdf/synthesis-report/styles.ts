@@ -80,6 +80,7 @@ export const IMPACT_COLORS = {
 };
 
 // Shared PDF styles (plain objects - react-pdf accepts these directly)
+// Using 'as const' to ensure TypeScript infers literal types for flexbox properties
 export const styles = {
   // Page layouts
   page: {
@@ -304,7 +305,7 @@ export const styles = {
     color: COLORS.slate[700],
     lineHeight: 1.4,
   },
-};
+} as const;
 
 // Helper to get quadrant badge style
 export function getQuadrantBadgeStyle(quadrant: string) {
