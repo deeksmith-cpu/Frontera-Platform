@@ -435,7 +435,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
             id="file-upload"
             type="file"
             className="hidden"
-            accept=".pdf,.docx,.txt"
+            accept=".pdf,.doc,.docx,.txt,.md,.rtf,.xlsx,.xls,.csv,.pptx,.ppt,.png,.jpg,.jpeg"
             onChange={handleFileUpload}
             disabled={isUploading}
           />

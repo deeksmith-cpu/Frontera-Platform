@@ -526,6 +526,15 @@ PDF exports use `@react-pdf/renderer` with subprocess isolation to avoid Next.js
 3. Create API route that sanitizes data and spawns subprocess
 4. Pass data via stdin (JSON), receive PDF buffer via stdout
 
+**Style typing requirement:** Use `as const` on style objects to ensure TypeScript infers literal types for flexbox properties (`flexDirection`, `alignItems`, `justifyContent`, etc.). Without this, TypeScript infers `string` which is incompatible with react-pdf's strict types.
+
+```typescript
+// Correct - literal types preserved
+export const styles = {
+  row: { flexDirection: 'row', alignItems: 'center' },
+} as const;
+```
+
 **Why subprocess?** Direct @react-pdf/renderer imports cause dual React instance errors in Next.js App Router. Subprocess isolation sidesteps bundler conflicts.
 
 **Data Flow:**

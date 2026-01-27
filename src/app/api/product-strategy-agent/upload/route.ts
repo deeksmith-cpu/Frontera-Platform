@@ -132,10 +132,29 @@ export async function POST(req: NextRequest) {
       }
 
       // Validate file type
-      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+      const allowedTypes = [
+        // Documents
+        'application/pdf',                                                              // .pdf
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',      // .docx
+        'application/msword',                                                           // .doc
+        'text/plain',                                                                   // .txt
+        'text/markdown',                                                                // .md
+        'application/rtf',                                                              // .rtf
+        'text/rtf',                                                                     // .rtf (alternative)
+        // Spreadsheets
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',            // .xlsx
+        'application/vnd.ms-excel',                                                     // .xls
+        'text/csv',                                                                     // .csv
+        // Presentations
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',   // .pptx
+        'application/vnd.ms-powerpoint',                                               // .ppt
+        // Images
+        'image/png',                                                                    // .png
+        'image/jpeg',                                                                   // .jpg, .jpeg
+      ];
       if (!allowedTypes.includes(file.type)) {
         return NextResponse.json(
-          { error: 'Invalid file type. Only PDF, DOCX, and TXT are allowed.' },
+          { error: 'Invalid file type. Supported: PDF, Word, Excel, PowerPoint, TXT, CSV, Markdown, RTF, PNG, JPG.' },
           { status: 400 }
         );
       }
