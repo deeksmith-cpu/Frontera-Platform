@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database, Client, ClientOnboarding, StrategicFocus, ClientTier } from "@/types/database";
+import type { PersonaId } from "./personas";
 
 /**
  * Client context loaded from the database for the Strategy Coach.
@@ -24,6 +25,9 @@ export interface ClientContext {
   additionalContext: string | null;
   successMetrics: string[];
   timelineExpectations: string | null;
+
+  // Coaching persona (optional)
+  persona: PersonaId | undefined;
 
   // Metadata
   clerkOrgId: string;
@@ -90,6 +94,11 @@ export async function loadClientContext(clerkOrgId: string): Promise<ClientConte
   // Determine strategic focus - prefer client record, fall back to onboarding
   const strategicFocus = (client.strategic_focus as StrategicFocus) || onboarding?.strategic_focus || null;
 
+  // Extract coaching persona from preferences if available
+  // coaching_preferences is a JSONB column with { persona?: PersonaId }
+  const coachingPreferences = (client as { coaching_preferences?: { persona?: string } }).coaching_preferences;
+  const persona = coachingPreferences?.persona as PersonaId | undefined;
+
   // Build the context object, merging data from both sources
   return {
     // Organization identity
@@ -113,6 +122,9 @@ export async function loadClientContext(clerkOrgId: string): Promise<ClientConte
     additionalContext: onboarding?.additional_context || null,
     successMetrics: onboarding?.success_metrics || [],
     timelineExpectations: onboarding?.timeline_expectations || null,
+
+    // Coaching persona
+    persona,
 
     // Metadata
     clerkOrgId,

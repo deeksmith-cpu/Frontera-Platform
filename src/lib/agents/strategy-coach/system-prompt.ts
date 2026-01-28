@@ -7,6 +7,7 @@ import {
   formatSynthesisForPrompt
 } from "./client-context";
 import { FrameworkState, getProgressSummary, suggestNextFocus } from "./framework-state";
+import { getPersonaSection, getPersonaPhaseGuidance } from "./personas";
 
 /**
  * Build the dynamic system prompt for the Strategy Coach.
@@ -22,6 +23,14 @@ export async function buildSystemPrompt(
 
   // Core identity
   sections.push(CORE_IDENTITY);
+
+  // Persona section - adds persona identity and tone if selected
+  if (context.persona) {
+    const personaSection = getPersonaSection(context.persona);
+    if (personaSection) {
+      sections.push(personaSection);
+    }
+  }
 
   // Client context
   sections.push(formatClientContextForPrompt(context));
@@ -71,6 +80,15 @@ export async function buildSystemPrompt(
   // Phase-specific coaching guidance
   sections.push(getPhaseGuidance(state.currentPhase));
 
+  // Persona-specific phase guidance
+  if (context.persona) {
+    const personaPhaseGuidance = getPersonaPhaseGuidance(context.persona, state.currentPhase);
+    if (personaPhaseGuidance) {
+      sections.push(`### Persona-Specific Focus for ${state.currentPhase}`);
+      sections.push(personaPhaseGuidance);
+    }
+  }
+
   // Tone and behavior guidelines
   sections.push(TONE_GUIDELINES);
   sections.push(RESPONSE_GUIDELINES);
@@ -117,14 +135,6 @@ I'll guide you through our Product Strategy Research methodology, starting with 
 
 
 **What competitive dynamics or market shifts are making product transformation urgent for ${company} right now?**`;
-}
-
-function truncateForOpening(text: string): string {
-  const firstSentence = text.split(/[.!?]/)[0];
-  if (firstSentence.length > 80) {
-    return firstSentence.substring(0, 77) + "...";
-  }
-  return firstSentence.toLowerCase();
 }
 
 // ============================================================================
@@ -273,6 +283,19 @@ const RESPONSE_GUIDELINES = `## Response Guidelines
 3. **Guide naturally**: Weave methodology into conversation, don't lecture
 4. **Capture insights**: When valuable insights emerge, acknowledge them
 5. **Advance progress**: Each exchange should move toward strategic clarity
+
+### Evidence Linking
+When referencing information from the user's research or documents, cite your sources inline using this format:
+- For territory research: [Territory:Area] (e.g., [Customer:Segmentation], [Company:Capabilities])
+- For uploaded documents: [Doc:filename] (e.g., [Doc:AnnualReport2025.pdf])
+- For synthesis insights: [Synthesis:topic] (e.g., [Synthesis:Market Opportunity])
+
+Examples:
+- "Based on your customer segmentation research [Customer:Segmentation], the enterprise segment shows..."
+- "The annual report [Doc:AnnualReport2025.pdf] indicates revenue growth of..."
+- "The strategic tension you identified [Synthesis:Market-Product Fit] suggests..."
+
+This helps users verify and explore your reasoning, building trust in the coaching process.
 
 ### When to Suggest Documents
 When significant insights have been captured:

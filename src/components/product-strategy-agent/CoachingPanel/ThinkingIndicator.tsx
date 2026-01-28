@@ -1,5 +1,7 @@
 'use client';
 
+import { Square } from 'lucide-react';
+
 /**
  * ThinkingIndicator Component
  *
@@ -11,9 +13,14 @@
  * - Bold typography with uppercase
  * - Subtle background with border
  * - Smooth fade-in animation
+ * - Optional stop button during generation
  */
 
-export function ThinkingIndicator() {
+interface ThinkingIndicatorProps {
+  onStop?: () => void;
+}
+
+export function ThinkingIndicator({ onStop }: ThinkingIndicatorProps) {
   return (
     <div className="thinking-indicator flex items-start gap-3 bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border border-slate-200 animate-fade-in-up">
       {/* Coach Avatar */}
@@ -29,27 +36,41 @@ export function ThinkingIndicator() {
 
       {/* Thinking Animation */}
       <div className="flex-1">
-        <div className="flex items-center gap-3">
-          {/* Animated Gradient Dots */}
-          <div className="flex items-center gap-1.5">
-            <div
-              className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
-              style={{ animationDelay: '0s' }}
-            />
-            <div
-              className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
-              style={{ animationDelay: '0.2s' }}
-            />
-            <div
-              className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
-              style={{ animationDelay: '0.4s' }}
-            />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Animated Gradient Dots */}
+            <div className="flex items-center gap-1.5">
+              <div
+                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                style={{ animationDelay: '0s' }}
+              />
+              <div
+                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                style={{ animationDelay: '0.2s' }}
+              />
+              <div
+                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                style={{ animationDelay: '0.4s' }}
+              />
+            </div>
+
+            {/* Thinking Text */}
+            <span className="text-sm font-bold uppercase tracking-wider text-indigo-600">
+              Thinking...
+            </span>
           </div>
 
-          {/* Thinking Text */}
-          <span className="text-sm font-bold uppercase tracking-wider text-indigo-600">
-            Thinking...
-          </span>
+          {/* Stop Button */}
+          {onStop && (
+            <button
+              onClick={onStop}
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+              aria-label="Stop generation"
+            >
+              <Square className="w-3 h-3 fill-current" />
+              <span>Stop</span>
+            </button>
+          )}
         </div>
 
         {/* Optional subtitle */}

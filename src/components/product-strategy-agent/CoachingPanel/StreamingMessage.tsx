@@ -1,5 +1,8 @@
 'use client';
 
+import Image from 'next/image';
+import { Square } from 'lucide-react';
+
 /**
  * StreamingMessage Component
  *
@@ -7,66 +10,55 @@
  *
  * Features:
  * - Animated typing cursor during streaming
- * - Bold border when actively streaming
- * - Stop button to halt streaming
- * - Smooth fade-in animation
- * - Preserves formatting with whitespace-pre-wrap
+ * - Stop button to halt generation
+ * - Matches Message component styling for consistency
+ * - Smooth animations with Frontera design system
  */
 
 interface StreamingMessageProps {
   content: string;
-  isStreaming: boolean;
   onStop?: () => void;
 }
 
-export function StreamingMessage({ content, isStreaming, onStop }: StreamingMessageProps) {
+export function StreamingMessage({ content, onStop }: StreamingMessageProps) {
   return (
-    <div
-      className={`streaming-message flex items-start gap-3 bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 transition-all ${
-        isStreaming ? 'border-2 border-indigo-200' : 'border border-slate-200'
-      }`}
-    >
-      {/* Coach Avatar */}
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 flex-shrink-0">
-        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-            clipRule="evenodd"
+    <div className="message flex flex-col gap-3 agent animate-fade-in">
+      <div className="message-header flex items-center gap-2.5">
+        <div className="message-avatar w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-md">
+          <Image
+            src="/frontera-logo-F.jpg"
+            alt="Frontera"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
           />
-        </svg>
-      </div>
-
-      {/* Message Content */}
-      <div className="flex-1 min-w-0">
-        {/* Label */}
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+        </div>
+        <span className="message-role text-xs uppercase tracking-wider text-slate-600 font-semibold">
           Frontera Coach
-        </div>
-
-        {/* Streaming Content with Typing Cursor */}
-        <div className="text-base text-slate-900 leading-relaxed whitespace-pre-wrap break-words">
-          {content}
-          {isStreaming && (
-            <span className="inline-block w-0.5 h-5 bg-gradient-to-b from-indigo-600 to-cyan-600 animate-pulse ml-1 align-text-bottom" />
-          )}
-        </div>
-
-        {/* Stop Button - Only visible when streaming */}
-        {isStreaming && onStop && (
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
+        </span>
+        <div className="flex items-center gap-2 ml-auto">
+          {/* Streaming indicator */}
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
+            <span className="text-xs text-indigo-600 font-semibold">Streaming</span>
+          </div>
+          {/* Stop button */}
+          {onStop && (
             <button
               onClick={onStop}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-red-300 rounded-lg text-red-700 font-semibold hover:bg-red-50 hover:border-red-400 transition-all text-sm"
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+              aria-label="Stop generation"
             >
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <rect x="6" y="6" width="8" height="8" rx="1" />
-              </svg>
-              Stop Generating
+              <Square className="w-3 h-3 fill-current" />
+              <span>Stop</span>
             </button>
-            <span className="text-xs text-slate-500">ESC to stop</span>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
+      <div className="message-content pl-10 text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
+        {content}
+        {/* Typing cursor */}
+        <span className="inline-block w-0.5 h-4 ml-0.5 bg-gradient-to-b from-indigo-600 to-cyan-600 animate-pulse rounded-sm align-text-bottom" />
       </div>
     </div>
   );

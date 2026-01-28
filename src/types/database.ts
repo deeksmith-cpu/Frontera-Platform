@@ -41,6 +41,13 @@ export type OutputType =
 export type ClientTier = "pilot" | "standard" | "enterprise";
 
 // Client record (linked to Clerk Organization)
+// Coaching persona preferences structure
+export interface CoachingPreferences {
+  persona?: 'marcus' | 'elena' | 'richard';
+  selected_at?: string;
+  auto_recommended?: boolean;
+}
+
 export interface Client {
   id: string;
   clerk_org_id: string;
@@ -58,6 +65,7 @@ export interface Client {
     features: Record<string, boolean>;
   };
   tier: ClientTier;
+  coaching_preferences: CoachingPreferences;
   created_at: string;
   updated_at: string;
   onboarding_id: string | null;

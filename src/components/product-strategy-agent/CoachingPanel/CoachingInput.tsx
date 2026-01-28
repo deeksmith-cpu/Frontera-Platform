@@ -1,15 +1,104 @@
 'use client';
 
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, KeyboardEvent, useMemo } from 'react';
+import { Sparkles } from 'lucide-react';
+
+interface TerritoryProgress {
+  mapped: number;
+  total: number;
+}
+
+interface SmartPromptsContext {
+  phase: string;
+  materialsCount: number;
+  territoryProgress: {
+    company: TerritoryProgress;
+    customer: TerritoryProgress;
+    competitor: TerritoryProgress;
+  };
+  synthesisAvailable: boolean;
+}
+
+interface SmartPrompt {
+  text: string;
+  category: 'discovery' | 'research' | 'synthesis' | 'bets' | 'general';
+}
 
 interface CoachingInputProps {
   onSendMessage: (content: string) => void;
   isDisabled: boolean;
+  smartPromptsContext?: SmartPromptsContext;
 }
 
-export function CoachingInput({ onSendMessage, isDisabled }: CoachingInputProps) {
+// Generate smart prompts based on context
+function getSmartPrompts(context?: SmartPromptsContext): SmartPrompt[] {
+  if (!context) return [];
+
+  const { phase, materialsCount, territoryProgress, synthesisAvailable } = context;
+  const prompts: SmartPrompt[] = [];
+
+  // Discovery phase prompts
+  if (phase === 'discovery') {
+    if (materialsCount === 0) {
+      prompts.push({ text: "What documents should I upload to get started?", category: 'discovery' });
+      prompts.push({ text: "Help me think through our strategic challenges", category: 'discovery' });
+    } else {
+      prompts.push({ text: "What insights can you share from my documents?", category: 'discovery' });
+      prompts.push({ text: "Am I ready to start mapping strategic terrain?", category: 'discovery' });
+    }
+  }
+
+  // Research phase prompts
+  if (phase === 'research') {
+    const { company, customer, competitor } = territoryProgress;
+
+    if (company.mapped < company.total) {
+      prompts.push({ text: "What should I focus on in Company territory?", category: 'research' });
+    }
+    if (customer.mapped < customer.total) {
+      prompts.push({ text: "Help me understand our customer segments", category: 'research' });
+    }
+    if (competitor.mapped < competitor.total) {
+      prompts.push({ text: "What competitive dynamics should I explore?", category: 'research' });
+    }
+
+    const totalMapped = company.mapped + customer.mapped + competitor.mapped;
+    if (totalMapped >= 4 && !synthesisAvailable) {
+      prompts.push({ text: "Am I ready to generate the strategic synthesis?", category: 'research' });
+    }
+  }
+
+  // Synthesis phase prompts
+  if (phase === 'synthesis') {
+    prompts.push({ text: "Walk me through the strategic opportunities", category: 'synthesis' });
+    prompts.push({ text: "What tensions exist in the synthesis?", category: 'synthesis' });
+    prompts.push({ text: "Help me formulate Strategic Bets", category: 'synthesis' });
+  }
+
+  // Bets phase prompts
+  if (phase === 'bets' || phase === 'planning') {
+    prompts.push({ text: "How should I prioritize these Strategic Bets?", category: 'bets' });
+    prompts.push({ text: "What success metrics should each bet have?", category: 'bets' });
+    prompts.push({ text: "What are the key risks for each bet?", category: 'bets' });
+  }
+
+  // Add general fallback prompts if we have few phase-specific ones
+  if (prompts.length < 2) {
+    prompts.push({ text: "What should I focus on next?", category: 'general' });
+    prompts.push({ text: "Help me understand my strategic position", category: 'general' });
+  }
+
+  return prompts.slice(0, 3); // Max 3 prompts
+}
+
+export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }: CoachingInputProps) {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const smartPrompts = useMemo(
+    () => getSmartPrompts(smartPromptsContext),
+    [smartPromptsContext]
+  );
 
   const handleSend = () => {
     if (value.trim() && !isDisabled) {
@@ -18,6 +107,12 @@ export function CoachingInput({ onSendMessage, isDisabled }: CoachingInputProps)
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
+    }
+  };
+
+  const handlePromptClick = (promptText: string) => {
+    if (!isDisabled) {
+      onSendMessage(promptText);
     }
   };
 
@@ -36,12 +131,34 @@ export function CoachingInput({ onSendMessage, isDisabled }: CoachingInputProps)
   };
 
   return (
-    <div className="coaching-input p-6 border-t border-slate-100 bg-white">
+    <div className="coaching-input p-4 border-t border-slate-100 bg-white">
+      {/* Smart Prompts */}
+      {!isDisabled && smartPrompts.length > 0 && (
+        <div className="mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Sparkles className="w-3 h-3 text-indigo-500" />
+            <span className="text-xs text-slate-500 font-medium">Suggested prompts</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {smartPrompts.map((prompt, i) => (
+              <button
+                key={i}
+                onClick={() => handlePromptClick(prompt.text)}
+                className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full border border-slate-200 transition-colors hover:border-slate-300"
+              >
+                {prompt.text}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Input area */}
       <div className="input-wrapper relative">
         <textarea
           ref={textareaRef}
           className="input-field w-full text-sm p-4 pr-14 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400"
-          rows={3}
+          rows={2}
           placeholder="Share your insights or ask a question..."
           value={value}
           onChange={handleInput}
