@@ -1,4 +1,5 @@
-import type { Client, ClientOnboarding, ClientTier, StrategicFocus } from '@/types/database';
+import type { Client, ClientOnboarding, ClientTier, StrategicFocus, CoachingPreferences } from '@/types/database';
+import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 
 // Counter for unique IDs
 let clientIdCounter = 1;
@@ -24,6 +25,7 @@ export const createMockClient = (overrides: Partial<Client> = {}): Client => {
       features: {},
     },
     tier: 'standard' as ClientTier,
+    coaching_preferences: {} as CoachingPreferences,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     onboarding_id: null,
@@ -70,6 +72,7 @@ export const createMockClientContext = (overrides: Partial<{
   additionalContext: string | null;
   successMetrics: string[];
   timelineExpectations: string | null;
+  persona: PersonaId | undefined;
   clerkOrgId: string;
   clientId: string;
 }> = {}) => ({
@@ -85,6 +88,7 @@ export const createMockClientContext = (overrides: Partial<{
   additionalContext: null,
   successMetrics: ['metrics_evidence', 'outcomes'],
   timelineExpectations: '6-12 months',
+  persona: undefined,
   clerkOrgId: 'org_test456',
   clientId: 'client_test_1',
   ...overrides,
