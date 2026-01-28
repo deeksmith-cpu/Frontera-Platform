@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Users, ChevronDown, Check } from 'lucide-react';
 import { PERSONA_OPTIONS, type PersonaId } from '@/lib/agents/strategy-coach/personas';
 
@@ -16,8 +16,33 @@ export function PersonaSelector({
   isLoading = false,
 }: PersonaSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
 
   const selected = PERSONA_OPTIONS.find((p) => p.id === currentPersona);
+
+  // Calculate dropdown position when opening
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownWidth = 320; // w-80 = 20rem = 320px
+
+      // Position below the button, aligned to the right edge
+      let left = rect.right - dropdownWidth;
+
+      // Ensure it doesn't go off the left edge of the screen
+      if (left < 16) {
+        left = 16;
+      }
+
+      setDropdownStyle({
+        position: 'fixed',
+        top: rect.bottom + 8,
+        left: left,
+        width: dropdownWidth,
+      });
+    }
+  }, [isOpen]);
 
   const handleSelect = (personaId: PersonaId | null) => {
     onSelect(personaId);
@@ -52,6 +77,7 @@ export function PersonaSelector({
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
         className="flex items-center gap-2 text-sm px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -71,19 +97,22 @@ export function PersonaSelector({
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-[99]"
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Dropdown */}
-          <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 overflow-hidden">
+          {/* Dropdown - fixed position calculated from button */}
+          <div
+            className="bg-white rounded-2xl shadow-xl border border-slate-200 z-[100] overflow-hidden"
+            style={dropdownStyle}
+          >
             <div className="p-3 border-b border-slate-100">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Choose Your Coach
               </p>
             </div>
 
-            <div className="p-2 space-y-1">
+            <div className="p-2 space-y-1 max-h-[60vh] overflow-y-auto">
               {/* Default Coach Option */}
               <button
                 onClick={() => handleSelect(null)}
