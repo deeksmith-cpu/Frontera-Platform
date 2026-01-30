@@ -32,8 +32,16 @@ async function generatePdfViaSubprocess(input: {
   }
 
   return new Promise<Buffer>((resolve, reject) => {
+    // Set cwd and NODE_PATH so the subprocess can find node_modules
+    // (the script runs from /tmp but modules are in the function directory)
+    const functionDir = process.cwd();
+    const nodeModulesPath = path.join(functionDir, 'node_modules');
+    console.log('Spawning PDF subprocess, cwd:', functionDir, 'NODE_PATH:', nodeModulesPath);
+
     const child = spawn('node', [tmpScript], {
       stdio: ['pipe', 'pipe', 'pipe'],
+      cwd: functionDir,
+      env: { ...process.env, NODE_PATH: nodeModulesPath },
     });
 
     const chunks: Buffer[] = [];
