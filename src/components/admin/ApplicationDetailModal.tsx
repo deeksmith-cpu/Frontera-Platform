@@ -233,7 +233,7 @@ export default function ApplicationDetailModal({
                   onChange={(e) => setReviewNotes(e.target.value)}
                   placeholder="Add notes about your decision..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
                 />
               ) : (
                 <p className="text-gray-700">{application.review_notes}</p>

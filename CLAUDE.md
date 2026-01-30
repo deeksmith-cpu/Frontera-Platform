@@ -157,19 +157,25 @@ Types defined in `src/types/database.ts`.
 
 ## Design Principles
 
-> **Last Updated**: January 11, 2026
-> **Based On**: Strategy Coach v2 Mockup - Finalized Design
+> **Last Updated**: January 29, 2026
+> **Based On**: Brand Design Update v1 - Navy + Gold + Cyan
 
 ### Visual Identity
 
-Frontera's design system creates a professional, confident, and modern aesthetic that balances trust with innovation. The design communicates strategic depth through careful use of color, typography, and spatial relationships.
+Frontera's design system creates a premium, authoritative, and distinctive aesthetic. The deep navy foundation communicates trust and strategic depth, while the gold accent conveys premium quality and forward momentum. Cyan serves as a supporting data/interactive color.
 
 ### Color Palette
 
-**Primary Colors:**
-- **Indigo** (`#1e3a8a` / `indigo-600`): Primary brand color, represents depth and strategic thinking
-- **Cyan** (`#06b6d4` / `cyan-600`): Secondary brand color, represents innovation and clarity
-- **Gradient**: `from-indigo-600 to-cyan-600` for primary actions and brand elements
+**Primary Brand Colors:**
+- **Frontera Navy** (`#1a1f3a`): Primary brand color, backgrounds, headings, key UI elements
+- **Premium Gold** (`#fbbf24`): Primary accent, CTAs, highlights, premium features
+- **Deep Blue** (`#2d3561`): Secondary brand, gradients, hover states
+
+**Cyan Scale (Data/Interactive):**
+- **Cyan 600** (`#0891b2`): Data visualization accent
+- **Cyan 400** (`#22d3ee`): Interactive element highlights
+- **Cyan 200** (`#a5f3fc`): Subtle backgrounds, borders
+- **Cyan 50** (`#ecfeff`): Tint for panels and cards
 
 **Neutral Colors:**
 - **Slate 900** (`text-slate-900`): Primary text, headings
@@ -181,49 +187,55 @@ Frontera's design system creates a professional, confident, and modern aesthetic
 - **Slate 100** (`border-slate-100`): Subtle dividers
 - **Slate 50** (`bg-slate-50`): Subtle backgrounds
 
-**Accent Colors:**
-- **Emerald** (`emerald-600`, `emerald-50`): Success states, discovery phase indicators
-- **Amber** (`amber-600`, `amber-50`): Warning states, research phase indicators
+**Phase Colors (Strategy Coach - Functional/Semantic):**
+- **Emerald** (`emerald-600`, `emerald-50`): Discovery phase indicators
+- **Amber** (`amber-600`, `amber-50`): Research/Landscape phase indicators
 - **Purple** (`purple-600`, `purple-50`): Synthesis phase indicators
-- **Cyan** (`cyan-600`, `cyan-50`): Active states, planning phase indicators
+- **Cyan** (`cyan-600`, `cyan-50`): Strategic Bets/Planning phase indicators
+
+**Semantic Colors:**
+- **Success**: `#10b981` (emerald-500)
+- **Warning**: `#d97706` (amber-600) - deliberately darker than gold to avoid confusion
+- **Error**: `#ef4444` (red-500)
+- **Info**: `#3b82f6` (blue-500)
 
 **Usage Guidelines:**
-- Use indigo-to-cyan gradients for primary CTAs and brand elements (logos, buttons)
+- Use solid Gold `#fbbf24` for primary CTAs with dark text (`text-slate-900`)
+- Use solid Navy `#1a1f3a` for secondary buttons with white text
+- Use Cyan borders (`border-cyan-200/300`) for tertiary buttons and cards
 - Use slate for all text and borders (never pure black/gray)
-- Use phase-specific colors (emerald, amber, purple, cyan) only for status indicators
-- Maintain WCAG AA contrast ratios: slate-900 on white for body text
+- Use phase colors only for Strategy Coach phase indicators
+- Maintain WCAG AA contrast ratios
 
 ### Typography
 
 **Font Stack:**
-- System font stack via Tailwind defaults (optimized for performance)
+- **Headings**: Inter (loaded via Google Fonts)
+- **Body**: System UI stack (`system-ui, -apple-system, sans-serif`)
 
 **Hierarchy:**
 - **Headings**: `font-bold` with appropriate text sizes
-  - H1: `text-2xl font-bold` (24px, 600 weight)
-  - H2: `text-xl font-bold` (20px, 600 weight)
-  - H3: `text-lg font-bold` (18px, 600 weight)
-- **Body**: `text-sm` (14px) with `leading-relaxed` (1.625 line-height)
-- **Labels**: `text-xs font-semibold uppercase tracking-wider` (12px, 600 weight, uppercase, wide letter spacing)
+  - H1: `text-5xl font-bold` (48px, 700 weight)
+  - H2: `text-3xl font-bold` (32px, 700 weight)
+  - H3: `text-2xl font-semibold` (24px, 600 weight)
+- **Body**: `text-base` (16px) with `leading-relaxed` (1.625 line-height)
+- **Body Small**: `text-sm` (14px) for secondary content
+- **Labels**: `text-xs font-semibold uppercase tracking-wider` (12px, 600 weight)
 - **Metadata**: `text-xs text-slate-400` (12px, muted)
 
 **Text Patterns:**
 - Use `font-semibold` (600 weight) for emphasis and interactive elements
-- Use `uppercase tracking-wider` for labels and metadata to create hierarchy
-- Use `leading-relaxed` for body text to improve readability
-- Use `whitespace-pre-wrap` for preserving formatting in chat messages
+- Use `font-bold` (700 weight) max for headings - avoid `font-black` (900)
+- Use `uppercase tracking-wider` for labels and metadata
+- Use `leading-relaxed` for body text
 
 ### Border Radius
 
 **Consistent Rounding:**
 - **Cards/Tiles**: `rounded-2xl` (16px) - primary content containers
-- **Buttons/Inputs**: `rounded-xl` (12px) - interactive elements
+- **Buttons/Inputs**: `rounded-lg` (8px) - interactive elements
 - **Badges/Pills**: `rounded-full` - status indicators, tags
 - **Avatars**: `rounded-xl` (12px) - user/agent avatars
-
-**Never use:**
-- `rounded` (4px) - too subtle for our design language
-- `rounded-lg` (8px) - creates inconsistency
 
 ### Spacing & Layout
 
@@ -231,7 +243,7 @@ Frontera's design system creates a professional, confident, and modern aesthetic
 - **Containers**: `p-6` (24px) - standard container padding
 - **Large Sections**: `py-5 px-10` (20px vertical, 40px horizontal) - headers
 - **Compact Elements**: `py-1.5 px-3` (6px vertical, 12px horizontal) - badges
-- **Buttons**: `py-2.5 px-5` (10px vertical, 20px horizontal) - standard buttons
+- **Buttons**: `px-6 py-3` (24px horizontal, 12px vertical) - standard buttons
 
 **Gaps:**
 - **Section Spacing**: `gap-6` (24px) - between major sections
@@ -243,7 +255,6 @@ Frontera's design system creates a professional, confident, and modern aesthetic
 - Use flexbox for all layouts (`flex`, `flex-col`)
 - Use `flex-shrink-0` for fixed-height headers/footers
 - Use `flex-1 min-h-0 overflow-hidden` for scrollable content areas
-- Use `h-full overflow-hidden` on parent containers to constrain flex children
 
 ### Interactive States
 
@@ -251,56 +262,62 @@ Frontera's design system creates a professional, confident, and modern aesthetic
 - **Scale**: `hover:scale-105` (5% growth) - primary buttons
 - **Scale**: `hover:scale-110` (10% growth) - avatars, icons
 - **Shadow**: `hover:shadow-lg` - buttons, cards
-- **Background**: `hover:bg-slate-50` - secondary buttons
-- **Border**: `hover:border-cyan-300` - inputs, secondary buttons
+- **Background**: `hover:bg-slate-50` - tertiary buttons
+- **Border**: `hover:border-cyan-300` - inputs, tertiary buttons
+- **Color**: `hover:bg-[#f59e0b]` - gold button hover
 
 **Focus States:**
-- **Border**: `focus:border-cyan-400` - active element indication
-- **Ring**: `focus:ring-2 focus:ring-cyan-100` - accessibility outline
-- **Outline**: `focus:outline-none` - remove default browser outline (replace with custom ring)
+- **Ring**: `focus:ring-2 focus:ring-[#fbbf24]` - gold focus ring
+- **Border**: `focus:border-[#fbbf24]` - gold border on focus
+- **Outline**: `focus:outline-none` - remove default browser outline
 
 **Disabled States:**
 - **Opacity**: `disabled:opacity-50` or `disabled:opacity-40`
 - **Cursor**: `disabled:cursor-not-allowed`
-- **Hover Reset**: `disabled:hover:scale-100 disabled:hover:shadow-none`
 
 **Transitions:**
 - **Duration**: `duration-300` (300ms) - all transitions
 - **Properties**: `transition-all` - comprehensive state changes
-- **Specific**: `transition-transform` - when only transforming
 
 ### Component Patterns
 
-**Avatars:**
+**Avatars (Coach/Brand):**
 ```tsx
-<div className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-md">
+<div className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-[#1a1f3a] shadow-md">
   <Image src="/frontera-logo-F.jpg" alt="Frontera" width={32} height={32} className="w-full h-full object-cover" />
 </div>
 ```
 
-**Primary Buttons:**
+**Primary Buttons (Gold):**
 ```tsx
-<button className="text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold">
-  Action
+<button className="inline-flex items-center justify-center rounded-lg bg-[#fbbf24] px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-[#f59e0b] focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2">
+  Primary Action
 </button>
 ```
 
-**Secondary Buttons:**
+**Secondary Buttons (Navy):**
 ```tsx
-<button className="text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold">
-  Action
+<button className="inline-flex items-center justify-center rounded-lg bg-[#1a1f3a] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#2d3561] focus:outline-none focus:ring-2 focus:ring-[#1a1f3a] focus:ring-offset-2">
+  Secondary Action
+</button>
+```
+
+**Tertiary Buttons (Cyan border):**
+```tsx
+<button className="inline-flex items-center justify-center rounded-lg border border-cyan-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2">
+  Tertiary
 </button>
 ```
 
 **Text Inputs/Textareas:**
 ```tsx
-<textarea className="w-full text-sm p-4 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400" />
+<textarea className="w-full text-sm p-4 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400" />
 ```
 
 **Status Badges:**
 ```tsx
-<div className="inline-flex items-center gap-2 text-xs text-cyan-600 py-1.5 px-3 bg-cyan-50 rounded-full tracking-wide font-semibold">
-  <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse" />
+<div className="inline-flex items-center gap-2 text-xs text-[#1a1f3a] py-1.5 px-3 bg-cyan-50 rounded-full tracking-wide font-semibold">
+  <span className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-pulse" />
   <span>Status</span>
 </div>
 ```
@@ -308,22 +325,35 @@ Frontera's design system creates a professional, confident, and modern aesthetic
 **Loading Indicators:**
 ```tsx
 <div className="flex items-center gap-2.5 text-slate-600 text-sm">
-  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
+  <div className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
   <span className="text-xs uppercase tracking-wide font-semibold">Loading...</span>
 </div>
 ```
 
 **Content Cards:**
 ```tsx
-<div className="bg-white border border-slate-100 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:border-cyan-200">
+<div className="bg-white border border-cyan-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:border-cyan-300">
   {/* Card content */}
+</div>
+```
+
+**Premium Cards (Navy bg):**
+```tsx
+<div className="relative overflow-hidden rounded-2xl bg-[#1a1f3a] p-6 text-white shadow-lg">
+  <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#fbbf24]/20 blur-2xl" />
+  <div className="relative">
+    {/* Card content */}
+    <button className="mt-4 rounded-lg bg-[#fbbf24] px-4 py-2 text-sm font-medium text-slate-900 hover:bg-[#f59e0b]">
+      Get Started
+    </button>
+  </div>
 </div>
 ```
 
 ### Image Usage
 
 **Logo Usage:**
-- Main header logo: `/frontera-logo-white.jpg` (full horizontal logo)
+- Main header logo: `/frontera-logo-white.jpg` (full horizontal logo, on navy backgrounds)
 - Chat avatar logo: `/frontera-logo-F.jpg` (F icon only)
 - Always use Next.js `Image` component for optimization
 - Apply `w-full h-full object-cover` for proper sizing in containers
@@ -351,13 +381,13 @@ import Image from 'next/image';
 **Keyboard Navigation:**
 - Ensure all interactive elements are focusable
 - Maintain logical tab order
-- Provide visible focus indicators (cyan ring)
+- Provide visible focus indicators (gold ring)
 
 **Color Contrast:**
 - All text meets WCAG AA standards
 - Slate-900 on white: 14.47:1 (AAA)
 - Slate-700 on white: 8.59:1 (AAA)
-- Indigo-600 on white: 8.57:1 (AAA)
+- Navy `#1a1f3a` on white: 15.39:1 (AAA)
 
 ### Animation Guidelines
 
@@ -375,19 +405,22 @@ import Image from 'next/image';
 
 When creating new components, ensure:
 
-- [ ] Colors use slate palette (not gray/black)
-- [ ] Interactive elements use indigo-to-cyan gradient or cyan accents
-- [ ] Border radius is `rounded-xl`, `rounded-2xl`, or `rounded-full`
+- [ ] Colors use slate palette for text (not gray/black)
+- [ ] Primary CTAs use Gold (`bg-[#fbbf24] text-slate-900`)
+- [ ] Secondary actions use Navy (`bg-[#1a1f3a] text-white`)
+- [ ] Tertiary actions use Cyan border (`border-cyan-300`)
+- [ ] Border radius is `rounded-lg`, `rounded-2xl`, or `rounded-full`
 - [ ] Hover states include scale and/or shadow effects
-- [ ] Focus states use cyan ring (`focus:ring-cyan-100`)
+- [ ] Focus states use gold ring (`focus:ring-[#fbbf24]`)
 - [ ] Disabled states reduce opacity and prevent interaction
 - [ ] All transitions use `duration-300`
-- [ ] Typography uses `font-semibold` for emphasis
+- [ ] Typography uses Inter for headings, system fonts for body
 - [ ] Labels use `uppercase tracking-wider`
-- [ ] Spacing uses consistent gap/padding values (2, 2.5, 3, 6)
+- [ ] Spacing uses consistent gap/padding values
 - [ ] Images use Next.js Image component
 - [ ] Semantic HTML is used
 - [ ] WCAG AA contrast is maintained
+- [ ] Phase colors are only used for Strategy Coach phase indicators
 
 ## UX Patterns
 

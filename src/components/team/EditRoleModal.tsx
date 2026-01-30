@@ -102,7 +102,7 @@ export default function EditRoleModal({
                   onClick={() => setRole("org:member")}
                   className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                     role === "org:member"
-                      ? "border-[#1e3a8a] bg-[#1e3a8a]/5 text-[#1e3a8a]"
+                      ? "border-[#1a1f3a] bg-[#1a1f3a]/5 text-[#1a1f3a]"
                       : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
                 >
@@ -114,7 +114,7 @@ export default function EditRoleModal({
                   onClick={() => setRole("org:admin")}
                   className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                     role === "org:admin"
-                      ? "border-[#1e3a8a] bg-[#1e3a8a]/5 text-[#1e3a8a]"
+                      ? "border-[#1a1f3a] bg-[#1a1f3a]/5 text-[#1a1f3a]"
                       : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
                 >
@@ -137,7 +137,7 @@ export default function EditRoleModal({
                 disabled={isLoading}
                 className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all ${
                   !isLoading
-                    ? "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25"
+                    ? "bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >

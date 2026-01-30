@@ -42,7 +42,7 @@ export function AppendixPage({ synthesis, companyName, pageNumber }: AppendixPag
                     {
                       backgroundColor:
                         territory === 'company'
-                          ? COLORS.indigo[50]
+                          ? COLORS.gold[50]
                           : territory === 'customer'
                           ? COLORS.cyan[50]
                           : COLORS.purple[50],
@@ -55,7 +55,7 @@ export function AppendixPage({ synthesis, companyName, pageNumber }: AppendixPag
                       fontFamily: 'Helvetica-Bold',
                       color:
                         territory === 'company'
-                          ? COLORS.indigo[600]
+                          ? COLORS.navy.DEFAULT
                           : territory === 'customer'
                           ? COLORS.cyan[600]
                           : COLORS.purple[600],
@@ -115,7 +115,7 @@ export function AppendixPage({ synthesis, companyName, pageNumber }: AppendixPag
             </Text>
           </View>
           <View style={styles.bulletItem}>
-            <View style={[styles.bullet, { backgroundColor: COLORS.indigo[500] }]} />
+            <View style={[styles.bullet, { backgroundColor: COLORS.navy.DEFAULT }]} />
             <Text style={styles.bulletText}>
               {`EXPLORE: High market + Low capability - build or partner`}
             </Text>

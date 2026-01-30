@@ -111,7 +111,7 @@ export default function SignUpForm() {
                 value={formData.firstName}
                 onChange={(e) => updateField("firstName", e.target.value)}
                 placeholder="John"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
                 required
               />
             </div>
@@ -125,7 +125,7 @@ export default function SignUpForm() {
                 value={formData.lastName}
                 onChange={(e) => updateField("lastName", e.target.value)}
                 placeholder="Smith"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
                 required
               />
             </div>
@@ -141,7 +141,7 @@ export default function SignUpForm() {
               value={formData.email}
               onChange={(e) => updateField("email", e.target.value)}
               placeholder="john.smith@company.com"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
               required
             />
           </div>
@@ -156,7 +156,7 @@ export default function SignUpForm() {
               value={formData.organizationName}
               onChange={(e) => updateField("organizationName", e.target.value)}
               placeholder="Your company or team name"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
               required
             />
             <p className="text-xs text-gray-500">
@@ -175,7 +175,7 @@ export default function SignUpForm() {
                 value={formData.password}
                 onChange={(e) => updateField("password", e.target.value)}
                 placeholder="Minimum 8 characters"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
                 required
                 minLength={8}
               />
@@ -194,7 +194,7 @@ export default function SignUpForm() {
                   formData.confirmPassword &&
                   formData.password !== formData.confirmPassword
                     ? "border-red-300 focus:border-red-400 focus:ring-red-200"
-                    : "border-gray-200 focus:border-[#06b6d4] focus:ring-[#06b6d4]/20"
+                    : "border-gray-200 focus:border-[#fbbf24] focus:ring-[#fbbf24]/20"
                 }`}
                 required
               />
@@ -212,7 +212,7 @@ export default function SignUpForm() {
             disabled={!isFormValid() || isLoading}
             className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
               isFormValid() && !isLoading
-                ? "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25"
+                ? "bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
@@ -232,7 +232,7 @@ export default function SignUpForm() {
             Already have an account?{" "}
             <Link
               href="/sign-in"
-              className="text-[#1e3a8a] hover:underline font-medium"
+              className="text-[#1a1f3a] hover:underline font-medium"
             >
               Sign in
             </Link>

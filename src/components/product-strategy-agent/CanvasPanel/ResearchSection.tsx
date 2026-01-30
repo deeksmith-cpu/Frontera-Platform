@@ -141,8 +141,8 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
       {/* Territory Cards Grid */}
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-flex items-center gap-2 text-indigo-600 font-semibold">
-            <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="inline-flex items-center gap-2 text-[#1a1f3a] font-semibold">
+            <div className="w-5 h-5 border-2 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
             Loading territories...
           </div>
         </div>
@@ -200,7 +200,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
             <button
               onClick={handleProceedToSynthesis}
               disabled={isNavigating}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-[#fbbf24] text-slate-900 font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all"
             >
               {isNavigating ? (
                 <>
@@ -219,9 +219,9 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
           </div>
         </div>
       ) : (
-        <div className="mt-12 p-6 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-2xl border border-indigo-200">
+        <div className="mt-12 p-6 bg-[#f4f4f7] rounded-2xl border border-slate-200">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl flex items-center justify-center">
+            <div className="flex-shrink-0 w-12 h-12 bg-[#1a1f3a] rounded-xl flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -238,7 +238,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-indigo-600">
+              <div className="text-2xl font-bold text-[#1a1f3a]">
                 {mappedAreasCount}
                 <span className="text-lg text-slate-400">/9</span>
               </div>

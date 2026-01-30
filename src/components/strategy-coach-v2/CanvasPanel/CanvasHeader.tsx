@@ -45,19 +45,19 @@ export function CanvasHeader() {
       <div className="canvas-controls flex gap-3">
         <button
           onClick={handleExport}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-[#fbbf24] hover:shadow-md font-semibold"
         >
           Export
         </button>
         <button
           onClick={handleShare}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-[#fbbf24] hover:shadow-md font-semibold"
         >
           Share
         </button>
         <button
           onClick={handleGenerateInsights}
-          className="canvas-btn primary text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold"
+          className="canvas-btn primary text-sm py-2.5 px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 hover:bg-[#f59e0b] cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold"
         >
           Generate Insights
         </button>

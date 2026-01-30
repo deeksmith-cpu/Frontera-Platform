@@ -24,7 +24,7 @@ export function CoverPage({ client, generatedAt }: CoverPageProps) {
             width: 60,
             height: 60,
             borderRadius: 12,
-            backgroundColor: COLORS.indigo[600],
+            backgroundColor: COLORS.navy.DEFAULT,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -84,7 +84,7 @@ export function CoverPage({ client, generatedAt }: CoverPageProps) {
         style={{
           width: 80,
           height: 3,
-          backgroundColor: COLORS.indigo[600],
+          backgroundColor: COLORS.navy.DEFAULT,
           marginBottom: 40,
           borderRadius: 2,
         }}
@@ -141,7 +141,7 @@ export function CoverPage({ client, generatedAt }: CoverPageProps) {
           style={{
             fontSize: 14,
             fontFamily: 'Helvetica-Bold',
-            color: COLORS.indigo[600],
+            color: COLORS.navy.DEFAULT,
           }}
         >
           Playing to Win Framework

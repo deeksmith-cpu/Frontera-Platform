@@ -19,7 +19,7 @@ export default function SignUpPage() {
           <Suspense
             fallback={
               <div className="flex items-center justify-center p-10">
-                <div className="w-8 h-8 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
               </div>
             }
           >
@@ -32,11 +32,11 @@ export default function SignUpPage() {
       <footer className="py-6 px-6 text-center">
         <p className="text-sm text-gray-500">
           By creating an account, you agree to our{" "}
-          <Link href="/terms" className="text-[#1e3a8a] hover:underline">
+          <Link href="/terms" className="text-[#1a1f3a] hover:underline">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className="text-[#1e3a8a] hover:underline">
+          <Link href="/privacy" className="text-[#1a1f3a] hover:underline">
             Privacy Policy
           </Link>
         </p>

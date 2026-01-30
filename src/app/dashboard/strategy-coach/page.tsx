@@ -57,7 +57,7 @@ export default async function StrategyCoachPage() {
             <li>
               <Link
                 href="/dashboard"
-                className="hover:text-[#1e3a8a] transition-colors"
+                className="hover:text-[#1a1f3a] transition-colors"
               >
                 Dashboard
               </Link>
@@ -78,7 +78,7 @@ export default async function StrategyCoachPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-[#1e3a8a] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#1a1f3a] flex items-center justify-center">
               <svg
                 className="w-5 h-5 text-white"
                 fill="none"

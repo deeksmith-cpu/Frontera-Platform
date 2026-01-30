@@ -89,7 +89,7 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
         <button
           onClick={handleGenerateInsights}
           disabled={isGenerating}
-          className="canvas-btn primary text-sm py-2.5 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="canvas-btn primary text-sm py-2.5 px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? (
             <span className="flex items-center gap-2">

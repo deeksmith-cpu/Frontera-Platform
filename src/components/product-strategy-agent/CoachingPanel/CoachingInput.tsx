@@ -136,7 +136,7 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
       {!isDisabled && smartPrompts.length > 0 && (
         <div className="mb-3">
           <div className="flex items-center gap-1.5 mb-2">
-            <Sparkles className="w-3 h-3 text-indigo-500" />
+            <Sparkles className="w-3 h-3 text-[#fbbf24]" />
             <span className="text-xs text-slate-500 font-medium">Suggested prompts</span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -157,7 +157,7 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
       <div className="input-wrapper relative">
         <textarea
           ref={textareaRef}
-          className="input-field w-full text-sm p-4 pr-14 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400"
+          className="input-field w-full text-sm p-4 pr-14 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400"
           rows={2}
           placeholder="Share your insights or ask a question..."
           value={value}
@@ -168,7 +168,7 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
         <button
           onClick={handleSend}
           disabled={!value.trim() || isDisabled}
-          className="send-btn absolute right-2 bottom-2 w-10 h-10 bg-gradient-to-r from-indigo-600 to-cyan-600 border-0 rounded-xl flex items-center justify-center text-white cursor-pointer transition-all hover:shadow-lg hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+          className="send-btn absolute right-2 bottom-2 w-10 h-10 bg-[#fbbf24] text-slate-900 hover:bg-[#f59e0b] border-0 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:shadow-lg hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M16 2L8 10M16 2L10.5 16L8 10M16 2L2 7.5L8 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

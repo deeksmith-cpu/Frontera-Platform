@@ -219,13 +219,13 @@ export function CompetitorTerritoryDeepDive({
 
   // Auto-select first unexplored area if none selected
   useEffect(() => {
-    if (!selectedArea) {
+    if (!selectedArea && sidebarAreas.length > 0) {
       const firstUnexplored = sidebarAreas.find((a) => a.status === 'unexplored');
       const firstInProgress = sidebarAreas.find((a) => a.status === 'in_progress');
       const defaultArea = firstUnexplored || firstInProgress || sidebarAreas[0];
       setSelectedArea(defaultArea.id);
     }
-  }, []);
+  }, [selectedArea, sidebarAreas]);
 
   if (!selectedArea) {
     return <div>Loading...</div>;

@@ -68,16 +68,16 @@ export default function Header() {
           {/* Desktop nav */}
           {!isSignedIn && (
             <div className="hidden lg:flex lg:gap-x-10">
-              <Link href="/#problem" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+              <Link href="/#problem" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
                 Why Frontera
               </Link>
-              <Link href="/#solution" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+              <Link href="/#solution" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
                 Platform
               </Link>
-              <Link href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+              <Link href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
                 Pricing
               </Link>
-              <Link href="/#testimonial" className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors">
+              <Link href="/#testimonial" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
                 Case Studies
               </Link>
             </div>
@@ -89,13 +89,13 @@ export default function Header() {
               <>
                 <Link
                   href="/sign-in"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors"
+                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/onboarding"
-                  className="rounded-full bg-[#1e3a8a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1e2a5e] transition-all duration-200 hover:shadow-lg"
+                  className="rounded-full bg-[#fbbf24] px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:bg-[#e5a91f] transition-all duration-200 hover:shadow-lg"
                 >
                   Get Started
                 </Link>
@@ -106,13 +106,13 @@ export default function Header() {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors"
+                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/team"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1e3a8a] transition-colors"
+                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
                 >
                   Team
                 </Link>
@@ -137,42 +137,42 @@ export default function Header() {
                 <>
                   <Link
                     href="/#problem"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Why Frontera
                   </Link>
                   <Link
                     href="/#solution"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Platform
                   </Link>
                   <Link
                     href="/#pricing"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Pricing
                   </Link>
                   <Link
                     href="/#testimonial"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Case Studies
                   </Link>
                   <Link
                     href="/sign-in"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/onboarding"
-                    className="block mt-4 text-center rounded-full bg-[#1e3a8a] px-6 py-3 text-base font-semibold text-white"
+                    className="block mt-4 text-center rounded-full bg-[#fbbf24] px-6 py-3 text-base font-semibold text-slate-900"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Get Started
@@ -184,14 +184,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="block px-3 py-2 text-base font-medium text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/dashboard/team"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1e3a8a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Team

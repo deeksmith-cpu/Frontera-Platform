@@ -38,7 +38,7 @@ export default function Logo({ className = "", showText = true, variant = "dark"
         {/* Teal accent - top curve */}
         <path
           d="M24 12C26.5 12 28 13.5 28 16"
-          stroke="#06b6d4"
+          stroke="#fbbf24"
           strokeWidth="3"
           strokeLinecap="round"
         />
@@ -91,7 +91,7 @@ export function LogoMark({ className = "" }: { className?: string }) {
       />
       <path
         d="M24 12C26.5 12 28 13.5 28 16"
-        stroke="#06b6d4"
+        stroke="#fbbf24"
         strokeWidth="3"
         strokeLinecap="round"
       />

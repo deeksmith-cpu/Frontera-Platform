@@ -38,7 +38,7 @@ export function ExecutiveSummaryPage({ synthesis, client }: ExecutiveSummaryPage
         <View
           style={{
             flex: 1,
-            backgroundColor: COLORS.indigo[50],
+            backgroundColor: COLORS.gold[50],
             borderRadius: 8,
             padding: 16,
             alignItems: 'center',
@@ -48,7 +48,7 @@ export function ExecutiveSummaryPage({ synthesis, client }: ExecutiveSummaryPage
             style={{
               fontSize: 28,
               fontFamily: 'Helvetica-Bold',
-              color: COLORS.indigo[600],
+              color: COLORS.navy.DEFAULT,
             }}
           >
             {opportunitiesCount}
@@ -137,7 +137,7 @@ export function ExecutiveSummaryPage({ synthesis, client }: ExecutiveSummaryPage
                 width: 24,
                 height: 24,
                 borderRadius: 12,
-                backgroundColor: COLORS.indigo[600],
+                backgroundColor: COLORS.navy.DEFAULT,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 12,

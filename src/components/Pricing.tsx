@@ -59,7 +59,7 @@ export default function Pricing() {
     <section id="pricing" className="bg-slate-50 py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[#06b6d4]">Pricing</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#fbbf24]">Pricing</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
             Investment That Delivers ROI
           </h2>
@@ -75,13 +75,13 @@ export default function Pricing() {
               key={index}
               className={`relative flex flex-col rounded-3xl p-8 ${
                 tier.highlighted
-                  ? "bg-gradient-to-b from-[#1e3a8a] to-[#1e2a5e] text-white shadow-2xl shadow-[#1e3a8a]/20 scale-105 z-10"
+                  ? "bg-gradient-to-b from-[#1a1f3a] to-[#2d3561] text-white shadow-2xl shadow-[#1a1f3a]/20 scale-105 z-10"
                   : "bg-white border border-slate-200 shadow-sm"
               }`}
             >
               {tier.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center rounded-full bg-[#06b6d4] px-4 py-1 text-sm font-semibold text-white shadow-lg">
+                  <span className="inline-flex items-center rounded-full bg-[#fbbf24] px-4 py-1 text-sm font-semibold text-white shadow-lg">
                     {tier.badge}
                   </span>
                 </div>
@@ -109,7 +109,7 @@ export default function Pricing() {
                 {tier.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">
                     <svg
-                      className={`h-5 w-5 shrink-0 ${tier.highlighted ? "text-[#06b6d4]" : "text-[#06b6d4]"}`}
+                      className={`h-5 w-5 shrink-0 ${tier.highlighted ? "text-[#fbbf24]" : "text-[#fbbf24]"}`}
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth="2"
@@ -128,8 +128,8 @@ export default function Pricing() {
                 href="#cta"
                 className={`block w-full rounded-full py-3 text-center text-sm font-semibold transition-all duration-200 ${
                   tier.highlighted
-                    ? "bg-[#06b6d4] text-white hover:bg-[#22d3ee] shadow-lg"
-                    : "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e]"
+                    ? "bg-[#fbbf24] text-slate-900 hover:bg-[#f59e0b] shadow-lg"
+                    : "bg-[#fbbf24] text-slate-900 hover:bg-[#f59e0b]"
                 }`}
               >
                 {tier.cta}
@@ -140,7 +140,7 @@ export default function Pricing() {
 
         <p className="mt-12 text-center text-sm text-slate-500">
           All prices exclude VAT. Volume discounts available for 1000+ users.{" "}
-          <Link href="#cta" className="font-medium text-[#1e3a8a] hover:text-[#06b6d4]">
+          <Link href="#cta" className="font-medium text-[#1a1f3a] hover:text-[#fbbf24]">
             Contact us for a custom quote
           </Link>
         </p>

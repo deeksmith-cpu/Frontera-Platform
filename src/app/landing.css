@@ -2,29 +2,34 @@
    FRONTERA LANDING PAGE V2 - Strategic Editorial Design
 
    Design Direction: Refined precision meets bold authority
-   Color Palette: Deep indigo (#1e3a8a) + Electric teal (#06b6d4)
-   Typography: DM Sans (distinctive yet professional)
+   Color Palette: Frontera Navy (#1a1f3a) + Premium Gold (#fbbf24) + Cyan scale
+   Typography: Inter (headings) + System UI (body)
    ============================================ */
 
-/* Import Google Fonts - DM Sans for a distinctive enterprise feel */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+/* Import Google Fonts - Inter for headings */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============================================
    CSS Variables
    ============================================ */
 :root {
-  /* Colors */
-  --color-indigo-900: #1e3a8a;
-  --color-indigo-800: #1e40af;
-  --color-indigo-700: #1d4ed8;
-  --color-indigo-600: #2563eb;
-  --color-indigo-100: #e0e7ff;
-  --color-indigo-50: #eef2ff;
+  /* Brand Colors */
+  --color-indigo-900: #1a1f3a;
+  --color-indigo-800: #2d3561;
+  --color-indigo-700: #3d4573;
+  --color-indigo-600: #4d5585;
+  --color-indigo-100: #e8e9ef;
+  --color-indigo-50: #f4f4f7;
 
-  --color-cyan-500: #06b6d4;
+  /* Accent - Premium Gold */
+  --color-gold: #fbbf24;
+  --color-gold-hover: #f59e0b;
+
+  --color-cyan-500: #0891b2;
   --color-cyan-400: #22d3ee;
   --color-cyan-300: #67e8f9;
   --color-cyan-100: #cffafe;
+  --color-cyan-50: #ecfeff;
 
   --color-slate-900: #0f172a;
   --color-slate-800: #1e293b;
@@ -40,14 +45,14 @@
   --color-white: #ffffff;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-indigo-900) 0%, var(--color-cyan-500) 100%);
-  --gradient-primary-reverse: linear-gradient(135deg, var(--color-cyan-500) 0%, var(--color-indigo-900) 100%);
+  --gradient-primary: linear-gradient(135deg, var(--color-indigo-900) 0%, var(--color-indigo-800) 100%);
+  --gradient-primary-reverse: linear-gradient(135deg, var(--color-indigo-800) 0%, var(--color-indigo-900) 100%);
   --gradient-subtle: linear-gradient(180deg, var(--color-slate-50) 0%, var(--color-white) 100%);
-  --gradient-hero-bg: radial-gradient(ellipse at 30% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-                      radial-gradient(ellipse at 70% 80%, rgba(30, 58, 138, 0.06) 0%, transparent 50%);
+  --gradient-hero-bg: radial-gradient(ellipse at 30% 20%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+                      radial-gradient(ellipse at 70% 80%, rgba(26, 31, 58, 0.06) 0%, transparent 50%);
 
   /* Typography */
-  --font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Spacing */
   --section-padding: 120px;
@@ -66,7 +71,7 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 60px rgba(6, 182, 212, 0.3);
+  --shadow-glow: 0 0 60px rgba(251, 191, 36, 0.3);
 
   /* Border Radius */
   --radius-sm: 6px;
@@ -212,7 +217,7 @@ img {
 
 .nav-links a:hover {
   color: var(--color-indigo-900);
-  background: rgba(30, 58, 138, 0.06);
+  background: rgba(26, 31, 58, 0.06);
   transform: translateY(-1px);
 }
 
@@ -225,7 +230,7 @@ img {
   outline: 2px solid var(--color-cyan-500);
   outline-offset: 2px;
   color: var(--color-indigo-900);
-  background: rgba(30, 58, 138, 0.06);
+  background: rgba(26, 31, 58, 0.06);
 }
 
 .nav-actions {
@@ -246,8 +251,8 @@ img {
 
 .nav-login:hover {
   color: var(--color-indigo-900);
-  background: rgba(30, 58, 138, 0.08);
-  border-color: rgba(30, 58, 138, 0.15);
+  background: rgba(26, 31, 58, 0.08);
+  border-color: rgba(26, 31, 58, 0.15);
   transform: translateY(-1px);
 }
 
@@ -255,7 +260,7 @@ img {
   outline: 2px solid var(--color-cyan-500);
   outline-offset: 2px;
   color: var(--color-indigo-900);
-  background: rgba(30, 58, 138, 0.08);
+  background: rgba(26, 31, 58, 0.08);
 }
 
 .nav-cta {
@@ -272,20 +277,20 @@ img {
 
 .nav-cta:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px -5px rgba(30, 58, 138, 0.4), 0 0 20px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 25px -5px rgba(26, 31, 58, 0.4), 0 0 20px rgba(251, 191, 36, 0.3);
   filter: brightness(1.1);
 }
 
 .nav-cta:focus-visible {
-  outline: 2px solid var(--color-cyan-400);
+  outline: 2px solid var(--color-gold);
   outline-offset: 2px;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px -5px rgba(30, 58, 138, 0.35);
+  box-shadow: 0 6px 20px -5px rgba(26, 31, 58, 0.35);
 }
 
 .nav-cta:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 4px 15px -5px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 4px 15px -5px rgba(26, 31, 58, 0.3);
 }
 
 .mobile-menu-btn {
@@ -333,7 +338,7 @@ img {
 .hero-shape-1 {
   width: 600px;
   height: 600px;
-  background: rgba(6, 182, 212, 0.15);
+  background: rgba(251, 191, 36, 0.15);
   top: -200px;
   right: -100px;
 }
@@ -341,7 +346,7 @@ img {
 .hero-shape-2 {
   width: 500px;
   height: 500px;
-  background: rgba(30, 58, 138, 0.1);
+  background: rgba(26, 31, 58, 0.1);
   bottom: -150px;
   left: -100px;
 }
@@ -350,8 +355,8 @@ img {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(30, 58, 138, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 58, 138, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(26, 31, 58, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 31, 58, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse at 50% 50%, black 0%, transparent 70%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 0%, transparent 70%);
@@ -509,7 +514,7 @@ img {
   position: absolute;
   width: 300px;
   height: 400px;
-  background: radial-gradient(ellipse, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(251, 191, 36, 0.3) 0%, transparent 70%);
   filter: blur(60px);
   top: 50%;
   left: 50%;
@@ -613,7 +618,7 @@ img {
 
 .coach-card {
   background: linear-gradient(135deg, var(--color-indigo-50), var(--color-cyan-50));
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 16px;
@@ -639,7 +644,7 @@ img {
   font-size: 0.6875rem;
   font-weight: 600;
   color: var(--color-cyan-500);
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(251, 191, 36, 0.1);
   border-radius: var(--radius-full);
 }
 
@@ -914,7 +919,7 @@ img {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--color-cyan-500);
+  color: var(--color-gold);
   margin-bottom: 16px;
 }
 
@@ -1088,8 +1093,8 @@ img {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-cyan-500);
-  background: var(--color-cyan-50);
+  color: var(--color-indigo-900);
+  background: var(--color-indigo-50);
   border-radius: var(--radius-full);
   margin-bottom: 20px;
 }
@@ -1268,7 +1273,7 @@ img {
 
 .bet-row.highlight {
   border-color: var(--color-cyan-200);
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(30, 58, 138, 0.05));
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(26, 31, 58, 0.05));
 }
 
 .bet-prefix {
@@ -1587,7 +1592,7 @@ img {
 .cta-shape-1 {
   width: 600px;
   height: 600px;
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(251, 191, 36, 0.2);
   top: -200px;
   right: -100px;
 }
@@ -1595,7 +1600,7 @@ img {
 .cta-shape-2 {
   width: 400px;
   height: 400px;
-  background: rgba(30, 58, 138, 0.3);
+  background: rgba(26, 31, 58, 0.3);
   bottom: -100px;
   left: -50px;
 }
@@ -1626,7 +1631,7 @@ img {
 }
 
 .cta-content h2 span {
-  color: var(--color-cyan-400);
+  color: var(--color-gold);
 }
 
 .cta-content > p {
@@ -1651,14 +1656,15 @@ img {
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-slate-900);
-  background: linear-gradient(135deg, var(--color-cyan-400), var(--color-cyan-300));
+  background: var(--color-gold);
   border-radius: var(--radius-full);
   transition: all var(--transition-fast);
 }
 
 .btn-cta-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(6, 182, 212, 0.3);
+  background: var(--color-gold-hover);
+  box-shadow: 0 20px 40px rgba(251, 191, 36, 0.3);
 }
 
 .btn-cta-secondary {
@@ -1776,7 +1782,7 @@ img {
 }
 
 .footer-column a:hover {
-  color: var(--color-cyan-400);
+  color: var(--color-gold);
 }
 
 .footer-bottom {
@@ -1794,7 +1800,7 @@ img {
 
 .footer-tagline {
   font-style: italic;
-  color: var(--color-cyan-500);
+  color: var(--color-gold);
 }
 
 /* ============================================

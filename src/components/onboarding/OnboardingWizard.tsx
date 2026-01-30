@@ -307,7 +307,7 @@ export default function OnboardingWizard({ existingId }: OnboardingWizardProps) 
                   disabled={!isCurrentStepValid() || isSaving}
                   className={`px-8 py-3 rounded-xl font-semibold transition-all ${
                     isCurrentStepValid() && !isSaving
-                      ? "bg-gradient-to-r from-teal-electric to-cyan-500 text-white hover:opacity-90 shadow-lg shadow-teal-electric/25"
+                      ? "bg-[#fbbf24] text-slate-900 hover:opacity-90 shadow-lg shadow-[#fbbf24]/25"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }`}
                 >

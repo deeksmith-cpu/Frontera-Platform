@@ -44,7 +44,7 @@ export function Message({
       <div className="message-header flex items-center gap-2.5">
         <div className={`message-avatar w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 ${
           isAgent
-            ? 'bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-md'
+            ? 'bg-[#1a1f3a] shadow-md'
             : 'bg-gradient-to-br from-slate-100 to-slate-200'
         }`}>
           {isAgent ? (

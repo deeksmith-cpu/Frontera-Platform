@@ -4,18 +4,21 @@
 
 // Frontera brand colors
 export const COLORS = {
-  indigo: {
-    50: '#eef2ff',
-    100: '#e0e7ff',
-    500: '#6366f1',
-    600: '#4f46e5',
-    700: '#4338ca',
-    900: '#312e81',
+  navy: {
+    DEFAULT: '#1a1f3a',
+    light: '#2d3561',
+  },
+  gold: {
+    DEFAULT: '#fbbf24',
+    hover: '#f59e0b',
+    50: '#fffbeb',
   },
   cyan: {
     50: '#ecfeff',
     100: '#cffafe',
-    500: '#06b6d4',
+    200: '#a5f3fc',
+    400: '#22d3ee',
+    500: '#0891b2',
     600: '#0891b2',
   },
   slate: {
@@ -53,21 +56,21 @@ export const COLORS = {
 // Quadrant colors for the strategic map
 export const QUADRANT_COLORS = {
   invest: { bg: COLORS.emerald[50], text: COLORS.emerald[600], border: COLORS.emerald[500] },
-  explore: { bg: COLORS.indigo[50], text: COLORS.indigo[600], border: COLORS.indigo[500] },
+  explore: { bg: COLORS.cyan[50], text: COLORS.cyan[600], border: COLORS.cyan[500] },
   harvest: { bg: COLORS.amber[50], text: COLORS.amber[600], border: COLORS.amber[500] },
   divest: { bg: COLORS.slate[100], text: COLORS.slate[600], border: COLORS.slate[400] },
 };
 
 // Opportunity type colors
 export const OPPORTUNITY_TYPE_COLORS = {
-  where_to_play: COLORS.indigo[600],
+  where_to_play: COLORS.navy.DEFAULT,
   how_to_win: COLORS.cyan[600],
   capability_gap: COLORS.amber[600],
 };
 
 // Territory colors
 export const TERRITORY_COLORS = {
-  company: COLORS.indigo[600],
+  company: COLORS.navy.DEFAULT,
   customer: COLORS.cyan[600],
   competitor: COLORS.purple[600],
 };
@@ -169,8 +172,8 @@ export const styles = {
     color: COLORS.emerald[600],
   },
   badgeExplore: {
-    backgroundColor: COLORS.indigo[50],
-    color: COLORS.indigo[600],
+    backgroundColor: COLORS.cyan[50],
+    color: COLORS.cyan[600],
   },
   badgeHarvest: {
     backgroundColor: COLORS.amber[50],

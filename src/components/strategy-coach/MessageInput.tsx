@@ -62,7 +62,7 @@ export default function MessageInput({
                 w-full resize-none rounded-xl border border-slate-300
                 px-4 py-3 pr-12
                 text-slate-800 placeholder:text-slate-400
-                focus:outline-none focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent
+                focus:outline-none focus:ring-2 focus:ring-[#fbbf24]/20 focus:border-[#fbbf24]
                 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
                 transition-all duration-200
               `}
@@ -87,7 +87,7 @@ export default function MessageInput({
               ${
                 disabled || !message.trim()
                   ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                  : "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] active:scale-95"
+                  : "bg-[#fbbf24] text-slate-900 hover:bg-[#f59e0b] active:scale-95"
               }
             `}
             aria-label="Send message"

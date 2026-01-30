@@ -71,7 +71,7 @@ export function OpportunityCard({
     <div
       className={`
         bg-white border rounded-2xl transition-all duration-300
-        ${isExpanded ? 'border-cyan-300 shadow-lg' : 'border-slate-200 hover:border-cyan-200 hover:shadow-md'}
+        ${isExpanded ? 'border-[#fbbf24] shadow-lg' : 'border-slate-200 hover:border-[#fbbf24]/50 hover:shadow-md'}
       `}
     >
       {/* Header */}
@@ -119,7 +119,7 @@ export function OpportunityCard({
 
           {/* Score Circle */}
           <div className="flex-shrink-0">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600 to-cyan-600 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-[#1a1f3a] flex items-center justify-center">
               <span className="text-lg font-bold text-white">
                 {opportunity.scoring.overallScore}
               </span>
@@ -192,20 +192,20 @@ export function OpportunityCard({
             {showPTW && (
               <div className="mt-3 space-y-3 text-sm">
                 <div>
-                  <span className="font-semibold text-indigo-600">Winning Aspiration:</span>
+                  <span className="font-semibold text-[#1a1f3a]">Winning Aspiration:</span>
                   <p className="text-slate-600 mt-0.5">{opportunity.ptw.winningAspiration || 'Not defined'}</p>
                 </div>
                 <div>
-                  <span className="font-semibold text-indigo-600">Where to Play:</span>
+                  <span className="font-semibold text-[#1a1f3a]">Where to Play:</span>
                   <p className="text-slate-600 mt-0.5">{opportunity.ptw.whereToPlay || 'Not defined'}</p>
                 </div>
                 <div>
-                  <span className="font-semibold text-indigo-600">How to Win:</span>
+                  <span className="font-semibold text-[#1a1f3a]">How to Win:</span>
                   <p className="text-slate-600 mt-0.5">{opportunity.ptw.howToWin || 'Not defined'}</p>
                 </div>
                 {opportunity.ptw.capabilitiesRequired.length > 0 && (
                   <div>
-                    <span className="font-semibold text-indigo-600">Capabilities Required:</span>
+                    <span className="font-semibold text-[#1a1f3a]">Capabilities Required:</span>
                     <ul className="mt-1 space-y-1">
                       {opportunity.ptw.capabilitiesRequired.map((cap, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-slate-600">
@@ -218,7 +218,7 @@ export function OpportunityCard({
                 )}
                 {opportunity.ptw.managementSystems.length > 0 && (
                   <div>
-                    <span className="font-semibold text-indigo-600">Management Systems:</span>
+                    <span className="font-semibold text-[#1a1f3a]">Management Systems:</span>
                     <ul className="mt-1 space-y-1">
                       {opportunity.ptw.managementSystems.map((sys, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-slate-600">

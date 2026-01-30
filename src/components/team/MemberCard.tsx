@@ -57,7 +57,7 @@ export default function MemberCard({
         <span
           className={`px-3 py-1 text-xs font-medium rounded-full ${
             member.role === "org:admin"
-              ? "text-[#1e3a8a] bg-[#1e3a8a]/10"
+              ? "text-[#1a1f3a] bg-[#1a1f3a]/10"
               : "text-slate-600 bg-slate-100"
           }`}
         >

@@ -24,7 +24,7 @@ export function StreamingMessage({ content, onStop }: StreamingMessageProps) {
   return (
     <div className="message flex flex-col gap-3 agent animate-fade-in">
       <div className="message-header flex items-center gap-2.5">
-        <div className="message-avatar w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-md">
+        <div className="message-avatar w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110 bg-[#1a1f3a] shadow-md">
           <Image
             src="/frontera-logo-F.jpg"
             alt="Frontera"
@@ -39,8 +39,8 @@ export function StreamingMessage({ content, onStop }: StreamingMessageProps) {
         <div className="flex items-center gap-2 ml-auto">
           {/* Streaming indicator */}
           <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
-            <span className="text-xs text-indigo-600 font-semibold">Streaming</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-pulse" />
+            <span className="text-xs text-[#fbbf24] font-semibold">Streaming</span>
           </div>
           {/* Stop button */}
           {onStop && (
@@ -58,7 +58,7 @@ export function StreamingMessage({ content, onStop }: StreamingMessageProps) {
       <div className="message-content pl-10 text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
         {content}
         {/* Typing cursor */}
-        <span className="inline-block w-0.5 h-4 ml-0.5 bg-gradient-to-b from-indigo-600 to-cyan-600 animate-pulse rounded-sm align-text-bottom" />
+        <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#fbbf24] animate-pulse rounded-sm align-text-bottom" />
       </div>
     </div>
   );

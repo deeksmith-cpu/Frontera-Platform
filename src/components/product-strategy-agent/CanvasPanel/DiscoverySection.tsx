@@ -129,10 +129,10 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
   return (
     <div className="discovery-section max-w-6xl mx-auto space-y-8">
       {/* Methodology Introduction */}
-      <div className="methodology-intro bg-gradient-to-br from-indigo-50 to-cyan-50 rounded-2xl p-8 border border-indigo-100">
+      <div className="methodology-intro bg-[#f4f4f7] rounded-2xl p-8 border border-slate-200">
         <div className="flex items-start gap-6">
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-[#1a1f3a] rounded-2xl flex items-center justify-center shadow-lg">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
@@ -179,7 +179,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
         <div className="strategic-context-tile bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-[#1a1f3a] rounded-xl flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
@@ -336,7 +336,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
         </div>
 
         {/* Encouragement Message */}
-        <div className="mt-4 p-4 bg-gradient-to-br from-cyan-50 to-indigo-50 border border-cyan-200 rounded-xl">
+        <div className="mt-4 p-4 bg-[#f4f4f7] border border-slate-200 rounded-xl">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-0.5">
               <svg className="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
@@ -368,7 +368,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
           {/* AI Research Assistant Button */}
           <button
             onClick={() => setShowAiResearchModal(true)}
-            className="w-full mb-6 p-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl transition-all hover:shadow-xl hover:shadow-purple-500/30 border-2 border-transparent hover:scale-[1.02] duration-300"
+            className="w-full mb-6 p-4 bg-[#1a1f3a] hover:bg-[#252b4a] text-white rounded-xl transition-all hover:shadow-xl border-2 border-transparent hover:scale-[1.02] duration-300"
           >
             <div className="flex items-center gap-4">
               <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -390,7 +390,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
         </div>
 
         {/* Upload Area */}
-      <div className="upload-area bg-white rounded-2xl border-2 border-dashed border-slate-300 p-12 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all">
+      <div className="upload-area bg-white rounded-2xl border-2 border-dashed border-slate-300 p-12 hover:border-[#fbbf24] hover:bg-[#f4f4f7]/30 transition-all">
         <div className="text-center">
           <div className="mb-4">
             <svg
@@ -414,7 +414,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
 
           <label
             htmlFor="file-upload"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-xl font-semibold cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#fbbf24] text-slate-900 rounded-xl font-semibold cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
           >
             <svg
               className="w-5 h-5"
@@ -451,8 +451,8 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
 
         {isUploading && (
           <div className="mt-6 text-center">
-            <div className="inline-flex items-center gap-2 text-indigo-600 font-semibold">
-              <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            <div className="inline-flex items-center gap-2 text-[#1a1f3a] font-semibold">
+              <div className="w-4 h-4 border-2 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
               Uploading...
             </div>
           </div>
@@ -475,9 +475,9 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
             {uploadedFiles.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 transition-colors group"
+                className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:border-[#fbbf24] transition-colors group"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#1a1f3a] rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 text-white"
                     fill="none"
@@ -575,7 +575,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
                         window.location.reload();
                       }
                     }}
-                    className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-emerald-500/40 hover:scale-105 transition-all duration-300"
+                    className="px-8 py-4 bg-[#fbbf24] text-slate-900 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300"
                   >
                     Begin Terrain Mapping →
                   </button>
@@ -718,7 +718,7 @@ function UrlInput({ onSubmit, isDisabled }: { onSubmit: (url: string) => void; i
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         placeholder="https://example.com/strategy-doc.pdf"
-        className="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent disabled:opacity-50"
+        className="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:border-transparent disabled:opacity-50"
         disabled={isDisabled}
       />
       <button
@@ -812,7 +812,7 @@ function AiResearchModal({ conversation, onClose, onDocumentsAdded }: AiResearch
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl">
+        <div className="sticky top-0 bg-[#1a1f3a] text-white p-6 rounded-t-2xl">
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-2">AI Research Assistant</h2>
@@ -861,7 +861,7 @@ function AiResearchModal({ conversation, onClose, onDocumentsAdded }: AiResearch
               value={topics}
               onChange={(e) => setTopics(e.target.value)}
               placeholder="E.g., SaaS market trends 2024, enterprise software pricing strategies, product-led growth best practices"
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               rows={3}
               disabled={isSearching}
             />
@@ -880,7 +880,7 @@ function AiResearchModal({ conversation, onClose, onDocumentsAdded }: AiResearch
               value={websites}
               onChange={(e) => setWebsites(e.target.value)}
               placeholder="https://example.com/reports&#10;https://blog.competitor.com&#10;https://industry-insights.org"
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm font-mono"
+              className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm font-mono"
               rows={4}
               disabled={isSearching}
             />
@@ -898,9 +898,9 @@ function AiResearchModal({ conversation, onClose, onDocumentsAdded }: AiResearch
 
           {/* Searching State */}
           {isSearching && (
-            <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl">
+            <div className="p-6 bg-[#f4f4f7] border border-slate-200 rounded-xl">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-[#1a1f3a] rounded-xl flex items-center justify-center">
                   <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
                 </div>
                 <div className="flex-1">
@@ -926,7 +926,7 @@ function AiResearchModal({ conversation, onClose, onDocumentsAdded }: AiResearch
           <button
             onClick={handleSearch}
             disabled={isSearching || !topics.trim()}
-            className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+            className="px-8 py-3 bg-[#fbbf24] text-slate-900 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
           >
             {isSearching ? 'Researching...' : 'Start AI Research'}
           </button>

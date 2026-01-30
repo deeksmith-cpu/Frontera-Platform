@@ -1,11 +1,23 @@
 @import "tailwindcss";
 
-/* Frontera Brand Colors */
+/* Frontera Brand Colors - Brand Design Update v1 */
 :root {
-  /* Primary Colors */
-  --indigo-deep: #1e3a8a;
-  --indigo-darker: #1e2a5e;
-  --teal-electric: #06b6d4;
+  /* Primary Brand Colors */
+  --frontera-navy: #1a1f3a;
+  --frontera-navy-light: #2d3561;
+  --premium-gold: #fbbf24;
+  --premium-gold-hover: #f59e0b;
+
+  /* Cyan Scale (Data/Interactive) */
+  --cyan-600: #0891b2;
+  --cyan-400: #22d3ee;
+  --cyan-200: #a5f3fc;
+  --cyan-50: #ecfeff;
+
+  /* Legacy aliases for backward compatibility */
+  --indigo-deep: #1a1f3a;
+  --indigo-darker: #2d3561;
+  --teal-electric: #0891b2;
   --teal-light: #22d3ee;
 
   /* Neutral Colors */
@@ -24,10 +36,19 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-indigo-deep: var(--indigo-deep);
-  --color-indigo-darker: var(--indigo-darker);
-  --color-teal-electric: var(--teal-electric);
-  --color-teal-light: var(--teal-light);
+  --color-frontera-navy: var(--frontera-navy);
+  --color-frontera-navy-light: var(--frontera-navy-light);
+  --color-premium-gold: var(--premium-gold);
+  --color-premium-gold-hover: var(--premium-gold-hover);
+  --color-cyan-600: var(--cyan-600);
+  --color-cyan-400: var(--cyan-400);
+  --color-cyan-200: var(--cyan-200);
+  --color-cyan-50: var(--cyan-50);
+  /* Legacy aliases */
+  --color-indigo-deep: var(--frontera-navy);
+  --color-indigo-darker: var(--frontera-navy-light);
+  --color-teal-electric: var(--cyan-600);
+  --color-teal-light: var(--cyan-400);
   --color-silver: var(--silver);
   --color-silver-dark: var(--silver-dark);
   --font-sans: var(--font-inter), system-ui, sans-serif;
@@ -60,10 +81,15 @@
   --box-shadow-cyan-lg: 0 10px 15px -3px rgb(6 182 212 / 0.3), 0 4px 6px -4px rgb(6 182 212 / 0.2);
   --box-shadow-cyan-xl: 0 20px 25px -5px rgb(6 182 212 / 0.4), 0 8px 10px -6px rgb(6 182 212 / 0.3);
 
-  --box-shadow-indigo-sm: 0 1px 2px 0 rgb(79 70 229 / 0.1);
-  --box-shadow-indigo-md: 0 4px 6px -1px rgb(79 70 229 / 0.2), 0 2px 4px -2px rgb(79 70 229 / 0.1);
-  --box-shadow-indigo-lg: 0 10px 15px -3px rgb(79 70 229 / 0.3), 0 4px 6px -4px rgb(79 70 229 / 0.2);
-  --box-shadow-indigo-xl: 0 20px 25px -5px rgb(79 70 229 / 0.4), 0 8px 10px -6px rgb(79 70 229 / 0.3);
+  --box-shadow-indigo-sm: 0 1px 2px 0 rgb(26 31 58 / 0.1);
+  --box-shadow-indigo-md: 0 4px 6px -1px rgb(26 31 58 / 0.2), 0 2px 4px -2px rgb(26 31 58 / 0.1);
+  --box-shadow-indigo-lg: 0 10px 15px -3px rgb(26 31 58 / 0.3), 0 4px 6px -4px rgb(26 31 58 / 0.2);
+  --box-shadow-indigo-xl: 0 20px 25px -5px rgb(26 31 58 / 0.4), 0 8px 10px -6px rgb(26 31 58 / 0.3);
+
+  --box-shadow-gold-sm: 0 1px 2px 0 rgb(251 191 36 / 0.1);
+  --box-shadow-gold-md: 0 4px 6px -1px rgb(251 191 36 / 0.2), 0 2px 4px -2px rgb(251 191 36 / 0.1);
+  --box-shadow-gold-lg: 0 10px 15px -3px rgb(251 191 36 / 0.3), 0 4px 6px -4px rgb(251 191 36 / 0.2);
+  --box-shadow-gold-xl: 0 20px 25px -5px rgb(251 191 36 / 0.4), 0 8px 10px -6px rgb(251 191 36 / 0.3);
 }
 
 /* Base Styles */
@@ -141,7 +167,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Focus States for Accessibility */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--teal-electric);
+  outline: 2px solid var(--premium-gold);
   outline-offset: 2px;
 }
 
@@ -151,10 +177,12 @@ a:focus-visible {
   --primary-ink: #0f172a;
   --secondary-ink: #1e293b;
   --tertiary-ink: #475569;
-  --accent-teal: #06b6d4;
-  --accent-teal-light: #22d3ee;
-  --accent-coral: #f97316;
-  --accent-indigo: #1e3a8a;
+  --accent-gold: #fbbf24;
+  --accent-gold-hover: #f59e0b;
+  --accent-navy: #1a1f3a;
+  --accent-navy-light: #2d3561;
+  --accent-cyan: #0891b2;
+  --accent-cyan-light: #22d3ee;
   --accent-success: #10b981;
   --surface-white: #ffffff;
   --surface-silver: #f8fafc;
@@ -163,16 +191,16 @@ a:focus-visible {
   --border-medium: #94a3b8;
 
   /* Typography Scale */
-  --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
   /* Text Sizes */
-  --text-display-xl: 2.25rem;
-  --text-display-lg: 1.75rem;
-  --text-display-md: 1.375rem;
-  --text-body-lg: 1.0625rem;
-  --text-body-md: 0.9375rem;
+  --text-display-xl: 3rem;
+  --text-display-lg: 2.25rem;
+  --text-display-md: 1.5rem;
+  --text-body-lg: 1.125rem;
+  --text-body-md: 1rem;
   --text-body-sm: 0.875rem;
   --text-mono-md: 0.6875rem;
   --text-mono-sm: 0.625rem;
@@ -186,10 +214,10 @@ a:focus-visible {
   --space-2xl: 4.25rem;
 
   /* Border Radius */
-  --radius-sm: 3px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -198,7 +226,7 @@ a:focus-visible {
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--accent-indigo) 0%, var(--accent-teal) 100%);
+  --gradient-primary: linear-gradient(135deg, var(--accent-navy) 0%, var(--accent-navy-light) 100%);
   --gradient-card: linear-gradient(180deg, var(--surface-white) 0%, var(--surface-silver) 100%);
 }
 
@@ -238,8 +266,16 @@ a:focus-visible {
 }
 
 /* Gradient Text Utility */
+.gradient-text-brand {
+  background: linear-gradient(135deg, var(--frontera-navy) 0%, var(--frontera-navy-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Legacy alias */
 .gradient-text-teal {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, var(--frontera-navy) 0%, var(--frontera-navy-light) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -376,4 +412,29 @@ a:focus-visible {
 
 .hover\:shadow-indigo-xl:hover {
   box-shadow: var(--box-shadow-indigo-xl);
+}
+
+/* Gold Shadow Utilities */
+.shadow-gold-sm {
+  box-shadow: var(--box-shadow-gold-sm);
+}
+
+.shadow-gold-md {
+  box-shadow: var(--box-shadow-gold-md);
+}
+
+.shadow-gold-lg {
+  box-shadow: var(--box-shadow-gold-lg);
+}
+
+.shadow-gold-xl {
+  box-shadow: var(--box-shadow-gold-xl);
+}
+
+.hover\:shadow-gold-lg:hover {
+  box-shadow: var(--box-shadow-gold-lg);
+}
+
+.hover\:shadow-gold-xl:hover {
+  box-shadow: var(--box-shadow-gold-xl);
 }

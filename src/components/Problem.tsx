@@ -42,7 +42,7 @@ export default function Problem() {
     <section id="problem" className="bg-slate-50 py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[#06b6d4]">The Problem</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#fbbf24]">The Problem</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
             The Playbooks Are Broken
           </h2>
@@ -56,7 +56,7 @@ export default function Problem() {
           {problems.map((problem, index) => (
             <div
               key={index}
-              className="group relative rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-[#06b6d4]/30"
+              className="group relative rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-[#fbbf24]/30"
             >
               <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-600 group-hover:bg-red-100 transition-colors">
                 {problem.icon}
@@ -68,9 +68,9 @@ export default function Problem() {
         </div>
 
         {/* Call out box */}
-        <div className="mx-auto mt-16 max-w-3xl rounded-2xl bg-[#1e3a8a]/5 border border-[#1e3a8a]/10 p-8 text-center">
+        <div className="mx-auto mt-16 max-w-3xl rounded-2xl bg-[#1a1f3a]/5 border border-[#1a1f3a]/10 p-8 text-center">
           <p className="text-lg text-slate-700">
-            <span className="font-semibold text-[#1e3a8a]">It&apos;s time for a new model</span> — designed by real product leaders, not slide builders.
+            <span className="font-semibold text-[#1a1f3a]">It&apos;s time for a new model</span> — designed by real product leaders, not slide builders.
             A model that embeds strategy into practice, supports teams in real time, and is measured by outcomes.
           </p>
         </div>

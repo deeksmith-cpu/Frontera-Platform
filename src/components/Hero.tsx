@@ -2,26 +2,26 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#1e3a8a] via-[#1e2a5e] to-[#0f172a] pt-32 pb-20 lg:pt-40 lg:pb-32">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#1a1f3a] via-[#2d3561] to-[#0f172a] pt-32 pb-20 lg:pt-40 lg:pb-32">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#06b6d4]/10 blur-3xl" />
-        <div className="absolute top-1/2 -left-20 h-60 w-60 rounded-full bg-[#06b6d4]/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 h-40 w-40 rounded-full bg-[#22d3ee]/10 blur-2xl" />
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#fbbf24]/10 blur-3xl" />
+        <div className="absolute top-1/2 -left-20 h-60 w-60 rounded-full bg-[#fbbf24]/10 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-40 w-40 rounded-full bg-[#f59e0b]/10 blur-2xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#06b6d4]/30 bg-[#06b6d4]/10 px-4 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#06b6d4] animate-pulse" />
-            <span className="text-sm font-medium text-[#22d3ee]">Built by Product Leaders, Not Theorists</span>
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-4 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#fbbf24] animate-pulse" />
+            <span className="text-sm font-medium text-[#f59e0b]">Built by Product Leaders, Not Theorists</span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
             Product Model Transformations{" "}
-            <span className="block mt-2 bg-gradient-to-r from-[#06b6d4] to-[#22d3ee] bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] bg-clip-text text-transparent">
               Are Failing Enterprises
             </span>
           </h1>
@@ -35,22 +35,22 @@ export default function Hero() {
           </p>
 
           {/* Tagline */}
-          <p className="mt-6 text-[#06b6d4] font-semibold text-lg">
+          <p className="mt-6 text-[#fbbf24] font-semibold text-lg">
             From Strategy to Outcomes.
           </p>
 
           {/* Stats row */}
           <div className="mt-12 grid grid-cols-3 gap-8 border-t border-white/10 pt-10 sm:gap-12">
             <div>
-              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">70%</div>
+              <div className="text-3xl font-bold text-[#fbbf24] sm:text-4xl">70%</div>
               <div className="mt-1 text-sm text-slate-400">Transformations Fail</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">£Ms</div>
+              <div className="text-3xl font-bold text-[#fbbf24] sm:text-4xl">£Ms</div>
               <div className="mt-1 text-sm text-slate-400">Wasted on Consultants</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#06b6d4] sm:text-4xl">2yr</div>
+              <div className="text-3xl font-bold text-[#fbbf24] sm:text-4xl">2yr</div>
               <div className="mt-1 text-sm text-slate-400">Reboot Cycle</div>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function Hero() {
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <Link
               href="#cta"
-              className="inline-flex items-center justify-center rounded-full bg-[#06b6d4] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#06b6d4]/25 transition-all duration-200 hover:bg-[#22d3ee] hover:shadow-xl hover:shadow-[#06b6d4]/30"
+              className="inline-flex items-center justify-center rounded-full bg-[#fbbf24] px-8 py-4 text-base font-semibold text-slate-900 shadow-lg shadow-[#fbbf24]/25 transition-all duration-200 hover:bg-[#f59e0b] hover:shadow-xl hover:shadow-[#fbbf24]/30"
             >
               Book a Demo
               <svg className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">

@@ -147,7 +147,7 @@ export function CoachContextAwareness({ conversation }: CoachContextAwarenessPro
         className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-indigo-600" />
+          <Brain className="w-4 h-4 text-[#1a1f3a]" />
           <span className="text-sm font-semibold text-slate-700">What the Coach Knows</span>
         </div>
         <div className="flex items-center gap-2">

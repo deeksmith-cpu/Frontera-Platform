@@ -43,8 +43,8 @@ export default function LandingMockup() {
               <path d="M16 2V30M2 9L30 23M30 9L2 23" stroke="white" strokeWidth="1.5" opacity="0.4"/>
               <defs>
                 <linearGradient id="logo-gradient-nav" x1="2" y1="2" x2="30" y2="30">
-                  <stop stopColor="#1e3a8a"/>
-                  <stop offset="1" stopColor="#06b6d4"/>
+                  <stop stopColor="#1a1f3a"/>
+                  <stop offset="1" stopColor="#fbbf24"/>
                 </linearGradient>
               </defs>
             </svg>
@@ -172,8 +172,8 @@ export default function LandingMockup() {
             <div className="floating-card card-notification">
               <div className="notification-icon">
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                  <path d="M9 12l2 2 4-4" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="12" r="10" stroke="#06b6d4" strokeWidth="2"/>
+                  <path d="M9 12l2 2 4-4" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="10" stroke="#fbbf24" strokeWidth="2"/>
                 </svg>
               </div>
               <div className="notification-content">
@@ -200,8 +200,8 @@ export default function LandingMockup() {
                   <text x="8" y="16" fill="white" fontSize="8" fontWeight="600">STRATEGY</text>
                   <defs>
                     <linearGradient id="card-grad" x1="0" y1="0" x2="40" y2="24">
-                      <stop stopColor="#1e3a8a"/>
-                      <stop offset="1" stopColor="#06b6d4"/>
+                      <stop stopColor="#1a1f3a"/>
+                      <stop offset="1" stopColor="#fbbf24"/>
                     </linearGradient>
                   </defs>
                 </svg>
@@ -395,8 +395,8 @@ export default function LandingMockup() {
                       <path d="M16 4L30 10V22L16 28L2 22V10L16 4Z" fill="url(#tilt-grad)" opacity="0.9"/>
                       <defs>
                         <linearGradient id="tilt-grad" x1="2" y1="4" x2="30" y2="28">
-                          <stop stopColor="#1e3a8a"/>
-                          <stop offset="1" stopColor="#06b6d4"/>
+                          <stop stopColor="#1a1f3a"/>
+                          <stop offset="1" stopColor="#fbbf24"/>
                         </linearGradient>
                       </defs>
                     </svg>
@@ -429,11 +429,11 @@ export default function LandingMockup() {
                 <svg viewBox="0 0 80 96" fill="none">
                   <path d="M40 4L76 20V52C76 72 60 88 40 92C20 88 4 72 4 52V20L40 4Z" fill="url(#shield-grad)" opacity="0.1"/>
                   <path d="M40 4L76 20V52C76 72 60 88 40 92C20 88 4 72 4 52V20L40 4Z" stroke="url(#shield-grad)" strokeWidth="2" fill="none"/>
-                  <path d="M28 48L36 56L52 40" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M28 48L36 56L52 40" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                   <defs>
                     <linearGradient id="shield-grad" x1="4" y1="4" x2="76" y2="92">
-                      <stop stopColor="#1e3a8a"/>
-                      <stop offset="1" stopColor="#06b6d4"/>
+                      <stop stopColor="#1a1f3a"/>
+                      <stop offset="1" stopColor="#fbbf24"/>
                     </linearGradient>
                   </defs>
                 </svg>
@@ -504,8 +504,8 @@ export default function LandingMockup() {
                   <path d="M16 2V30M2 9L30 23M30 9L2 23" stroke="white" strokeWidth="1.5" opacity="0.4"/>
                   <defs>
                     <linearGradient id="logo-gradient-footer" x1="2" y1="2" x2="30" y2="30">
-                      <stop stopColor="#1e3a8a"/>
-                      <stop offset="1" stopColor="#06b6d4"/>
+                      <stop stopColor="#1a1f3a"/>
+                      <stop offset="1" stopColor="#fbbf24"/>
                     </linearGradient>
                   </defs>
                 </svg>

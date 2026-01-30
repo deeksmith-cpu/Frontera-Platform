@@ -170,7 +170,7 @@ export function StrategicMapPage({ opportunities, companyName }: StrategicMapPag
       <Text style={[styles.label, styles.mb8]}>Opportunity Types</Text>
       <View style={[styles.row, { gap: 16, marginBottom: 20 }]}>
         <View style={[styles.row, { gap: 6 }]}>
-          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.indigo[600] }} />
+          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.navy.DEFAULT }} />
           <Text style={styles.bodySmall}>Where to Play</Text>
         </View>
         <View style={[styles.row, { gap: 6 }]}>

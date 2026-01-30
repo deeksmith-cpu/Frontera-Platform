@@ -125,12 +125,12 @@ function TensionCard({ tension, index }: { tension: StrategicTension; index: num
           key={i}
           style={[
             {
-              backgroundColor: option.recommended ? COLORS.indigo[50] : COLORS.slate[50],
+              backgroundColor: option.recommended ? COLORS.gold[50] : COLORS.slate[50],
               borderRadius: 4,
               padding: 8,
               marginBottom: 6,
               borderWidth: option.recommended ? 1 : 0,
-              borderColor: COLORS.indigo[500],
+              borderColor: COLORS.navy.DEFAULT,
             },
           ]}
         >

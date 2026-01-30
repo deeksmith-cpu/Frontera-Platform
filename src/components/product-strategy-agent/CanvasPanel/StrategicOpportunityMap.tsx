@@ -40,7 +40,7 @@ export function StrategicOpportunityMap({
     const isHovered = opp.id === hoveredId;
 
     if (isSelected || isHovered) {
-      return 'bg-gradient-to-br from-indigo-600 to-cyan-600';
+      return 'bg-[#1a1f3a]';
     }
 
     switch (opp.opportunityType) {
@@ -169,7 +169,7 @@ export function StrategicOpportunityMap({
                   ${getDotColor(opp)}
                   rounded-full cursor-pointer
                   transition-all duration-300
-                  ${isSelected ? 'ring-2 ring-offset-2 ring-cyan-400 scale-125' : ''}
+                  ${isSelected ? 'ring-2 ring-offset-2 ring-[#fbbf24] scale-125' : ''}
                   ${isHovered && !isSelected ? 'scale-110' : ''}
                   hover:shadow-lg
                 `}

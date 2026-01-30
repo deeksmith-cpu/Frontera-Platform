@@ -52,7 +52,7 @@ export default async function AdminPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-[#1e3a8a] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-[#1a1f3a] flex items-center justify-center">
                   <svg
                     className="w-5 h-5 text-white"
                     fill="none"

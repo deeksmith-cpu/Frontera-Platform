@@ -1,6 +1,6 @@
 /* Frontera Landing Page - Finova-Inspired Editorial Design */
 /* Typography: Outfit (sans) + Playfair Display (serif italic for emphasis) */
-/* Brand: Indigo (#1e3a8a) + Electric Teal (#06b6d4) */
+/* Brand: Indigo (#1a1f3a) + Electric Teal (#fbbf24) */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap');
 
@@ -14,12 +14,12 @@
   --color-bg-muted: #f1f5f9;
 
   /* Primary - Deep Indigo */
-  --color-indigo: #1e3a8a;
-  --color-indigo-dark: #1e2a5e;
+  --color-indigo: #1a1f3a;
+  --color-indigo-dark: #2d3561;
   --color-indigo-light: #dbeafe;
 
   /* Accent - Electric Teal */
-  --color-teal: #06b6d4;
+  --color-teal: #fbbf24;
   --color-teal-light: #22d3ee;
   --color-teal-bg: #ecfeff;
 

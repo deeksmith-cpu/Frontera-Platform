@@ -70,7 +70,7 @@ export default function ApplicationList() {
             onClick={() => setStatusFilter(filter.value)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               statusFilter === filter.value
-                ? "bg-[#1e3a8a] text-white"
+                ? "bg-[#1a1f3a] text-white"
                 : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300"
             }`}
           >
@@ -100,7 +100,7 @@ export default function ApplicationList() {
       {/* Loading State */}
       {isLoading && (
         <div className="flex items-center justify-center py-12">
-          <div className="w-8 h-8 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 

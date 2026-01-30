@@ -89,7 +89,7 @@ export function EvidenceLinks({ references, onNavigate }: EvidenceLinksProps) {
             key={i}
             onClick={() => onNavigate?.(ref)}
             disabled={!onNavigate}
-            className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition-colors disabled:cursor-default"
+            className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-slate-100 text-[#1a1f3a] rounded hover:bg-slate-200 transition-colors disabled:cursor-default"
           >
             {getEvidenceIcon(ref.type)}
             <span>{getEvidenceLabel(ref)}</span>
@@ -138,7 +138,7 @@ export function FormattedContent({
     parts.push(
       <span
         key={keyIndex++}
-        className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-indigo-50 text-indigo-600 rounded text-xs font-medium cursor-pointer hover:bg-indigo-100 transition-colors"
+        className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-slate-100 text-[#1a1f3a] rounded text-xs font-medium cursor-pointer hover:bg-slate-200 transition-colors"
         onClick={() => onReferenceClick?.(ref)}
       >
         {getEvidenceIcon(ref.type)}

@@ -8,7 +8,7 @@ export default function SSOCallback() {
           signInFallbackRedirectUrl="/dashboard"
           signUpFallbackRedirectUrl="/dashboard"
         />
-        <div className="w-12 h-12 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gray-600">Completing sign in...</p>
       </div>
     </div>

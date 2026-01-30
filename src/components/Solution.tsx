@@ -42,7 +42,7 @@ export default function Solution() {
     <section id="solution" className="bg-white py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[#06b6d4]">The Platform</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#fbbf24]">The Platform</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
             Product Model Coaching with Agents That Work for You
           </h2>
@@ -59,9 +59,9 @@ export default function Solution() {
             {agents.map((agent, index) => (
               <div
                 key={index}
-                className="relative flex gap-5 rounded-2xl border border-slate-100 bg-slate-50/50 p-8 transition-all duration-300 hover:bg-white hover:shadow-lg hover:border-[#06b6d4]/20"
+                className="relative flex gap-5 rounded-2xl border border-slate-100 bg-slate-50/50 p-8 transition-all duration-300 hover:bg-white hover:shadow-lg hover:border-[#fbbf24]/20"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#06b6d4] text-white shadow-lg shadow-[#1e3a8a]/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#1a1f3a] to-[#fbbf24] text-white shadow-lg shadow-[#1a1f3a]/20">
                   {agent.icon}
                 </div>
                 <div>
@@ -73,14 +73,14 @@ export default function Solution() {
           </div>
 
           {/* How it works */}
-          <div className="mt-20 rounded-3xl bg-gradient-to-br from-[#1e3a8a] to-[#1e2a5e] p-8 lg:p-12">
+          <div className="mt-20 rounded-3xl bg-gradient-to-br from-[#1a1f3a] to-[#2d3561] p-8 lg:p-12">
             <h3 className="text-center text-2xl font-bold text-white sm:text-3xl">How Frontera Works</h3>
             <p className="text-center text-slate-300 mt-2 max-w-2xl mx-auto">
               Expert-led, AI-powered coaching that embeds in your flow of work
             </p>
             <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
               <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#06b6d4] text-xl font-bold text-white">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#fbbf24] text-xl font-bold text-white">
                   1
                 </div>
                 <h4 className="mt-5 text-lg font-semibold text-white">Configure Your Context</h4>
@@ -89,7 +89,7 @@ export default function Solution() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#06b6d4] text-xl font-bold text-white">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#fbbf24] text-xl font-bold text-white">
                   2
                 </div>
                 <h4 className="mt-5 text-lg font-semibold text-white">Teams Get Coached</h4>
@@ -98,7 +98,7 @@ export default function Solution() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#06b6d4] text-xl font-bold text-white">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#fbbf24] text-xl font-bold text-white">
                   3
                 </div>
                 <h4 className="mt-5 text-lg font-semibold text-white">Measure Outcomes</h4>
@@ -112,8 +112,8 @@ export default function Solution() {
           {/* Key differentiators */}
           <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
             <div className="text-center p-6">
-              <div className="mx-auto h-12 w-12 rounded-full bg-[#06b6d4]/10 flex items-center justify-center">
-                <svg className="h-6 w-6 text-[#06b6d4]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto h-12 w-12 rounded-full bg-[#fbbf24]/10 flex items-center justify-center">
+                <svg className="h-6 w-6 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
               </div>
@@ -121,8 +121,8 @@ export default function Solution() {
               <p className="mt-2 text-sm text-slate-600">Generative and agentic AI that adapts to your context in real time</p>
             </div>
             <div className="text-center p-6">
-              <div className="mx-auto h-12 w-12 rounded-full bg-[#06b6d4]/10 flex items-center justify-center">
-                <svg className="h-6 w-6 text-[#06b6d4]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto h-12 w-12 rounded-full bg-[#fbbf24]/10 flex items-center justify-center">
+                <svg className="h-6 w-6 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
               </div>
@@ -130,8 +130,8 @@ export default function Solution() {
               <p className="mt-2 text-sm text-slate-600">Created by real product leaders who&apos;ve built products, not theorists</p>
             </div>
             <div className="text-center p-6">
-              <div className="mx-auto h-12 w-12 rounded-full bg-[#06b6d4]/10 flex items-center justify-center">
-                <svg className="h-6 w-6 text-[#06b6d4]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto h-12 w-12 rounded-full bg-[#fbbf24]/10 flex items-center justify-center">
+                <svg className="h-6 w-6 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
                 </svg>
               </div>

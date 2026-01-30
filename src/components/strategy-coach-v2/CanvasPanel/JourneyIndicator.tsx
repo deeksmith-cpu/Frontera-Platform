@@ -31,7 +31,7 @@ export function JourneyIndicator({ currentPhase }: JourneyIndicatorProps) {
                     isCompleted
                       ? 'w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 border-2 border-emerald-400 shadow-md'
                       : isActive
-                      ? 'w-12 h-12 bg-gradient-to-br from-indigo-600 to-cyan-600 border-2 border-cyan-400 shadow-lg'
+                      ? 'w-12 h-12 bg-[#1a1f3a] border-2 border-[#fbbf24] shadow-lg'
                       : 'w-10 h-10 bg-slate-100 border-2 border-slate-200'
                   } rounded-full`}
                 >
@@ -55,7 +55,7 @@ export function JourneyIndicator({ currentPhase }: JourneyIndicatorProps) {
                       isCompleted
                         ? 'text-emerald-600'
                         : isActive
-                        ? 'text-cyan-600'
+                        ? 'text-[#fbbf24]'
                         : 'text-slate-400'
                     }`}
                   >
@@ -69,7 +69,7 @@ export function JourneyIndicator({ currentPhase }: JourneyIndicatorProps) {
                 {/* "You Are Here" indicator for active phase */}
                 {isActive && (
                   <div className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-full text-[10px] font-semibold shadow-md">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1a1f3a] text-white rounded-full text-[10px] font-semibold shadow-md">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
                       You Are Here
                     </div>

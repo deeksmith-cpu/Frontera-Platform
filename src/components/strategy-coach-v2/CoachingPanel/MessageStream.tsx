@@ -34,7 +34,7 @@ export function MessageStream({ messages, isLoading }: MessageStreamProps) {
       ))}
       {isLoading && (
         <div className="flex items-center gap-2.5 text-slate-600 text-sm">
-          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-[#1a1f3a] animate-pulse" />
           <span className="text-xs uppercase tracking-wide font-semibold">Coach is thinking...</span>
         </div>
       )}

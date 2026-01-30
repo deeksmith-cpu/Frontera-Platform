@@ -39,7 +39,7 @@ export function PillarCard({
 
   const statusColors = {
     pending: 'text-slate-500',
-    in_progress: 'text-cyan-500',
+    in_progress: 'text-[#fbbf24]',
     completed: 'text-emerald-500',
   };
 
@@ -54,11 +54,11 @@ export function PillarCard({
       onClick={onClick}
       className={`group relative bg-white border rounded-2xl p-8 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 ${
         isActive
-          ? 'border-cyan-200 shadow-xl ring-1 ring-cyan-100'
+          ? 'border-[#fbbf24]/40 shadow-xl ring-1 ring-[#fbbf24]/20'
           : status === 'completed'
           ? 'border-emerald-100'
           : status === 'in_progress'
-          ? 'border-cyan-100'
+          ? 'border-[#fbbf24]/20'
           : 'border-slate-100'
       }`}
       style={{ animationDelay: `${['company', 'customer', 'competitor'].indexOf(pillar) * 0.1}s` }}
@@ -87,7 +87,7 @@ export function PillarCard({
       <div className="mb-6">
         <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full transition-all duration-700 ease-out"
+            className="h-full bg-[#fbbf24] rounded-full transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -127,7 +127,7 @@ export function PillarCard({
 
       {/* Hover Indicator */}
       {!isActive && (
-        <div className="absolute inset-0 rounded-2xl ring-2 ring-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl ring-2 ring-[#fbbf24] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       )}
     </div>
   );

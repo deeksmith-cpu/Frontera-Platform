@@ -199,7 +199,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-2 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-slate-600">Loading synthesis...</p>
         </div>
       </div>
@@ -218,7 +218,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
       </div>
 
       {/* Research Progress Bar */}
-      <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-2xl border border-indigo-100 p-4">
+      <div className="bg-[#f4f4f7] rounded-2xl border border-slate-200 p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-slate-700">Research Completion</span>
@@ -232,7 +232,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
         </div>
         <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-indigo-600 to-cyan-600 transition-all duration-500"
+            className="h-full bg-[#1a1f3a] transition-all duration-500"
             style={{ width: `${overallProgress}%` }}
           />
         </div>
@@ -247,8 +247,8 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center">
           {canGenerateSynthesis ? (
             <>
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-indigo-100 to-cyan-100 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 mx-auto mb-4 bg-[#f4f4f7] rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
@@ -265,7 +265,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
               <button
                 onClick={handleGenerateSynthesis}
                 disabled={isGenerating}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="px-6 py-3 bg-[#fbbf24] text-slate-900 font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isGenerating ? (
                   <span className="flex items-center gap-2">
@@ -371,7 +371,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
             <button
               onClick={handleExportPDF}
               disabled={isExporting}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#fbbf24] text-slate-900 font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isExporting ? (
                 <>
@@ -392,7 +392,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
             <button
               onClick={handleGenerateSynthesis}
               disabled={isGenerating}
-              className="text-sm text-slate-500 hover:text-indigo-600 font-medium transition-colors disabled:opacity-50"
+              className="text-sm text-slate-500 hover:text-[#1a1f3a] font-medium transition-colors disabled:opacity-50"
             >
               {isGenerating ? 'Regenerating...' : 'Regenerate Synthesis'}
             </button>

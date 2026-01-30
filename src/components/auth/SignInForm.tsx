@@ -226,7 +226,7 @@ export default function SignInForm() {
       {!isReady && (
         <div className="p-6 sm:p-10 flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="w-12 h-12 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
@@ -259,8 +259,8 @@ export default function SignInForm() {
         {verificationStep === "second_factor" && (
           <div className="space-y-6">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-[#1e3a8a]/10 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#1e3a8a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 mx-auto mb-4 bg-[#1a1f3a]/10 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -280,7 +280,7 @@ export default function SignInForm() {
                 type="button"
                 onClick={handleSendEmailCode}
                 disabled={sendingCode}
-                className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25 disabled:opacity-50"
+                className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25 disabled:opacity-50"
               >
                 {sendingCode ? (
                   <>
@@ -307,7 +307,7 @@ export default function SignInForm() {
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="Enter 6-digit code"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none text-center text-2xl tracking-widest font-mono"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none text-center text-2xl tracking-widest font-mono"
                     autoFocus
                     maxLength={6}
                   />
@@ -318,7 +318,7 @@ export default function SignInForm() {
                   disabled={verificationCode.length !== 6 || isLoading}
                   className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                     verificationCode.length === 6 && !isLoading
-                      ? "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25"
+                      ? "bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }`}
                 >
@@ -336,7 +336,7 @@ export default function SignInForm() {
                   type="button"
                   onClick={handleSendEmailCode}
                   disabled={sendingCode}
-                  className="w-full text-sm text-[#1e3a8a] hover:underline disabled:opacity-50"
+                  className="w-full text-sm text-[#1a1f3a] hover:underline disabled:opacity-50"
                 >
                   {sendingCode ? "Sending..." : "Resend code"}
                 </button>
@@ -418,7 +418,7 @@ export default function SignInForm() {
               value={formData.email}
               onChange={(e) => updateField("email", e.target.value)}
               placeholder="john.smith@company.com"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
               required
             />
           </div>
@@ -431,7 +431,7 @@ export default function SignInForm() {
               </label>
               <Link
                 href="/forgot-password"
-                className="text-sm text-[#1e3a8a] hover:underline"
+                className="text-sm text-[#1a1f3a] hover:underline"
               >
                 Forgot password?
               </Link>
@@ -441,7 +441,7 @@ export default function SignInForm() {
               value={formData.password}
               onChange={(e) => updateField("password", e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#06b6d4] focus:ring-2 focus:ring-[#06b6d4]/20 transition-all outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none"
               required
             />
           </div>
@@ -452,7 +452,7 @@ export default function SignInForm() {
             disabled={!isFormValid() || isLoading || !isLoaded}
             className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
               isFormValid() && !isLoading && isLoaded
-                ? "bg-[#1e3a8a] text-white hover:bg-[#1e2a5e] shadow-lg shadow-[#1e3a8a]/25"
+                ? "bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
@@ -472,7 +472,7 @@ export default function SignInForm() {
             Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
-              className="text-[#1e3a8a] hover:underline font-medium"
+              className="text-[#1a1f3a] hover:underline font-medium"
             >
               Create one
             </Link>

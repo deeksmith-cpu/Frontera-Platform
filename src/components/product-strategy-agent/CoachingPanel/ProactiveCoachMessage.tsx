@@ -12,9 +12,9 @@ export function ProactiveCoachMessage({ trigger, onDismiss }: ProactiveCoachMess
   if (!trigger) return null;
 
   return (
-    <div className="mx-4 my-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 border border-indigo-100 rounded-xl animate-fade-in">
+    <div className="mx-4 my-2 p-3 bg-slate-50 border border-slate-200 rounded-xl animate-fade-in">
       <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-cyan-600 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-[#1a1f3a] flex items-center justify-center flex-shrink-0">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1 min-w-0">
@@ -22,7 +22,7 @@ export function ProactiveCoachMessage({ trigger, onDismiss }: ProactiveCoachMess
           {trigger.action && (
             <button
               onClick={trigger.action.onClick}
-              className="mt-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="mt-2 text-xs font-semibold text-[#fbbf24] hover:text-[#f59e0b] transition-colors"
             >
               {trigger.action.label} →
             </button>

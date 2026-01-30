@@ -19,7 +19,7 @@ export default function SignInPage() {
           <Suspense
             fallback={
               <div className="flex items-center justify-center p-10">
-                <div className="w-8 h-8 border-4 border-[#1e3a8a] border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
               </div>
             }
           >

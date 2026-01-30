@@ -47,7 +47,7 @@ export default async function DashboardPage() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a]/5 via-transparent to-cyan-500/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1f3a]/5 via-transparent to-[#fbbf24]/5 pointer-events-none" />
         <div className="max-w-7xl mx-auto px-6 py-16 pt-32">
           <div className="relative">
             <h1 className="text-5xl font-bold text-slate-900 mb-4">
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
             </h1>
             {orgName && (
               <div className="flex items-center gap-3 text-lg">
-                <span className="font-semibold text-[#1e3a8a]">{orgName}</span>
+                <span className="font-semibold text-[#1a1f3a]">{orgName}</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                 <span className="text-slate-600">{formattedRole}</span>
               </div>
@@ -75,12 +75,12 @@ export default async function DashboardPage() {
           {/* Strategy Coach - Featured Card */}
           <Link
             href="/dashboard/strategy-coach"
-            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#06b6d4] hover:-translate-y-1"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#fbbf24] hover:-translate-y-1"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#06b6d4]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#fbbf24]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
             <div className="relative p-8">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-[#1e3a8a] to-[#06b6d4] rounded-xl shadow-lg">
+                <div className="p-3 bg-gradient-to-br from-[#1a1f3a] to-[#fbbf24] rounded-xl shadow-lg">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
                   </svg>
                 </div>
                 <svg
-                  className="w-6 h-6 text-slate-400 group-hover:text-[#1e3a8a] group-hover:translate-x-1 transition-all duration-300"
+                  className="w-6 h-6 text-slate-400 group-hover:text-[#1a1f3a] group-hover:translate-x-1 transition-all duration-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="2"
@@ -123,12 +123,12 @@ export default async function DashboardPage() {
           {/* Product Strategy Agent - Functional MVP */}
           <Link
             href="/dashboard/product-strategy-agent"
-            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-[#1e3a8a] hover:border-[#06b6d4] hover:-translate-y-1"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-[#1a1f3a] hover:border-[#fbbf24] hover:-translate-y-1"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#06b6d4]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#fbbf24]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
             <div className="relative p-8">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-[#1e3a8a] to-[#06b6d4] rounded-xl shadow-lg">
+                <div className="p-3 bg-gradient-to-br from-[#1a1f3a] to-[#fbbf24] rounded-xl shadow-lg">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                     />
                   </svg>
                 </div>
-                <span className="px-3 py-1 bg-gradient-to-r from-[#1e3a8a] to-[#06b6d4] text-white text-xs font-bold rounded-full uppercase tracking-wide">
+                <span className="px-3 py-1 bg-gradient-to-r from-[#1a1f3a] to-[#fbbf24] text-white text-xs font-bold rounded-full uppercase tracking-wide">
                   MVP
                 </span>
               </div>
@@ -233,12 +233,12 @@ export default async function DashboardPage() {
           {/* Team Management Card */}
           <Link
             href="/dashboard/team"
-            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#06b6d4] hover:-translate-y-1"
+            className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-[#fbbf24] hover:-translate-y-1"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#1e3a8a]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#1a1f3a]/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500" />
             <div className="relative p-8">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-[#06b6d4] to-[#1e3a8a] rounded-xl shadow-lg">
+                <div className="p-3 bg-gradient-to-br from-[#fbbf24] to-[#1a1f3a] rounded-xl shadow-lg">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -254,7 +254,7 @@ export default async function DashboardPage() {
                   </svg>
                 </div>
                 <svg
-                  className="w-6 h-6 text-slate-400 group-hover:text-[#1e3a8a] group-hover:translate-x-1 transition-all duration-300"
+                  className="w-6 h-6 text-slate-400 group-hover:text-[#1a1f3a] group-hover:translate-x-1 transition-all duration-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="2"
@@ -282,7 +282,7 @@ export default async function DashboardPage() {
           {isAdmin && (
             <Link
               href="/dashboard/admin"
-              className="group relative overflow-hidden bg-gradient-to-br from-[#1e3a8a] to-[#1e2a5e] rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-[#1e3a8a] hover:border-[#06b6d4] hover:-translate-y-1 lg:col-span-2"
+              className="group relative overflow-hidden bg-gradient-to-br from-[#1a1f3a] to-[#2d3561] rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-[#1a1f3a] hover:border-[#fbbf24] hover:-translate-y-1 lg:col-span-2"
             >
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
               <div className="relative p-8">
@@ -320,7 +320,7 @@ export default async function DashboardPage() {
                 <p className="text-white/90 leading-relaxed mb-6 text-lg">
                   Review client applications, manage provisioning, and oversee the Frontera platform.
                 </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#1e3a8a] rounded-full font-bold text-sm shadow-lg">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#1a1f3a] rounded-full font-bold text-sm shadow-lg">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>

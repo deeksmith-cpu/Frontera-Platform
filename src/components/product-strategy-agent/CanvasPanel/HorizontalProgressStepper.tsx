@@ -71,7 +71,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
         case 'cyan':
           return 'bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-cyan-xl';
         default:
-          return 'bg-gradient-to-br from-indigo-600 to-cyan-600 shadow-indigo-xl';
+          return 'bg-[#1a1f3a] shadow-lg';
       }
     } else {
       // Complete state
@@ -85,7 +85,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
         case 'cyan':
           return 'bg-cyan-500 shadow-cyan-lg';
         default:
-          return 'bg-indigo-600 shadow-indigo-lg';
+          return 'bg-[#1a1f3a] shadow-lg';
       }
     }
   };
@@ -101,7 +101,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
       case 'cyan':
         return 'text-cyan-600';
       default:
-        return 'text-indigo-600';
+        return 'text-[#1a1f3a]';
     }
   };
 
@@ -137,7 +137,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                       : 'bg-slate-200 text-slate-500'
                   } ${
                     isClickable
-                      ? 'cursor-pointer hover:scale-125 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-offset-2 hover:ring-cyan-400'
+                      ? 'cursor-pointer hover:scale-125 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-offset-2 hover:ring-[#fbbf24]'
                       : isLocked
                       ? 'cursor-not-allowed opacity-60'
                       : ''

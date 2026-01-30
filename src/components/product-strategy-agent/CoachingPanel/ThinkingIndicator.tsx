@@ -24,7 +24,7 @@ export function ThinkingIndicator({ onStop }: ThinkingIndicatorProps) {
   return (
     <div className="thinking-indicator flex items-start gap-3 bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border border-slate-200 animate-fade-in-up">
       {/* Coach Avatar */}
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 flex-shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-[#1a1f3a] flex items-center justify-center shadow-lg shadow-slate-500/20 flex-shrink-0">
         <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
@@ -41,21 +41,21 @@ export function ThinkingIndicator({ onStop }: ThinkingIndicatorProps) {
             {/* Animated Gradient Dots */}
             <div className="flex items-center gap-1.5">
               <div
-                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                className="w-2.5 h-2.5 rounded-full bg-[#fbbf24] animate-pulse"
                 style={{ animationDelay: '0s' }}
               />
               <div
-                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                className="w-2.5 h-2.5 rounded-full bg-[#fbbf24] animate-pulse"
                 style={{ animationDelay: '0.2s' }}
               />
               <div
-                className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 animate-pulse"
+                className="w-2.5 h-2.5 rounded-full bg-[#fbbf24] animate-pulse"
                 style={{ animationDelay: '0.4s' }}
               />
             </div>
 
             {/* Thinking Text */}
-            <span className="text-sm font-bold uppercase tracking-wider text-indigo-600">
+            <span className="text-sm font-bold uppercase tracking-wider text-[#1a1f3a]">
               Thinking...
             </span>
           </div>

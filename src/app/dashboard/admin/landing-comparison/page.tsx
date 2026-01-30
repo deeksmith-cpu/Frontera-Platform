@@ -54,7 +54,7 @@ export default function LandingComparisonPage() {
                 href="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ml-4 px-4 py-2 text-sm font-medium bg-[#1e3a8a] text-white rounded-lg hover:bg-[#1e3070] transition-colors flex items-center gap-2"
+                className="ml-4 px-4 py-2 text-sm font-medium bg-[#1a1f3a] text-white rounded-lg hover:bg-[#2d3561] transition-colors flex items-center gap-2"
               >
                 View Live Page
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -117,7 +117,7 @@ export default function LandingComparisonPage() {
 
           {/* Comparison Notes */}
           <div className="mt-6 grid grid-cols-2 gap-6">
-            <div className={`p-6 rounded-xl border-2 transition-all ${activeTab === "original" ? "border-[#1e3a8a] bg-indigo-50" : "border-slate-200 bg-white"}`}>
+            <div className={`p-6 rounded-xl border-2 transition-all ${activeTab === "original" ? "border-[#1a1f3a] bg-indigo-50" : "border-slate-200 bg-white"}`}>
               <h3 className="font-semibold text-slate-900 mb-2">Original (Component-based)</h3>
               <ul className="text-sm text-slate-600 space-y-1">
                 <li>• Uses modular React components</li>
@@ -126,7 +126,7 @@ export default function LandingComparisonPage() {
                 <li>• Logo component with live text</li>
               </ul>
             </div>
-            <div className={`p-6 rounded-xl border-2 transition-all ${activeTab === "mockup" ? "border-[#1e3a8a] bg-indigo-50" : "border-slate-200 bg-white"}`}>
+            <div className={`p-6 rounded-xl border-2 transition-all ${activeTab === "mockup" ? "border-[#1a1f3a] bg-indigo-50" : "border-slate-200 bg-white"}`}>
               <h3 className="font-semibold text-slate-900 mb-2">Mockup (Fintech Style)</h3>
               <ul className="text-sm text-slate-600 space-y-1">
                 <li>• Fintech-inspired phone mockups</li>

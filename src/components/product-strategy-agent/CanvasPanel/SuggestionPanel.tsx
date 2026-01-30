@@ -90,7 +90,7 @@ export function SuggestionPanel({ suggestion, onApply, onCopy }: SuggestionPanel
   };
 
   return (
-    <div className="suggestion-panel mt-4 rounded-xl border border-cyan-200 bg-gradient-to-br from-indigo-50/50 to-cyan-50/50 overflow-hidden transition-all duration-300">
+    <div className="suggestion-panel mt-4 rounded-xl border border-slate-200 bg-[#f4f4f7]/50 overflow-hidden transition-all duration-300">
       {/* Header */}
       <button
         onClick={handleToggleExpand}
@@ -98,7 +98,7 @@ export function SuggestionPanel({ suggestion, onApply, onCopy }: SuggestionPanel
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">&#10024;</span>
-          <span className="text-sm font-semibold text-indigo-700">Coach Suggestion</span>
+          <span className="text-sm font-semibold text-[#1a1f3a]">Coach Suggestion</span>
         </div>
         <svg
           className={`w-5 h-5 text-slate-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
@@ -121,13 +121,13 @@ export function SuggestionPanel({ suggestion, onApply, onCopy }: SuggestionPanel
           {/* Core Competencies Proposals */}
           {suggestion.core_competencies && suggestion.core_competencies.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-indigo-700 uppercase tracking-wider">
+              <h4 className="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">
                 Core Competencies Proposals:
               </h4>
               <ul className="space-y-1.5">
                 {suggestion.core_competencies.map((point, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#1a1f3a] mt-2 flex-shrink-0" />
                     <span>{point}</span>
                   </li>
                 ))}
@@ -202,7 +202,7 @@ export function SuggestionPanel({ suggestion, onApply, onCopy }: SuggestionPanel
             {onApply && (
               <button
                 onClick={handleApply}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-lg hover:shadow-md transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-900 bg-[#fbbf24] rounded-lg hover:shadow-md transition-all"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -222,11 +222,11 @@ export function SuggestionPanel({ suggestion, onApply, onCopy }: SuggestionPanel
  */
 export function SuggestionPanelLoading() {
   return (
-    <div className="suggestion-panel-loading mt-4 rounded-xl border border-cyan-200 bg-gradient-to-br from-indigo-50/50 to-cyan-50/50 p-4">
+    <div className="suggestion-panel-loading mt-4 rounded-xl border border-slate-200 bg-[#f4f4f7]/50 p-4">
       <div className="flex items-center gap-3">
-        <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-[#1a1f3a] border-t-transparent rounded-full animate-spin" />
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-semibold text-indigo-700">Generating suggestions...</span>
+          <span className="text-sm font-semibold text-[#1a1f3a]">Generating suggestions...</span>
           <span className="text-xs text-slate-500">Analyzing your context and materials</span>
         </div>
       </div>

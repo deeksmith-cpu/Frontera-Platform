@@ -150,7 +150,7 @@ function OpportunityCard({ opportunity, index }: { opportunity: StrategicOpportu
             style={{
               fontSize: 14,
               fontFamily: 'Helvetica-Bold',
-              color: COLORS.indigo[600],
+              color: COLORS.navy.DEFAULT,
             }}
           >
             {opportunity.scoring.overallScore}
