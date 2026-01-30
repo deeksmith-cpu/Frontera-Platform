@@ -1,11 +1,62 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import React from 'react';
-import { renderToBuffer } from '@react-pdf/renderer';
+import { spawn } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
-import { SynthesisReportDocument } from '@/lib/pdf/synthesis-report';
+import { PDF_SCRIPT_CONTENT } from '@/lib/pdf/generate-pdf-script';
+
+// =============================================================================
+// PDF Generation via Subprocess
+// =============================================================================
+
+/**
+ * Generate PDF by spawning a subprocess that uses @react-pdf/renderer.
+ * The script is written to /tmp at runtime (always available on Vercel)
+ * to avoid file-tracing issues with external scripts.
+ * This subprocess approach avoids Next.js dual React instance issues.
+ */
+async function generatePdfViaSubprocess(input: {
+  synthesis: SynthesisResult;
+  client: Client | null;
+  generatedAt: string;
+}): Promise<Buffer> {
+  const tmpScript = path.join(os.tmpdir(), 'frontera-generate-pdf.cjs');
+
+  if (!fs.existsSync(tmpScript)) {
+    fs.writeFileSync(tmpScript, PDF_SCRIPT_CONTENT);
+    console.log('Wrote PDF script to', tmpScript);
+  }
+
+  return new Promise<Buffer>((resolve, reject) => {
+    const child = spawn('node', [tmpScript], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    const chunks: Buffer[] = [];
+    const errorChunks: Buffer[] = [];
+
+    child.stdout.on('data', (chunk: Buffer) => chunks.push(chunk));
+    child.stderr.on('data', (chunk: Buffer) => errorChunks.push(chunk));
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(Buffer.concat(chunks));
+      } else {
+        const errMsg = Buffer.concat(errorChunks).toString('utf8');
+        reject(new Error('PDF subprocess failed (exit ' + code + '): ' + errMsg));
+      }
+    });
+
+    child.on('error', (error) => reject(error));
+
+    child.stdin.write(JSON.stringify(input));
+    child.stdin.end();
+  });
+}
 
 // =============================================================================
 // Supabase Client
@@ -118,21 +169,16 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Generate PDF directly using @react-pdf/renderer
     console.log('Generating PDF for synthesis:', synthesis.id);
-    console.log('Opportunities count:', synthesis.opportunities.length);
-    console.log('Tensions count:', synthesis.tensions.length);
 
     // Cast client data for type compatibility
     const typedClient = clientData as unknown as Client | null;
 
-    const pdfBuffer = await renderToBuffer(
-      React.createElement(SynthesisReportDocument, {
-        synthesis,
-        client: typedClient,
-        generatedAt: new Date(),
-      }) as React.ReactElement
-    );
+    const pdfBuffer = await generatePdfViaSubprocess({
+      synthesis,
+      client: typedClient,
+      generatedAt: new Date().toISOString(),
+    });
 
     console.log('PDF render complete');
 
