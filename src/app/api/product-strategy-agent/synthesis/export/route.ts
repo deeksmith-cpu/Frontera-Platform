@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { spawn } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
 
@@ -22,7 +23,16 @@ interface PdfInput {
  */
 async function generatePdfBuffer(input: PdfInput): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const scriptPath = path.join(process.cwd(), 'scripts', 'generate-pdf.mjs');
+    // Try multiple possible locations for the script
+    const candidates = [
+      path.join(process.cwd(), 'scripts', 'generate-pdf.mjs'),
+      path.resolve(__dirname, '../../../../../../scripts/generate-pdf.mjs'),
+      path.resolve(__dirname, '../../../../../scripts/generate-pdf.mjs'),
+      '/var/task/scripts/generate-pdf.mjs',
+    ];
+    const scriptPath = candidates.find(p => fs.existsSync(p)) || candidates[0];
+    console.log('PDF script path:', scriptPath, 'exists:', fs.existsSync(scriptPath));
+    console.log('cwd:', process.cwd(), '__dirname:', __dirname);
 
     const child = spawn('node', [scriptPath], {
       stdio: ['pipe', 'pipe', 'pipe'],
