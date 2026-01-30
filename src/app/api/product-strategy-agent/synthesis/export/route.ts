@@ -72,40 +72,12 @@ function impactColor(i: string): string {
   return C.slate500;
 }
 
-/** Track whether footer has already been drawn on current page */
-let footerDrawn = false;
-
-/** Add a new page if not enough vertical space remains. Returns current pageNum. */
-function needPage(doc: PDFKit.PDFDocument, needed: number, pageNum: number): number {
+/** Check remaining space; if insufficient, start a fresh page. */
+function ensureSpace(doc: PDFKit.PDFDocument, needed: number) {
   if (doc.y + needed > MAX_Y) {
-    return startNewPage(doc, pageNum);
+    doc.addPage();
+    // pdfkit resets x/y to margins on addPage
   }
-  return pageNum;
-}
-
-/** Draw footer on current page, add a new page, reset cursor. */
-function startNewPage(doc: PDFKit.PDFDocument, pageNum: number): number {
-  if (!footerDrawn) {
-    drawFooter(doc, pageNum);
-  }
-  doc.addPage();
-  doc.x = M;
-  doc.y = M;
-  footerDrawn = false;
-  return pageNum + 1;
-}
-
-function drawFooter(doc: PDFKit.PDFDocument, n: number) {
-  if (footerDrawn) return;
-  footerDrawn = true;
-  const savedY = doc.y;
-  doc.save();
-  doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
-  doc.text('Frontera AI Strategy Coach', M, FOOTER_Y, { width: PAGE_W / 2, lineBreak: false });
-  doc.text(`${n}`, M + PAGE_W / 2, FOOTER_Y, { width: PAGE_W / 2, align: 'right', lineBreak: false });
-  doc.restore();
-  // Restore y so footer text doesn't advance cursor past page
-  doc.y = savedY;
 }
 
 function separator(doc: PDFKit.PDFDocument) {
@@ -114,6 +86,21 @@ function separator(doc: PDFKit.PDFDocument) {
   doc.moveTo(M, y).lineTo(M + PAGE_W, y).strokeColor(C.slate200).lineWidth(0.5).stroke();
   doc.restore();
   doc.y = y + 14;
+}
+
+/** Add footers to all buffered pages (call before doc.end). */
+function addFootersToAllPages(doc: PDFKit.PDFDocument) {
+  const range = doc.bufferedPageRange();
+  for (let i = 0; i < range.count; i++) {
+    doc.switchToPage(range.start + i);
+    // Skip cover page (page 0)
+    if (i === 0) continue;
+    doc.save();
+    doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
+    doc.text('Frontera AI Strategy Coach', M, FOOTER_Y, { width: PAGE_W / 2, lineBreak: false });
+    doc.text(`${i}`, M + PAGE_W / 2, FOOTER_Y, { width: PAGE_W / 2, align: 'right', lineBreak: false });
+    doc.restore();
+  }
 }
 
 // =============================================================================
@@ -319,6 +306,7 @@ async function generatePdf(input: {
     size: 'A4',
     margins: { top: M, bottom: 50, left: M, right: M },
     autoFirstPage: true,
+    bufferPages: true,
     info: {
       Title: `Strategic Synthesis - ${companyName}`,
       Author: 'Frontera AI Strategy Coach',
@@ -327,9 +315,6 @@ async function generatePdf(input: {
 
   const chunks: Buffer[] = [];
   doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-
-  let pg = 0;
-  footerDrawn = false;
 
   // ======================= COVER PAGE =======================
 
@@ -374,7 +359,7 @@ async function generatePdf(input: {
   // ======================= EXECUTIVE SUMMARY =======================
 
   if (synthesis.executiveSummary) {
-    pg = startNewPage(doc, pg);
+    doc.addPage();
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Executive Summary', M, M, { width: PAGE_W });
     doc.moveDown(0.8);
@@ -385,13 +370,12 @@ async function generatePdf(input: {
       `Model: ${synthesis.metadata.modelUsed}   |   Territories: ${synthesis.metadata.territoriesIncluded.join(', ')}   |   Areas analyzed: ${synthesis.metadata.researchAreasCount}`,
       { width: PAGE_W }
     );
-    drawFooter(doc, pg);
   }
 
   // ======================= 2×2 OPPORTUNITY MAP =======================
 
   if (synthesis.opportunities.length > 0) {
-    pg = startNewPage(doc, pg);
+    doc.addPage();
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Strategic Opportunity Map', M, M, { width: PAGE_W });
     doc.moveDown(0.5);
@@ -400,54 +384,55 @@ async function generatePdf(input: {
     doc.moveDown(1);
 
     drawQuadrantMap(doc, synthesis.opportunities);
-    drawFooter(doc, pg);
 
     // ======================= OPPORTUNITY DETAILS =======================
 
-    pg = startNewPage(doc, pg);
+    doc.addPage();
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text(`Strategic Opportunities — Detail`, M, M, { width: PAGE_W });
     doc.moveDown(0.8);
 
     for (let i = 0; i < synthesis.opportunities.length; i++) {
-      pg = needPage(doc, 160, pg);
+      ensureSpace(doc, 160);
       renderOpportunity(doc, synthesis.opportunities[i], i + 1);
     }
-    drawFooter(doc, pg);
   }
 
   // ======================= TENSIONS =======================
 
   if (synthesis.tensions && synthesis.tensions.length > 0) {
-    pg = startNewPage(doc, pg);
+    doc.addPage();
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text(`Strategic Tensions (${synthesis.tensions.length})`, M, M, { width: PAGE_W });
     doc.moveDown(0.8);
 
     for (const t of synthesis.tensions) {
-      pg = needPage(doc, 100, pg);
+      ensureSpace(doc, 100);
       renderTension(doc, t);
     }
-    drawFooter(doc, pg);
   }
 
   // ======================= RECOMMENDATIONS =======================
 
   if (synthesis.recommendations && synthesis.recommendations.length > 0) {
-    pg = startNewPage(doc, pg);
+    doc.addPage();
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Priority Recommendations', M, M, { width: PAGE_W });
     doc.moveDown(0.8);
 
     synthesis.recommendations.forEach((rec, i) => {
-      pg = needPage(doc, 40, pg);
+      ensureSpace(doc, 40);
       doc.fontSize(10).font('Helvetica').fillColor(C.slate700)
         .text(`${i + 1}. ${rec}`, M, doc.y, { width: PAGE_W, lineGap: 3 });
       doc.moveDown(0.6);
     });
-    drawFooter(doc, pg);
   }
 
+  // Add footers to all pages (except cover) now that all content is laid out
+  addFootersToAllPages(doc);
+
+  // Flush buffered pages before ending
+  doc.flushPages();
   doc.end();
 
   return new Promise<Buffer>((resolve, reject) => {
