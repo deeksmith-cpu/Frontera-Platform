@@ -1,71 +1,11 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { spawn } from 'child_process';
-import path from 'path';
-import fs from 'fs';
+import React from 'react';
+import { renderToBuffer } from '@react-pdf/renderer';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
-
-// =============================================================================
-// PDF Generation via Child Process
-// =============================================================================
-
-interface PdfInput {
-  synthesis: SynthesisResult;
-  client: Client | null;
-  generatedAt: string;
-}
-
-/**
- * Generate PDF using a standalone Node.js script to avoid
- * Next.js bundling issues with @react-pdf/renderer.
- */
-async function generatePdfBuffer(input: PdfInput): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    // Try multiple possible locations for the script
-    const candidates = [
-      path.join(process.cwd(), 'scripts', 'generate-pdf.mjs'),
-      path.resolve(__dirname, '../../../../../../scripts/generate-pdf.mjs'),
-      path.resolve(__dirname, '../../../../../scripts/generate-pdf.mjs'),
-      '/var/task/scripts/generate-pdf.mjs',
-    ];
-    const scriptPath = candidates.find(p => fs.existsSync(p)) || candidates[0];
-    console.log('PDF script path:', scriptPath, 'exists:', fs.existsSync(scriptPath));
-    console.log('cwd:', process.cwd(), '__dirname:', __dirname);
-
-    const child = spawn('node', [scriptPath], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    const chunks: Buffer[] = [];
-    const errorChunks: Buffer[] = [];
-
-    child.stdout.on('data', (chunk: Buffer) => {
-      chunks.push(chunk);
-    });
-
-    child.stderr.on('data', (chunk: Buffer) => {
-      errorChunks.push(chunk);
-    });
-
-    child.on('close', (code) => {
-      if (code === 0) {
-        resolve(Buffer.concat(chunks));
-      } else {
-        const errorMessage = Buffer.concat(errorChunks).toString('utf8');
-        reject(new Error(`PDF generation failed (exit code ${code}): ${errorMessage}`));
-      }
-    });
-
-    child.on('error', (error) => {
-      reject(error);
-    });
-
-    child.stdin.write(JSON.stringify(input));
-    child.stdin.end();
-  });
-}
+import { SynthesisReportDocument } from '@/lib/pdf/synthesis-report';
 
 // =============================================================================
 // Supabase Client
@@ -178,87 +118,21 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Generate PDF - with detailed logging for debugging
+    // Generate PDF directly using @react-pdf/renderer
     console.log('Generating PDF for synthesis:', synthesis.id);
     console.log('Opportunities count:', synthesis.opportunities.length);
     console.log('Tensions count:', synthesis.tensions.length);
-    console.log('Recommendations count:', synthesis.recommendations?.length || 0);
-
-    // Validate and sanitize data - ensure all values are proper strings
-    const sanitizedSynthesis: SynthesisResult = {
-      ...synthesis,
-      executiveSummary: String(synthesis.executiveSummary || ''),
-      recommendations: (synthesis.recommendations || []).map(r =>
-        typeof r === 'string' ? r : (typeof r === 'object' ? JSON.stringify(r) : String(r))
-      ),
-      opportunities: synthesis.opportunities.map(opp => ({
-        ...opp,
-        id: String(opp.id || ''),
-        title: String(opp.title || ''),
-        description: String(opp.description || ''),
-        opportunityType: String(opp.opportunityType || 'where_to_play') as 'where_to_play' | 'how_to_win' | 'capability_gap',
-        quadrant: String(opp.quadrant || 'explore') as 'invest' | 'explore' | 'harvest' | 'divest',
-        confidence: String(opp.confidence || 'medium') as 'low' | 'medium' | 'high',
-        scoring: {
-          marketAttractiveness: Number(opp.scoring?.marketAttractiveness) || 5,
-          capabilityFit: Number(opp.scoring?.capabilityFit) || 5,
-          competitiveAdvantage: Number(opp.scoring?.competitiveAdvantage) || 5,
-          overallScore: Number(opp.scoring?.overallScore) || 50,
-        },
-        ptw: {
-          winningAspiration: String(opp.ptw?.winningAspiration || ''),
-          whereToPlay: String(opp.ptw?.whereToPlay || ''),
-          howToWin: String(opp.ptw?.howToWin || ''),
-          capabilitiesRequired: (opp.ptw?.capabilitiesRequired || []).map(c => String(c)),
-          managementSystems: (opp.ptw?.managementSystems || []).map(m => String(m)),
-        },
-        evidence: (opp.evidence || []).map(ev => ({
-          territory: String(ev.territory || 'company') as 'company' | 'customer' | 'competitor',
-          researchArea: String(ev.researchArea || ''),
-          question: String(ev.question || ''),
-          quote: String(ev.quote || ''),
-          insightId: String(ev.insightId || ''),
-        })),
-        assumptions: (opp.assumptions || []).map(a => ({
-          category: String(a.category || 'customer') as 'customer' | 'company' | 'competitor' | 'economics',
-          assumption: String(a.assumption || ''),
-          testMethod: String(a.testMethod || ''),
-          riskIfFalse: String(a.riskIfFalse || ''),
-        })),
-      })),
-      tensions: synthesis.tensions.map(t => ({
-        ...t,
-        id: String(t.id || ''),
-        description: String(t.description || ''),
-        impact: String(t.impact || 'significant') as 'blocking' | 'significant' | 'minor',
-        alignedEvidence: (t.alignedEvidence || []).map(e => ({
-          insight: String(e.insight || ''),
-          source: String(e.source || ''),
-        })),
-        conflictingEvidence: (t.conflictingEvidence || []).map(e => ({
-          insight: String(e.insight || ''),
-          source: String(e.source || ''),
-        })),
-        resolutionOptions: (t.resolutionOptions || []).map(r => ({
-          option: String(r.option || ''),
-          tradeOff: String(r.tradeOff || ''),
-          recommended: Boolean(r.recommended),
-        })),
-      })),
-    };
 
     // Cast client data for type compatibility
     const typedClient = clientData as unknown as Client | null;
 
-    console.log('Creating PDF via subprocess...');
-    console.log('Client data:', typedClient ? { company_name: typedClient.company_name, industry: typedClient.industry } : null);
-
-    // Generate PDF using standalone script (runs outside Next.js bundling)
-    const pdfBuffer = await generatePdfBuffer({
-      synthesis: sanitizedSynthesis,
-      client: typedClient,
-      generatedAt: new Date().toISOString(),
-    });
+    const pdfBuffer = await renderToBuffer(
+      React.createElement(SynthesisReportDocument, {
+        synthesis,
+        client: typedClient,
+        generatedAt: new Date(),
+      }) as React.ReactElement
+    );
 
     console.log('PDF render complete');
 

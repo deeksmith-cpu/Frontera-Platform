@@ -21,10 +21,6 @@ const nextConfig: NextConfig = {
     '@react-pdf/primitives',
     '@react-pdf/fns',
   ],
-  // Include subprocess scripts in serverless function bundles
-  outputFileTracingIncludes: {
-    '/api/product-strategy-agent/synthesis/export': ['./scripts/generate-pdf.mjs'],
-  },
   // Performance optimizations
   poweredByHeader: false,
   compress: true,
