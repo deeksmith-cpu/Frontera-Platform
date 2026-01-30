@@ -28,8 +28,13 @@ const C = {
 };
 
 // =============================================================================
-// PDF Generation with PDFKit
+// Helpers
 // =============================================================================
+
+const PAGE_WIDTH = 515.28; // A4 (595.28) minus 40+40 margins
+const MARGIN = 40;
+const FOOTER_Y = 790;
+const CONTENT_BOTTOM = 760; // stop content before footer area
 
 function getQuadrantLabel(q: string): string {
   return q.charAt(0).toUpperCase() + q.slice(1);
@@ -53,6 +58,28 @@ function getImpactColor(impact: string): string {
   }
 }
 
+function ensureSpace(doc: PDFKit.PDFDocument, needed: number) {
+  if (doc.y + needed > CONTENT_BOTTOM) {
+    doc.addPage();
+    doc.y = MARGIN;
+  }
+}
+
+function drawFooter(doc: PDFKit.PDFDocument, pageNum: number) {
+  doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
+  doc.text('Frontera AI Strategy Coach', MARGIN, FOOTER_Y, { width: PAGE_WIDTH / 2 });
+  doc.text(`${pageNum}`, MARGIN + PAGE_WIDTH / 2, FOOTER_Y, { width: PAGE_WIDTH / 2, align: 'right' });
+}
+
+function drawSeparator(doc: PDFKit.PDFDocument) {
+  doc.moveTo(MARGIN, doc.y).lineTo(MARGIN + PAGE_WIDTH, doc.y).strokeColor(C.slate200).lineWidth(0.5).stroke();
+  doc.y += 12;
+}
+
+// =============================================================================
+// PDF Generation
+// =============================================================================
+
 async function generatePdf(input: {
   synthesis: SynthesisResult;
   client: Client | null;
@@ -68,8 +95,7 @@ async function generatePdf(input: {
 
   const doc = new PDFDocument({
     size: 'A4',
-    margins: { top: 40, bottom: 60, left: 40, right: 40 },
-    bufferPages: true,
+    margins: { top: MARGIN, bottom: 50, left: MARGIN, right: MARGIN },
     info: {
       Title: `Strategic Synthesis - ${companyName}`,
       Author: 'Frontera AI Strategy Coach',
@@ -79,47 +105,56 @@ async function generatePdf(input: {
   const chunks: Buffer[] = [];
   doc.on('data', (chunk: Buffer) => chunks.push(chunk));
 
-  const pageWidth = 595.28 - 80; // A4 width minus margins
+  let pageNum = 0;
 
   // =========================================================================
-  // Cover Page
+  // Cover Page (no footer)
   // =========================================================================
 
   // Logo box
-  doc.rect(40, 100, 60, 60).fill(C.navy);
-  doc.fontSize(28).font('Helvetica-Bold').fillColor(C.white).text('F', 40, 116, { width: 60, align: 'center' });
+  doc.rect(MARGIN, 100, 60, 60).fill(C.navy);
+  doc.fontSize(28).font('Helvetica-Bold').fillColor(C.white).text('F', MARGIN, 116, { width: 60, align: 'center' });
 
   // Cyan accent line
-  doc.rect(40, 190, 80, 3).fill(C.cyan600);
+  doc.rect(MARGIN, 190, 80, 3).fill(C.cyan600);
 
-  // Title
-  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('STRATEGIC SYNTHESIS REPORT', 40, 220, { characterSpacing: 2 });
+  // Title label
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
+    .text('STRATEGIC SYNTHESIS REPORT', MARGIN, 220, { width: PAGE_WIDTH, characterSpacing: 2 });
 
-  doc.fontSize(32).font('Helvetica-Bold').fillColor(C.slate900).text(companyName, 40, 250, { width: pageWidth });
+  // Company name
+  doc.fontSize(32).font('Helvetica-Bold').fillColor(C.slate900)
+    .text(companyName, MARGIN, 250, { width: PAGE_WIDTH });
 
   // Navy accent line
-  const companyNameHeight = doc.heightOfString(companyName, { width: pageWidth });
-  const lineY = 260 + companyNameHeight;
-  doc.rect(40, lineY, 80, 3).fill(C.navy);
+  const nameBottom = doc.y + 10;
+  doc.rect(MARGIN, nameBottom, 80, 3).fill(C.navy);
 
   // Metadata
-  let metaY = lineY + 25;
+  let metaY = nameBottom + 25;
   if (client?.industry) {
-    doc.fontSize(10).font('Helvetica').fillColor(C.slate600).text(`Industry: ${client.industry}`, 40, metaY, { width: pageWidth });
+    doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
+      .text(`Industry: ${client.industry}`, MARGIN, metaY, { width: PAGE_WIDTH });
     metaY += 18;
   }
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate600).text(`Generated: ${dateStr}`, 40, metaY, { width: pageWidth });
+  doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
+    .text(`Generated: ${dateStr}`, MARGIN, metaY, { width: PAGE_WIDTH });
 
   // Methodology box
   const boxY = metaY + 50;
-  doc.roundedRect(40, boxY, pageWidth, 70, 6).strokeColor(C.slate200).stroke();
-  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('METHODOLOGY', 40, boxY + 12, { width: pageWidth, align: 'center' });
-  doc.fontSize(14).font('Helvetica-Bold').fillColor(C.navy).text('Playing to Win Framework', 40, boxY + 28, { width: pageWidth, align: 'center' });
-  doc.fontSize(9).font('Helvetica').fillColor(C.slate500).text('by Roger Martin & A.G. Lafley', 40, boxY + 48, { width: pageWidth, align: 'center' });
+  doc.roundedRect(MARGIN, boxY, PAGE_WIDTH, 70, 6).strokeColor(C.slate200).stroke();
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
+    .text('METHODOLOGY', MARGIN, boxY + 12, { width: PAGE_WIDTH, align: 'center' });
+  doc.fontSize(14).font('Helvetica-Bold').fillColor(C.navy)
+    .text('Playing to Win Framework', MARGIN, boxY + 28, { width: PAGE_WIDTH, align: 'center' });
+  doc.fontSize(9).font('Helvetica').fillColor(C.slate500)
+    .text('by Roger Martin & A.G. Lafley', MARGIN, boxY + 48, { width: PAGE_WIDTH, align: 'center' });
 
-  // Footer
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate400).text('Powered by Frontera AI Strategy Coach', 40, 720, { width: pageWidth, align: 'center' });
-  doc.fontSize(8).fillColor(C.slate300).text('www.frontera.ai', 40, 736, { width: pageWidth, align: 'center' });
+  // Cover footer
+  doc.fontSize(10).font('Helvetica').fillColor(C.slate400)
+    .text('Powered by Frontera AI Strategy Coach', MARGIN, 720, { width: PAGE_WIDTH, align: 'center' });
+  doc.fontSize(8).fillColor(C.slate300)
+    .text('www.frontera.ai', MARGIN, 736, { width: PAGE_WIDTH, align: 'center' });
 
   // =========================================================================
   // Executive Summary
@@ -127,22 +162,25 @@ async function generatePdf(input: {
 
   if (synthesis.executiveSummary) {
     doc.addPage();
+    pageNum++;
+    doc.y = MARGIN;
 
-    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900).text('Executive Summary', 40, 40);
-    doc.moveDown(0.5);
+    doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
+      .text('Executive Summary', MARGIN, MARGIN, { width: PAGE_WIDTH });
+    doc.moveDown(0.8);
 
-    doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(synthesis.executiveSummary, {
-      width: pageWidth,
-      lineGap: 4,
-    });
+    doc.fontSize(10).font('Helvetica').fillColor(C.slate700)
+      .text(synthesis.executiveSummary, { width: PAGE_WIDTH, lineGap: 4 });
 
-    doc.moveDown(1);
+    doc.moveDown(1.5);
     const meta = [
       `Model: ${synthesis.metadata.modelUsed}`,
       `Territories: ${synthesis.metadata.territoriesIncluded.join(', ')}`,
       `Areas analyzed: ${synthesis.metadata.researchAreasCount}`,
-    ].join('  •  ');
-    doc.fontSize(8).fillColor(C.slate400).text(meta, { width: pageWidth });
+    ].join('   |   ');
+    doc.fontSize(8).fillColor(C.slate400).text(meta, { width: PAGE_WIDTH });
+
+    drawFooter(doc, pageNum);
   }
 
   // =========================================================================
@@ -151,59 +189,26 @@ async function generatePdf(input: {
 
   if (synthesis.opportunities.length > 0) {
     doc.addPage();
+    pageNum++;
+    doc.y = MARGIN;
 
-    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900)
-      .text(`Strategic Opportunities (${synthesis.opportunities.length})`, 40, 40);
+    doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
+      .text(`Strategic Opportunities (${synthesis.opportunities.length})`, MARGIN, MARGIN, { width: PAGE_WIDTH });
     doc.moveDown(1);
 
     for (const opp of synthesis.opportunities) {
-      ensureSpace(doc, 120);
+      renderOpportunity(doc, opp);
 
-      // Title + quadrant badge
-      const qColor = getQuadrantColor(opp.quadrant);
-      doc.fontSize(16).font('Helvetica-Bold').fillColor(C.slate900).text(opp.title, { width: pageWidth - 80, continued: false });
-
-      // Quadrant label on right (approximate position)
-      const savedY = doc.y;
-      doc.fontSize(7).font('Helvetica-Bold').fillColor(qColor)
-        .text(getQuadrantLabel(opp.quadrant).toUpperCase(), 40 + pageWidth - 70, savedY - 18, { width: 70, align: 'right' });
-      doc.y = savedY;
-
-      // Description
-      doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(opp.description, { width: pageWidth, lineGap: 3 });
-      doc.moveDown(0.5);
-
-      // Scores
-      const scores = `Market: ${opp.scoring.marketAttractiveness}/10  |  Capability: ${opp.scoring.capabilityFit}/10  |  Advantage: ${opp.scoring.competitiveAdvantage}/10  |  Score: ${opp.scoring.overallScore}`;
-      doc.fontSize(9).fillColor(C.slate600).text(scores, { width: pageWidth });
-      doc.moveDown(0.5);
-
-      // PTW Cascade
-      if (opp.ptw) {
-        doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('PLAYING TO WIN CASCADE');
-        doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
-          .text(`Where to Play: ${opp.ptw.whereToPlay}`, { width: pageWidth })
-          .text(`How to Win: ${opp.ptw.howToWin}`, { width: pageWidth });
-        doc.moveDown(0.3);
+      // Check if we need a new page for next opportunity
+      if (doc.y > CONTENT_BOTTOM - 40) {
+        drawFooter(doc, pageNum);
+        doc.addPage();
+        pageNum++;
+        doc.y = MARGIN;
       }
-
-      // Evidence (top 3)
-      if (opp.evidence && opp.evidence.length > 0) {
-        doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('EVIDENCE');
-        for (const ev of opp.evidence.slice(0, 3)) {
-          doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate600)
-            .text(`${ev.territory} > ${ev.researchArea}: `, { continued: true })
-            .font('Helvetica-Oblique').fillColor(C.slate500)
-            .text(`"${ev.quote}"`, { width: pageWidth });
-        }
-        doc.moveDown(0.3);
-      }
-
-      // Separator
-      doc.moveDown(0.5);
-      doc.moveTo(40, doc.y).lineTo(40 + pageWidth, doc.y).strokeColor(C.slate200).lineWidth(0.5).stroke();
-      doc.moveDown(0.8);
     }
+
+    drawFooter(doc, pageNum);
   }
 
   // =========================================================================
@@ -212,38 +217,25 @@ async function generatePdf(input: {
 
   if (synthesis.tensions && synthesis.tensions.length > 0) {
     doc.addPage();
+    pageNum++;
+    doc.y = MARGIN;
 
-    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900)
-      .text(`Strategic Tensions (${synthesis.tensions.length})`, 40, 40);
+    doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
+      .text(`Strategic Tensions (${synthesis.tensions.length})`, MARGIN, MARGIN, { width: PAGE_WIDTH });
     doc.moveDown(1);
 
     for (const tension of synthesis.tensions) {
-      ensureSpace(doc, 80);
+      renderTension(doc, tension);
 
-      const impactColor = getImpactColor(tension.impact);
-
-      doc.fontSize(12).font('Helvetica-Bold').fillColor(C.slate900).text(tension.description, { width: pageWidth - 80 });
-      const tY = doc.y;
-      doc.fontSize(7).font('Helvetica-Bold').fillColor(impactColor)
-        .text(tension.impact.toUpperCase(), 40 + pageWidth - 70, tY - 14, { width: 70, align: 'right' });
-      doc.y = tY;
-
-      // Resolution options
-      if (tension.resolutionOptions && tension.resolutionOptions.length > 0) {
-        doc.moveDown(0.3);
-        for (const opt of tension.resolutionOptions) {
-          const bullet = opt.recommended ? '★ ' : '• ';
-          const bulletColor = opt.recommended ? C.gold : C.slate400;
-          doc.fontSize(9).font('Helvetica').fillColor(bulletColor).text(bullet, { continued: true })
-            .fillColor(C.slate700).text(opt.option, { continued: true })
-            .fillColor(C.slate400).font('Helvetica-Oblique').text(` — ${opt.tradeOff}`, { width: pageWidth });
-        }
+      if (doc.y > CONTENT_BOTTOM - 40) {
+        drawFooter(doc, pageNum);
+        doc.addPage();
+        pageNum++;
+        doc.y = MARGIN;
       }
-
-      doc.moveDown(0.5);
-      doc.moveTo(40, doc.y).lineTo(40 + pageWidth, doc.y).strokeColor(C.slate200).lineWidth(0.5).stroke();
-      doc.moveDown(0.8);
     }
+
+    drawFooter(doc, pageNum);
   }
 
   // =========================================================================
@@ -251,28 +243,22 @@ async function generatePdf(input: {
   // =========================================================================
 
   if (synthesis.recommendations && synthesis.recommendations.length > 0) {
-    ensureSpace(doc, 100);
+    doc.addPage();
+    pageNum++;
+    doc.y = MARGIN;
 
-    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900).text('Priority Recommendations');
-    doc.moveDown(0.8);
+    doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
+      .text('Priority Recommendations', MARGIN, MARGIN, { width: PAGE_WIDTH });
+    doc.moveDown(1);
 
     synthesis.recommendations.forEach((rec, i) => {
-      ensureSpace(doc, 30);
-      doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(`${i + 1}. ${rec}`, { width: pageWidth, lineGap: 3 });
-      doc.moveDown(0.3);
+      ensureSpace(doc, 40);
+      doc.fontSize(10).font('Helvetica').fillColor(C.slate700)
+        .text(`${i + 1}. ${rec}`, MARGIN, doc.y, { width: PAGE_WIDTH, lineGap: 3 });
+      doc.moveDown(0.6);
     });
-  }
 
-  // =========================================================================
-  // Page Numbers (footer on all pages)
-  // =========================================================================
-
-  const totalPages = doc.bufferedPageRange().count;
-  for (let i = 0; i < totalPages; i++) {
-    doc.switchToPage(i);
-    doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
-    doc.text('Frontera AI Strategy Coach', 40, 800, { width: pageWidth / 2 });
-    doc.text(`${i + 1} / ${totalPages}`, 40 + pageWidth / 2, 800, { width: pageWidth / 2, align: 'right' });
+    drawFooter(doc, pageNum);
   }
 
   doc.end();
@@ -283,10 +269,106 @@ async function generatePdf(input: {
   });
 }
 
-function ensureSpace(doc: PDFKit.PDFDocument, needed: number) {
-  if (doc.y + needed > 780) {
-    doc.addPage();
+// =============================================================================
+// Opportunity Renderer
+// =============================================================================
+
+function renderOpportunity(doc: PDFKit.PDFDocument, opp: StrategicOpportunity) {
+  ensureSpace(doc, 140);
+
+  const qColor = getQuadrantColor(opp.quadrant);
+  const qLabel = getQuadrantLabel(opp.quadrant).toUpperCase();
+
+  // Title line with inline quadrant badge
+  doc.fontSize(14).font('Helvetica-Bold').fillColor(C.slate900)
+    .text(opp.title, MARGIN, doc.y, { width: PAGE_WIDTH, continued: false });
+
+  // Quadrant badge on its own line
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(qColor)
+    .text(qLabel, MARGIN, doc.y, { width: PAGE_WIDTH });
+  doc.moveDown(0.3);
+
+  // Description
+  doc.fontSize(10).font('Helvetica').fillColor(C.slate700)
+    .text(opp.description, MARGIN, doc.y, { width: PAGE_WIDTH, lineGap: 3 });
+  doc.moveDown(0.5);
+
+  // Scores on one line
+  const scores = `Market: ${opp.scoring.marketAttractiveness}/10   |   Capability: ${opp.scoring.capabilityFit}/10   |   Advantage: ${opp.scoring.competitiveAdvantage}/10   |   Score: ${opp.scoring.overallScore}`;
+  doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
+    .text(scores, MARGIN, doc.y, { width: PAGE_WIDTH });
+  doc.moveDown(0.5);
+
+  // PTW Cascade
+  if (opp.ptw) {
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
+      .text('PLAYING TO WIN CASCADE', MARGIN, doc.y, { width: PAGE_WIDTH });
+    doc.moveDown(0.2);
+    doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
+      .text(`Where to Play: ${opp.ptw.whereToPlay}`, MARGIN, doc.y, { width: PAGE_WIDTH });
+    doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
+      .text(`How to Win: ${opp.ptw.howToWin}`, MARGIN, doc.y, { width: PAGE_WIDTH });
+    doc.moveDown(0.4);
   }
+
+  // Evidence (top 3, truncated quotes)
+  if (opp.evidence && opp.evidence.length > 0) {
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
+      .text('EVIDENCE', MARGIN, doc.y, { width: PAGE_WIDTH });
+    doc.moveDown(0.2);
+
+    for (const ev of opp.evidence.slice(0, 3)) {
+      const quote = ev.quote.length > 120 ? ev.quote.slice(0, 120) + '...' : ev.quote;
+      doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate600)
+        .text(`${ev.territory} > ${ev.researchArea}`, MARGIN + 8, doc.y, { width: PAGE_WIDTH - 8 });
+      doc.fontSize(8).font('Helvetica-Oblique').fillColor(C.slate500)
+        .text(`"${quote}"`, MARGIN + 8, doc.y, { width: PAGE_WIDTH - 8 });
+      doc.moveDown(0.2);
+    }
+  }
+
+  // Separator
+  doc.moveDown(0.5);
+  drawSeparator(doc);
+}
+
+// =============================================================================
+// Tension Renderer
+// =============================================================================
+
+function renderTension(doc: PDFKit.PDFDocument, tension: StrategicTension) {
+  ensureSpace(doc, 100);
+
+  const impactColor = getImpactColor(tension.impact);
+
+  // Description
+  doc.fontSize(12).font('Helvetica-Bold').fillColor(C.slate900)
+    .text(tension.description, MARGIN, doc.y, { width: PAGE_WIDTH });
+
+  // Impact badge on its own line
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(impactColor)
+    .text(tension.impact.toUpperCase(), MARGIN, doc.y, { width: PAGE_WIDTH });
+  doc.moveDown(0.4);
+
+  // Resolution options
+  if (tension.resolutionOptions && tension.resolutionOptions.length > 0) {
+    for (const opt of tension.resolutionOptions) {
+      const bullet = opt.recommended ? '\u2605 ' : '\u2022 ';
+      const bulletColor = opt.recommended ? C.gold : C.slate400;
+      const line = `${bullet}${opt.option} \u2014 ${opt.tradeOff}`;
+
+      doc.fontSize(9).font('Helvetica').fillColor(bulletColor)
+        .text(bullet, MARGIN, doc.y, { continued: true, width: PAGE_WIDTH })
+        .fillColor(C.slate700).font('Helvetica')
+        .text(opt.option, { continued: true })
+        .fillColor(C.slate400).font('Helvetica-Oblique')
+        .text(` \u2014 ${opt.tradeOff}`, { continued: false, width: PAGE_WIDTH });
+      doc.moveDown(0.2);
+    }
+  }
+
+  doc.moveDown(0.5);
+  drawSeparator(doc);
 }
 
 // =============================================================================
@@ -408,8 +490,8 @@ export async function GET(req: NextRequest) {
 
     const pdfBytes = new Uint8Array(pdfBuffer);
 
-    const companyName = typedClient?.company_name || 'Strategy';
-    const sanitizedCompanyName = companyName.replace(/[^a-zA-Z0-9]/g, '-');
+    const cName = typedClient?.company_name || 'Strategy';
+    const sanitizedCompanyName = cName.replace(/[^a-zA-Z0-9]/g, '-');
     const dateStrFile = new Date().toISOString().split('T')[0];
     const filename = `Strategic-Synthesis-${sanitizedCompanyName}-${dateStrFile}.pdf`;
 
