@@ -72,24 +72,40 @@ function impactColor(i: string): string {
   return C.slate500;
 }
 
+/** Track whether footer has already been drawn on current page */
+let footerDrawn = false;
+
 /** Add a new page if not enough vertical space remains. Returns current pageNum. */
 function needPage(doc: PDFKit.PDFDocument, needed: number, pageNum: number): number {
   if (doc.y + needed > MAX_Y) {
-    footer(doc, pageNum);
-    doc.addPage();
-    doc.x = M;
-    doc.y = M;
-    return pageNum + 1;
+    return startNewPage(doc, pageNum);
   }
   return pageNum;
 }
 
-function footer(doc: PDFKit.PDFDocument, n: number) {
+/** Draw footer on current page, add a new page, reset cursor. */
+function startNewPage(doc: PDFKit.PDFDocument, pageNum: number): number {
+  if (!footerDrawn) {
+    drawFooter(doc, pageNum);
+  }
+  doc.addPage();
+  doc.x = M;
+  doc.y = M;
+  footerDrawn = false;
+  return pageNum + 1;
+}
+
+function drawFooter(doc: PDFKit.PDFDocument, n: number) {
+  if (footerDrawn) return;
+  footerDrawn = true;
+  const savedY = doc.y;
   doc.save();
   doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
   doc.text('Frontera AI Strategy Coach', M, FOOTER_Y, { width: PAGE_W / 2, lineBreak: false });
   doc.text(`${n}`, M + PAGE_W / 2, FOOTER_Y, { width: PAGE_W / 2, align: 'right', lineBreak: false });
   doc.restore();
+  // Restore y so footer text doesn't advance cursor past page
+  doc.y = savedY;
 }
 
 function separator(doc: PDFKit.PDFDocument) {
@@ -313,6 +329,7 @@ async function generatePdf(input: {
   doc.on('data', (chunk: Buffer) => chunks.push(chunk));
 
   let pg = 0;
+  footerDrawn = false;
 
   // ======================= COVER PAGE =======================
 
@@ -357,7 +374,7 @@ async function generatePdf(input: {
   // ======================= EXECUTIVE SUMMARY =======================
 
   if (synthesis.executiveSummary) {
-    doc.addPage(); pg++;
+    pg = startNewPage(doc, pg);
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Executive Summary', M, M, { width: PAGE_W });
     doc.moveDown(0.8);
@@ -368,13 +385,13 @@ async function generatePdf(input: {
       `Model: ${synthesis.metadata.modelUsed}   |   Territories: ${synthesis.metadata.territoriesIncluded.join(', ')}   |   Areas analyzed: ${synthesis.metadata.researchAreasCount}`,
       { width: PAGE_W }
     );
-    footer(doc, pg);
+    drawFooter(doc, pg);
   }
 
   // ======================= 2×2 OPPORTUNITY MAP =======================
 
   if (synthesis.opportunities.length > 0) {
-    doc.addPage(); pg++;
+    pg = startNewPage(doc, pg);
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Strategic Opportunity Map', M, M, { width: PAGE_W });
     doc.moveDown(0.5);
@@ -383,11 +400,11 @@ async function generatePdf(input: {
     doc.moveDown(1);
 
     drawQuadrantMap(doc, synthesis.opportunities);
-    footer(doc, pg);
+    drawFooter(doc, pg);
 
     // ======================= OPPORTUNITY DETAILS =======================
 
-    doc.addPage(); pg++;
+    pg = startNewPage(doc, pg);
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text(`Strategic Opportunities — Detail`, M, M, { width: PAGE_W });
     doc.moveDown(0.8);
@@ -396,13 +413,13 @@ async function generatePdf(input: {
       pg = needPage(doc, 160, pg);
       renderOpportunity(doc, synthesis.opportunities[i], i + 1);
     }
-    footer(doc, pg);
+    drawFooter(doc, pg);
   }
 
   // ======================= TENSIONS =======================
 
   if (synthesis.tensions && synthesis.tensions.length > 0) {
-    doc.addPage(); pg++;
+    pg = startNewPage(doc, pg);
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text(`Strategic Tensions (${synthesis.tensions.length})`, M, M, { width: PAGE_W });
     doc.moveDown(0.8);
@@ -411,13 +428,13 @@ async function generatePdf(input: {
       pg = needPage(doc, 100, pg);
       renderTension(doc, t);
     }
-    footer(doc, pg);
+    drawFooter(doc, pg);
   }
 
   // ======================= RECOMMENDATIONS =======================
 
   if (synthesis.recommendations && synthesis.recommendations.length > 0) {
-    doc.addPage(); pg++;
+    pg = startNewPage(doc, pg);
     doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
       .text('Priority Recommendations', M, M, { width: PAGE_W });
     doc.moveDown(0.8);
@@ -428,7 +445,7 @@ async function generatePdf(input: {
         .text(`${i + 1}. ${rec}`, M, doc.y, { width: PAGE_W, lineGap: 3 });
       doc.moveDown(0.6);
     });
-    footer(doc, pg);
+    drawFooter(doc, pg);
   }
 
   doc.end();
