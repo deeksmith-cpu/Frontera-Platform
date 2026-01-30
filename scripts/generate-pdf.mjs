@@ -32,17 +32,19 @@ try {
   LOGO_DATA_URI = null;
 }
 
-// Frontera Brand Colors
+// Frontera Brand Colors - Brand Design Update v1
 const COLORS = {
   // Primary brand colors
-  indigo: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3' },
-  cyan: { 50: '#ecfeff', 100: '#cffafe', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' },
+  navy: { DEFAULT: '#1a1f3a', light: '#2d3561' },
+  gold: { DEFAULT: '#fbbf24', hover: '#f59e0b', 50: '#fffbeb' },
+  cyan: { 50: '#ecfeff', 100: '#cffafe', 200: '#a5f3fc', 400: '#22d3ee', 500: '#0891b2', 600: '#0891b2' },
   // Neutral colors (slate palette)
   slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
   // Accent colors
   emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669' },
   amber: { 50: '#fffbeb', 100: '#fef3c7', 500: '#f59e0b', 600: '#d97706' },
   purple: { 50: '#faf5ff', 100: '#f3e8ff', 500: '#a855f7', 600: '#9333ea' },
+  red: { 50: '#fef2f2', 500: '#ef4444' },
   white: '#ffffff',
 };
 
@@ -87,8 +89,8 @@ const styles = {
   },
   badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, fontSize: 7, fontFamily: 'Helvetica-Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
   // Brand accents
-  accentBar: { width: '100%', height: 4, backgroundColor: COLORS.indigo[600] },
-  gradientBar: { width: '100%', height: 6, backgroundColor: COLORS.indigo[600] },
+  accentBar: { width: '100%', height: 4, backgroundColor: COLORS.navy.DEFAULT },
+  gradientBar: { width: '100%', height: 6, backgroundColor: COLORS.navy.DEFAULT },
   // Layout utilities
   mb8: { marginBottom: 8 },
   mb12: { marginBottom: 12 },
@@ -135,7 +137,7 @@ const styles = {
 // Quadrant styles with Frontera colors
 const QUADRANT_STYLES = {
   invest: { backgroundColor: COLORS.emerald[50], color: COLORS.emerald[600], borderColor: COLORS.emerald[500] },
-  explore: { backgroundColor: COLORS.indigo[50], color: COLORS.indigo[600], borderColor: COLORS.indigo[500] },
+  explore: { backgroundColor: COLORS.gold[50], color: COLORS.navy.DEFAULT, borderColor: COLORS.navy.DEFAULT },
   harvest: { backgroundColor: COLORS.amber[50], color: COLORS.amber[600], borderColor: COLORS.amber[500] },
   divest: { backgroundColor: COLORS.slate[100], color: COLORS.slate[600], borderColor: COLORS.slate[400] },
 };
@@ -155,19 +157,19 @@ function formatDate(dateStr) {
 function createCoverPage(client, generatedAt) {
   return h(Page, { size: 'A4', style: styles.coverPage },
     // Top accent bar (Indigo brand color)
-    h(View, { style: { width: '100%', height: 8, backgroundColor: COLORS.indigo[600] } }),
+    h(View, { style: { width: '100%', height: 8, backgroundColor: COLORS.navy.DEFAULT } }),
 
     // Main content area
     h(View, { style: { flex: 1, padding: 60, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' } },
       // Logo
       h(View, { style: { marginBottom: 40, alignItems: 'center' } },
         LOGO_DATA_URI && h(Image, { src: LOGO_DATA_URI, style: { width: 80, height: 80, borderRadius: 16 } }),
-        h(Text, { style: { fontSize: 36, fontFamily: 'Helvetica-Bold', color: COLORS.indigo[600], marginTop: LOGO_DATA_URI ? 16 : 0, letterSpacing: 2 } }, 'FRONTERA')
+        h(Text, { style: { fontSize: 36, fontFamily: 'Helvetica-Bold', color: COLORS.navy.DEFAULT, marginTop: LOGO_DATA_URI ? 16 : 0, letterSpacing: 2 } }, 'FRONTERA')
       ),
 
       // Report type badge
-      h(View, { style: { backgroundColor: COLORS.indigo[50], paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, marginBottom: 24 } },
-        h(Text, { style: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: COLORS.indigo[600], textTransform: 'uppercase', letterSpacing: 1.5 } }, 'STRATEGIC SYNTHESIS REPORT')
+      h(View, { style: { backgroundColor: COLORS.gold[50], paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, marginBottom: 24 } },
+        h(Text, { style: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: COLORS.navy.DEFAULT, textTransform: 'uppercase', letterSpacing: 1.5 } }, 'STRATEGIC SYNTHESIS REPORT')
       ),
 
       // Company name
@@ -197,7 +199,7 @@ function createExecutiveSummaryPage(synthesis, client, pageNumber = 2) {
     // Section header with accent
     h(View, { style: { marginBottom: 20 } },
       h(View, { style: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 } },
-        h(View, { style: { width: 4, height: 24, backgroundColor: COLORS.indigo[600], borderRadius: 2, marginRight: 12 } }),
+        h(View, { style: { width: 4, height: 24, backgroundColor: COLORS.navy.DEFAULT, borderRadius: 2, marginRight: 12 } }),
         h(Text, { style: { ...styles.h2, marginBottom: 0 } }, 'Executive Summary')
       )
     ),
@@ -210,7 +212,7 @@ function createExecutiveSummaryPage(synthesis, client, pageNumber = 2) {
     // Stats row
     h(View, { style: { ...styles.row, gap: 16, marginBottom: 24 } },
       h(View, { style: styles.statCard },
-        h(Text, { style: { ...styles.statNumber, color: COLORS.indigo[600] } }, String(synthesis.opportunities?.length || 0)),
+        h(Text, { style: { ...styles.statNumber, color: COLORS.navy.DEFAULT } }, String(synthesis.opportunities?.length || 0)),
         h(Text, { style: styles.statLabel }, 'OPPORTUNITIES')
       ),
       h(View, { style: styles.statCard },
@@ -271,10 +273,10 @@ function createStrategicMapPage(opportunities, client, pageNumber) {
   function getDotColor(quadrant) {
     switch (quadrant) {
       case 'invest': return COLORS.emerald[600];
-      case 'explore': return COLORS.indigo[600];
+      case 'explore': return COLORS.navy.DEFAULT;
       case 'harvest': return COLORS.amber[600];
       case 'divest': return COLORS.slate[500];
-      default: return COLORS.indigo[600];
+      default: return COLORS.navy.DEFAULT;
     }
   }
 
@@ -302,8 +304,8 @@ function createStrategicMapPage(opportunities, client, pageNumber) {
       // Grid background with quadrants
       h(View, { style: { position: 'absolute', left: gridLeft, top: 0, width: gridSize, height: gridSize, border: `1pt solid ${COLORS.slate[300]}` } },
         // Top-left quadrant (EXPLORE)
-        h(View, { style: { position: 'absolute', left: 0, top: 0, width: gridSize / 2, height: gridSize / 2, backgroundColor: COLORS.indigo[50] } },
-          h(Text, { style: { position: 'absolute', left: 8, top: 8, fontSize: 8, fontFamily: 'Helvetica-Bold', color: COLORS.indigo[600] } }, 'EXPLORE')
+        h(View, { style: { position: 'absolute', left: 0, top: 0, width: gridSize / 2, height: gridSize / 2, backgroundColor: COLORS.gold[50] } },
+          h(Text, { style: { position: 'absolute', left: 8, top: 8, fontSize: 8, fontFamily: 'Helvetica-Bold', color: COLORS.navy.DEFAULT } }, 'EXPLORE')
         ),
         // Top-right quadrant (INVEST)
         h(View, { style: { position: 'absolute', left: gridSize / 2, top: 0, width: gridSize / 2, height: gridSize / 2, backgroundColor: COLORS.emerald[50] } },
@@ -396,10 +398,10 @@ function createOpportunityCard(opportunity, index) {
     );
   }
 
-  return h(View, { key: `opp-${index}`, style: { ...styles.card, borderLeft: `3pt solid ${quadrantStyle.borderColor || COLORS.indigo[600]}` } },
+  return h(View, { key: `opp-${index}`, style: { ...styles.card, borderLeft: `3pt solid ${quadrantStyle.borderColor || COLORS.navy.DEFAULT}` } },
     // Header with number badge and title
     h(View, { style: { ...styles.row, marginBottom: 12 } },
-      h(View, { style: { width: 24, height: 24, borderRadius: 12, backgroundColor: quadrantStyle.borderColor || COLORS.indigo[600], alignItems: 'center', justifyContent: 'center', marginRight: 10 } },
+      h(View, { style: { width: 24, height: 24, borderRadius: 12, backgroundColor: quadrantStyle.borderColor || COLORS.navy.DEFAULT, alignItems: 'center', justifyContent: 'center', marginRight: 10 } },
         h(Text, { style: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: COLORS.white } }, String(index + 1))
       ),
       h(Text, { style: { ...styles.h3, flex: 1, marginBottom: 0 } }, truncate(opportunity.title, 45)),
@@ -414,7 +416,7 @@ function createOpportunityCard(opportunity, index) {
     // Score bars
     opportunity.scoring && h(View, { style: { ...styles.row, gap: 16, marginBottom: 12, paddingTop: 12, borderTop: `1pt solid ${COLORS.slate[200]}` } },
       createScoreBar(opportunity.scoring.marketAttractiveness, 'MARKET', COLORS.cyan[600]),
-      createScoreBar(opportunity.scoring.capabilityFit, 'CAPABILITY', COLORS.indigo[600]),
+      createScoreBar(opportunity.scoring.capabilityFit, 'CAPABILITY', COLORS.navy.DEFAULT),
       createScoreBar(opportunity.scoring.competitiveAdvantage, 'COMPETITIVE', COLORS.emerald[600])
     ),
 
@@ -434,7 +436,7 @@ function createOpportunitiesPage(opportunities, client, pageNumber, startIndex) 
     // Section header (only on first opportunities page)
     isFirstPage && h(View, { style: { marginBottom: 20 } },
       h(View, { style: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 } },
-        h(View, { style: { width: 4, height: 24, backgroundColor: COLORS.indigo[600], borderRadius: 2, marginRight: 12 } }),
+        h(View, { style: { width: 4, height: 24, backgroundColor: COLORS.navy.DEFAULT, borderRadius: 2, marginRight: 12 } }),
         h(Text, { style: { ...styles.h2, marginBottom: 0 } }, 'Strategic Opportunities')
       ),
       h(Text, { style: { ...styles.body, marginLeft: 16, color: COLORS.slate[500] } },
@@ -537,8 +539,8 @@ function createAppendixPage(synthesis, client, pageNumber) {
     // Playing to Win Framework
     h(View, { style: { ...styles.card, marginBottom: 20 } },
       h(View, { style: { ...styles.row, marginBottom: 12 } },
-        h(View, { style: { width: 32, height: 32, borderRadius: 8, backgroundColor: COLORS.indigo[50], alignItems: 'center', justifyContent: 'center', marginRight: 12 } },
-          h(Text, { style: { fontSize: 16, color: COLORS.indigo[600] } }, '📊')
+        h(View, { style: { width: 32, height: 32, borderRadius: 8, backgroundColor: COLORS.gold[50], alignItems: 'center', justifyContent: 'center', marginRight: 12 } },
+          h(Text, { style: { fontSize: 16, color: COLORS.navy.DEFAULT } }, '📊')
         ),
         h(Text, { style: { ...styles.h3, marginBottom: 0, flex: 1 } }, 'Playing to Win Framework')
       ),
@@ -555,7 +557,7 @@ function createAppendixPage(synthesis, client, pageNumber) {
           'Management Systems - How do we enable success?'
         ].map((q, i) =>
           h(View, { key: `q-${i}`, style: { ...styles.row, marginBottom: 4 } },
-            h(View, { style: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.indigo[600], marginRight: 8, marginTop: 4 } }),
+            h(View, { style: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.navy.DEFAULT, marginRight: 8, marginTop: 4 } }),
             h(Text, { style: styles.bodySmall }, q)
           )
         )
