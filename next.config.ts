@@ -8,10 +8,10 @@ const __dirname = path.dirname(__filename);
 const nextConfig: NextConfig = {
   // Fix workspace root detection issue (prevents Next.js from using wrong parent directory)
   outputFileTracingRoot: __dirname,
-  // pdfmake uses pdfkit internally; externalize to avoid bundler issues.
+  // pdfkit uses native streams; externalize to avoid bundler issues.
   // @react-pdf/* kept for legacy components (not used in active PDF export).
   serverExternalPackages: [
-    'pdfmake',
+    'pdfkit',
     '@react-pdf/renderer',
     '@react-pdf/reconciler',
     '@react-pdf/layout',

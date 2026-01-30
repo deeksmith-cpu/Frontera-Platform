@@ -1,9 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const PdfPrinter = require('pdfmake');
-import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
+import PDFDocument from 'pdfkit';
 import type { Database, Client } from '@/types/database';
 import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/types/synthesis';
 
@@ -13,7 +11,6 @@ import type { SynthesisResult, StrategicOpportunity, StrategicTension } from '@/
 
 const C = {
   navy: '#1a1f3a',
-  navyLight: '#2d3561',
   gold: '#fbbf24',
   cyan600: '#0891b2',
   slate900: '#0f172a',
@@ -23,172 +20,16 @@ const C = {
   slate400: '#94a3b8',
   slate300: '#cbd5e1',
   slate200: '#e2e8f0',
-  slate100: '#f1f5f9',
   slate50: '#f8fafc',
   white: '#ffffff',
   emerald600: '#059669',
-  emerald50: '#ecfdf5',
   amber600: '#d97706',
-  amber50: '#fffbeb',
-  purple600: '#9333ea',
   red500: '#ef4444',
 };
 
 // =============================================================================
-// PDF Document Builder
+// PDF Generation with PDFKit
 // =============================================================================
-
-function buildPdfDefinition(
-  synthesis: SynthesisResult,
-  client: Client | null,
-  generatedAt: string,
-): TDocumentDefinitions {
-  const companyName = client?.company_name || 'Strategic Analysis';
-  const dateStr = new Date(generatedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
-  const styles: StyleDictionary = {
-    h1: { fontSize: 24, bold: true, color: C.slate900, margin: [0, 0, 0, 12] },
-    h2: { fontSize: 16, bold: true, color: C.slate900, margin: [0, 0, 0, 10] },
-    h3: { fontSize: 12, bold: true, color: C.slate900, margin: [0, 0, 0, 6] },
-    body: { fontSize: 10, color: C.slate700, lineHeight: 1.5 },
-    bodySmall: { fontSize: 9, color: C.slate600, lineHeight: 1.4 },
-    label: { fontSize: 8, bold: true, color: C.slate500 },
-    caption: { fontSize: 8, color: C.slate400 },
-  };
-
-  const content: Content[] = [];
-
-  // ---- Cover Page ----
-  content.push(
-    {
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 60, r: 8, color: C.navy }],
-      margin: [0, 80, 0, 0] as [number, number, number, number],
-    },
-    {
-      text: 'F',
-      fontSize: 28,
-      bold: true,
-      color: C.white,
-      absolutePosition: { x: 62, y: 96 },
-    },
-    {
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 80, h: 3, r: 1, color: C.cyan600 }],
-      margin: [0, 30, 0, 20] as [number, number, number, number],
-    },
-    { text: 'STRATEGIC SYNTHESIS REPORT', style: 'label', margin: [0, 0, 0, 8] as [number, number, number, number] },
-    { text: companyName, fontSize: 32, bold: true, color: C.slate900, margin: [0, 0, 0, 16] as [number, number, number, number] },
-    {
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 80, h: 3, r: 1, color: C.navy }],
-      margin: [0, 0, 0, 20] as [number, number, number, number],
-    },
-  );
-
-  if (client?.industry) {
-    content.push({ text: `Industry: ${client.industry}`, style: 'bodySmall', margin: [0, 0, 0, 4] as [number, number, number, number] });
-  }
-  content.push(
-    { text: `Generated: ${dateStr}`, style: 'bodySmall', margin: [0, 0, 0, 30] as [number, number, number, number] },
-    {
-      table: {
-        widths: ['*'],
-        body: [[
-          {
-            stack: [
-              { text: 'METHODOLOGY', style: 'label', alignment: 'center' as const, margin: [0, 0, 0, 4] as [number, number, number, number] },
-              { text: 'Playing to Win Framework', fontSize: 14, bold: true, color: C.navy, alignment: 'center' as const, margin: [0, 0, 0, 4] as [number, number, number, number] },
-              { text: 'by Roger Martin & A.G. Lafley', fontSize: 9, color: C.slate500, alignment: 'center' as const },
-            ],
-            margin: [0, 8, 0, 8] as [number, number, number, number],
-          },
-        ]],
-      },
-      layout: {
-        hLineWidth: () => 1,
-        vLineWidth: () => 1,
-        hLineColor: () => C.slate200,
-        vLineColor: () => C.slate200,
-        paddingLeft: () => 12,
-        paddingRight: () => 12,
-        paddingTop: () => 8,
-        paddingBottom: () => 8,
-      },
-      margin: [0, 0, 0, 60] as [number, number, number, number],
-    },
-    { text: 'Powered by Frontera AI Strategy Coach', style: 'caption', alignment: 'center' as const },
-    { text: 'www.frontera.ai', fontSize: 8, color: C.slate300, alignment: 'center' as const, margin: [0, 4, 0, 0] as [number, number, number, number] },
-    { text: '', pageBreak: 'after' as const },
-  );
-
-  // ---- Executive Summary ----
-  if (synthesis.executiveSummary) {
-    content.push(
-      { text: 'Executive Summary', style: 'h1' },
-      { text: synthesis.executiveSummary, style: 'body', margin: [0, 0, 0, 12] as [number, number, number, number] },
-      {
-        columns: [
-          { text: `Model: ${synthesis.metadata.modelUsed}`, style: 'caption' },
-          { text: `Territories: ${synthesis.metadata.territoriesIncluded.join(', ')}`, style: 'caption' },
-          { text: `Areas analyzed: ${synthesis.metadata.researchAreasCount}`, style: 'caption' },
-        ],
-        margin: [0, 0, 0, 20] as [number, number, number, number],
-      },
-    );
-  }
-
-  // ---- Strategic Opportunities ----
-  if (synthesis.opportunities.length > 0) {
-    content.push(
-      { text: `Strategic Opportunities (${synthesis.opportunities.length})`, style: 'h1', margin: [0, 10, 0, 12] as [number, number, number, number] },
-    );
-
-    for (const opp of synthesis.opportunities) {
-      content.push(buildOpportunityCard(opp));
-    }
-  }
-
-  // ---- Strategic Tensions ----
-  if (synthesis.tensions && synthesis.tensions.length > 0) {
-    content.push(
-      { text: '', pageBreak: 'before' as const },
-      { text: `Strategic Tensions (${synthesis.tensions.length})`, style: 'h1' },
-    );
-
-    for (const tension of synthesis.tensions) {
-      content.push(buildTensionCard(tension));
-    }
-  }
-
-  // ---- Recommendations ----
-  if (synthesis.recommendations && synthesis.recommendations.length > 0) {
-    content.push(
-      { text: 'Priority Recommendations', style: 'h1', margin: [0, 20, 0, 12] as [number, number, number, number] },
-    );
-    const recItems = synthesis.recommendations.map((rec, i) => ({
-      text: `${i + 1}. ${rec}`,
-      style: 'body' as const,
-      margin: [0, 0, 0, 6] as [number, number, number, number],
-    }));
-    content.push(...recItems);
-  }
-
-  return {
-    content,
-    styles,
-    defaultStyle: { font: 'Helvetica', fontSize: 10, color: C.slate700 },
-    pageSize: 'A4' as const,
-    pageMargins: [40, 40, 40, 60] as [number, number, number, number],
-    footer: (currentPage: number, pageCount: number) => ({
-      columns: [
-        { text: 'Frontera AI Strategy Coach', style: 'caption', margin: [40, 0, 0, 0] as [number, number, number, number] },
-        { text: `${currentPage} / ${pageCount}`, style: 'caption', alignment: 'right' as const, margin: [0, 0, 40, 0] as [number, number, number, number] },
-      ],
-    }),
-  };
-}
 
 function getQuadrantLabel(q: string): string {
   return q.charAt(0).toUpperCase() + q.slice(1);
@@ -204,117 +45,248 @@ function getQuadrantColor(q: string): string {
   }
 }
 
-function buildOpportunityCard(opp: StrategicOpportunity): Content {
-  const qColor = getQuadrantColor(opp.quadrant);
-
-  const evidenceItems: Content[] = opp.evidence.slice(0, 3).map((ev) => ({
-    text: [
-      { text: `${ev.territory} > ${ev.researchArea}: `, bold: true, fontSize: 8, color: C.slate600 },
-      { text: `"${ev.quote}"`, fontSize: 8, color: C.slate500, italics: true },
-    ],
-    margin: [8, 0, 0, 3] as [number, number, number, number],
-  }));
-
-  return {
-    stack: [
-      {
-        columns: [
-          { text: opp.title, style: 'h2', width: '*' },
-          {
-            text: getQuadrantLabel(opp.quadrant).toUpperCase(),
-            fontSize: 7,
-            bold: true,
-            color: qColor,
-            alignment: 'right' as const,
-            margin: [0, 4, 0, 0] as [number, number, number, number],
-          },
-        ],
-      },
-      { text: opp.description, style: 'body', margin: [0, 0, 0, 8] as [number, number, number, number] },
-      {
-        columns: [
-          { text: `Market: ${opp.scoring.marketAttractiveness}/10`, style: 'bodySmall' },
-          { text: `Capability: ${opp.scoring.capabilityFit}/10`, style: 'bodySmall' },
-          { text: `Advantage: ${opp.scoring.competitiveAdvantage}/10`, style: 'bodySmall' },
-          { text: `Score: ${opp.scoring.overallScore}`, style: 'bodySmall', bold: true },
-        ],
-        margin: [0, 0, 0, 8] as [number, number, number, number],
-      },
-      ...(opp.ptw ? [
-        { text: 'Playing to Win Cascade', style: 'label' as const, margin: [0, 0, 0, 4] as [number, number, number, number] },
-        { text: `Where to Play: ${opp.ptw.whereToPlay}`, style: 'bodySmall' as const, margin: [0, 0, 0, 2] as [number, number, number, number] },
-        { text: `How to Win: ${opp.ptw.howToWin}`, style: 'bodySmall' as const, margin: [0, 0, 0, 6] as [number, number, number, number] },
-      ] as Content[] : []),
-      ...(evidenceItems.length > 0 ? [
-        { text: 'Evidence', style: 'label' as const, margin: [0, 0, 0, 4] as [number, number, number, number] } as Content,
-        ...evidenceItems,
-      ] : []),
-    ],
-    margin: [0, 0, 0, 16] as [number, number, number, number],
-  };
+function getImpactColor(impact: string): string {
+  switch (impact) {
+    case 'blocking': return C.red500;
+    case 'significant': return C.amber600;
+    default: return C.slate500;
+  }
 }
-
-function buildTensionCard(tension: StrategicTension): Content {
-  const impactColor = tension.impact === 'blocking' ? C.red500
-    : tension.impact === 'significant' ? C.amber600 : C.slate500;
-
-  return {
-    stack: [
-      {
-        columns: [
-          { text: tension.description, style: 'h3', width: '*' },
-          {
-            text: tension.impact.toUpperCase(),
-            fontSize: 7,
-            bold: true,
-            color: impactColor,
-            alignment: 'right' as const,
-            margin: [0, 2, 0, 0] as [number, number, number, number],
-          },
-        ],
-      },
-      ...(tension.resolutionOptions || []).map((opt) => ({
-        text: [
-          { text: opt.recommended ? '★ ' : '• ', color: opt.recommended ? C.gold : C.slate400 },
-          { text: opt.option, style: 'bodySmall' as const },
-          { text: ` — ${opt.tradeOff}`, fontSize: 8, color: C.slate400, italics: true },
-        ],
-        margin: [0, 0, 0, 3] as [number, number, number, number],
-      }) as Content),
-    ],
-    margin: [0, 0, 0, 14] as [number, number, number, number],
-  };
-}
-
-// =============================================================================
-// PDF Generation
-// =============================================================================
 
 async function generatePdf(input: {
   synthesis: SynthesisResult;
   client: Client | null;
   generatedAt: string;
 }): Promise<Buffer> {
-  const fonts = {
-    Helvetica: {
-      normal: 'Helvetica',
-      bold: 'Helvetica-Bold',
-      italics: 'Helvetica-Oblique',
-      bolditalics: 'Helvetica-BoldOblique',
-    },
-  };
+  const { synthesis, client, generatedAt } = input;
+  const companyName = client?.company_name || 'Strategic Analysis';
+  const dateStr = new Date(generatedAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
-  const printer = new PdfPrinter(fonts);
-  const docDefinition = buildPdfDefinition(input.synthesis, input.client, input.generatedAt);
-  const pdfDoc = printer.createPdfKitDocument(docDefinition);
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: { top: 40, bottom: 60, left: 40, right: 40 },
+    bufferPages: true,
+    info: {
+      Title: `Strategic Synthesis - ${companyName}`,
+      Author: 'Frontera AI Strategy Coach',
+    },
+  });
+
+  const chunks: Buffer[] = [];
+  doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+  const pageWidth = 595.28 - 80; // A4 width minus margins
+
+  // =========================================================================
+  // Cover Page
+  // =========================================================================
+
+  // Logo box
+  doc.rect(40, 100, 60, 60).fill(C.navy);
+  doc.fontSize(28).font('Helvetica-Bold').fillColor(C.white).text('F', 40, 116, { width: 60, align: 'center' });
+
+  // Cyan accent line
+  doc.rect(40, 190, 80, 3).fill(C.cyan600);
+
+  // Title
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('STRATEGIC SYNTHESIS REPORT', 40, 220, { characterSpacing: 2 });
+
+  doc.fontSize(32).font('Helvetica-Bold').fillColor(C.slate900).text(companyName, 40, 250, { width: pageWidth });
+
+  // Navy accent line
+  const companyNameHeight = doc.heightOfString(companyName, { width: pageWidth });
+  const lineY = 260 + companyNameHeight;
+  doc.rect(40, lineY, 80, 3).fill(C.navy);
+
+  // Metadata
+  let metaY = lineY + 25;
+  if (client?.industry) {
+    doc.fontSize(10).font('Helvetica').fillColor(C.slate600).text(`Industry: ${client.industry}`, 40, metaY, { width: pageWidth });
+    metaY += 18;
+  }
+  doc.fontSize(10).font('Helvetica').fillColor(C.slate600).text(`Generated: ${dateStr}`, 40, metaY, { width: pageWidth });
+
+  // Methodology box
+  const boxY = metaY + 50;
+  doc.roundedRect(40, boxY, pageWidth, 70, 6).strokeColor(C.slate200).stroke();
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('METHODOLOGY', 40, boxY + 12, { width: pageWidth, align: 'center' });
+  doc.fontSize(14).font('Helvetica-Bold').fillColor(C.navy).text('Playing to Win Framework', 40, boxY + 28, { width: pageWidth, align: 'center' });
+  doc.fontSize(9).font('Helvetica').fillColor(C.slate500).text('by Roger Martin & A.G. Lafley', 40, boxY + 48, { width: pageWidth, align: 'center' });
+
+  // Footer
+  doc.fontSize(10).font('Helvetica').fillColor(C.slate400).text('Powered by Frontera AI Strategy Coach', 40, 720, { width: pageWidth, align: 'center' });
+  doc.fontSize(8).fillColor(C.slate300).text('www.frontera.ai', 40, 736, { width: pageWidth, align: 'center' });
+
+  // =========================================================================
+  // Executive Summary
+  // =========================================================================
+
+  if (synthesis.executiveSummary) {
+    doc.addPage();
+
+    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900).text('Executive Summary', 40, 40);
+    doc.moveDown(0.5);
+
+    doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(synthesis.executiveSummary, {
+      width: pageWidth,
+      lineGap: 4,
+    });
+
+    doc.moveDown(1);
+    const meta = [
+      `Model: ${synthesis.metadata.modelUsed}`,
+      `Territories: ${synthesis.metadata.territoriesIncluded.join(', ')}`,
+      `Areas analyzed: ${synthesis.metadata.researchAreasCount}`,
+    ].join('  •  ');
+    doc.fontSize(8).fillColor(C.slate400).text(meta, { width: pageWidth });
+  }
+
+  // =========================================================================
+  // Strategic Opportunities
+  // =========================================================================
+
+  if (synthesis.opportunities.length > 0) {
+    doc.addPage();
+
+    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900)
+      .text(`Strategic Opportunities (${synthesis.opportunities.length})`, 40, 40);
+    doc.moveDown(1);
+
+    for (const opp of synthesis.opportunities) {
+      ensureSpace(doc, 120);
+
+      // Title + quadrant badge
+      const qColor = getQuadrantColor(opp.quadrant);
+      doc.fontSize(16).font('Helvetica-Bold').fillColor(C.slate900).text(opp.title, { width: pageWidth - 80, continued: false });
+
+      // Quadrant label on right (approximate position)
+      const savedY = doc.y;
+      doc.fontSize(7).font('Helvetica-Bold').fillColor(qColor)
+        .text(getQuadrantLabel(opp.quadrant).toUpperCase(), 40 + pageWidth - 70, savedY - 18, { width: 70, align: 'right' });
+      doc.y = savedY;
+
+      // Description
+      doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(opp.description, { width: pageWidth, lineGap: 3 });
+      doc.moveDown(0.5);
+
+      // Scores
+      const scores = `Market: ${opp.scoring.marketAttractiveness}/10  |  Capability: ${opp.scoring.capabilityFit}/10  |  Advantage: ${opp.scoring.competitiveAdvantage}/10  |  Score: ${opp.scoring.overallScore}`;
+      doc.fontSize(9).fillColor(C.slate600).text(scores, { width: pageWidth });
+      doc.moveDown(0.5);
+
+      // PTW Cascade
+      if (opp.ptw) {
+        doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('PLAYING TO WIN CASCADE');
+        doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
+          .text(`Where to Play: ${opp.ptw.whereToPlay}`, { width: pageWidth })
+          .text(`How to Win: ${opp.ptw.howToWin}`, { width: pageWidth });
+        doc.moveDown(0.3);
+      }
+
+      // Evidence (top 3)
+      if (opp.evidence && opp.evidence.length > 0) {
+        doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500).text('EVIDENCE');
+        for (const ev of opp.evidence.slice(0, 3)) {
+          doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate600)
+            .text(`${ev.territory} > ${ev.researchArea}: `, { continued: true })
+            .font('Helvetica-Oblique').fillColor(C.slate500)
+            .text(`"${ev.quote}"`, { width: pageWidth });
+        }
+        doc.moveDown(0.3);
+      }
+
+      // Separator
+      doc.moveDown(0.5);
+      doc.moveTo(40, doc.y).lineTo(40 + pageWidth, doc.y).strokeColor(C.slate200).lineWidth(0.5).stroke();
+      doc.moveDown(0.8);
+    }
+  }
+
+  // =========================================================================
+  // Strategic Tensions
+  // =========================================================================
+
+  if (synthesis.tensions && synthesis.tensions.length > 0) {
+    doc.addPage();
+
+    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900)
+      .text(`Strategic Tensions (${synthesis.tensions.length})`, 40, 40);
+    doc.moveDown(1);
+
+    for (const tension of synthesis.tensions) {
+      ensureSpace(doc, 80);
+
+      const impactColor = getImpactColor(tension.impact);
+
+      doc.fontSize(12).font('Helvetica-Bold').fillColor(C.slate900).text(tension.description, { width: pageWidth - 80 });
+      const tY = doc.y;
+      doc.fontSize(7).font('Helvetica-Bold').fillColor(impactColor)
+        .text(tension.impact.toUpperCase(), 40 + pageWidth - 70, tY - 14, { width: 70, align: 'right' });
+      doc.y = tY;
+
+      // Resolution options
+      if (tension.resolutionOptions && tension.resolutionOptions.length > 0) {
+        doc.moveDown(0.3);
+        for (const opt of tension.resolutionOptions) {
+          const bullet = opt.recommended ? '★ ' : '• ';
+          const bulletColor = opt.recommended ? C.gold : C.slate400;
+          doc.fontSize(9).font('Helvetica').fillColor(bulletColor).text(bullet, { continued: true })
+            .fillColor(C.slate700).text(opt.option, { continued: true })
+            .fillColor(C.slate400).font('Helvetica-Oblique').text(` — ${opt.tradeOff}`, { width: pageWidth });
+        }
+      }
+
+      doc.moveDown(0.5);
+      doc.moveTo(40, doc.y).lineTo(40 + pageWidth, doc.y).strokeColor(C.slate200).lineWidth(0.5).stroke();
+      doc.moveDown(0.8);
+    }
+  }
+
+  // =========================================================================
+  // Recommendations
+  // =========================================================================
+
+  if (synthesis.recommendations && synthesis.recommendations.length > 0) {
+    ensureSpace(doc, 100);
+
+    doc.fontSize(24).font('Helvetica-Bold').fillColor(C.slate900).text('Priority Recommendations');
+    doc.moveDown(0.8);
+
+    synthesis.recommendations.forEach((rec, i) => {
+      ensureSpace(doc, 30);
+      doc.fontSize(10).font('Helvetica').fillColor(C.slate700).text(`${i + 1}. ${rec}`, { width: pageWidth, lineGap: 3 });
+      doc.moveDown(0.3);
+    });
+  }
+
+  // =========================================================================
+  // Page Numbers (footer on all pages)
+  // =========================================================================
+
+  const totalPages = doc.bufferedPageRange().count;
+  for (let i = 0; i < totalPages; i++) {
+    doc.switchToPage(i);
+    doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
+    doc.text('Frontera AI Strategy Coach', 40, 800, { width: pageWidth / 2 });
+    doc.text(`${i + 1} / ${totalPages}`, 40 + pageWidth / 2, 800, { width: pageWidth / 2, align: 'right' });
+  }
+
+  doc.end();
 
   return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    pdfDoc.on('data', (chunk: Buffer) => chunks.push(chunk));
-    pdfDoc.on('end', () => resolve(Buffer.concat(chunks)));
-    pdfDoc.on('error', (err: Error) => reject(err));
-    pdfDoc.end();
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', (err: Error) => reject(err));
   });
+}
+
+function ensureSpace(doc: PDFKit.PDFDocument, needed: number) {
+  if (doc.y + needed > 780) {
+    doc.addPage();
+  }
 }
 
 // =============================================================================
@@ -438,8 +410,8 @@ export async function GET(req: NextRequest) {
 
     const companyName = typedClient?.company_name || 'Strategy';
     const sanitizedCompanyName = companyName.replace(/[^a-zA-Z0-9]/g, '-');
-    const dateStr = new Date().toISOString().split('T')[0];
-    const filename = `Strategic-Synthesis-${sanitizedCompanyName}-${dateStr}.pdf`;
+    const dateStrFile = new Date().toISOString().split('T')[0];
+    const filename = `Strategic-Synthesis-${sanitizedCompanyName}-${dateStrFile}.pdf`;
 
     return new NextResponse(pdfBytes, {
       status: 200,
