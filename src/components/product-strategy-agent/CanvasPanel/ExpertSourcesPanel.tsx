@@ -127,9 +127,9 @@ export function ExpertSourcesPanel({ conversation }: ExpertSourcesPanelProps) {
 
   // Tab colors
   const tabColors: Record<TabKey, { active: string; badge: string; border: string }> = {
-    company: { active: 'bg-indigo-600 text-white', badge: 'bg-indigo-50 text-indigo-700', border: 'border-indigo-200 hover:border-indigo-300' },
-    customer: { active: 'bg-cyan-600 text-white', badge: 'bg-cyan-50 text-cyan-700', border: 'border-cyan-200 hover:border-cyan-300' },
-    competitor: { active: 'bg-purple-600 text-white', badge: 'bg-purple-50 text-purple-700', border: 'border-purple-200 hover:border-purple-300' },
+    company: { active: 'bg-[#1a1f3a] text-white', badge: 'bg-[#1a1f3a]/10 text-[#1a1f3a]', border: 'border-[#1a1f3a]/20 hover:border-[#1a1f3a]/40' },
+    customer: { active: 'bg-[#fbbf24] text-slate-900', badge: 'bg-[#fbbf24]/10 text-[#b45309]', border: 'border-[#fbbf24]/30 hover:border-[#fbbf24]/50' },
+    competitor: { active: 'bg-[#0891b2] text-white', badge: 'bg-cyan-50 text-[#0891b2]', border: 'border-cyan-200 hover:border-cyan-300' },
   };
 
   return (

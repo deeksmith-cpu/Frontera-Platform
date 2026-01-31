@@ -20,31 +20,34 @@ export function TerritoryCard({ title, description, status, onClick, territory }
 
   const TerritoryIcon = territoryIcons[territory];
 
-  // Territory-specific bold colors with gradients and shadows
+  // Territory-specific colors using Frontera brand palette
   const territoryColors = {
     company: {
-      bg: 'from-indigo-600 to-indigo-700',
-      border: 'border-indigo-400',
-      text: 'text-indigo-600',
-      badge: 'bg-indigo-100 text-indigo-700',
-      hover: 'hover:border-indigo-500 hover:shadow-indigo-xl',
-      shadow: 'shadow-indigo-lg',
+      bg: 'from-[#1a1f3a] to-[#2d3561]',
+      border: 'border-[#1a1f3a]/30',
+      text: 'text-[#1a1f3a]',
+      badge: 'bg-[#1a1f3a]/10 text-[#1a1f3a]',
+      hover: 'hover:border-[#1a1f3a]/60 hover:shadow-lg',
+      shadow: 'shadow-md',
+      ring: 'focus:ring-[#1a1f3a]',
     },
     customer: {
-      bg: 'from-amber-500 to-amber-600',
-      border: 'border-amber-400',
-      text: 'text-amber-600',
-      badge: 'bg-amber-100 text-amber-700',
-      hover: 'hover:border-amber-500 hover:shadow-amber-xl',
-      shadow: 'shadow-amber-lg',
+      bg: 'from-[#fbbf24] to-[#f59e0b]',
+      border: 'border-[#fbbf24]/40',
+      text: 'text-[#b45309]',
+      badge: 'bg-[#fbbf24]/10 text-[#b45309]',
+      hover: 'hover:border-[#fbbf24]/70 hover:shadow-lg',
+      shadow: 'shadow-md',
+      ring: 'focus:ring-[#fbbf24]',
     },
     competitor: {
-      bg: 'from-purple-600 to-purple-700',
-      border: 'border-purple-400',
-      text: 'text-purple-600',
-      badge: 'bg-purple-100 text-purple-700',
-      hover: 'hover:border-purple-500 hover:shadow-purple-xl',
-      shadow: 'shadow-purple-lg',
+      bg: 'from-[#0891b2] to-[#0e7490]',
+      border: 'border-cyan-300',
+      text: 'text-[#0891b2]',
+      badge: 'bg-cyan-50 text-[#0891b2]',
+      hover: 'hover:border-cyan-400 hover:shadow-lg',
+      shadow: 'shadow-md',
+      ring: 'focus:ring-cyan-400',
     },
   };
 
@@ -77,7 +80,7 @@ export function TerritoryCard({ title, description, status, onClick, territory }
   return (
     <button
       onClick={onClick}
-      className={`group territory-card w-full text-left bg-white rounded-2xl border-3 ${colors.border} ${colors.hover} ${colors.shadow} p-8 transition-all hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${territory}-400`}
+      className={`group territory-card w-full text-left bg-white rounded-2xl border-3 ${colors.border} ${colors.hover} ${colors.shadow} p-8 transition-all hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 ${colors.ring}`}
     >
       {/* Icon with Gradient Background */}
       <div className="mb-6">

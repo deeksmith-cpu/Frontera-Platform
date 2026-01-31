@@ -438,3 +438,12 @@ a:focus-visible {
 .hover\:shadow-gold-xl:hover {
   box-shadow: var(--box-shadow-gold-xl);
 }
+
+/* Safe Area Utilities for notched/rounded devices */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}

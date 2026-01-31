@@ -168,62 +168,130 @@ export default function UserProfileDetailModal({ conversationId, onClose }: User
           )}
 
           {profile && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Column 1: Role & Objectives */}
-              <div className="space-y-6">
-                <ProfileSection
-                  title="Role"
-                  icon={briefcaseIcon}
-                  data={profile.profileData.role as unknown as Record<string, unknown>}
-                  fields={[
-                    { label: "Title", key: "title" },
-                    { label: "Department", key: "department" },
-                    { label: "Years in Role", key: "yearsInRole" },
-                    { label: "Team Size", key: "teamSize" },
-                    { label: "Reports To", key: "reportingTo" },
-                  ]}
-                />
-                <ProfileSection
-                  title="Objectives"
-                  icon={targetIcon}
-                  data={profile.profileData.objectives as unknown as Record<string, unknown>}
-                  fields={[
-                    { label: "Primary Goal", key: "primaryGoal" },
-                    { label: "Secondary Goals", key: "secondaryGoals", array: true },
-                    { label: "Time Horizon", key: "timeHorizon" },
-                    { label: "Success Metrics", key: "successMetrics", array: true },
-                  ]}
-                />
+            <div className="space-y-6">
+              {/* Coach Reflection — Full-width Premium Navy Card */}
+              <div className="relative overflow-hidden rounded-2xl bg-[#1a1f3a] p-6 text-white shadow-lg">
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#fbbf24]/20 blur-2xl" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg className="w-5 h-5 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                    </svg>
+                    <h3 className="text-lg font-bold">Coach Reflection</h3>
+                  </div>
+
+                  {profile.coachReflection ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div>
+                        <p className="text-sm leading-relaxed text-slate-200 mb-4">
+                          {profile.coachReflection.summary}
+                        </p>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
+                          Key Drivers
+                        </h4>
+                        <ul className="space-y-1.5">
+                          {profile.coachReflection.keyDrivers.map((d, i) => (
+                            <li key={i} className="text-sm flex items-start gap-2">
+                              <span className="text-[#fbbf24] mt-0.5">•</span>
+                              <span>{d}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
+                          Working Style Insights
+                        </h4>
+                        <ul className="space-y-1.5">
+                          {profile.coachReflection.workingStyleInsights.map((w, i) => (
+                            <li key={i} className="text-sm flex items-start gap-2">
+                              <span className="text-[#fbbf24] mt-0.5">•</span>
+                              <span>{w}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
+                          Coaching Recommendations
+                        </h4>
+                        <ul className="space-y-1.5">
+                          {profile.coachReflection.coachingRecommendations.map((r, i) => (
+                            <li key={i} className="text-sm flex items-start gap-2">
+                              <span className="text-[#fbbf24] mt-0.5">•</span>
+                              <span>{r}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-xs text-slate-400 pt-3 mt-4 border-t border-white/10">
+                          Generated {formatDate(profile.coachReflection.generatedAt)}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-slate-300">
+                      <div className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
+                      <span>Generating reflection...</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Column 2: Leadership & Experience */}
-              <div className="space-y-6">
-                <ProfileSection
-                  title="Leadership Style"
-                  icon={usersIcon}
-                  data={profile.profileData.leadershipStyle as unknown as Record<string, unknown>}
-                  fields={[
-                    { label: "Self-Described", key: "selfDescribed" },
-                    { label: "Decision Making", key: "decisionMaking" },
-                    { label: "Communication", key: "communicationPreference" },
-                    { label: "Conflict Approach", key: "conflictApproach" },
-                  ]}
-                />
-                <ProfileSection
-                  title="Experience"
-                  icon={academicIcon}
-                  data={profile.profileData.experience as unknown as Record<string, unknown>}
-                  fields={[
-                    { label: "Industry Background", key: "industryBackground" },
-                    { label: "Strategic Experience", key: "strategicExperience" },
-                    { label: "Biggest Challenge", key: "biggestChallenge" },
-                    { label: "Prior Coaching", key: "priorCoaching" },
-                  ]}
-                />
-              </div>
+              {/* Profile Dimension Tiles — 3 columns */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="space-y-6">
+                  <ProfileSection
+                    title="Role"
+                    icon={briefcaseIcon}
+                    data={profile.profileData.role as unknown as Record<string, unknown>}
+                    fields={[
+                      { label: "Title", key: "title" },
+                      { label: "Department", key: "department" },
+                      { label: "Years in Role", key: "yearsInRole" },
+                      { label: "Team Size", key: "teamSize" },
+                      { label: "Reports To", key: "reportingTo" },
+                    ]}
+                  />
+                  <ProfileSection
+                    title="Objectives"
+                    icon={targetIcon}
+                    data={profile.profileData.objectives as unknown as Record<string, unknown>}
+                    fields={[
+                      { label: "Primary Goal", key: "primaryGoal" },
+                      { label: "Secondary Goals", key: "secondaryGoals", array: true },
+                      { label: "Time Horizon", key: "timeHorizon" },
+                      { label: "Success Metrics", key: "successMetrics", array: true },
+                    ]}
+                  />
+                </div>
 
-              {/* Column 3: Working Style & Coach Reflection */}
-              <div className="space-y-6">
+                <div className="space-y-6">
+                  <ProfileSection
+                    title="Leadership Style"
+                    icon={usersIcon}
+                    data={profile.profileData.leadershipStyle as unknown as Record<string, unknown>}
+                    fields={[
+                      { label: "Self-Described", key: "selfDescribed" },
+                      { label: "Decision Making", key: "decisionMaking" },
+                      { label: "Communication", key: "communicationPreference" },
+                      { label: "Conflict Approach", key: "conflictApproach" },
+                    ]}
+                  />
+                  <ProfileSection
+                    title="Experience"
+                    icon={academicIcon}
+                    data={profile.profileData.experience as unknown as Record<string, unknown>}
+                    fields={[
+                      { label: "Industry Background", key: "industryBackground" },
+                      { label: "Strategic Experience", key: "strategicExperience" },
+                      { label: "Biggest Challenge", key: "biggestChallenge" },
+                      { label: "Prior Coaching", key: "priorCoaching" },
+                    ]}
+                  />
+                </div>
+
                 <ProfileSection
                   title="Working Style"
                   icon={boltIcon}
@@ -235,78 +303,6 @@ export default function UserProfileDetailModal({ conversationId, onClose }: User
                     { label: "Learning Style", key: "learningStyle" },
                   ]}
                 />
-
-                {/* Coach Reflection — Premium Navy Card */}
-                <div className="relative overflow-hidden rounded-2xl bg-[#1a1f3a] p-6 text-white shadow-lg">
-                  <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#fbbf24]/20 blur-2xl" />
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-4">
-                      <svg className="w-5 h-5 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                      </svg>
-                      <h3 className="text-lg font-bold">Coach Reflection</h3>
-                    </div>
-
-                    {profile.coachReflection ? (
-                      <div className="space-y-4">
-                        <p className="text-sm leading-relaxed text-slate-200">
-                          {profile.coachReflection.summary}
-                        </p>
-
-                        <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
-                            Key Drivers
-                          </h4>
-                          <ul className="space-y-1.5">
-                            {profile.coachReflection.keyDrivers.map((d, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-[#fbbf24] mt-0.5">•</span>
-                                <span>{d}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
-                            Working Style Insights
-                          </h4>
-                          <ul className="space-y-1.5">
-                            {profile.coachReflection.workingStyleInsights.map((w, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-[#fbbf24] mt-0.5">•</span>
-                                <span>{w}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-2">
-                            Coaching Recommendations
-                          </h4>
-                          <ul className="space-y-1.5">
-                            {profile.coachReflection.coachingRecommendations.map((r, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-[#fbbf24] mt-0.5">•</span>
-                                <span>{r}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <p className="text-xs text-slate-400 pt-3 border-t border-white/10">
-                          Generated {formatDate(profile.coachReflection.generatedAt)}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-sm text-slate-300">
-                        <div className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
-                        <span>Generating reflection...</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           )}

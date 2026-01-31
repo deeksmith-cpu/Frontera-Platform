@@ -80,9 +80,9 @@ function TerritoryContextItem({
   const percentage = progress.total > 0 ? Math.round((progress.mapped / progress.total) * 100) : 0;
 
   const colorClasses = {
-    indigo: { bg: 'bg-indigo-600', text: 'text-indigo-600' },
+    indigo: { bg: 'bg-[#1a1f3a]', text: 'text-[#1a1f3a]' },
     cyan: { bg: 'bg-cyan-600', text: 'text-cyan-600' },
-    purple: { bg: 'bg-purple-600', text: 'text-purple-600' },
+    purple: { bg: 'bg-[#0891b2]', text: 'text-[#0891b2]' },
   };
 
   return (

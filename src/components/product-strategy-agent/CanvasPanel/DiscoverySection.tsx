@@ -130,6 +130,20 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
     <div className="discovery-section max-w-6xl mx-auto space-y-8">
       {/* Methodology Introduction */}
       <div className="methodology-intro bg-[#f4f4f7] rounded-2xl p-8 border border-slate-200">
+        {/* Coaching Intro Video */}
+        <div className="mb-6 flex justify-center">
+          <div className="w-1/2 rounded-xl overflow-hidden shadow-lg">
+            <video
+              className="w-full"
+              controls
+              preload="metadata"
+            >
+              <source src="/frontera-coaching-intro.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+
         <div className="flex items-start gap-6">
           <div className="flex-shrink-0">
             <div className="w-16 h-16 bg-[#1a1f3a] rounded-2xl flex items-center justify-center shadow-lg">

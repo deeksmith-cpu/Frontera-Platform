@@ -45,9 +45,9 @@ const TERRITORY_OPTIONS = [
 ] as const;
 
 const TERRITORY_COLORS: Record<string, string> = {
-  company: 'bg-indigo-50 border-indigo-200 text-indigo-700',
-  customer: 'bg-cyan-50 border-cyan-200 text-cyan-700',
-  competitor: 'bg-purple-50 border-purple-200 text-purple-700',
+  company: 'bg-[#1a1f3a]/5 border-[#1a1f3a]/20 text-[#1a1f3a]',
+  customer: 'bg-[#fbbf24]/10 border-[#fbbf24]/30 text-[#b45309]',
+  competitor: 'bg-cyan-50 border-cyan-200 text-[#0891b2]',
   general: 'bg-slate-50 border-slate-200 text-slate-700',
 };
 

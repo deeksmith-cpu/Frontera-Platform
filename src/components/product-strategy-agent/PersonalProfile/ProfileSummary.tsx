@@ -90,8 +90,8 @@ export function ProfileSummary({ profile, onRedo }: ProfileSummaryProps) {
       {/* Top Banner */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden bg-[#1a1f3a] shadow-md transition-transform duration-300 hover:scale-110">
-            <Image src="/frontera-logo-F.jpg" alt="Frontera" width={32} height={32} className="w-full h-full object-cover" />
+          <Link href="/dashboard" className="h-8 transition-transform duration-300 hover:scale-105">
+            <Image src="/frontera-logo-white.jpg" alt="Frontera" width={120} height={32} className="h-8 w-auto object-contain" />
           </Link>
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Your Profile</h2>

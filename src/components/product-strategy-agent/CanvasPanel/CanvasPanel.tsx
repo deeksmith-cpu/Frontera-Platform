@@ -6,7 +6,6 @@ import { HorizontalProgressStepper } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
 import { SynthesisSection } from './SynthesisSection';
-import { ExpertSourcesPanel } from './ExpertSourcesPanel';
 import { CaseLibrary } from './CaseLibrary';
 import type { Database } from '@/types/database';
 
@@ -102,28 +101,10 @@ export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
           <>
             {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} />}
             {currentPhase === 'research' && (
-              <div className="flex gap-6">
-                <div className="flex-1 min-w-0">
-                  <ResearchSection conversation={conversation} />
-                </div>
-                <aside className="w-80 flex-shrink-0">
-                  <div className="sticky top-0">
-                    <ExpertSourcesPanel conversation={conversation} />
-                  </div>
-                </aside>
-              </div>
+              <ResearchSection conversation={conversation} />
             )}
             {currentPhase === 'synthesis' && (
-              <div className="flex gap-6">
-                <div className="flex-1 min-w-0">
-                  <SynthesisSection conversation={conversation} />
-                </div>
-                <aside className="w-80 flex-shrink-0">
-                  <div className="sticky top-0">
-                    <ExpertSourcesPanel conversation={conversation} />
-                  </div>
-                </aside>
-              </div>
+              <SynthesisSection conversation={conversation} />
             )}
             {currentPhase === 'bets' && (
               <div className="max-w-6xl mx-auto">

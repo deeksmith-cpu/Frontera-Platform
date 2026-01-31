@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Crimson_Pro, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -33,6 +33,13 @@ const newsreader = Newsreader({
   variable: "--font-newsreader",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#1a1f3a',
+};
 
 export const metadata: Metadata = {
   title: "Frontera | AI-Powered Product Strategy Coaching for Enterprise Transformations",

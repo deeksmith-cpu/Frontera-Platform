@@ -39,28 +39,28 @@ export function TerritoryDeepDiveSidebar({
   onSelectArea,
   onBack,
 }: TerritoryDeepDiveSidebarProps) {
-  // Territory-specific colors
+  // Territory-specific colors using Frontera brand palette
   const territoryColors = {
     company: {
-      bg: 'from-indigo-600 to-indigo-700',
-      border: 'border-indigo-400',
-      text: 'text-indigo-600',
-      badge: 'bg-indigo-100 text-indigo-700',
-      active: 'bg-indigo-50 border-indigo-300',
+      bg: 'from-[#1a1f3a] to-[#2d3561]',
+      border: 'border-[#1a1f3a]/30',
+      text: 'text-[#1a1f3a]',
+      badge: 'bg-[#1a1f3a]/10 text-[#1a1f3a]',
+      active: 'bg-[#1a1f3a]/5 border-[#1a1f3a]/30',
     },
     customer: {
-      bg: 'from-amber-500 to-amber-600',
-      border: 'border-amber-400',
-      text: 'text-amber-600',
-      badge: 'bg-amber-100 text-amber-700',
-      active: 'bg-amber-50 border-amber-300',
+      bg: 'from-[#fbbf24] to-[#f59e0b]',
+      border: 'border-[#fbbf24]/40',
+      text: 'text-[#b45309]',
+      badge: 'bg-[#fbbf24]/10 text-[#b45309]',
+      active: 'bg-[#fbbf24]/10 border-[#fbbf24]/40',
     },
     competitor: {
-      bg: 'from-purple-600 to-purple-700',
-      border: 'border-purple-400',
-      text: 'text-purple-600',
-      badge: 'bg-purple-100 text-purple-700',
-      active: 'bg-purple-50 border-purple-300',
+      bg: 'from-[#0891b2] to-[#0e7490]',
+      border: 'border-cyan-300',
+      text: 'text-[#0891b2]',
+      badge: 'bg-cyan-50 text-[#0891b2]',
+      active: 'bg-cyan-50 border-cyan-300',
     },
   };
 

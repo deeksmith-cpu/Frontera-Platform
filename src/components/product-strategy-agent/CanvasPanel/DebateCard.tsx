@@ -22,7 +22,7 @@ function ExpertPanel({
   isSelected: boolean;
   onSelect: () => void;
 }) {
-  const colorA = { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700', accent: 'text-indigo-600', ring: 'ring-indigo-400' };
+  const colorA = { bg: 'bg-[#1a1f3a]/5', border: 'border-[#1a1f3a]/30', text: 'text-[#1a1f3a]', accent: 'text-[#1a1f3a]', ring: 'ring-[#1a1f3a]/40' };
   const colorB = { bg: 'bg-rose-50', border: 'border-rose-300', text: 'text-rose-700', accent: 'text-rose-600', ring: 'ring-rose-400' };
   const c = side === 'A' ? colorA : colorB;
 

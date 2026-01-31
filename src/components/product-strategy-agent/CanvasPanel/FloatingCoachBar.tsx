@@ -162,25 +162,25 @@ export function FloatingCoachBar({
 
   const territoryColors = {
     company: {
-      bg: 'from-indigo-50 to-indigo-100',
-      border: 'border-indigo-200 hover:border-indigo-400',
-      text: 'text-indigo-700',
-      button: 'from-indigo-600 to-indigo-700',
-      accent: 'bg-indigo-500',
+      bg: 'from-[#1a1f3a]/5 to-[#1a1f3a]/10',
+      border: 'border-[#1a1f3a]/20 hover:border-[#1a1f3a]/40',
+      text: 'text-[#1a1f3a]',
+      button: 'from-[#1a1f3a] to-[#2d3561]',
+      accent: 'bg-[#1a1f3a]',
     },
     customer: {
-      bg: 'from-cyan-50 to-cyan-100',
-      border: 'border-cyan-200 hover:border-cyan-400',
-      text: 'text-cyan-700',
-      button: 'from-cyan-600 to-cyan-700',
-      accent: 'bg-cyan-500',
+      bg: 'from-[#fbbf24]/10 to-[#fbbf24]/20',
+      border: 'border-[#fbbf24]/30 hover:border-[#fbbf24]/50',
+      text: 'text-[#b45309]',
+      button: 'from-[#fbbf24] to-[#f59e0b]',
+      accent: 'bg-[#fbbf24]',
     },
     competitor: {
-      bg: 'from-purple-50 to-purple-100',
-      border: 'border-purple-200 hover:border-purple-400',
-      text: 'text-purple-700',
-      button: 'from-purple-600 to-purple-700',
-      accent: 'bg-purple-500',
+      bg: 'from-cyan-50 to-cyan-100',
+      border: 'border-cyan-200 hover:border-cyan-400',
+      text: 'text-[#0891b2]',
+      button: 'from-[#0891b2] to-[#0e7490]',
+      accent: 'bg-[#0891b2]',
     },
   };
 

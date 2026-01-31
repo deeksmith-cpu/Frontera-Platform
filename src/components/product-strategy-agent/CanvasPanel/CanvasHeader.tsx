@@ -58,9 +58,9 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
 
 
   return (
-    <header className="canvas-header py-5 px-10 border-b border-slate-100 bg-white flex justify-between items-center flex-shrink-0">
+    <header className="canvas-header py-5 px-10 border-b border-[#2d3561] bg-[#1a1f3a] flex justify-between items-center flex-shrink-0">
       <div className="flex items-center gap-6">
-        <Link href="/dashboard">
+        <Link href="/dashboard" className="transition-transform duration-300 hover:scale-105">
           <Image
             src="/frontera-logo-white.jpg"
             alt="Frontera"
@@ -70,7 +70,7 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
           />
         </Link>
         <div>
-          <h2 className="canvas-title text-xl font-bold text-slate-900">
+          <h2 className="canvas-title text-xl font-bold text-white">
             Product Strategy Coach
           </h2>
         </div>
@@ -79,20 +79,20 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
       <div className="canvas-controls flex gap-3">
         <button
           onClick={handleExport}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+          className="canvas-btn text-sm py-2.5 px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
         >
           Export
         </button>
         <button
           onClick={handleShare}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-cyan-300 hover:shadow-md font-semibold"
+          className="canvas-btn text-sm py-2.5 px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
         >
           Share
         </button>
         <button
           onClick={handleGenerateInsights}
           disabled={isGenerating}
-          className="canvas-btn primary text-sm py-2.5 px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="canvas-btn primary text-sm py-2.5 px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 cursor-pointer transition-all duration-300 hover:bg-[#f59e0b] hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? (
             <span className="flex items-center gap-2">

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { TerritoryDeepDiveSidebar } from './TerritoryDeepDiveSidebar';
 import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from './SuggestionPanel';
-import { FloatingCoachBar } from './FloatingCoachBar';
+import { InlineCoachBar } from './InlineCoachBar';
 import { CustomerIcon } from '@/components/icons/TerritoryIcons';
 import type { Database } from '@/types/database';
 
@@ -74,13 +74,8 @@ export function CustomerTerritoryDeepDive({
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [suggestionError, setSuggestionError] = useState(false);
 
-  // Floating coach bar state
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
-  const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
-  const activeTextareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  // Handle floating bar suggestion apply
-  const handleFloatingBarApply = useCallback((questionIndex: number, text: string) => {
+  // Handle inline coach bar suggestion apply
+  const handleInlineBarApply = useCallback((questionIndex: number, text: string) => {
     setResponses((prev) => ({
       ...prev,
       [questionIndex]: (prev[questionIndex] || '') + text,
@@ -253,7 +248,7 @@ export function CustomerTerritoryDeepDive({
           {/* Area Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-cyan-700 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] rounded-2xl flex items-center justify-center shadow-lg">
                 <CustomerIcon className="text-white" size={24} />
               </div>
               <div>
@@ -273,34 +268,31 @@ export function CustomerTerritoryDeepDive({
                 <div key={index} className="question-card bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                   <label className="block">
                     <div className="flex items-start gap-3 mb-4">
-                      <span className="inline-flex items-center justify-center w-8 h-8 bg-cyan-100 text-cyan-600 rounded-lg text-sm font-bold flex-shrink-0">
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-[#fbbf24]/10 text-[#b45309] rounded-lg text-sm font-bold flex-shrink-0">
                         {index + 1}
                       </span>
                       <span className="font-semibold text-base text-slate-900">{question}</span>
                     </div>
                     <textarea
-                      ref={(el) => {
-                        textareaRefs.current[index] = el;
-                        if (activeQuestionIndex === index) {
-                          activeTextareaRef.current = el;
-                        }
-                      }}
                       value={responses[index] || ''}
                       onChange={(e) => handleResponseChange(index, e.target.value)}
-                      onFocus={() => setActiveQuestionIndex(index)}
-                      onBlur={(e) => {
-                        // Delay clearing to allow clicking floating bar
-                        setTimeout(() => {
-                          if (!e.relatedTarget?.closest('.floating-coach-bar')) {
-                            setActiveQuestionIndex(null);
-                          }
-                        }, 200);
-                      }}
                       placeholder="Share your insights here..."
                       rows={5}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-all"
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#fbbf24]/20 focus:border-[#fbbf24] transition-all"
                     />
                   </label>
+
+                  {/* Inline Coach Bar - persistent below textarea */}
+                  <InlineCoachBar
+                    conversationId={conversation.id}
+                    territory="customer"
+                    researchArea={selectedArea || ''}
+                    researchAreaTitle={currentArea?.title || ''}
+                    question={question}
+                    questionIndex={index}
+                    existingResponse={responses[index] || ''}
+                    onApplySuggestion={handleInlineBarApply}
+                  />
 
                   {/* Suggestion Panel for this question */}
                   {isLoadingSuggestions && index === 0 && <SuggestionPanelLoading />}
@@ -316,21 +308,6 @@ export function CustomerTerritoryDeepDive({
             })}
           </div>
 
-          {/* Floating Coach Bar - appears above active textarea */}
-          {currentArea && (
-            <FloatingCoachBar
-              conversationId={conversation.id}
-              territory="customer"
-              researchArea={selectedArea || ''}
-              researchAreaTitle={currentArea.title}
-              questions={currentArea.questions}
-              activeQuestionIndex={activeQuestionIndex}
-              existingResponses={responses}
-              onApplySuggestion={handleFloatingBarApply}
-              targetRef={activeTextareaRef}
-            />
-          )}
-
           {/* Action Buttons - Sticky Bottom */}
           <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
             <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
@@ -339,11 +316,11 @@ export function CustomerTerritoryDeepDive({
                 <button
                   onClick={handleGetSuggestions}
                   disabled={isLoadingSuggestions}
-                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-cyan-50 to-indigo-50 border-2 border-cyan-200 text-cyan-700 rounded-xl font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#fbbf24]/10 to-[#fbbf24]/20 border-2 border-[#fbbf24]/30 text-[#b45309] rounded-xl font-bold hover:border-[#fbbf24]/50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isLoadingSuggestions ? (
                     <>
-                      <span className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin" />
+                      <span className="w-4 h-4 border-2 border-[#fbbf24] border-t-transparent rounded-full animate-spin" />
                       <span>Generating All...</span>
                     </>
                   ) : (
@@ -367,7 +344,7 @@ export function CustomerTerritoryDeepDive({
                 <button
                   onClick={() => handleSave('mapped')}
                   disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-xl font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] text-white rounded-xl font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
                 >
                   {isSaving ? 'Saving...' : 'Mark as Mapped'}
                 </button>

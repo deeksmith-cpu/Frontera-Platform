@@ -16,7 +16,8 @@ const VALID_PERSONAS: (PersonaId | null)[] = ['marcus', 'elena', 'richard', 'gro
 
 /**
  * GET /api/product-strategy-agent/persona
- * Get the current persona for the organization
+ * Get the current persona for the organization.
+ * If none is set, auto-populate from the user's profiling recommendation.
  */
 export async function GET() {
   const { userId, orgId } = await auth();
@@ -35,7 +36,6 @@ export async function GET() {
       .single();
 
     if (error) {
-      // If no coaching_preferences column exists yet, return null persona
       if (error.message.includes('coaching_preferences')) {
         return NextResponse.json({ persona: null });
       }
@@ -44,10 +44,48 @@ export async function GET() {
     }
 
     const coachingPreferences = client?.coaching_preferences as { persona?: PersonaId } | null;
+    const existingPersona = coachingPreferences?.persona || null;
 
-    return NextResponse.json({
-      persona: coachingPreferences?.persona || null,
-    });
+    // If a persona is already set, return it
+    if (existingPersona) {
+      return NextResponse.json({ persona: existingPersona });
+    }
+
+    // No persona set — check if the user's profiling has a recommendation
+    const { data: profConv } = await supabase
+      .from('conversations')
+      .select('framework_state')
+      .eq('clerk_user_id', userId)
+      .eq('clerk_org_id', orgId)
+      .eq('agent_type', 'profiling')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (profConv) {
+      const fs = profConv.framework_state as Record<string, unknown> | null;
+      const profileData = fs?.profileData as Record<string, unknown> | null;
+      const coachingApproach = profileData?.coachingApproach as { recommendedPersona?: string } | null;
+      const recommended = coachingApproach?.recommendedPersona as PersonaId | undefined;
+
+      if (recommended && VALID_PERSONAS.includes(recommended)) {
+        // Auto-set the recommended persona so it persists
+        await supabase
+          .from('clients')
+          .update({
+            coaching_preferences: {
+              persona: recommended,
+              selected_at: new Date().toISOString(),
+              auto_recommended: true,
+            },
+          })
+          .eq('clerk_org_id', orgId);
+
+        return NextResponse.json({ persona: recommended });
+      }
+    }
+
+    return NextResponse.json({ persona: null });
   } catch (error) {
     console.error('Error fetching persona:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

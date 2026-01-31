@@ -105,6 +105,21 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
     }
   };
 
+  const getGroupHoverTextClass = (color: string) => {
+    switch (color) {
+      case 'emerald':
+        return 'group-hover:text-emerald-600';
+      case 'amber':
+        return 'group-hover:text-amber-600';
+      case 'purple':
+        return 'group-hover:text-purple-600';
+      case 'cyan':
+        return 'group-hover:text-cyan-600';
+      default:
+        return 'group-hover:text-[#1a1f3a]';
+    }
+  };
+
   const getConnectorGradient = (fromColor: string, toColor: string) => {
     return `bg-gradient-to-r from-${fromColor}-500 to-${toColor}-500`;
   };
@@ -124,11 +139,21 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
 
           return (
             <div key={step.id} className="flex items-center flex-1">
-              <div className="flex flex-col items-center flex-1">
-                {/* Compact Circle with Phase Color - Raised effect on hover */}
-                <button
-                  onClick={() => isClickable && onPhaseClick(step.phase)}
-                  disabled={isLocked || !onPhaseClick}
+              {/* Entire phase card is the hover/click target */}
+              <button
+                onClick={() => isClickable && onPhaseClick(step.phase)}
+                disabled={isLocked || !onPhaseClick}
+                className={`group flex flex-col items-center flex-1 py-2 px-1 md:px-3 rounded-xl transition-all duration-300 ${
+                  isClickable
+                    ? 'cursor-pointer hover:bg-slate-50 hover:-translate-y-1.5 hover:shadow-lg'
+                    : isLocked
+                    ? 'cursor-not-allowed opacity-60'
+                    : ''
+                }`}
+                aria-label={`Go to ${step.label} phase`}
+              >
+                {/* Circle with Phase Color */}
+                <div
                   className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-sm md:text-base transition-all duration-300 ${
                     isCurrent
                       ? `${getPhaseClasses(step.color, 'current')} text-white scale-110 shadow-lg`
@@ -137,12 +162,9 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                       : 'bg-slate-200 text-slate-500'
                   } ${
                     isClickable
-                      ? 'cursor-pointer hover:scale-125 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-offset-2 hover:ring-[#fbbf24]'
-                      : isLocked
-                      ? 'cursor-not-allowed opacity-60'
+                      ? 'group-hover:scale-125 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-offset-2 group-hover:ring-[#fbbf24]'
                       : ''
                   }`}
-                  aria-label={`Go to ${step.label} phase`}
                 >
                   {isVisited ? (
                     <CheckIcon className="text-white" size={16} />
@@ -151,20 +173,20 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                   ) : (
                     <span className="text-xs md:text-sm">{step.id}</span>
                   )}
-                </button>
+                </div>
 
-                {/* Compact Labels */}
+                {/* Labels */}
                 <div className="mt-1.5 md:mt-2 text-center">
                   <div
-                    className={`text-xs md:text-sm font-bold ${
+                    className={`text-xs md:text-sm font-bold transition-colors duration-300 ${
                       isCurrent || isVisited ? 'text-slate-900' : 'text-slate-500'
-                    }`}
+                    } ${isClickable ? getGroupHoverTextClass(step.color) : ''}`}
                   >
                     {step.label}
                   </div>
                   {/* Sublabel - hidden on mobile */}
                   <div
-                    className={`hidden md:block text-[10px] uppercase tracking-wider font-semibold mt-0.5 ${
+                    className={`hidden md:block text-[10px] uppercase tracking-wider font-semibold mt-0.5 transition-colors duration-300 ${
                       isCurrent
                         ? getTextColorClass(step.color)
                         : isVisited
@@ -188,7 +210,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                     </div>
                   )}
                 </div>
-              </div>
+              </button>
 
               {/* Connector Line with Phase-Specific Gradient */}
               {index < STEPS.length - 1 && (
