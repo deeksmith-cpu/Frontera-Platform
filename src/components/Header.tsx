@@ -107,13 +107,13 @@ export default function Header() {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300"
+                  className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-300 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 focus:ring-offset-[#1a1f3a] active:bg-white/20 active:scale-95"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/team"
-                  className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300"
+                  className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-300 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 focus:ring-offset-[#1a1f3a] active:bg-white/20 active:scale-95"
                 >
                   Team
                 </Link>
@@ -184,14 +184,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="block px-3 py-2 text-base font-semibold text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
+                    className="block px-3 py-2 text-base font-semibold text-white rounded-lg transition-all duration-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] active:bg-white/20"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/dashboard/team"
-                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 rounded-lg transition-all duration-300 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] active:bg-white/20"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Team
