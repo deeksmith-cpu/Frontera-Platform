@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth, UserButton } from "@clerk/nextjs";
-import Logo from "./Logo";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,12 +19,12 @@ export default function Header() {
   // Show nothing until component is mounted and auth is loaded
   if (!mounted || !isLoaded) {
     return (
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100">
-        <nav className="mx-auto max-w-7xl px-6 lg:px-8" aria-label="Global">
-          <div className="flex items-center justify-between py-4">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] shadow-md">
+        <nav className="mx-auto max-w-7xl py-5 px-10" aria-label="Global">
+          <div className="flex items-center justify-between">
             <div className="flex lg:flex-1">
-              <Link href="/" className="-m-1.5 p-1.5">
-                <Logo variant="dark" />
+              <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2.5">
+                <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" />
               </Link>
             </div>
             <div className="h-9 w-32" /> {/* Placeholder to prevent layout shift */}
@@ -35,13 +35,13 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100">
-      <nav className="mx-auto max-w-7xl px-6 lg:px-8" aria-label="Global">
-        <div className="flex items-center justify-between py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] shadow-md">
+      <nav className="mx-auto max-w-7xl py-5 px-10" aria-label="Global">
+        <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
-              <Logo variant="dark" />
+            <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2.5">
+              <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" />
             </Link>
           </div>
 
@@ -49,8 +49,9 @@ export default function Header() {
           <div className="flex lg:hidden">
             <button
               type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-slate-700"
+              className="-m-2.5 inline-flex items-center justify-center rounded-lg p-2.5 text-white/80 hover:text-white transition-colors duration-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
             >
               <span className="sr-only">Open main menu</span>
               {mobileMenuOpen ? (
@@ -68,16 +69,16 @@ export default function Header() {
           {/* Desktop nav */}
           {!isSignedIn && (
             <div className="hidden lg:flex lg:gap-x-10">
-              <Link href="/#problem" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
+              <Link href="/#problem" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
                 Why Frontera
               </Link>
-              <Link href="/#solution" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
+              <Link href="/#solution" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
                 Platform
               </Link>
-              <Link href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
+              <Link href="/#pricing" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
                 Pricing
               </Link>
-              <Link href="/#testimonial" className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors">
+              <Link href="/#testimonial" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
                 Case Studies
               </Link>
             </div>
@@ -89,13 +90,13 @@ export default function Header() {
               <>
                 <Link
                   href="/sign-in"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
+                  className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-transparent px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 focus:ring-offset-[#1a1f3a]"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/onboarding"
-                  className="rounded-full bg-[#fbbf24] px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm hover:bg-[#e5a91f] transition-all duration-200 hover:shadow-lg"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#fbbf24] px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:bg-[#f59e0b] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 focus:ring-offset-[#1a1f3a]"
                 >
                   Get Started
                 </Link>
@@ -106,18 +107,17 @@ export default function Header() {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
+                  className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/team"
-                  className="text-sm font-medium text-slate-600 hover:text-[#1a1f3a] transition-colors"
+                  className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300"
                 >
                   Team
                 </Link>
                 <UserButton
-                  afterSignOutUrl="/"
                   appearance={{
                     elements: {
                       avatarBox: "h-9 w-9",
@@ -131,48 +131,48 @@ export default function Header() {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden">
-            <div className="space-y-1 pb-4">
+          <div className="lg:hidden border-t border-white/10">
+            <div className="space-y-1 pb-4 pt-2">
               {!isSignedIn && (
                 <>
                   <Link
                     href="/#problem"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Why Frontera
                   </Link>
                   <Link
                     href="/#solution"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Platform
                   </Link>
                   <Link
                     href="/#pricing"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Pricing
                   </Link>
                   <Link
                     href="/#testimonial"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Case Studies
                   </Link>
                   <Link
                     href="/sign-in"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/onboarding"
-                    className="block mt-4 text-center rounded-full bg-[#fbbf24] px-6 py-3 text-base font-semibold text-slate-900"
+                    className="block mt-4 text-center rounded-lg bg-[#fbbf24] px-6 py-3 text-base font-semibold text-slate-900 transition-colors duration-300 hover:bg-[#f59e0b]"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Get Started
@@ -184,14 +184,14 @@ export default function Header() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="block px-3 py-2 text-base font-medium text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/dashboard/team"
-                    className="block px-3 py-2 text-base font-medium text-slate-600 hover:text-[#1a1f3a] hover:bg-slate-50 rounded-lg"
+                    className="block px-3 py-2 text-base font-semibold text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Team
