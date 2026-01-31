@@ -11,7 +11,11 @@ import { getTensionImpactDisplay } from '@/lib/synthesis/helpers';
  * Shows aligned vs conflicting evidence side-by-side with
  * resolution options.
  */
-export function TensionCard({ tension }: TensionCardProps) {
+interface ExtendedTensionCardProps extends TensionCardProps {
+  onEnterDebate?: (tensionDescription: string) => void;
+}
+
+export function TensionCard({ tension, onEnterDebate }: ExtendedTensionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const impactDisplay = getTensionImpactDisplay(tension.impact);
 
@@ -153,6 +157,21 @@ export function TensionCard({ tension }: TensionCardProps) {
               </div>
             </div>
           </div>
+
+          {/* Enter Debate Mode Button */}
+          {onEnterDebate && (
+            <div className="mt-4 mb-2">
+              <button
+                onClick={() => onEnterDebate(tension.description)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#1a1f3a] text-white text-sm font-semibold rounded-lg hover:bg-[#2d3561] transition-colors"
+              >
+                <svg className="w-4 h-4 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Enter Debate Mode
+              </button>
+            </div>
+          )}
 
           {/* Resolution Options */}
           {tension.resolutionOptions && tension.resolutionOptions.length > 0 && (

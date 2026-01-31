@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, KeyboardEvent, useMemo } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface TerritoryProgress {
   mapped: number;
@@ -93,6 +93,7 @@ function getSmartPrompts(context?: SmartPromptsContext): SmartPrompt[] {
 
 export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }: CoachingInputProps) {
   const [value, setValue] = useState('');
+  const [promptsExpanded, setPromptsExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const smartPrompts = useMemo(
@@ -132,24 +133,36 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
 
   return (
     <div className="coaching-input p-4 border-t border-slate-100 bg-white">
-      {/* Smart Prompts */}
+      {/* Smart Prompts — collapsible */}
       {!isDisabled && smartPrompts.length > 0 && (
         <div className="mb-3">
-          <div className="flex items-center gap-1.5 mb-2">
+          <button
+            onClick={() => setPromptsExpanded(!promptsExpanded)}
+            className="flex items-center gap-1.5 mb-2 group"
+          >
             <Sparkles className="w-3 h-3 text-[#fbbf24]" />
-            <span className="text-xs text-slate-500 font-medium">Suggested prompts</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {smartPrompts.map((prompt, i) => (
-              <button
-                key={i}
-                onClick={() => handlePromptClick(prompt.text)}
-                className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full border border-slate-200 transition-colors hover:border-slate-300"
-              >
-                {prompt.text}
-              </button>
-            ))}
-          </div>
+            <span className="text-xs text-slate-500 font-medium group-hover:text-slate-700 transition-colors">
+              Suggested prompts ({smartPrompts.length})
+            </span>
+            {promptsExpanded ? (
+              <ChevronUp className="w-3 h-3 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            )}
+          </button>
+          {promptsExpanded && (
+            <div className="flex flex-wrap gap-2">
+              {smartPrompts.map((prompt, i) => (
+                <button
+                  key={i}
+                  onClick={() => handlePromptClick(prompt.text)}
+                  className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full border border-slate-200 transition-colors hover:border-slate-300"
+                >
+                  {prompt.text}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

@@ -25,7 +25,57 @@ export type InvitationStatus =
   | "revoked";
 
 // Agent types for conversations
-export type AgentType = "strategy_coach" | "product_coach" | "team_coach" | "general";
+export type AgentType = "strategy_coach" | "product_coach" | "team_coach" | "general" | "profiling";
+
+// Personal Profile data from coaching intake conversation
+export interface PersonalProfileData {
+  role: {
+    title: string;
+    department: string;
+    yearsInRole: string;
+    teamSize: string;
+    reportingTo: string;
+  };
+  objectives: {
+    primaryGoal: string;
+    secondaryGoals: string[];
+    timeHorizon: string;
+    successMetrics: string[];
+  };
+  leadershipStyle: {
+    selfDescribed: string;
+    decisionMaking: string;
+    communicationPreference: string;
+    conflictApproach: string;
+  };
+  experience: {
+    industryBackground: string;
+    strategicExperience: string;
+    biggestChallenge: string;
+    priorCoaching: string;
+  };
+  workingStyle: {
+    preferredPace: string;
+    detailVsBigPicture: string;
+    feedbackPreference: string;
+    learningStyle: string;
+  };
+  coachingApproach?: {
+    recommendedPersona: string;
+    reasoning: string;
+    userConfirmed: boolean;
+  };
+}
+
+export type ProfilingStatus = 'not_started' | 'in_progress' | 'completed';
+
+export interface ProfilingFrameworkState {
+  status: ProfilingStatus;
+  currentDimension: number;
+  dimensionsCompleted: string[];
+  profileData: PersonalProfileData | null;
+  completedAt: string | null;
+}
 
 // Output types for strategic documents
 export type OutputType =
@@ -43,9 +93,33 @@ export type ClientTier = "pilot" | "standard" | "enterprise";
 // Client record (linked to Clerk Organization)
 // Coaching persona preferences structure
 export interface CoachingPreferences {
-  persona?: 'marcus' | 'elena' | 'richard';
+  persona?: 'marcus' | 'elena' | 'richard' | 'growth-architect' | 'product-purist' | 'scale-navigator';
   selected_at?: string;
   auto_recommended?: boolean;
+}
+
+// Case Study record (UC3 - Case Study Engine)
+export interface CaseStudyRecord {
+  id: string;
+  title: string;
+  source_transcript: string;
+  speaker_name: string;
+  speaker_company: string;
+  speaker_role: string | null;
+  context: string;
+  decision_point: string;
+  action_taken: string;
+  outcome: string;
+  lessons_learned: string;
+  full_excerpt: string | null;
+  topic_tags: string[];
+  industry_tags: string[];
+  company_stage_tags: string[];
+  challenge_type_tags: string[];
+  phase_relevance: string[];
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Client {
@@ -236,6 +310,32 @@ export interface SynthesisOutput {
 
   created_at: string;
   updated_at: string;
+}
+
+// Expert Knowledge (UC1: Expert Perspectives from 301 podcast transcripts)
+export interface ExpertKnowledgeChunk {
+  id: string;
+  transcript_filename: string;
+  speaker_name: string;
+  speaker_company: string;
+  speaker_role: string;
+  chunk_text: string;
+  chunk_index: number;
+  topic_tags: string[];
+  industry_tags: string[];
+  phase_relevance: string[];
+  territory_relevance: string[];
+  created_at: string;
+}
+
+export interface ExpertCitationRecord {
+  id: string;
+  conversation_id: string;
+  chunk_id: string;
+  message_id: string | null;
+  synthesis_output_id: string | null;
+  citation_context: string;
+  created_at: string;
 }
 
 export interface Database {

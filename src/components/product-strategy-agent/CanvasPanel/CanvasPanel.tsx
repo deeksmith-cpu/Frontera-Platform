@@ -1,11 +1,13 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { CanvasHeader } from './CanvasHeader';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
 import { SynthesisSection } from './SynthesisSection';
+import { ExpertSourcesPanel } from './ExpertSourcesPanel';
+import { CaseLibrary } from './CaseLibrary';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
@@ -25,6 +27,9 @@ export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
     (phase === 'research' || phase === 'synthesis' || phase === 'bets') ? phase : 'discovery';
   const highestPhaseReached: 'discovery' | 'research' | 'synthesis' | 'bets' =
     (highest === 'research' || highest === 'synthesis' || highest === 'bets') ? highest : currentPhase;
+
+  // Canvas tab state: 'phase' shows the phase-specific content, 'cases' shows Case Library
+  const [activeTab, setActiveTab] = useState<'phase' | 'cases'>('phase');
 
   // Handle phase navigation via stepper clicks (must be before any early returns)
   const handlePhaseClick = useCallback(async (targetPhase: 'discovery' | 'research' | 'synthesis' | 'bets') => {
@@ -63,21 +68,75 @@ export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
     <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden h-full">
       <CanvasHeader conversation={conversation} />
       <HorizontalProgressStepper currentPhase={currentPhase} highestPhaseReached={highestPhaseReached} onPhaseClick={handlePhaseClick} />
-      <div className="canvas-content flex-1 overflow-y-auto p-10">
-        {/* Render phase-specific content */}
-        {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} />}
-        {currentPhase === 'research' && <ResearchSection conversation={conversation} />}
-        {currentPhase === 'synthesis' && <SynthesisSection conversation={conversation} />}
-        {currentPhase === 'bets' && (
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-3xl font-bold text-slate-900 mb-4">Strategic Bets Phase</h1>
-            <p className="text-lg text-slate-600 mb-8">
-              Formulate hypothesis-driven strategic bets
-            </p>
-            <div className="bg-white rounded-2xl border border-slate-200 p-8">
-              <p className="text-slate-600">Strategic bets framework coming soon...</p>
-            </div>
-          </div>
+
+      {/* Canvas tab bar */}
+      <div className="flex items-center gap-1 px-10 pt-4 pb-0">
+        <button
+          onClick={() => setActiveTab('phase')}
+          className={`px-4 py-2 text-sm font-semibold rounded-t-lg transition-all duration-300 ${
+            activeTab === 'phase'
+              ? 'bg-white text-slate-900 border border-b-0 border-slate-200'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          {currentPhase === 'discovery' ? 'Discovery' :
+           currentPhase === 'research' ? 'Research' :
+           currentPhase === 'synthesis' ? 'Synthesis' : 'Strategic Bets'}
+        </button>
+        <button
+          onClick={() => setActiveTab('cases')}
+          className={`px-4 py-2 text-sm font-semibold rounded-t-lg transition-all duration-300 ${
+            activeTab === 'cases'
+              ? 'bg-white text-slate-900 border border-b-0 border-slate-200'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          Case Library
+        </button>
+      </div>
+
+      <div className="canvas-content flex-1 overflow-y-auto p-10 pt-6">
+        {activeTab === 'cases' ? (
+          <CaseLibrary conversation={conversation} />
+        ) : (
+          <>
+            {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} />}
+            {currentPhase === 'research' && (
+              <div className="flex gap-6">
+                <div className="flex-1 min-w-0">
+                  <ResearchSection conversation={conversation} />
+                </div>
+                <aside className="w-80 flex-shrink-0">
+                  <div className="sticky top-0">
+                    <ExpertSourcesPanel conversation={conversation} />
+                  </div>
+                </aside>
+              </div>
+            )}
+            {currentPhase === 'synthesis' && (
+              <div className="flex gap-6">
+                <div className="flex-1 min-w-0">
+                  <SynthesisSection conversation={conversation} />
+                </div>
+                <aside className="w-80 flex-shrink-0">
+                  <div className="sticky top-0">
+                    <ExpertSourcesPanel conversation={conversation} />
+                  </div>
+                </aside>
+              </div>
+            )}
+            {currentPhase === 'bets' && (
+              <div className="max-w-6xl mx-auto">
+                <h1 className="text-3xl font-bold text-slate-900 mb-4">Strategic Bets Phase</h1>
+                <p className="text-lg text-slate-600 mb-8">
+                  Formulate hypothesis-driven strategic bets
+                </p>
+                <div className="bg-white rounded-2xl border border-slate-200 p-8">
+                  <p className="text-slate-600">Strategic bets framework coming soon...</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </main>

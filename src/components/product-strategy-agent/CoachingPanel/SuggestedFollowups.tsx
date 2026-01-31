@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-import { MessageCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SuggestedFollowupsProps {
   phase: string;
@@ -72,6 +72,7 @@ function generateFollowups(phase: string, content: string): string[] {
 }
 
 export function SuggestedFollowups({ phase, messageContent, onSelect }: SuggestedFollowupsProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const followups = useMemo(
     () => generateFollowups(phase, messageContent),
     [phase, messageContent]
@@ -81,21 +82,33 @@ export function SuggestedFollowups({ phase, messageContent, onSelect }: Suggeste
 
   return (
     <div className="mt-4 pt-3 border-t border-slate-100">
-      <div className="flex items-center gap-1.5 mb-2">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-1.5 mb-2 group"
+      >
         <MessageCircle className="w-3 h-3 text-slate-400" />
-        <span className="text-xs text-slate-400">Continue exploring</span>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {followups.map((followup, i) => (
-          <button
-            key={i}
-            onClick={() => onSelect(followup)}
-            className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors text-left hover:border-slate-300 border border-slate-200"
-          >
-            {followup}
-          </button>
-        ))}
-      </div>
+        <span className="text-xs text-slate-400 group-hover:text-slate-600 transition-colors">
+          Continue exploring ({followups.length})
+        </span>
+        {isExpanded ? (
+          <ChevronUp className="w-3 h-3 text-slate-400" />
+        ) : (
+          <ChevronDown className="w-3 h-3 text-slate-400" />
+        )}
+      </button>
+      {isExpanded && (
+        <div className="flex flex-wrap gap-2">
+          {followups.map((followup, i) => (
+            <button
+              key={i}
+              onClick={() => onSelect(followup)}
+              className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors text-left hover:border-slate-300 border border-slate-200"
+            >
+              {followup}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

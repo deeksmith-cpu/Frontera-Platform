@@ -43,6 +43,7 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
   const [lastActivityAt, setLastActivityAt] = useState<number>(Date.now());
   const [currentPersona, setCurrentPersona] = useState<PersonaId | undefined>(undefined);
   const [isPersonaLoading, setIsPersonaLoading] = useState(false);
+  const [capturedInsights, setCapturedInsights] = useState<Set<string>>(new Set());
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Extract current phase from conversation
@@ -193,6 +194,28 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
       abortControllerRef.current.abort();
     }
   }, []);
+
+  // Capture insight handler
+  const handleCaptureInsight = useCallback(async (messageId: string, territory: string, content: string) => {
+    if (!conversation) return;
+    try {
+      const response = await fetch('/api/product-strategy-agent/captured-insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          message_id: messageId,
+          territory,
+          content,
+        }),
+      });
+      if (response.ok) {
+        setCapturedInsights(prev => new Set([...prev, messageId]));
+      }
+    } catch (error) {
+      console.error('Error capturing insight:', error);
+    }
+  }, [conversation]);
 
   if (!conversation) {
     return (
@@ -356,6 +379,8 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
           onStopGeneration={handleStopGeneration}
           currentPhase={currentPhase}
           onSendFollowup={handleSendMessage}
+          onCaptureInsight={handleCaptureInsight}
+          capturedInsights={capturedInsights}
         />
       </div>
       <div className="flex-shrink-0">

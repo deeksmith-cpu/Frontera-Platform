@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database, Client, ClientOnboarding, StrategicFocus, ClientTier } from "@/types/database";
+import type { Database, Client, ClientOnboarding, StrategicFocus, ClientTier, PersonalProfileData } from "@/types/database";
 import type { PersonaId } from "./personas";
 
 /**
@@ -28,6 +28,9 @@ export interface ClientContext {
 
   // Coaching persona (optional)
   persona: PersonaId | undefined;
+
+  // Personal profile (from profiling conversation)
+  personalProfile: PersonalProfileData | null;
 
   // Metadata
   clerkOrgId: string;
@@ -60,7 +63,7 @@ function getSupabaseAdmin() {
  * Load the full client context for the Strategy Coach.
  * Combines data from both the clients table and original onboarding record.
  */
-export async function loadClientContext(clerkOrgId: string): Promise<ClientContext | null> {
+export async function loadClientContext(clerkOrgId: string, clerkUserId?: string): Promise<ClientContext | null> {
   const supabase = getSupabaseAdmin();
 
   // Load the client record
@@ -99,6 +102,12 @@ export async function loadClientContext(clerkOrgId: string): Promise<ClientConte
   const coachingPreferences = (client as { coaching_preferences?: { persona?: string } }).coaching_preferences;
   const persona = coachingPreferences?.persona as PersonaId | undefined;
 
+  // Load personal profile if userId provided
+  let personalProfile: PersonalProfileData | null = null;
+  if (clerkUserId) {
+    personalProfile = await loadPersonalProfile(clerkUserId, clerkOrgId);
+  }
+
   // Build the context object, merging data from both sources
   return {
     // Organization identity
@@ -125,6 +134,9 @@ export async function loadClientContext(clerkOrgId: string): Promise<ClientConte
 
     // Coaching persona
     persona,
+
+    // Personal profile
+    personalProfile,
 
     // Metadata
     clerkOrgId,
@@ -400,6 +412,74 @@ export function formatTerritoryInsightsForPrompt(insights: {
  * Format synthesis output for the system prompt.
  * Now accepts structured SynthesisContext.
  */
+/**
+ * Load personal profile for a user from their profiling conversation.
+ */
+export async function loadPersonalProfile(
+  clerkUserId: string,
+  clerkOrgId: string
+): Promise<PersonalProfileData | null> {
+  const rawSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: conversation } = await rawSupabase
+    .from('conversations')
+    .select('framework_state')
+    .eq('clerk_user_id', clerkUserId)
+    .eq('clerk_org_id', clerkOrgId)
+    .eq('agent_type', 'profiling')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!conversation) return null;
+
+  const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+  if (!frameworkState || frameworkState.status !== 'completed') return null;
+
+  return (frameworkState.profileData as PersonalProfileData) || null;
+}
+
+/**
+ * Format personal profile for inclusion in the system prompt.
+ */
+export function formatPersonalProfileForPrompt(profile: PersonalProfileData): string {
+  const sections: string[] = [];
+
+  sections.push('## Your User (Personal Profile)');
+  sections.push('');
+
+  sections.push(`**Role**: ${profile.role.title}${profile.role.department ? ` (${profile.role.department})` : ''}`);
+  if (profile.role.yearsInRole) sections.push(`**Experience in role**: ${profile.role.yearsInRole}`);
+  if (profile.role.teamSize) sections.push(`**Team size**: ${profile.role.teamSize}`);
+
+  sections.push('');
+  sections.push(`**Primary objective**: ${profile.objectives.primaryGoal}`);
+  if (profile.objectives.timeHorizon) sections.push(`**Time horizon**: ${profile.objectives.timeHorizon}`);
+
+  sections.push('');
+  sections.push(`**Decision-making style**: ${profile.leadershipStyle.decisionMaking}`);
+  sections.push(`**Communication preference**: ${profile.leadershipStyle.communicationPreference}`);
+  sections.push(`**Feedback preference**: ${profile.workingStyle.feedbackPreference}`);
+
+  sections.push('');
+  sections.push(`**Strategic experience**: ${profile.experience.strategicExperience}`);
+  if (profile.experience.biggestChallenge) {
+    sections.push(`**Current challenge**: ${profile.experience.biggestChallenge}`);
+  }
+
+  sections.push('');
+  sections.push(`**Preferred pace**: ${profile.workingStyle.preferredPace}`);
+  sections.push(`**Detail orientation**: ${profile.workingStyle.detailVsBigPicture}`);
+
+  sections.push('');
+  sections.push('**Adapt your coaching to this profile**: Match the depth, pace, tone, and framing to their preferences. Reference their specific goals and challenges. Adjust formality and directness based on their feedback preference.');
+
+  return sections.join('\n');
+}
+
 export function formatSynthesisForPrompt(synthesis: SynthesisContext): string {
   const sections: string[] = [];
 

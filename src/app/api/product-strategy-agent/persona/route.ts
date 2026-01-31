@@ -12,7 +12,7 @@ function getSupabaseAdmin() {
   return createClient(url, key);
 }
 
-const VALID_PERSONAS: (PersonaId | null)[] = ['marcus', 'elena', 'richard', null];
+const VALID_PERSONAS: (PersonaId | null)[] = ['marcus', 'elena', 'richard', 'growth-architect', 'product-purist', 'scale-navigator', null];
 
 /**
  * GET /api/product-strategy-agent/persona

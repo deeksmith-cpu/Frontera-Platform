@@ -2,11 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Database } from '@/types/database';
-import type { SynthesisResult, EvidenceLink } from '@/types/synthesis';
+import type { SynthesisResult, EvidenceLink, StrategicTension as SynthesisTensionType } from '@/types/synthesis';
 import { StrategicOpportunityMap } from './StrategicOpportunityMap';
 import { OpportunityCard } from './OpportunityCard';
 import { TensionCard } from './TensionCard';
 import { RecommendationsPanel } from './RecommendationsPanel';
+import { DebateCard } from './DebateCard';
+import { DebateHistory } from './DebateHistory';
+import { matchTensionToSynthesis } from '@/lib/knowledge/tension-map';
+import type { StrategicTension as ExpertTension, DebateDecision } from '@/lib/knowledge/tension-map';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
@@ -46,6 +50,10 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
   // State for UI interactions
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const [expandedOpportunityId, setExpandedOpportunityId] = useState<string | null>(null);
+
+  // Debate Mode state
+  const [activeDebate, setActiveDebate] = useState<{ synthesisTension: SynthesisTensionType; expertTension: ExpertTension } | null>(null);
+  const [debateDecisions, setDebateDecisions] = useState<DebateDecision[]>([]);
 
   // Fetch territory insights on mount
   useEffect(() => {
@@ -91,6 +99,54 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
     }
 
     fetchSynthesis();
+  }, [conversation.id]);
+
+  // Fetch debate decisions
+  useEffect(() => {
+    async function fetchDebateDecisions() {
+      try {
+        const response = await fetch(
+          `/api/product-strategy-agent/debate-decisions?conversation_id=${conversation.id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setDebateDecisions(data.decisions || []);
+        }
+      } catch (error) {
+        console.error('Error fetching debate decisions:', error);
+      }
+    }
+    fetchDebateDecisions();
+  }, [conversation.id]);
+
+  // Enter debate mode for a tension
+  const handleEnterDebate = useCallback((tensionDescription: string) => {
+    if (!synthesis) return;
+    const synthTension = synthesis.tensions.find(t => t.description === tensionDescription);
+    if (!synthTension) return;
+
+    const matched = matchTensionToSynthesis(tensionDescription);
+    if (matched) {
+      setActiveDebate({ synthesisTension: synthTension, expertTension: matched });
+    }
+  }, [synthesis]);
+
+  // Save debate decision
+  const handleDebateDecision = useCallback(async (decision: DebateDecision) => {
+    try {
+      const response = await fetch('/api/product-strategy-agent/debate-decisions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversation.id, decision }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDebateDecisions(data.decisions || []);
+        setActiveDebate(null);
+      }
+    } catch (error) {
+      console.error('Error saving debate decision:', error);
+    }
   }, [conversation.id]);
 
   // Generate synthesis
@@ -156,7 +212,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Export failed');
+        throw new Error(data.details || data.error || 'Export failed');
       }
 
       // Download the PDF
@@ -346,6 +402,16 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
             </div>
           )}
 
+          {/* Active Debate */}
+          {activeDebate && (
+            <DebateCard
+              synthesyisTension={activeDebate.synthesisTension}
+              expertTension={activeDebate.expertTension}
+              onDecision={handleDebateDecision}
+              existingDecision={debateDecisions.find(d => d.tensionId === activeDebate.expertTension.id)}
+            />
+          )}
+
           {/* Strategic Tensions */}
           {synthesis.tensions && synthesis.tensions.length > 0 && (
             <div className="space-y-4">
@@ -354,10 +420,15 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
               </h3>
               <div className="space-y-3">
                 {synthesis.tensions.map((tension) => (
-                  <TensionCard key={tension.id} tension={tension} />
+                  <TensionCard key={tension.id} tension={tension} onEnterDebate={handleEnterDebate} />
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Debate History */}
+          {debateDecisions.length > 0 && (
+            <DebateHistory decisions={debateDecisions} />
           )}
 
           {/* Priority Recommendations */}

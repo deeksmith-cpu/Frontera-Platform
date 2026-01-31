@@ -5,10 +5,14 @@ import type { Conversation, ConversationMessage } from "@/types/database";
 import {
   loadClientContext,
   streamMessage,
+  streamProfilingMessage,
   messagesToChatHistory,
   type FrameworkState,
 } from "@/lib/agents/strategy-coach";
 import { generateOpeningMessage } from "@/lib/agents/strategy-coach/system-prompt";
+import { generateProfilingOpeningMessage } from "@/lib/agents/strategy-coach/profiling-prompt";
+import { initializeProfilingState } from "@/lib/agents/strategy-coach/profiling-state";
+import type { ProfilingFrameworkState } from "@/types/database";
 import { trackEvent } from "@/lib/analytics/posthog-server";
 
 // Supabase client with service role
@@ -66,8 +70,8 @@ export async function POST(
 
     const conversation = conversationData as Conversation;
 
-    // Load client context
-    const clientContext = await loadClientContext(orgId);
+    // Load client context (pass userId for personal profile loading)
+    const clientContext = await loadClientContext(orgId, userId);
     if (!clientContext) {
       return new Response(
         JSON.stringify({ error: "Failed to load client context" }),
@@ -85,6 +89,7 @@ export async function POST(
     const messages = (existingMessages || []) as ConversationMessage[];
     const frameworkState = conversation.framework_state as unknown as FrameworkState;
     const userName = user?.firstName || undefined;
+    const isProfilingConversation = (conversation as { agent_type?: string }).agent_type === 'profiling';
 
     // Handle opening message request (no user message provided)
     if (!message || (typeof message === "string" && message.trim().length === 0)) {
@@ -100,13 +105,10 @@ export async function POST(
         );
       }
 
-      // Generate opening message for new conversation
-      const openingMessage = generateOpeningMessage(
-        clientContext,
-        frameworkState,
-        userName,
-        false
-      );
+      // Generate opening message — profiling or coaching
+      const openingMessage = isProfilingConversation
+        ? generateProfilingOpeningMessage(clientContext, userName)
+        : generateOpeningMessage(clientContext, frameworkState, userName, false);
 
       // Save the opening message as an assistant message
       await supabase.from("conversation_messages").insert({
@@ -162,14 +164,22 @@ export async function POST(
     // Convert messages to chat history format
     const chatHistory = messagesToChatHistory(messages);
 
-    // Stream the response
-    const { stream, getUsage } = await streamMessage(
-      clientContext,
-      frameworkState,
-      chatHistory,
-      message,
-      conversationId
-    );
+    // Stream the response — profiling or coaching
+    const { stream, getUsage } = isProfilingConversation
+      ? await streamProfilingMessage(
+          clientContext,
+          (conversation.framework_state as unknown as ProfilingFrameworkState) || initializeProfilingState(),
+          chatHistory,
+          message,
+          userName
+        )
+      : await streamMessage(
+          clientContext,
+          frameworkState,
+          chatHistory,
+          message,
+          conversationId
+        );
 
     // Create a transform stream to collect the full response
     let fullResponse = "";

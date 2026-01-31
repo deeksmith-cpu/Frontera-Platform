@@ -1,6 +1,7 @@
 import {
   ClientContext,
   formatClientContextForPrompt,
+  formatPersonalProfileForPrompt,
   loadTerritoryInsights,
   loadSynthesisOutput,
   formatTerritoryInsightsForPrompt,
@@ -8,6 +9,9 @@ import {
 } from "./client-context";
 import { FrameworkState, getProgressSummary, suggestNextFocus } from "./framework-state";
 import { getPersonaSection, getPersonaPhaseGuidance } from "./personas";
+import { retrieveExpertInsights, formatExpertInsightsForPrompt } from "@/lib/knowledge/expert-index";
+import { getRelevantCaseStudies, formatCaseStudiesForPrompt } from "@/lib/knowledge/case-studies";
+import { matchTensionToSynthesis, formatTensionForPrompt } from "@/lib/knowledge/tension-map";
 
 /**
  * Build the dynamic system prompt for the Strategy Coach.
@@ -35,6 +39,11 @@ export async function buildSystemPrompt(
   // Client context
   sections.push(formatClientContextForPrompt(context));
 
+  // Personal profile (if available)
+  if (context.personalProfile) {
+    sections.push(formatPersonalProfileForPrompt(context.personalProfile));
+  }
+
   // Industry-specific guidance
   if (context.industry) {
     sections.push(getIndustryGuidance(context.industry));
@@ -61,6 +70,33 @@ export async function buildSystemPrompt(
     if (insights.company.length > 0 || insights.customer.length > 0 || insights.competitor.length > 0) {
       sections.push(formatTerritoryInsightsForPrompt(insights));
     }
+
+    // Inject expert perspectives from 301 podcast transcripts
+    const territory = state.currentPhase === "synthesis" ? undefined :
+      (state.researchPillars?.macroMarket?.completed === false ? "competitor" :
+       state.researchPillars?.customer?.completed === false ? "customer" : "company");
+    const expertInsights = retrieveExpertInsights(
+      territory,
+      undefined,
+      state.currentPhase,
+      5
+    );
+    if (expertInsights.length > 0) {
+      sections.push(formatExpertInsightsForPrompt(expertInsights));
+    }
+
+    // Inject relevant case studies from 301 podcast transcripts
+    const relevantCases = getRelevantCaseStudies(
+      {
+        industry: context.industry || undefined,
+        phase: state.currentPhase,
+        challenges: context.painPoints ? [context.painPoints] : undefined,
+      },
+      3
+    );
+    if (relevantCases.length > 0) {
+      sections.push(formatCaseStudiesForPrompt(relevantCases, 3));
+    }
   }
 
   // Load and include synthesis if in synthesis or planning phase
@@ -68,6 +104,21 @@ export async function buildSystemPrompt(
     const synthesis = await loadSynthesisOutput(conversationId);
     if (synthesis) {
       sections.push(formatSynthesisForPrompt(synthesis));
+
+      // Inject expert debate positions for identified tensions
+      if (synthesis.tensions && synthesis.tensions.length > 0) {
+        const tensionDescriptions = synthesis.tensions.map((t: { description: string }) => t.description);
+        const tensionSections: string[] = [];
+        for (const desc of tensionDescriptions) {
+          const matched = matchTensionToSynthesis(desc);
+          if (matched) {
+            tensionSections.push(formatTensionForPrompt(matched));
+          }
+        }
+        if (tensionSections.length > 0) {
+          sections.push(`## Expert Debate Positions\n\nWhen discussing strategic tensions, offer the user "Debate Mode" where two experts argue opposing positions. Use the [Debate:Tension Title] citation format.\n\n${tensionSections.join('\n\n')}`);
+        }
+      }
     }
   }
 
@@ -289,6 +340,8 @@ When referencing information from the user's research or documents, cite your so
 - For territory research: [Territory:Area] (e.g., [Customer:Segmentation], [Company:Capabilities])
 - For uploaded documents: [Doc:filename] (e.g., [Doc:AnnualReport2025.pdf])
 - For synthesis insights: [Synthesis:topic] (e.g., [Synthesis:Market Opportunity])
+- For expert perspectives: [Expert:Speaker — Topic] (e.g., [Expert:Elena Verna — PLG Strategy])
+- For case studies: [Case:Title — Speaker] (e.g., [Case:Mixpanel's Portfolio Refocus — Vijay Iyengar])
 
 Examples:
 - "Based on your customer segmentation research [Customer:Segmentation], the enterprise segment shows..."
@@ -296,6 +349,14 @@ Examples:
 - "The strategic tension you identified [Synthesis:Market-Product Fit] suggests..."
 
 This helps users verify and explore your reasoning, building trust in the coaching process.
+
+### Insight Proposals
+When you surface a strategically significant insight — a key reframe, a strategic tension, a new opportunity, or a critical risk — propose capturing it by appending an insight marker at the end of your response:
+- Format: [Insight:territory:one-sentence summary]
+- Territories: company, customer, competitor, general
+- Example: [Insight:customer:Enterprise segment shows 3x higher willingness to pay for integrated solutions]
+- Only propose 1 insight per message maximum — be selective about what qualifies as truly significant
+- Do not propose insights for routine coaching exchanges — only for genuine strategic discoveries
 
 ### When to Suggest Documents
 When significant insights have been captured:

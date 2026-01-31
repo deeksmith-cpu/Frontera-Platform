@@ -3,7 +3,8 @@ import { getPostHogServer } from "@/lib/analytics/posthog-server";
 import { ClientContext, loadClientContext } from "./client-context";
 import { FrameworkState, initializeFrameworkState } from "./framework-state";
 import { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
-import type { ConversationMessage } from "@/types/database";
+import { buildProfilingSystemPrompt } from "./profiling-prompt";
+import type { ConversationMessage, ProfilingFrameworkState } from "@/types/database";
 
 // Model configuration
 const MODEL = "claude-sonnet-4-20250514";
@@ -229,6 +230,69 @@ export async function streamMessage(
 }
 
 /**
+ * Stream a profiling conversation message.
+ * Uses the profiling system prompt instead of the regular coaching prompt.
+ */
+export async function streamProfilingMessage(
+  context: ClientContext,
+  profilingState: ProfilingFrameworkState,
+  conversationHistory: ChatMessage[],
+  userMessage: string,
+  userName?: string
+): Promise<{
+  stream: ReadableStream<Uint8Array>;
+  getUsage: () => Promise<{ inputTokens: number; outputTokens: number }>;
+}> {
+  const anthropic = getAnthropicClient();
+  const systemPrompt = buildProfilingSystemPrompt(context, profilingState, userName);
+
+  const messages: Anthropic.MessageParam[] = [
+    ...conversationHistory.map((msg) => ({
+      role: msg.role as "user" | "assistant",
+      content: msg.content,
+    })),
+    { role: "user", content: userMessage },
+  ];
+
+  const streamResponse = await anthropic.messages.stream({
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    system: systemPrompt,
+    messages,
+  });
+
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      try {
+        for await (const event of streamResponse) {
+          if (event.type === "content_block_delta") {
+            const delta = event.delta;
+            if ("text" in delta) {
+              controller.enqueue(encoder.encode(delta.text));
+            }
+          }
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
+
+  return {
+    stream,
+    getUsage: async () => {
+      const finalMessage = await streamResponse.finalMessage();
+      return {
+        inputTokens: finalMessage.usage.input_tokens,
+        outputTokens: finalMessage.usage.output_tokens,
+      };
+    },
+  };
+}
+
+/**
  * Convert database messages to chat format.
  */
 export function messagesToChatHistory(messages: ConversationMessage[]): ChatMessage[] {
@@ -254,3 +318,6 @@ export type { ClientContext } from "./client-context";
 export { initializeFrameworkState, updateFrameworkState, calculateProgress } from "./framework-state";
 export type { FrameworkState } from "./framework-state";
 export { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
+export { buildProfilingSystemPrompt, generateProfilingOpeningMessage } from "./profiling-prompt";
+export { initializeProfilingState } from "./profiling-state";
+export type { ProfilingFrameworkState } from "@/types/database";

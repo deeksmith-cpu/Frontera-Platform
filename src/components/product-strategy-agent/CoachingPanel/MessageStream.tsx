@@ -16,6 +16,8 @@ interface MessageStreamProps {
   onStopGeneration?: () => void;
   currentPhase?: string;
   onSendFollowup?: (question: string) => void;
+  onCaptureInsight?: (messageId: string, territory: string, content: string) => void;
+  capturedInsights?: Set<string>;
 }
 
 export function MessageStream({
@@ -26,6 +28,8 @@ export function MessageStream({
   onStopGeneration,
   currentPhase = 'discovery',
   onSendFollowup,
+  onCaptureInsight,
+  capturedInsights,
 }: MessageStreamProps) {
   const streamRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +60,8 @@ export function MessageStream({
           isLastMessage={index === lastAssistantIndex && !isStreaming && !isLoading}
           currentPhase={currentPhase}
           onSendFollowup={onSendFollowup}
+          onCaptureInsight={onCaptureInsight}
+          isCaptured={capturedInsights?.has(message.id) || false}
         />
       ))}
       {isLoading && <ThinkingIndicator />}
