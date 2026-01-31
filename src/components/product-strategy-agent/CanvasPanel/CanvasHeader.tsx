@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
@@ -59,13 +60,15 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
   return (
     <header className="canvas-header py-5 px-10 border-b border-slate-100 bg-white flex justify-between items-center flex-shrink-0">
       <div className="flex items-center gap-6">
-        <Image
-          src="/frontera-logo-white.jpg"
-          alt="Frontera"
-          width={120}
-          height={40}
-          className="h-10 w-auto"
-        />
+        <Link href="/dashboard">
+          <Image
+            src="/frontera-logo-white.jpg"
+            alt="Frontera"
+            width={120}
+            height={40}
+            className="h-10 w-auto"
+          />
+        </Link>
         <div>
           <h2 className="canvas-title text-xl font-bold text-slate-900">
             Product Strategy Coach

@@ -40,7 +40,7 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2.5">
+            <Link href={isSignedIn ? "/dashboard" : "/"} className="-m-1.5 p-1.5 flex items-center gap-2.5">
               <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" />
             </Link>
           </div>
