@@ -304,7 +304,7 @@ async function generatePdf(input: {
 
   const doc = new PDFDocument({
     size: 'A4',
-    margins: { top: M, bottom: 50, left: M, right: M },
+    margins: { top: M, bottom: 0, left: M, right: M },
     autoFirstPage: true,
     bufferPages: true,
     info: {
