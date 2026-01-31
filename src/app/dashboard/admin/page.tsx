@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
-import ApplicationList from "@/components/admin/ApplicationList";
+import AdminTabs from "@/components/admin/AdminTabs";
 
 // Check if user is a Frontera super admin
 async function isSuperAdmin(userId: string): Promise<boolean> {
@@ -70,7 +70,7 @@ export default async function AdminPage() {
                 <h1 className="text-3xl font-bold text-slate-900">Admin Panel</h1>
               </div>
               <p className="text-slate-600">
-                Review and manage client onboarding applications
+                Manage applications and view user profiles
               </p>
             </div>
             <Link
@@ -98,7 +98,7 @@ export default async function AdminPage() {
         {/* Content */}
         <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
           <div className="p-6 sm:p-8">
-            <ApplicationList />
+            <AdminTabs />
           </div>
         </div>
       </div>

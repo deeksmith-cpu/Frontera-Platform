@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import type { PersonalProfileData } from '@/types/database';
 
 interface ProfileSummaryProps {
@@ -85,11 +87,16 @@ const DIMENSION_CONFIG = [
 export function ProfileSummary({ profile, onRedo }: ProfileSummaryProps) {
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Top Banner */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Your Profile</h2>
-          <p className="text-sm text-slate-500 mt-1">How the coach understands you</p>
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden bg-[#1a1f3a] shadow-md transition-transform duration-300 hover:scale-110">
+            <Image src="/frontera-logo-F.jpg" alt="Frontera" width={32} height={32} className="w-full h-full object-cover" />
+          </Link>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Your Profile</h2>
+            <p className="text-sm text-slate-500 mt-0.5">How the coach understands you</p>
+          </div>
         </div>
         <button
           onClick={onRedo}
@@ -100,6 +107,32 @@ export function ProfileSummary({ profile, onRedo }: ProfileSummaryProps) {
           </svg>
           Redo Conversation
         </button>
+      </div>
+
+      {/* Success Message */}
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Profile created successfully</h3>
+            <p className="text-sm text-slate-700 mt-1 leading-relaxed">
+              Your coaching profile is all set. Your coach will now tailor every conversation to your goals, leadership style, and preferences. Head back to the dashboard to continue your coaching journey.
+            </p>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 mt-3 rounded-lg bg-[#fbbf24] px-5 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-[#f59e0b] focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2"
+            >
+              Return to Dashboard
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Coaching Approach Callout */}
