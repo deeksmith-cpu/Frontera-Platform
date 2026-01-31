@@ -103,32 +103,6 @@ export default async function DashboardPage() {
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-6 pb-16">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Strategy Coach */}
-          <Link href="/dashboard/strategy-coach" className="block">
-            <div className="relative overflow-hidden rounded-2xl bg-[#1a1f3a] p-6 text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
-              <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#fbbf24]/20 blur-2xl" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-bold">Strategy Coach</h3>
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                  AI-powered guidance for your product strategy transformation journey.
-                </p>
-                <div className="inline-flex items-center gap-2 rounded-lg bg-[#fbbf24] px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#f59e0b] transition-colors">
-                  Start Coaching
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </Link>
-
           {/* Personal Profile Card */}
           <ProfileCard status={profileStatus} profile={profileData} />
 
@@ -149,7 +123,7 @@ export default async function DashboardPage() {
                   <span className="px-2.5 py-1 bg-[#fbbf24] text-slate-900 text-xs font-bold rounded-full uppercase tracking-wide">MVP</span>
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                  Guided 4-phase strategy development with AI coaching, 3Cs research, and strategic synthesis.
+                  Guided research, analysis and expert coaching to create your Product Strategy.
                 </p>
                 <div className="inline-flex items-center gap-2 rounded-lg bg-[#fbbf24] px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#f59e0b] transition-colors">
                   Open Agent

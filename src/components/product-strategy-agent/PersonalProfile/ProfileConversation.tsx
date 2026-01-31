@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { PersonalProfileData } from '@/types/database';
 
 interface ProfileConversationProps {
@@ -33,7 +34,7 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
 
-  // Fetch opening message
+  // Fetch opening message or load existing messages
   useEffect(() => {
     async function fetchOpening() {
       try {
@@ -46,6 +47,21 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
           const data = await res.json();
           if (data.content) {
             setMessages([{ role: 'assistant', content: data.content }]);
+          } else if (data.existingMessages && data.existingMessages > 0) {
+            // Conversation already has messages — load them
+            const convRes = await fetch(`/api/conversations/${conversationId}`);
+            if (convRes.ok) {
+              const convData = await convRes.json();
+              if (convData.messages && Array.isArray(convData.messages)) {
+                const loaded: ChatMessage[] = convData.messages
+                  .filter((m: { role: string }) => m.role === 'user' || m.role === 'assistant')
+                  .map((m: { role: string; content: string }) => ({
+                    role: m.role as 'user' | 'assistant',
+                    content: m.content,
+                  }));
+                setMessages(loaded);
+              }
+            }
           }
         }
       } catch (err) {
@@ -136,9 +152,9 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-[#1a1f3a]">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden bg-[#1a1f3a] shadow-md">
+          <Link href="/dashboard" className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden bg-[#1a1f3a] shadow-md transition-transform duration-300 hover:scale-110">
             <Image src="/frontera-logo-F.jpg" alt="Frontera" width={32} height={32} className="w-full h-full object-cover" />
-          </div>
+          </Link>
           <div>
             <h2 className="text-sm font-bold text-white">Personal Profile</h2>
             <p className="text-xs text-slate-400">Getting to know you as a leader</p>
