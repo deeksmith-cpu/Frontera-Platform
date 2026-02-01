@@ -107,12 +107,7 @@ function TerritoryContextItem({
 
 export function CoachContextAwareness({ conversation }: CoachContextAwarenessProps) {
   // Expanded by default on desktop (lg+), collapsed on tablet (md)
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 1024;
-    }
-    return false;
-  });
+  const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState<ContextAwarenessData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
