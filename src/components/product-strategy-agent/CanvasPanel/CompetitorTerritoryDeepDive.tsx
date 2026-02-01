@@ -308,55 +308,58 @@ export function CompetitorTerritoryDeepDive({
             })}
           </div>
 
-          {/* Action Buttons - Sticky Bottom */}
-          <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
-            <div className="bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-6 shadow-lg">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                {/* Coach Suggestion Button - for all questions at once */}
-                <button
-                  onClick={handleGetSuggestions}
-                  disabled={isLoadingSuggestions}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-cyan-50 to-[#ecfeff] border-2 border-cyan-200 text-[#0891b2] rounded-xl text-sm sm:text-base font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  {isLoadingSuggestions ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-[#0891b2] border-t-transparent rounded-full animate-spin" />
-                      <span>Generating All...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-lg">&#10024;</span>
-                      <span>Suggest All Questions</span>
-                    </>
-                  )}
-                </button>
+          {/* Spacer for fixed bottom bar */}
+          <div className="h-36" />
+        </div>
+      </div>
 
-                {/* Save Progress Button */}
-                <button
-                  onClick={() => handleSave('in_progress')}
-                  disabled={isSaving || Object.keys(responses).length === 0}
-                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-200 text-slate-900 rounded-xl text-sm sm:text-base font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isSaving ? 'Saving...' : 'Save Progress'}
-                </button>
-
-                {/* Mark as Mapped Button */}
-                <button
-                  onClick={() => handleSave('mapped')}
-                  disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
-                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white rounded-xl text-sm sm:text-base font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
-                >
-                  {isSaving ? 'Saving...' : 'Mark as Mapped'}
-                </button>
-              </div>
-
-              {Object.keys(responses).length < currentArea.questions.length && (
-                <p className="text-sm text-center text-slate-500 mt-4">
-                  Answer all {currentArea.questions.length} questions to mark this area as mapped
-                </p>
+      {/* Action Buttons - Fixed Bottom */}
+      <div className="fixed bottom-0 left-0 md:left-[25%] right-0 z-30 px-4 md:px-8 pt-4 pb-4 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent">
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-6 shadow-lg">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            {/* Coach Suggestion Button - for all questions at once */}
+            <button
+              onClick={handleGetSuggestions}
+              disabled={isLoadingSuggestions}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-cyan-50 to-[#ecfeff] border-2 border-cyan-200 text-[#0891b2] rounded-xl text-sm sm:text-base font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {isLoadingSuggestions ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-[#0891b2] border-t-transparent rounded-full animate-spin" />
+                  <span>Generating All...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-lg">&#10024;</span>
+                  <span>Suggest All Questions</span>
+                </>
               )}
-            </div>
+            </button>
+
+            {/* Save Progress Button */}
+            <button
+              onClick={() => handleSave('in_progress')}
+              disabled={isSaving || Object.keys(responses).length === 0}
+              className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-200 text-slate-900 rounded-xl text-sm sm:text-base font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSaving ? 'Saving...' : 'Save Progress'}
+            </button>
+
+            {/* Mark as Mapped Button */}
+            <button
+              onClick={() => handleSave('mapped')}
+              disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
+              className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white rounded-xl text-sm sm:text-base font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+            >
+              {isSaving ? 'Saving...' : 'Mark as Mapped'}
+            </button>
           </div>
+
+          {Object.keys(responses).length < currentArea.questions.length && (
+            <p className="text-sm text-center text-slate-500 mt-4">
+              Answer all {currentArea.questions.length} questions to mark this area as mapped
+            </p>
+          )}
         </div>
       </div>
     </div>
