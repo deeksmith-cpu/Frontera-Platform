@@ -39,10 +39,10 @@ export default function SignInForm() {
   // Redirect if already signed in - only after mount
   useEffect(() => {
     if (mounted && userLoaded && isSignedIn) {
-      // Use replace instead of push to avoid back button issues
-      router.replace("/dashboard");
+      // Use window.location for full page load so middleware picks up session
+      window.location.href = "/dashboard";
     }
-  }, [mounted, userLoaded, isSignedIn, router]);
+  }, [mounted, userLoaded, isSignedIn]);
 
   useEffect(() => {
     if (mounted && searchParams.get("registered") === "true") {
@@ -135,7 +135,7 @@ export default function SignInForm() {
         setError("No account found with this email. Please sign up first.");
       } else if (firstError?.code === "session_exists") {
         setError("You're already signed in. Redirecting...");
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         const message = firstError?.longMessage ||
                        firstError?.message ||
