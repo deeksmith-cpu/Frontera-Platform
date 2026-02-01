@@ -92,12 +92,8 @@ function SignUpFormInner() {
 
         if (result.status === "complete") {
           // Invitation accepted, user joined the org
-          await setActive({
-            session: result.createdSessionId,
-            beforeEmit: async () => {
-              window.location.href = "/dashboard";
-            },
-          });
+          await setActive({ session: result.createdSessionId });
+          window.location.href = "/dashboard";
           return;
         } else if (result.status === "missing_requirements") {
           // May need email verification
@@ -152,12 +148,9 @@ function SignUpFormInner() {
       });
 
       if (result.status === "complete") {
-        await setActive({
-          session: result.createdSessionId,
-          beforeEmit: async () => {
-            window.location.href = "/dashboard";
-          },
-        });
+        await setActive({ session: result.createdSessionId });
+        window.location.href = "/dashboard";
+        return;
       } else {
         setError(`Verification incomplete (status: ${result.status})`);
       }
