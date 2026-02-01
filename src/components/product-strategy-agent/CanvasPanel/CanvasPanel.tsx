@@ -17,9 +17,10 @@ type Client = Database['public']['Tables']['clients']['Row'];
 interface CanvasPanelProps {
   conversation: Conversation | null | undefined;
   clientContext?: Client | null;
+  onClientContextUpdate?: (client: Client | null | undefined) => void;
 }
 
-export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
+export function CanvasPanel({ conversation, clientContext, onClientContextUpdate }: CanvasPanelProps) {
   // Extract current phase and highest phase reached from framework_state (must be before any early returns for hooks)
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const phase = frameworkState?.currentPhase as string | undefined;
@@ -125,7 +126,7 @@ export function CanvasPanel({ conversation, clientContext }: CanvasPanelProps) {
           <CaseLibrary conversation={conversation} />
         ) : (
           <>
-            {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} />}
+            {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} onClientContextUpdate={onClientContextUpdate} />}
             {currentPhase === 'research' && (
               <ResearchSection conversation={conversation} />
             )}

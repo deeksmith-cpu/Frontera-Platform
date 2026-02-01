@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { Database } from '@/types/database';
+import { INDUSTRIES, COMPANY_SIZES, STRATEGIC_FOCUS_OPTIONS } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type UploadedMaterial = Database['public']['Tables']['uploaded_materials']['Row'];
@@ -10,9 +11,10 @@ type Client = Database['public']['Tables']['clients']['Row'];
 interface DiscoverySectionProps {
   conversation: Conversation;
   clientContext?: Client | null;
+  onClientContextUpdate?: (client: Client | null | undefined) => void;
 }
 
-export function DiscoverySection({ conversation, clientContext }: DiscoverySectionProps) {
+export function DiscoverySection({ conversation, clientContext, onClientContextUpdate }: DiscoverySectionProps) {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedMaterial[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -20,6 +22,55 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
   const [showAiResearchModal, setShowAiResearchModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ id: string; filename: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Editable company context state
+  const [isEditingContext, setIsEditingContext] = useState(false);
+  const [isSavingContext, setIsSavingContext] = useState(false);
+  const [editValues, setEditValues] = useState({
+    company_name: '',
+    industry: '',
+    company_size: '',
+    strategic_focus: '',
+    pain_points: '',
+    target_outcomes: '',
+  });
+
+  const startEditing = () => {
+    setEditValues({
+      company_name: clientContext?.company_name || '',
+      industry: clientContext?.industry || '',
+      company_size: clientContext?.company_size || '',
+      strategic_focus: clientContext?.strategic_focus || '',
+      pain_points: clientContext?.pain_points || '',
+      target_outcomes: clientContext?.target_outcomes || '',
+    });
+    setIsEditingContext(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditingContext(false);
+  };
+
+  const saveContext = async () => {
+    setIsSavingContext(true);
+    try {
+      const res = await fetch('/api/product-strategy-agent/client-context', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editValues),
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      const updated = await res.json();
+      onClientContextUpdate?.(updated);
+      setIsEditingContext(false);
+    } catch {
+      // Keep edit mode open on error
+    } finally {
+      setIsSavingContext(false);
+    }
+  };
+
+  const hasBeenEdited = clientContext && clientContext.updated_at !== clientContext.created_at;
 
   // Handle material deletion
   const handleDeleteMaterial = async (materialId: string) => {
@@ -191,81 +242,188 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
       {/* Strategic Context Tile */}
       {clientContext && (
         <div className="strategic-context-tile bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#1a1f3a] rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">Company Strategic Context</h3>
-                <p className="text-xs text-slate-600">From your onboarding profile</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-6 space-y-4">
-            {/* Company Name & Industry */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Organization</div>
-                <div className="text-base font-semibold text-slate-900">{clientContext.company_name}</div>
-              </div>
-              {clientContext.industry && (
-                <div>
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Industry</div>
-                  <div className="text-base font-semibold text-slate-900">{clientContext.industry}</div>
-                </div>
-              )}
-            </div>
-
-            {/* Strategic Focus */}
-            {clientContext.strategic_focus && (
-              <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Strategic Focus</div>
-                <div className="text-sm text-slate-700 leading-relaxed">
-                  {formatStrategicFocus(clientContext.strategic_focus)}
-                </div>
-              </div>
-            )}
-
-            {/* Pain Points */}
-            {clientContext.pain_points && (
-              <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Key Challenges</div>
-                <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {clientContext.pain_points}
-                </div>
-              </div>
-            )}
-
-            {/* Target Outcomes */}
-            {clientContext.target_outcomes && (
-              <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Target Outcomes</div>
-                <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {clientContext.target_outcomes}
-                </div>
-              </div>
-            )}
-
-            {/* Evolutionary Context Message */}
-            <div className="mt-6 pt-6 border-t border-slate-200">
-              <div className="flex items-start gap-3 bg-cyan-50 border border-cyan-200 rounded-xl p-4">
-                <div className="flex-shrink-0 mt-0.5">
-                  <svg className="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-4 sm:px-6 py-4 border-b border-slate-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#1a1f3a] rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-cyan-900 font-medium mb-1">Evolving Strategic Context</p>
-                  <p className="text-xs text-cyan-800 leading-relaxed">
-                    This strategic context will <strong>deepen and iterate</strong> as we progress through the research phases. Through our conversations and territory exploration, we&apos;ll refine your understanding of market forces, customer needs, and organizational capabilities—building a richer, more nuanced strategy foundation.
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Company Strategic Context</h3>
+                  <p className="text-xs text-slate-600">
+                    {hasBeenEdited
+                      ? `Last updated ${new Date(clientContext.updated_at).toLocaleDateString()}`
+                      : 'From your onboarding profile'}
                   </p>
                 </div>
               </div>
+              {!isEditingContext && (
+                <button
+                  onClick={startEditing}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
+                </button>
+              )}
             </div>
+          </div>
+
+          <div className="p-4 sm:p-6 space-y-4">
+            {isEditingContext ? (
+              <>
+                {/* Edit Mode */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Organization</label>
+                    <input
+                      type="text"
+                      value={editValues.company_name}
+                      onChange={(e) => setEditValues(v => ({ ...v, company_name: e.target.value }))}
+                      className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Industry</label>
+                    <select
+                      value={editValues.industry}
+                      onChange={(e) => setEditValues(v => ({ ...v, industry: e.target.value }))}
+                      className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20"
+                    >
+                      <option value="">Select industry</option>
+                      {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Company Size</label>
+                    <select
+                      value={editValues.company_size}
+                      onChange={(e) => setEditValues(v => ({ ...v, company_size: e.target.value }))}
+                      className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20"
+                    >
+                      <option value="">Select size</option>
+                      {COMPANY_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Strategic Focus</label>
+                    <select
+                      value={editValues.strategic_focus}
+                      onChange={(e) => setEditValues(v => ({ ...v, strategic_focus: e.target.value }))}
+                      className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20"
+                    >
+                      <option value="">Select focus</option>
+                      {STRATEGIC_FOCUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Key Challenges</label>
+                  <textarea
+                    value={editValues.pain_points}
+                    onChange={(e) => setEditValues(v => ({ ...v, pain_points: e.target.value }))}
+                    rows={3}
+                    className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Target Outcomes</label>
+                  <textarea
+                    value={editValues.target_outcomes}
+                    onChange={(e) => setEditValues(v => ({ ...v, target_outcomes: e.target.value }))}
+                    rows={3}
+                    className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 leading-relaxed"
+                  />
+                </div>
+
+                {/* Save / Cancel */}
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={cancelEditing}
+                    disabled={isSavingContext}
+                    className="px-4 py-2 text-sm font-semibold text-slate-600 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveContext}
+                    disabled={isSavingContext || !editValues.company_name.trim()}
+                    className="px-5 py-2 text-sm font-semibold text-slate-900 bg-[#fbbf24] rounded-lg hover:bg-[#f59e0b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingContext ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Read Mode */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Organization</div>
+                    <div className="text-base font-semibold text-slate-900">{clientContext.company_name}</div>
+                  </div>
+                  {clientContext.industry && (
+                    <div>
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Industry</div>
+                      <div className="text-base font-semibold text-slate-900">{clientContext.industry}</div>
+                    </div>
+                  )}
+                </div>
+
+                {clientContext.strategic_focus && (
+                  <div>
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Strategic Focus</div>
+                    <div className="text-sm text-slate-700 leading-relaxed">
+                      {formatStrategicFocus(clientContext.strategic_focus)}
+                    </div>
+                  </div>
+                )}
+
+                {clientContext.pain_points && (
+                  <div>
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Key Challenges</div>
+                    <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {clientContext.pain_points}
+                    </div>
+                  </div>
+                )}
+
+                {clientContext.target_outcomes && (
+                  <div>
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Target Outcomes</div>
+                    <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {clientContext.target_outcomes}
+                    </div>
+                  </div>
+                )}
+
+                {/* Evolutionary Context Message */}
+                <div className="mt-6 pt-6 border-t border-slate-200">
+                  <div className="flex items-start gap-3 bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-cyan-900 font-medium mb-1">Evolving Strategic Context</p>
+                      <p className="text-xs text-cyan-800 leading-relaxed">
+                        You can <strong>edit your strategic context</strong> anytime as your understanding evolves. Through territory exploration and coaching conversations, you&apos;ll refine your view of market forces, customer needs, and organizational capabilities.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

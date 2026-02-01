@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import posthog from 'posthog-js';
 import { ChevronRight } from 'lucide-react';
 import { CanvasPanel } from './CanvasPanel/CanvasPanel';
@@ -25,8 +25,9 @@ export function ProductStrategyAgentInterface({
   conversation,
   userId,
   orgId,
-  clientContext,
+  clientContext: initialClientContext,
 }: ProductStrategyAgentInterfaceProps) {
+  const [clientContext, setClientContext] = useState(initialClientContext);
   const popup = useCoachPopup();
   const panel = useCoachPanel();
   const isMobile = useMediaQuery('(max-width: 1023px)');
@@ -89,6 +90,7 @@ export function ProductStrategyAgentInterface({
           <CanvasPanel
             conversation={conversation}
             clientContext={clientContext}
+            onClientContextUpdate={setClientContext}
           />
         </div>
       </main>
