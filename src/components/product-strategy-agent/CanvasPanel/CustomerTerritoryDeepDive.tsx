@@ -310,13 +310,13 @@ export function CustomerTerritoryDeepDive({
 
           {/* Action Buttons - Sticky Bottom */}
           <div className="sticky bottom-0 mt-8 pt-6 pb-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
-            <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-lg">
-              <div className="flex items-center gap-3">
+            <div className="bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-6 shadow-lg">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                 {/* Coach Suggestion Button - for all questions at once */}
                 <button
                   onClick={handleGetSuggestions}
                   disabled={isLoadingSuggestions}
-                  className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#fbbf24]/10 to-[#fbbf24]/20 border-2 border-[#fbbf24]/30 text-[#b45309] rounded-xl font-bold hover:border-[#fbbf24]/50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-[#fbbf24]/10 to-[#fbbf24]/20 border-2 border-[#fbbf24]/30 text-[#b45309] rounded-xl text-sm sm:text-base font-bold hover:border-[#fbbf24]/50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isLoadingSuggestions ? (
                     <>
@@ -335,7 +335,7 @@ export function CustomerTerritoryDeepDive({
                 <button
                   onClick={() => handleSave('in_progress')}
                   disabled={isSaving || Object.keys(responses).length === 0}
-                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-900 rounded-xl font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-200 text-slate-900 rounded-xl text-sm sm:text-base font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSaving ? 'Saving...' : 'Save Progress'}
                 </button>
@@ -344,7 +344,7 @@ export function CustomerTerritoryDeepDive({
                 <button
                   onClick={() => handleSave('mapped')}
                   disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] text-white rounded-xl font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] text-white rounded-xl text-sm sm:text-base font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
                 >
                   {isSaving ? 'Saving...' : 'Mark as Mapped'}
                 </button>

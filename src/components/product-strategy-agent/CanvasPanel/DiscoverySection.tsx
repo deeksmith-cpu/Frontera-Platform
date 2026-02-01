@@ -132,7 +132,7 @@ export function DiscoverySection({ conversation, clientContext }: DiscoverySecti
       <div className="methodology-intro bg-[#f4f4f7] rounded-2xl p-8 border border-slate-200">
         {/* Coaching Intro Video */}
         <div className="mb-6 flex justify-center">
-          <div className="w-1/2 rounded-xl overflow-hidden shadow-lg">
+          <div className="w-full sm:w-3/4 md:w-1/2 rounded-xl overflow-hidden shadow-lg">
             <video
               className="w-full"
               controls
