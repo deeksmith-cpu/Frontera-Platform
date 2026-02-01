@@ -105,7 +105,7 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else if (result.status === "needs_first_factor") {
         // Password was wrong or first factor verification needed
         const factors = result.supportedFirstFactors?.map(f => f.strategy).join(", ");
@@ -191,7 +191,7 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         setError(`Verification incomplete (status: ${result.status})`);
       }
