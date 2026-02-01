@@ -79,9 +79,9 @@ export default async function DashboardPage() {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a1f3a]/5 via-transparent to-[#fbbf24]/5 pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-6 py-16 pt-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 pt-24 sm:pt-28 md:pt-32">
           <div className="relative">
-            <h1 className="text-5xl font-bold text-slate-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
               Welcome back, {user?.firstName || "User"}
             </h1>
             {orgName && (
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main Dashboard Content */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Personal Profile Card */}
           <ProfileCard status={profileStatus} profile={profileData} />

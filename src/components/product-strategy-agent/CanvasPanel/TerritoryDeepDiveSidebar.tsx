@@ -72,7 +72,57 @@ export function TerritoryDeepDiveSidebar({
   const progressPercent = totalAreas > 0 ? (mappedCount / totalAreas) * 100 : 0;
 
   return (
-    <div className="territory-sidebar flex flex-col h-full bg-white border-r-2 border-slate-200 w-1/4">
+    <>
+    {/* Mobile Territory Nav */}
+    <div className="md:hidden bg-white border-b border-slate-200">
+      <div className={`flex items-center gap-2 px-4 py-3 bg-gradient-to-r ${colors.bg} text-white`}>
+        <button
+          onClick={onBack}
+          className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+          aria-label="Back to overview"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <span className="font-bold text-sm">{territoryTitle}</span>
+        <span className="ml-auto text-xs font-semibold">{mappedCount}/{totalAreas}</span>
+      </div>
+      <div className="flex gap-2 px-4 py-2 overflow-x-auto">
+        {researchAreas.map((area) => {
+          const isActive = area.id === activeAreaId;
+          const isMapped = area.status === 'mapped';
+          const isInProgress = area.status === 'in_progress';
+          return (
+            <button
+              key={area.id}
+              onClick={() => onSelectArea(area.id)}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
+                isActive
+                  ? `${colors.badge} ring-2 ring-offset-1 ring-current`
+                  : isMapped
+                  ? 'bg-green-100 text-green-700'
+                  : isInProgress
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-slate-100 text-slate-600'
+              }`}
+            >
+              {isMapped && '✓ '}{area.title}
+            </button>
+          );
+        })}
+      </div>
+      {/* Thin progress strip */}
+      <div className="h-1 bg-slate-100">
+        <div
+          className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-500`}
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+    </div>
+
+    {/* Desktop Sidebar */}
+    <div className="territory-sidebar hidden md:flex flex-col h-full bg-white border-r-2 border-slate-200 w-1/4">
       {/* Header */}
       <div className={`p-6 bg-gradient-to-br ${colors.bg} text-white`}>
         {/* Back Button */}
@@ -192,5 +242,6 @@ export function TerritoryDeepDiveSidebar({
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase";
 import {
   OnboardingFormData,
@@ -30,6 +31,11 @@ export default function OnboardingWizard({ existingId }: OnboardingWizardProps) 
   const [error, setError] = useState<string | null>(null);
 
   const TOTAL_STEPS = 4;
+
+  // Track onboarding start
+  useEffect(() => {
+    posthog.capture('onboarding_started', { existing_id: existingId || null });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load existing data if editing
   useEffect(() => {
@@ -120,10 +126,18 @@ export default function OnboardingWizard({ existingId }: OnboardingWizardProps) 
 
       if (submit) {
         setIsSubmitted(true);
+        posthog.capture('onboarding_submitted', {
+          company_name: formData.companyName,
+          industry: formData.industry,
+          company_size: formData.companySize,
+          strategic_focus: formData.strategicFocus,
+          steps_completed: step,
+        });
       }
     } catch (err) {
       setError("Failed to save progress. Please try again.");
       console.error(err);
+      posthog.capture('onboarding_error', { step, submit, error: String(err) });
     } finally {
       setIsSaving(false);
     }
@@ -135,6 +149,10 @@ export default function OnboardingWizard({ existingId }: OnboardingWizardProps) 
 
   const handleNext = async () => {
     if (currentStep < TOTAL_STEPS) {
+      posthog.capture('onboarding_step_completed', {
+        step: currentStep,
+        step_name: ['company_basics', 'strategic_focus', 'transformation_context', 'success_criteria'][currentStep - 1],
+      });
       await saveProgress(currentStep + 1);
       setCurrentStep((prev) => prev + 1);
     }

@@ -82,7 +82,7 @@ export function SessionHeader({
 
   return (
     <header
-      className={`coaching-header p-6 border-b border-slate-100 bg-white ${
+      className={`coaching-header p-4 md:p-5 lg:p-6 border-b border-slate-100 bg-white ${
         isPopup ? 'popup-drag-handle cursor-move select-none' : ''
       }`}
     >

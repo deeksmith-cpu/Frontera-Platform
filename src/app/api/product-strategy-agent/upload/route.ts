@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 // Route segment config for file uploads
 export const runtime = 'nodejs';
@@ -93,6 +94,7 @@ export async function POST(req: NextRequest) {
         })
         .eq('id', (material as { id: string }).id);
 
+      trackEvent('psa_url_imported', userId, { org_id: orgId, conversation_id, url });
       return NextResponse.json(material);
     }
 
@@ -233,6 +235,13 @@ export async function POST(req: NextRequest) {
         })
         .eq('id', (material as { id: string }).id);
 
+      trackEvent('psa_file_uploaded', userId, {
+        org_id: orgId,
+        conversation_id,
+        file_name: file.name,
+        file_type: fileExt,
+        file_size: file.size,
+      });
       return NextResponse.json(material);
     }
 

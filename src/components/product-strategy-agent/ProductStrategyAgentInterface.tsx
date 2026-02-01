@@ -1,5 +1,7 @@
 'use client';
 
+import { useCallback } from 'react';
+import posthog from 'posthog-js';
 import { ChevronRight } from 'lucide-react';
 import { CanvasPanel } from './CanvasPanel/CanvasPanel';
 import { CoachTriggerButton } from './CoachTriggerButton';
@@ -29,47 +31,29 @@ export function ProductStrategyAgentInterface({
   const panel = useCoachPanel();
   const isMobile = useMediaQuery('(max-width: 1023px)');
 
-  // Mobile: Use the floating popup pattern
-  if (isMobile) {
-    return (
-      <div className="product-strategy-agent h-screen overflow-hidden bg-slate-50">
-        {/* Main Canvas - full width on mobile */}
-        <div className="h-full flex flex-col">
-          <CanvasPanel
-            conversation={conversation}
-            clientContext={clientContext}
-          />
-        </div>
+  const handleCoachToggle = useCallback(() => {
+    posthog.capture('coach_popup_toggled', { action: popup.isOpen ? 'close' : 'open', device: isMobile ? 'mobile' : 'desktop' });
+    popup.toggle();
+  }, [popup, isMobile]);
 
-        {/* Coach Trigger Button - floating action button */}
-        <CoachTriggerButton onClick={popup.toggle} isOpen={popup.isOpen} />
+  const handlePanelCollapse = useCallback(() => {
+    posthog.capture('coach_panel_collapsed');
+    panel.collapse();
+  }, [panel]);
 
-        {/* Floating Coach Popup */}
-        <CoachingPopup
-          isOpen={popup.isOpen}
-          onClose={popup.close}
-          position={popup.position}
-          size={popup.size}
-          onPositionChange={popup.updatePosition}
-          onSizeChange={popup.updateSize}
-          conversation={conversation}
-          userId={userId}
-          orgId={orgId}
-          constraints={popup.constraints}
-        />
-      </div>
-    );
-  }
+  const handlePanelExpand = useCallback(() => {
+    posthog.capture('coach_panel_expanded');
+    panel.expand();
+  }, [panel]);
 
-  // Desktop: Persistent side panel layout
   return (
-    <div className="product-strategy-agent h-screen flex overflow-hidden bg-slate-50">
-      {/* Coaching Panel - Left Side (35% width) */}
+    <div className="product-strategy-agent h-screen flex flex-col md:flex-row overflow-hidden bg-slate-50">
+      {/* Coaching Panel - hidden on mobile, side panel on tablet/desktop */}
       <aside
         className={`
-          ${panel.isCollapsed ? 'w-0' : 'w-[35%] min-w-[360px] max-w-[480px]'}
-          flex-shrink-0 border-r border-slate-200 bg-white
+          hidden md:flex flex-shrink-0 border-r border-slate-200 bg-white
           transition-all duration-300 overflow-hidden
+          ${panel.isCollapsed ? 'md:w-0' : 'md:w-[30%] md:min-w-[280px] lg:w-[35%] lg:min-w-[360px] lg:max-w-[480px]'}
         `}
       >
         {conversation && (
@@ -77,7 +61,7 @@ export function ProductStrategyAgentInterface({
             conversation={conversation}
             userId={userId}
             orgId={orgId}
-            onCollapse={panel.collapse}
+            onCollapse={handlePanelCollapse}
             mode="sidepanel"
           />
         )}
@@ -88,13 +72,13 @@ export function ProductStrategyAgentInterface({
         )}
       </aside>
 
-      {/* Canvas Panel - Right Side (fills remaining space) */}
+      {/* Canvas Panel - full width on mobile, fills remaining on tablet/desktop */}
       <main className="flex-1 overflow-hidden relative">
-        {/* Expand button when collapsed */}
+        {/* Expand button when collapsed (tablet/desktop only) */}
         {panel.isCollapsed && (
           <button
-            onClick={panel.expand}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white border border-slate-200 rounded-xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            onClick={handlePanelExpand}
+            className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white border border-slate-200 rounded-xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             aria-label="Expand coach panel"
           >
             <ChevronRight className="w-5 h-5 text-slate-600" />
@@ -108,6 +92,27 @@ export function ProductStrategyAgentInterface({
           />
         </div>
       </main>
+
+      {/* Coach Trigger Button - mobile only */}
+      <div className="md:hidden">
+        <CoachTriggerButton onClick={handleCoachToggle} isOpen={popup.isOpen} />
+      </div>
+
+      {/* Floating Coach Popup - mobile only */}
+      {isMobile && (
+        <CoachingPopup
+          isOpen={popup.isOpen}
+          onClose={popup.close}
+          position={popup.position}
+          size={popup.size}
+          onPositionChange={popup.updatePosition}
+          onSizeChange={popup.updateSize}
+          conversation={conversation}
+          userId={userId}
+          orgId={orgId}
+          constraints={popup.constraints}
+        />
+      )}
     </div>
   );
 }

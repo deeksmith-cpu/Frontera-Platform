@@ -80,7 +80,7 @@ export function TerritoryCard({ title, description, status, onClick, territory }
   return (
     <button
       onClick={onClick}
-      className={`group territory-card w-full text-left bg-white rounded-2xl border-3 ${colors.border} ${colors.hover} ${colors.shadow} p-8 transition-all hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 ${colors.ring}`}
+      className={`group territory-card w-full text-left bg-white rounded-2xl border-3 ${colors.border} ${colors.hover} ${colors.shadow} p-5 sm:p-6 md:p-8 transition-all hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 ${colors.ring}`}
     >
       {/* Icon with Gradient Background */}
       <div className="mb-6">

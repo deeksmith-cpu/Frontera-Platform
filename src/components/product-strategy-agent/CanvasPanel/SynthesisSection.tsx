@@ -47,6 +47,9 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
+  // Offline state
+  const [isOffline, setIsOffline] = useState(false);
+
   // State for UI interactions
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const [expandedOpportunityId, setExpandedOpportunityId] = useState<string | null>(null);
@@ -85,14 +88,24 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched synthesis data:', data);
-          console.log('Opportunities count:', data.synthesis?.opportunities?.length);
           if (data.success && data.synthesis) {
             setSynthesis(data.synthesis);
+            // Cache for offline access
+            try {
+              localStorage.setItem(`synthesis_${conversation.id}`, JSON.stringify(data.synthesis));
+            } catch { /* quota exceeded */ }
           }
         }
       } catch (error) {
         console.error('Error fetching synthesis:', error);
+        // Offline fallback: try localStorage
+        try {
+          const cached = localStorage.getItem(`synthesis_${conversation.id}`);
+          if (cached) {
+            setSynthesis(JSON.parse(cached));
+            setIsOffline(true);
+          }
+        } catch { /* parse error */ }
       } finally {
         setIsLoadingSynthesis(false);
       }
@@ -264,6 +277,13 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
 
   return (
     <div className="synthesis-section space-y-6">
+      {/* Offline banner */}
+      {isOffline && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-700 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
+          Viewing cached data — you&apos;re offline
+        </div>
+      )}
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Strategic Synthesis</h2>

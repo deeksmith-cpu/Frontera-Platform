@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 // Initialize Supabase Admin Client
 function getSupabaseAdmin() {
@@ -120,6 +121,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const previousPhase = existingState.currentPhase as string | undefined;
+    trackEvent('psa_phase_changed', userId, {
+      org_id: orgId,
+      conversation_id,
+      from_phase: previousPhase || 'none',
+      to_phase: phase,
+      highest_phase: newHighest,
+    });
     return NextResponse.json({ success: true, conversation: updated });
   } catch (error) {
     console.error('Phase update error:', error);

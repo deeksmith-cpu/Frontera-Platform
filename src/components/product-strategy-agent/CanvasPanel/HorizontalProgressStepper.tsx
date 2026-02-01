@@ -126,7 +126,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
 
   return (
     <div className="horizontal-stepper py-3 px-4 md:py-4 md:px-8 bg-white border-b border-slate-100">
-      <div className="flex items-center justify-between max-w-5xl mx-auto">
+      <div className="flex items-center justify-between max-w-5xl mx-auto overflow-x-auto">
         {STEPS.map((step, index) => {
           const isCurrent = index === currentIndex;
           const isVisited = index <= highestIndex && !isCurrent; // Any phase reached before (not current)
@@ -178,7 +178,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                 {/* Labels */}
                 <div className="mt-1.5 md:mt-2 text-center">
                   <div
-                    className={`text-xs md:text-sm font-bold transition-colors duration-300 ${
+                    className={`text-[10px] sm:text-xs md:text-sm font-bold transition-colors duration-300 ${
                       isCurrent || isVisited ? 'text-slate-900' : 'text-slate-500'
                     } ${isClickable ? getGroupHoverTextClass(step.color) : ''}`}
                   >
@@ -215,7 +215,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
               {/* Connector Line with Phase-Specific Gradient */}
               {index < STEPS.length - 1 && (
                 <div
-                  className={`h-0.5 md:h-1 flex-1 mx-1 md:mx-3 mt-[-24px] md:mt-[-32px] transition-all duration-300 rounded-full ${
+                  className={`h-0.5 md:h-1 flex-1 mx-0.5 sm:mx-1 md:mx-3 mt-[-24px] md:mt-[-32px] transition-all duration-300 rounded-full ${
                     index < highestIndex
                       ? getConnectorGradient(step.color, nextStep.color)
                       : 'bg-slate-200'

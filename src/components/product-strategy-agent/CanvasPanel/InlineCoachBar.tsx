@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import posthog from 'posthog-js';
 
 interface QuestionSuggestion {
   question_index: number;
@@ -37,6 +38,7 @@ export function InlineCoachBar({
   const [error, setError] = useState(false);
 
   const handleGetSuggestion = async () => {
+    posthog.capture('inline_coach_suggestion_requested', { territory, research_area: researchArea, question_index: questionIndex });
     setIsLoading(true);
     setError(false);
     setSuggestion(null);
@@ -78,6 +80,7 @@ export function InlineCoachBar({
 
   const handleApply = () => {
     if (!suggestion) return;
+    posthog.capture('inline_coach_suggestion_applied', { territory, research_area: researchArea, question_index: questionIndex });
 
     const sections: string[] = [];
     if (suggestion.suggestion) sections.push(suggestion.suggestion);

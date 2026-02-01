@@ -67,10 +67,31 @@ export function CoachingPopup({
 
         {/* Bottom sheet */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up"
+          className="absolute bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up pb-[env(safe-area-inset-bottom)]"
           role="dialog"
           aria-modal="true"
           aria-label="Strategy Coach"
+          onTouchStart={(e) => {
+            const touch = e.touches[0];
+            (e.currentTarget as HTMLElement).dataset.touchStartY = String(touch.clientY);
+          }}
+          onTouchMove={(e) => {
+            const startY = Number((e.currentTarget as HTMLElement).dataset.touchStartY);
+            const currentY = e.touches[0].clientY;
+            const delta = currentY - startY;
+            if (delta > 0) {
+              (e.currentTarget as HTMLElement).style.transform = `translateY(${delta}px)`;
+            }
+          }}
+          onTouchEnd={(e) => {
+            const startY = Number((e.currentTarget as HTMLElement).dataset.touchStartY);
+            const endY = e.changedTouches[0].clientY;
+            const delta = endY - startY;
+            (e.currentTarget as HTMLElement).style.transform = '';
+            if (delta > 100) {
+              onClose();
+            }
+          }}
         >
           {/* Drag indicator */}
           <div className="flex-shrink-0 flex justify-center py-3">

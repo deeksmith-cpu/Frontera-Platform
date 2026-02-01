@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 // Initialize Supabase Admin Client
 function getSupabaseAdmin() {
@@ -136,6 +137,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
+    trackEvent('psa_material_deleted', userId, { org_id: orgId, material_id: materialId });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Material delete error:', error);

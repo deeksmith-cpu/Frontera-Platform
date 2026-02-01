@@ -71,6 +71,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+        <head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <link rel="apple-touch-icon" href="/frontera-logo-F.jpg" />
+        </head>
         <body className={`${inter.variable} ${crimsonPro.variable} ${ibmPlexMono.variable} ${newsreader.variable} font-sans antialiased`} suppressHydrationWarning>
           <PostHogProvider>
             <PostHogPageView />

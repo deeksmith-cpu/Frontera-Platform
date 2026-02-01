@@ -58,41 +58,41 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
 
 
   return (
-    <header className="canvas-header py-5 px-10 border-b border-[#2d3561] bg-[#1a1f3a] flex justify-between items-center flex-shrink-0">
-      <div className="flex items-center gap-6">
+    <header className="canvas-header py-3 px-4 sm:py-4 sm:px-6 md:py-5 md:px-10 border-b border-[#2d3561] bg-[#1a1f3a] flex justify-between items-center flex-shrink-0">
+      <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
         <Link href="/dashboard" className="transition-transform duration-300 hover:scale-105">
           <Image
             src="/frontera-logo-white.jpg"
             alt="Frontera"
             width={120}
             height={40}
-            className="h-10 w-auto"
+            className="h-8 sm:h-10 w-auto"
           />
         </Link>
         <div>
-          <h2 className="canvas-title text-xl font-bold text-white">
+          <h2 className="canvas-title text-base sm:text-lg md:text-xl font-bold text-white">
             Product Strategy Coach
           </h2>
         </div>
       </div>
 
-      <div className="canvas-controls flex gap-3">
+      <div className="canvas-controls flex gap-2 sm:gap-3">
         <button
           onClick={handleExport}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
+          className="canvas-btn text-xs sm:text-sm py-2 px-3 sm:py-2.5 sm:px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
         >
           Export
         </button>
         <button
           onClick={handleShare}
-          className="canvas-btn text-sm py-2.5 px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
+          className="canvas-btn hidden sm:inline-flex text-sm py-2.5 px-5 bg-white/10 border border-white/20 rounded-xl text-white cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:shadow-md font-semibold"
         >
           Share
         </button>
         <button
           onClick={handleGenerateInsights}
           disabled={isGenerating}
-          className="canvas-btn primary text-sm py-2.5 px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 cursor-pointer transition-all duration-300 hover:bg-[#f59e0b] hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="canvas-btn primary text-xs sm:text-sm py-2 px-3 sm:py-2.5 sm:px-5 bg-[#fbbf24] border-0 rounded-xl text-slate-900 cursor-pointer transition-all duration-300 hover:bg-[#f59e0b] hover:shadow-lg hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? (
             <span className="flex items-center gap-2">
@@ -100,10 +100,10 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Generating...
+              <span className="hidden sm:inline">Generating...</span>
             </span>
           ) : (
-            'Generate Insights'
+            <span><span className="sm:hidden">Insights</span><span className="hidden sm:inline">Generate Insights</span></span>
           )}
         </button>
       </div>

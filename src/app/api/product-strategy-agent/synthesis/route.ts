@@ -9,6 +9,7 @@ import {
   formatTerritoryInsightsForPrompt,
   matchEvidenceToInsights,
 } from '@/lib/synthesis/helpers';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 // =============================================================================
 // Supabase & Anthropic Clients
@@ -136,6 +137,11 @@ export async function GET(req: NextRequest) {
       createdAt: synthesisData.created_at,
     };
 
+    trackEvent('psa_synthesis_viewed', userId, {
+      org_id: orgId,
+      conversation_id: conversationId,
+      has_synthesis: !!synthesisData,
+    });
     return NextResponse.json({
       success: true,
       synthesis,
@@ -473,6 +479,14 @@ Return ONLY the JSON object, no additional text before or after.`;
       createdAt: synthesisOutput.created_at,
     };
 
+    trackEvent('psa_synthesis_generated', userId, {
+      org_id: orgId,
+      conversation_id,
+      opportunities_count: opportunitiesWithInsightIds.length,
+      tensions_count: parsedSynthesis.tensions.length,
+      territories_included: territoriesWithData,
+      research_areas_count: insights.length,
+    });
     return NextResponse.json({
       success: true,
       synthesis: responseSynthesis,

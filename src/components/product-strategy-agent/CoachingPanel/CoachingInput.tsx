@@ -132,7 +132,7 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
   };
 
   return (
-    <div className="coaching-input p-4 border-t border-slate-100 bg-white">
+    <div className="coaching-input p-3 sm:p-4 border-t border-slate-100 bg-white">
       {/* Smart Prompts — collapsible */}
       {!isDisabled && smartPrompts.length > 0 && (
         <div className="mb-3">
@@ -151,12 +151,12 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
             )}
           </button>
           {promptsExpanded && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2 overflow-x-auto flex-nowrap pb-1">
               {smartPrompts.map((prompt, i) => (
                 <button
                   key={i}
                   onClick={() => handlePromptClick(prompt.text)}
-                  className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full border border-slate-200 transition-colors hover:border-slate-300"
+                  className="text-xs px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full border border-slate-200 transition-colors hover:border-slate-300 whitespace-nowrap flex-shrink-0"
                 >
                   {prompt.text}
                 </button>

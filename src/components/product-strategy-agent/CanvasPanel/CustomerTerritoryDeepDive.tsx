@@ -231,7 +231,7 @@ export function CustomerTerritoryDeepDive({
   if (!currentArea) return null;
 
   return (
-    <div className="customer-territory-deep-dive flex h-full">
+    <div className="customer-territory-deep-dive flex flex-col md:flex-row h-full">
       {/* Sidebar (25% width) */}
       <TerritoryDeepDiveSidebar
         territory="customer"
@@ -243,7 +243,7 @@ export function CustomerTerritoryDeepDive({
       />
 
       {/* Main Content (75% width) */}
-      <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           {/* Area Header */}
           <div className="mb-8">

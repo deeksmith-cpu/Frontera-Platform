@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest } from 'next/server';
 import type { PersonalProfileData, ProfilingFrameworkState } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -43,6 +44,10 @@ export async function GET() {
 
   const frameworkState = conversation.framework_state as unknown as ProfilingFrameworkState | null;
 
+  trackEvent('personal_profile_viewed', userId, {
+    org_id: orgId,
+    status: frameworkState?.status || 'not_started',
+  });
   return Response.json({
     status: frameworkState?.status || 'not_started',
     conversationId: conversation.id,
@@ -108,5 +113,9 @@ export async function PATCH(req: NextRequest) {
     return Response.json({ error: 'Failed to save profile' }, { status: 500 });
   }
 
+  trackEvent('personal_profile_completed', userId, {
+    org_id: orgId,
+    conversation_id,
+  });
   return Response.json({ success: true, profile: profileData });
 }

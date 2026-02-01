@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 /**
  * AI Research Assistant API Endpoint
@@ -131,6 +132,13 @@ export async function POST(req: NextRequest) {
       })
     );
 
+    trackEvent('psa_ai_research_completed', userId, {
+      org_id: orgId,
+      conversation_id,
+      topics,
+      websites_count: websites.length,
+      documents_generated: uploadedMaterials.length,
+    });
     return Response.json(uploadedMaterials);
   } catch (error) {
     console.error('AI Research error:', error);

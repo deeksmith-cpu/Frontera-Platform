@@ -5,8 +5,14 @@ import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useUser, useOrganization } from '@clerk/nextjs'
 
-// Initialize PostHog immediately (before component mounts)
+// Register service worker and initialize PostHog
 if (typeof window !== 'undefined') {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // SW registration failed silently
+    })
+  }
+
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
   const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
 
@@ -15,6 +21,10 @@ if (typeof window !== 'undefined') {
       api_host: host,
       person_profiles: 'identified_only',
       capture_pageview: false,
+      session_recording: {
+        maskAllInputs: false,
+        maskInputOptions: { password: true },
+      },
     })
   }
 }

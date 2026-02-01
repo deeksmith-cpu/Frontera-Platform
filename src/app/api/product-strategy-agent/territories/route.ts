@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { trackEvent } from '@/lib/analytics/posthog-server';
 
 // Initialize Supabase Admin Client
 function getSupabaseAdmin() {
@@ -64,6 +65,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    trackEvent('psa_territories_viewed', userId, {
+      org_id: orgId,
+      conversation_id,
+      insight_count: insights?.length || 0,
+    });
     return NextResponse.json(insights || []);
   } catch (error) {
     console.error('Territories fetch error:', error);
@@ -157,6 +163,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    trackEvent('psa_territory_saved', userId, {
+      org_id: orgId,
+      conversation_id,
+      territory,
+      research_area,
+      status,
+    });
     return NextResponse.json(insight);
   } catch (error) {
     console.error('Territory save error:', error);
