@@ -32,6 +32,7 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
     company_size: '',
     strategic_focus: '',
     pain_points: '',
+    previous_attempts: '',
     target_outcomes: '',
   });
 
@@ -42,6 +43,7 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
       company_size: clientContext?.company_size || '',
       strategic_focus: clientContext?.strategic_focus || '',
       pain_points: clientContext?.pain_points || '',
+      previous_attempts: clientContext?.previous_attempts || '',
       target_outcomes: clientContext?.target_outcomes || '',
     });
     setIsEditingContext(true);
@@ -336,6 +338,17 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
                 </div>
 
                 <div>
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Previous Transformation Attempts</label>
+                  <textarea
+                    value={editValues.previous_attempts}
+                    onChange={(e) => setEditValues(v => ({ ...v, previous_attempts: e.target.value }))}
+                    rows={3}
+                    className="w-full text-sm p-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 leading-relaxed"
+                    placeholder="Describe previous strategic or transformation initiatives and their outcomes..."
+                  />
+                </div>
+
+                <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Target Outcomes</label>
                   <textarea
                     value={editValues.target_outcomes}
@@ -393,6 +406,15 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
                     <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Key Challenges</div>
                     <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                       {clientContext.pain_points}
+                    </div>
+                  </div>
+                )}
+
+                {clientContext.previous_attempts && (
+                  <div>
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Previous Transformation Attempts</div>
+                    <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {clientContext.previous_attempts}
                     </div>
                   </div>
                 )}

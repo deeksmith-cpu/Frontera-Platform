@@ -124,7 +124,7 @@ export async function loadClientContext(clerkOrgId: string, clerkUserId?: string
 
     // Transformation context - prefer client record, fall back to onboarding
     painPoints: client.pain_points || onboarding?.pain_points || null,
-    previousAttempts: onboarding?.previous_attempts || null,
+    previousAttempts: client.previous_attempts || onboarding?.previous_attempts || null,
     targetOutcomes: client.target_outcomes || onboarding?.target_outcomes || null,
 
     // Additional onboarding context

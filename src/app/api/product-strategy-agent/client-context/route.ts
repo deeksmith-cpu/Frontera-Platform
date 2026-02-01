@@ -15,6 +15,7 @@ const ALLOWED_FIELDS = [
   'company_size',
   'strategic_focus',
   'pain_points',
+  'previous_attempts',
   'target_outcomes',
 ] as const;
 

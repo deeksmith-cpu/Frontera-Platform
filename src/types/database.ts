@@ -131,6 +131,7 @@ export interface Client {
   company_size: string | null;
   strategic_focus: string | null;
   pain_points: string | null;
+  previous_attempts: string | null;
   target_outcomes: string | null;
   branding: Record<string, unknown>;
   settings: {

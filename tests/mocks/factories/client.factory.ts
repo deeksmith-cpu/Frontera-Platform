@@ -17,6 +17,7 @@ export const createMockClient = (overrides: Partial<Client> = {}): Client => {
     company_size: '201-500 employees',
     strategic_focus: 'product_model',
     pain_points: 'Siloed teams, slow delivery, lack of product thinking',
+    previous_attempts: null,
     target_outcomes: 'Faster time-to-market, improved team autonomy',
     branding: {},
     settings: {
