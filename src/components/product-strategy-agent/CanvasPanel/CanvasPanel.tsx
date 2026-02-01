@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
-import { CanvasHeader } from './CanvasHeader';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
@@ -92,7 +91,6 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
 
   return (
     <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden h-full">
-      <CanvasHeader conversation={conversation} />
       <HorizontalProgressStepper currentPhase={currentPhase} highestPhaseReached={highestPhaseReached} onPhaseClick={handlePhaseClick} />
 
       {/* Canvas tab bar */}

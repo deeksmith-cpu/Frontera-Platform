@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import posthog from 'posthog-js';
 import { ChevronRight } from 'lucide-react';
 import { CanvasPanel } from './CanvasPanel/CanvasPanel';
+import { CanvasHeader } from './CanvasPanel/CanvasHeader';
 import { CoachTriggerButton } from './CoachTriggerButton';
 import { CoachingPopup } from './CoachingPopup';
 import { CoachingPanel } from './CoachingPanel/CoachingPanel';
@@ -48,7 +49,12 @@ export function ProductStrategyAgentInterface({
   }, [panel]);
 
   return (
-    <div className="product-strategy-agent h-screen flex flex-col md:flex-row overflow-hidden bg-slate-50">
+    <div className="product-strategy-agent h-screen flex flex-col overflow-hidden bg-slate-50">
+      {/* Full-width header */}
+      {conversation && <CanvasHeader conversation={conversation} />}
+
+      {/* Content area: chat + canvas side by side */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       {/* Coaching Panel - hidden on mobile, side panel on tablet/desktop */}
       <aside
         className={`
@@ -94,6 +100,7 @@ export function ProductStrategyAgentInterface({
           />
         </div>
       </main>
+      </div>
 
       {/* Coach Trigger Button - mobile only */}
       <div className="md:hidden">
