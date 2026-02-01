@@ -39,10 +39,10 @@ export default function SignInForm() {
   // Redirect if already signed in - only after mount
   useEffect(() => {
     if (mounted && userLoaded && isSignedIn) {
-      // Use window.location for full page load so middleware picks up session
-      window.location.href = "/dashboard";
+      // Use replace instead of push to avoid back button issues
+      router.replace("/dashboard");
     }
-  }, [mounted, userLoaded, isSignedIn]);
+  }, [mounted, userLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (mounted && searchParams.get("registered") === "true") {
@@ -105,10 +105,7 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        // setActive resolves after session cookie is written
-        const redirectTo = searchParams.get("redirect_url") || "/dashboard";
-        window.location.href = redirectTo;
-        return; // prevent further execution while redirecting
+        router.push("/dashboard");
       } else if (result.status === "needs_first_factor") {
         // Password was wrong or first factor verification needed
         const factors = result.supportedFirstFactors?.map(f => f.strategy).join(", ");
@@ -138,7 +135,7 @@ export default function SignInForm() {
         setError("No account found with this email. Please sign up first.");
       } else if (firstError?.code === "session_exists") {
         setError("You're already signed in. Redirecting...");
-        window.location.href = "/dashboard";
+        router.push("/dashboard");
       } else {
         const message = firstError?.longMessage ||
                        firstError?.message ||
@@ -194,10 +191,7 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        // setActive resolves after session cookie is written
-        const redirectTo = searchParams.get("redirect_url") || "/dashboard";
-        window.location.href = redirectTo;
-        return; // prevent further execution while redirecting
+        router.push("/dashboard");
       } else {
         setError(`Verification incomplete (status: ${result.status})`);
       }
