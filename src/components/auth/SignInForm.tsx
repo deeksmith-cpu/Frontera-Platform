@@ -105,7 +105,8 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
+        return;
       } else if (result.status === "needs_first_factor") {
         // Password was wrong or first factor verification needed
         const factors = result.supportedFirstFactors?.map(f => f.strategy).join(", ");
@@ -135,7 +136,7 @@ export default function SignInForm() {
         setError("No account found with this email. Please sign up first.");
       } else if (firstError?.code === "session_exists") {
         setError("You're already signed in. Redirecting...");
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       } else {
         const message = firstError?.longMessage ||
                        firstError?.message ||
@@ -191,7 +192,8 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
+        return;
       } else {
         setError(`Verification incomplete (status: ${result.status})`);
       }
