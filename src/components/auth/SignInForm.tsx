@@ -105,6 +105,8 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        // Wait for session cookie to propagate before redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
         window.location.href = "/dashboard";
       } else if (result.status === "needs_first_factor") {
         // Password was wrong or first factor verification needed
@@ -191,6 +193,8 @@ export default function SignInForm() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        // Wait for session cookie to propagate before redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
         window.location.href = "/dashboard";
       } else {
         setError(`Verification incomplete (status: ${result.status})`);

@@ -93,7 +93,8 @@ function SignUpFormInner() {
         if (result.status === "complete") {
           // Invitation accepted, user joined the org
           await setActive({ session: result.createdSessionId });
-          router.push("/dashboard");
+          await new Promise(resolve => setTimeout(resolve, 500));
+          window.location.href = "/dashboard";
           return;
         } else if (result.status === "missing_requirements") {
           // May need email verification
@@ -149,7 +150,8 @@ function SignUpFormInner() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        await new Promise(resolve => setTimeout(resolve, 500));
+        window.location.href = "/dashboard";
       } else {
         setError(`Verification incomplete (status: ${result.status})`);
       }
