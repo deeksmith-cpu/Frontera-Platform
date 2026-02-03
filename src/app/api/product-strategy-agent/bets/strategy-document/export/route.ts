@@ -252,6 +252,12 @@ function drawCard(
   }
 }
 
+function truncateText(text: string, maxLength: number): string {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength - 3) + '...';
+}
+
 function drawStatBox(
   pdf: PDFKit.PDFDocument,
   x: number,
@@ -385,69 +391,89 @@ function renderPTWCascade(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentCont
   currentY = pdf.y;
   pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
   pdf.text('Strategic Choices Cascade', M, currentY, { width: CONTENT_W });
-  currentY = pdf.y + 30;
+  currentY = pdf.y + 25;
 
-  // Winning Aspiration (hero card)
-  drawCard(pdf, M, currentY, CONTENT_W, 110, C.navy);
+  // Winning Aspiration (hero card) - truncate to prevent overflow
+  const aspirationText = truncateText(cascade.winningAspiration, 250);
+  drawCard(pdf, M, currentY, CONTENT_W, 100, C.navy);
   pdf.fontSize(10).fillColor(C.gold).font('Helvetica-Bold');
-  pdf.text('WINNING ASPIRATION', M + 20, currentY + 16, { width: CONTENT_W - 40 });
-  pdf.fontSize(12).fillColor(C.white).font('Helvetica');
-  pdf.text(cascade.winningAspiration, M + 20, currentY + 36, { width: CONTENT_W - 40, lineGap: 3 });
-  currentY += 130;
+  pdf.text('WINNING ASPIRATION', M + 20, currentY + 14, { width: CONTENT_W - 40 });
+  pdf.fontSize(11).fillColor(C.white).font('Helvetica');
+  pdf.text(aspirationText, M + 20, currentY + 32, { width: CONTENT_W - 40, lineGap: 2 });
+  currentY += 115;
 
-  // Two-column layout
-  const colW = (CONTENT_W - 20) / 2;
+  // Two-column layout - calculate column width
+  const colW = (CONTENT_W - 16) / 2;
+  const maxItemChars = 80; // Max characters per bullet item
 
-  // Where to Play
-  const wtpHeight = 180;
+  // Where to Play / How to Win row
+  const wtpHeight = 200;
+
+  // Where to Play card
   drawCard(pdf, M, currentY, colW, wtpHeight, C.cyan50, C.cyan200);
   pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
-  pdf.text('WHERE TO PLAY', M + 16, currentY + 14, { width: colW - 32 });
+  pdf.text('WHERE TO PLAY', M + 14, currentY + 12, { width: colW - 28 });
 
-  let itemY = currentY + 34;
-  cascade.whereToPlay.slice(0, 5).forEach((wtp) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`• ${wtp}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
-    itemY = pdf.y + 6;
+  let itemY = currentY + 32;
+  const maxY1 = currentY + wtpHeight - 14; // Leave padding at bottom
+  cascade.whereToPlay.slice(0, 4).forEach((wtp) => {
+    if (itemY < maxY1) {
+      const truncatedWtp = truncateText(wtp, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`• ${truncatedWtp}`, M + 14, itemY, { width: colW - 28, lineGap: 1 });
+      itemY = Math.min(pdf.y + 8, maxY1);
+    }
   });
 
-  // How to Win
-  drawCard(pdf, M + colW + 20, currentY, colW, wtpHeight, C.emerald50, C.emerald600);
+  // How to Win card
+  drawCard(pdf, M + colW + 16, currentY, colW, wtpHeight, C.emerald50, C.emerald600);
   pdf.fontSize(10).fillColor(C.emerald600).font('Helvetica-Bold');
-  pdf.text('HOW TO WIN', M + colW + 36, currentY + 14, { width: colW - 32 });
+  pdf.text('HOW TO WIN', M + colW + 30, currentY + 12, { width: colW - 28 });
 
-  itemY = currentY + 34;
-  cascade.howToWin.slice(0, 5).forEach((htw) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`• ${htw}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
-    itemY = pdf.y + 6;
+  itemY = currentY + 32;
+  cascade.howToWin.slice(0, 4).forEach((htw) => {
+    if (itemY < maxY1) {
+      const truncatedHtw = truncateText(htw, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`• ${truncatedHtw}`, M + colW + 30, itemY, { width: colW - 28, lineGap: 1 });
+      itemY = Math.min(pdf.y + 8, maxY1);
+    }
   });
 
-  currentY += wtpHeight + 16;
+  currentY += wtpHeight + 14;
 
-  // Capabilities
-  const capHeight = 160;
+  // Capabilities / Management Systems row
+  const capHeight = 180;
+  const maxY2 = currentY + capHeight - 14;
+
+  // Capabilities card
   drawCard(pdf, M, currentY, colW, capHeight, C.amber50, C.amber600);
   pdf.fontSize(10).fillColor(C.amber600).font('Helvetica-Bold');
-  pdf.text('CORE CAPABILITIES', M + 16, currentY + 14, { width: colW - 32 });
+  pdf.text('CORE CAPABILITIES', M + 14, currentY + 12, { width: colW - 28 });
 
-  itemY = currentY + 34;
-  cascade.capabilities.slice(0, 5).forEach((cap) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`• ${cap}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
-    itemY = pdf.y + 6;
+  itemY = currentY + 32;
+  cascade.capabilities.slice(0, 4).forEach((cap) => {
+    if (itemY < maxY2) {
+      const truncatedCap = truncateText(cap, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`• ${truncatedCap}`, M + 14, itemY, { width: colW - 28, lineGap: 1 });
+      itemY = Math.min(pdf.y + 8, maxY2);
+    }
   });
 
-  // Management Systems
-  drawCard(pdf, M + colW + 20, currentY, colW, capHeight, C.purple50, C.purple600);
+  // Management Systems card
+  drawCard(pdf, M + colW + 16, currentY, colW, capHeight, C.purple50, C.purple600);
   pdf.fontSize(10).fillColor(C.purple600).font('Helvetica-Bold');
-  pdf.text('MANAGEMENT SYSTEMS', M + colW + 36, currentY + 14, { width: colW - 32 });
+  pdf.text('MANAGEMENT SYSTEMS', M + colW + 30, currentY + 12, { width: colW - 28 });
 
-  itemY = currentY + 34;
-  cascade.managementSystems.slice(0, 5).forEach((sys) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`• ${sys}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
-    itemY = pdf.y + 6;
+  itemY = currentY + 32;
+  cascade.managementSystems.slice(0, 4).forEach((sys) => {
+    if (itemY < maxY2) {
+      const truncatedSys = truncateText(sys, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`• ${truncatedSys}`, M + colW + 30, itemY, { width: colW - 28, lineGap: 1 });
+      itemY = Math.min(pdf.y + 8, maxY2);
+    }
   });
 }
 
