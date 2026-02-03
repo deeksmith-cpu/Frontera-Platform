@@ -72,18 +72,44 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .single();
 
-    // 5. Fetch selected bets with their theses
-    const { data: selectedBets } = await supabase
+    // 5. Fetch selected bets
+    const { data: selectedBetsRaw, error: betsError } = await supabase
       .from('strategic_bets')
-      .select(`
-        *,
-        strategic_theses (*)
-      `)
+      .select('*')
       .in('id', selected_bet_ids);
 
-    if (!selectedBets || selectedBets.length === 0) {
+    if (betsError) {
+      console.error('Error fetching bets:', betsError);
+      return NextResponse.json({ error: 'Failed to fetch selected bets', details: betsError.message }, { status: 500 });
+    }
+
+    if (!selectedBetsRaw || selectedBetsRaw.length === 0) {
       return NextResponse.json({ error: 'No bets found with provided IDs' }, { status: 404 });
     }
+
+    // 5b. Fetch theses for the selected bets
+    const thesisIds = [...new Set(selectedBetsRaw.map(b => b.strategic_thesis_id).filter(Boolean))];
+    let thesesMap: Record<string, Record<string, unknown>> = {};
+
+    if (thesisIds.length > 0) {
+      const { data: thesesData, error: thesesError } = await supabase
+        .from('strategic_theses')
+        .select('*')
+        .in('id', thesisIds);
+
+      if (thesesError) {
+        console.error('Error fetching theses:', thesesError);
+        // Continue without theses - not fatal
+      } else if (thesesData) {
+        thesesMap = Object.fromEntries(thesesData.map(t => [t.id, t]));
+      }
+    }
+
+    // 5c. Combine bets with their theses
+    const selectedBets = selectedBetsRaw.map(bet => ({
+      ...bet,
+      strategic_theses: bet.strategic_thesis_id ? thesesMap[bet.strategic_thesis_id] || null : null,
+    }));
 
     // 6. Fetch conversation messages for coaching context
     const { data: messages } = await supabase
@@ -321,7 +347,11 @@ Be specific, actionable, and grounded in the company's context. Return ONLY the 
 
     if (insertError) {
       console.error('Error inserting strategy document:', insertError);
-      return NextResponse.json({ error: 'Failed to save strategy document' }, { status: 500 });
+      return NextResponse.json({
+        error: 'Failed to save strategy document',
+        details: insertError.message,
+        code: insertError.code,
+      }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -330,6 +360,10 @@ Be specific, actionable, and grounded in the company's context. Return ONLY the 
     });
   } catch (error) {
     console.error('POST /api/product-strategy-agent/bets/strategy-document/generate:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({
+      error: 'Internal server error',
+      details: errorMessage,
+    }, { status: 500 });
   }
 }
