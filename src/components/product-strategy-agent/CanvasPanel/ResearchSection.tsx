@@ -145,15 +145,45 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
 
   // Territory overview
   return (
-    <div className="research-section max-w-6xl mx-auto">
-      {/* Section Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Landscape</h1>
-        <p className="text-sm text-slate-600 uppercase tracking-wider font-semibold mb-4">Terrain Mapping</p>
-        <p className="text-lg text-slate-600 leading-relaxed">
-          Map your strategic terrain across three critical territories: Company, Customer, and Market Context.
-          Each territory offers deep insights into your strategic context, and starts to identify key potential themes for your future strategy.
-        </p>
+    <div className="research-section max-w-6xl mx-auto space-y-6">
+      {/* Section Header with Purpose & Context */}
+      <div className="bg-gradient-to-br from-amber-50 to-emerald-50 border border-amber-200 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Landscape</h2>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-3">Terrain Mapping</p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              Map your strategic terrain across three critical territories. This structured research builds the foundation
+              for AI-powered synthesis by capturing insights about your <strong>Company</strong>, <strong>Customers</strong>, and <strong>Market Context</strong>.
+            </p>
+
+            {/* Purpose Box */}
+            <div className="bg-white/70 border border-amber-100 rounded-xl p-4 mb-4">
+              <h3 className="text-sm font-semibold text-amber-700 uppercase tracking-wider mb-2">Purpose</h3>
+              <p className="text-sm text-slate-700">
+                Build a comprehensive view of your strategic landscape. Each territory contains 3 research areas with guided questions
+                to help you articulate your current situation, challenges, and opportunities in a structured way.
+              </p>
+            </div>
+
+            {/* What to Do Box */}
+            <div className="bg-white/70 border border-emerald-100 rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-emerald-700 uppercase tracking-wider mb-2">What To Do</h3>
+              <ol className="text-sm text-slate-700 space-y-1.5 list-decimal list-inside">
+                <li>Click on a <strong>Territory Card</strong> below to explore its research areas</li>
+                <li>Answer the guided questions for each research area — be specific and evidence-based</li>
+                <li>Mark each area as &quot;Mapped&quot; when complete (minimum 4 areas to unlock Synthesis)</li>
+                <li>Use the AI coach for help articulating insights or exploring angles you may have missed</li>
+                <li>When ready, proceed to <strong>Synthesis</strong> to generate strategic opportunities</li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Territory Cards Grid */}
