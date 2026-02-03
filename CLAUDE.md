@@ -546,37 +546,169 @@ await supabase.from('uploaded_materials').insert({
 - UI: Modal in `DiscoverySection.tsx` with topics input and optional websites list
 
 ### PDF Generation Pattern
-PDF exports use `@react-pdf/renderer` with subprocess isolation to avoid Next.js bundling conflicts.
+
+PDF exports use **PDFKit** for React 19 compatibility and direct server-side generation.
+
+**Why PDFKit?** `@react-pdf/renderer` v4 uses internal React APIs that break with React 19 in Next.js 15. PDFKit provides a stable, battle-tested solution with full control over layout.
 
 **Architecture:**
-- **Components**: `src/lib/pdf/{report-name}/` - React components using @react-pdf/renderer
-- **Subprocess**: `scripts/generate-pdf.mjs` - Isolated Node process for PDF rendering
-- **Shared Styles**: `src/lib/pdf/{report-name}/styles.ts` - Design tokens matching Frontera brand
+- **API Routes**: `src/app/api/product-strategy-agent/{feature}/export/route.ts` - PDF generation endpoints
+- **Direct Generation**: In-memory PDFKit document creation (no subprocess needed)
+- **Brand Colors**: Navy `#1a1f3a`, Gold `#fbbf24`, Cyan scale for accents
 
-**Adding a new PDF report:**
-1. Create components in `src/lib/pdf/{report-name}/`
-2. Add generation logic to subprocess script or create new script
-3. Create API route that sanitizes data and spawns subprocess
-4. Pass data via stdin (JSON), receive PDF buffer via stdout
-
-**Style typing requirement:** Use `as const` on style objects to ensure TypeScript infers literal types for flexbox properties (`flexDirection`, `alignItems`, `justifyContent`, etc.). Without this, TypeScript infers `string` which is incompatible with react-pdf's strict types.
+**Core Pattern:**
 
 ```typescript
-// Correct - literal types preserved
-export const styles = {
-  row: { flexDirection: 'row', alignItems: 'center' },
-} as const;
+import PDFDocument from 'pdfkit';
+
+async function generatePdf(input: { data: YourDataType }): Promise<Buffer> {
+  // 1. Initialize document with A4 size and margins
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: { top: 60, bottom: 60, left: 60, right: 60 },
+    bufferPages: true, // Enable multi-page support
+  });
+
+  // 2. Collect buffer chunks
+  const chunks: Buffer[] = [];
+  doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+  // 3. Brand colors
+  const NAVY = '#1a1f3a';
+  const GOLD = '#fbbf24';
+  const CYAN_200 = '#a5f3fc';
+  const CYAN_600 = '#0891b2';
+
+  // 4. Draw content using doc.y for position tracking
+  let currentY = 100;
+
+  // Title
+  doc.fontSize(24).fillColor(NAVY).font('Helvetica-Bold');
+  doc.text('Report Title', 60, currentY, { width: 475 });
+  currentY = doc.y + 20; // Use actual end position, don't estimate!
+
+  // Card-based layout
+  const cardX = 60;
+  const cardWidth = 475;
+  const cardHeight = 120; // Estimate background height
+
+  // Draw card background
+  doc.roundedRect(cardX, currentY, cardWidth, cardHeight, 8)
+     .fill(CYAN_200);
+
+  // Draw card content with explicit Y tracking
+  let contentY = currentY + 14;
+  doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+  doc.text('Card Title', cardX + 16, contentY, { width: cardWidth - 32 });
+  contentY = doc.y + 8; // Track actual position after text
+
+  doc.fontSize(10).fillColor('#475569').font('Helvetica');
+  doc.text('Card description text here...', cardX + 16, contentY, {
+    width: cardWidth - 32,
+    lineGap: 2,
+  });
+  contentY = doc.y + 8;
+
+  // Move past card
+  currentY = currentY + cardHeight + 16;
+  doc.y = currentY;
+
+  // 5. Finalize and return buffer
+  doc.end();
+  return new Promise<Buffer>((resolve, reject) => {
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
+  });
+}
+
+// 6. API route handler
+export async function POST(req: NextRequest) {
+  const { userId, orgId } = await auth();
+  if (!userId || !orgId) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json();
+
+  // Fetch and sanitize data
+  const data = await fetchYourData(body.conversation_id);
+
+  // Generate PDF
+  const pdfBuffer = await generatePdf({ data });
+
+  // Return as downloadable file
+  const uint8Array = new Uint8Array(pdfBuffer);
+  return new NextResponse(uint8Array, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="report-${new Date().toISOString().split('T')[0]}.pdf"`,
+    },
+  });
+}
 ```
 
-**Why subprocess?** Direct @react-pdf/renderer imports cause dual React instance errors in Next.js App Router. Subprocess isolation sidesteps bundler conflicts.
+**Critical Layout Rules:**
 
-**Data Flow:**
-```
-API Route (sanitize types) → spawn subprocess → JSON to stdin → PDF buffer from stdout → Response
+1. **Never estimate text heights** - Always use `doc.y` after drawing text
+   ```typescript
+   // ❌ BAD - Estimates are always wrong
+   const titleLines = Math.ceil(title.length / 60);
+   currentY += titleLines * 14;
+
+   // ✅ GOOD - Use actual position
+   doc.text(title, x, currentY, options);
+   currentY = doc.y + spacing;
+   ```
+
+2. **Card backgrounds** - Estimate reasonable height, draw content, then move past
+   ```typescript
+   const cardHeight = 120; // Reasonable estimate
+   doc.roundedRect(x, y, width, cardHeight, 8).fill(color);
+
+   // Draw content inside
+   let contentY = y + 14;
+   doc.text('Title', x + 16, contentY, { width: width - 32 });
+   contentY = doc.y + 8; // Track actual Y
+
+   // Move past entire card
+   doc.y = y + cardHeight + spacing;
+   ```
+
+3. **Page breaks** - PDFKit handles automatically when `bufferPages: true`
+
+4. **Font hierarchy**:
+   - Headings: `Helvetica-Bold` at 18-24pt
+   - Subheadings: `Helvetica-Bold` at 12-14pt
+   - Body: `Helvetica` at 10pt
+   - Labels: `Helvetica` at 9pt, uppercase
+
+**Client-side download pattern:**
+
+```typescript
+// In React component
+const handleExportPDF = async () => {
+  const response = await fetch('/api/your-feature/export', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conversation_id: conversationId }),
+  });
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `report-${new Date().toISOString().split('T')[0]}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+};
 ```
 
 **Current implementations:**
-- Strategic Synthesis Report (`src/lib/pdf/synthesis-report/`)
+- Strategic Synthesis PDF ([src/app/api/product-strategy-agent/synthesis/export/route.ts](src/app/api/product-strategy-agent/synthesis/export/route.ts))
+- Strategic Bets PDF ([src/app/api/product-strategy-agent/bets/export/route.ts](src/app/api/product-strategy-agent/bets/export/route.ts))
 
 ## Testing
 
