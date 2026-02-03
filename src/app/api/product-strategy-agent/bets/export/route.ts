@@ -164,7 +164,7 @@ async function generatePdf(input: {
   const statBoxW = PAGE_W / 2 - 20;
   const col1X = M + 20;
   const col2X = M + PAGE_W / 2 + 10;
-  let statY = statsY + 40;
+  const statY = statsY + 40;
 
   // Total Bets
   doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
