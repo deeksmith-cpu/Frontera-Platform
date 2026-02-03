@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import ReactPDF from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import React from 'react';
 import type { BetsResponse } from '@/types/bets';
 
@@ -80,9 +80,9 @@ export async function POST(req: NextRequest) {
     const pdfDoc = React.createElement(BetsReport, {
       betsData,
       companyName,
-    }) as React.ReactElement;
+    });
 
-    const pdfBuffer = await ReactPDF.renderToBuffer(pdfDoc);
+    const pdfBuffer = await pdf(pdfDoc).toBuffer();
 
     // Return PDF as download
     const filename = `strategic-bets-${companyName?.toLowerCase().replace(/\s+/g, '-') || 'portfolio'}-${new Date().toISOString().split('T')[0]}.pdf`;
