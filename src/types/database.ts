@@ -358,6 +358,18 @@ export interface StrategicThesisRow {
   updated_at: string;
 }
 
+// Strategy Document (Phase 4 - Strategic Bets final deliverable)
+export interface StrategyDocumentRow {
+  id: string;
+  conversation_id: string;
+  selected_bet_ids: string[];
+  document_content: Record<string, unknown>; // StrategyDocumentContent from bets.ts
+  generated_at: string;
+  exported_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // Strategic Bet (Phase 4 - Strategic Bets)
 export interface StrategicBetRow {
   id: string;
@@ -449,6 +461,11 @@ export interface Database {
         Row: StrategicBetRow;
         Insert: Omit<StrategicBetRow, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<StrategicBetRow, 'id' | 'created_at'>>;
+      };
+      strategy_documents: {
+        Row: StrategyDocumentRow;
+        Insert: Omit<StrategyDocumentRow, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategyDocumentRow, 'id' | 'created_at'>>;
       };
     };
   };

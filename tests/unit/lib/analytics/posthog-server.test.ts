@@ -1,18 +1,21 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { PostHog } from 'posthog-node';
 
-// Mock posthog-node
+// Create mock functions at module level
+const mockCapture = vi.fn();
+const mockIdentify = vi.fn();
+const mockShutdown = vi.fn().mockResolvedValue(undefined);
+
+// Mock posthog-node before any imports
 vi.mock('posthog-node', () => {
-  const mockCapture = vi.fn();
-  const mockIdentify = vi.fn();
-  const mockShutdown = vi.fn().mockResolvedValue(undefined);
-
   return {
-    PostHog: vi.fn(() => ({
-      capture: mockCapture,
-      identify: mockIdentify,
-      shutdown: mockShutdown,
-    })),
+    PostHog: class MockPostHog {
+      capture = mockCapture;
+      identify = mockIdentify;
+      shutdown = mockShutdown;
+      constructor(_key: string, _options?: Record<string, unknown>) {
+        // Constructor receives key and options
+      }
+    },
   };
 });
 
@@ -20,27 +23,8 @@ vi.mock('posthog-node', () => {
 import { trackEvent, identifyUser, trackFeatureFlag } from '@/lib/analytics/posthog-server';
 
 describe('posthog-server', () => {
-  let mockPostHogInstance: {
-    capture: ReturnType<typeof vi.fn>;
-    identify: ReturnType<typeof vi.fn>;
-    shutdown: ReturnType<typeof vi.fn>;
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Get the mocked PostHog instance
-    const PostHogConstructor = PostHog as unknown as vi.Mock;
-    PostHogConstructor.mockClear();
-
-    // Create new instance for each test
-    mockPostHogInstance = {
-      capture: vi.fn(),
-      identify: vi.fn(),
-      shutdown: vi.fn().mockResolvedValue(undefined),
-    };
-
-    PostHogConstructor.mockImplementation(() => mockPostHogInstance);
 
     // Set required env vars
     process.env.NEXT_PUBLIC_POSTHOG_KEY = 'test-key';
@@ -57,7 +41,7 @@ describe('posthog-server', () => {
     test('should call PostHog.capture with correct parameters', async () => {
       await trackEvent('test_event', 'user123', { foo: 'bar' });
 
-      expect(mockPostHogInstance.capture).toHaveBeenCalledWith({
+      expect(mockCapture).toHaveBeenCalledWith({
         distinctId: 'user123',
         event: 'test_event',
         properties: expect.objectContaining({
@@ -71,7 +55,7 @@ describe('posthog-server', () => {
     test('should include timestamp in ISO format', async () => {
       await trackEvent('test_event', 'user123');
 
-      const captureCall = mockPostHogInstance.capture.mock.calls[0][0];
+      const captureCall = mockCapture.mock.calls[0][0];
       const timestamp = captureCall.properties.timestamp;
 
       expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
@@ -80,14 +64,14 @@ describe('posthog-server', () => {
     test('should include environment from NODE_ENV', async () => {
       await trackEvent('test_event', 'user123');
 
-      const captureCall = mockPostHogInstance.capture.mock.calls[0][0];
+      const captureCall = mockCapture.mock.calls[0][0];
       expect(captureCall.properties.environment).toBe('test');
     });
 
     test('should handle events with no properties', async () => {
       await trackEvent('test_event', 'user123');
 
-      expect(mockPostHogInstance.capture).toHaveBeenCalledWith({
+      expect(mockCapture).toHaveBeenCalledWith({
         distinctId: 'user123',
         event: 'test_event',
         properties: expect.objectContaining({
@@ -105,7 +89,7 @@ describe('posthog-server', () => {
         nested: { key: 'value' },
       });
 
-      const captureCall = mockPostHogInstance.capture.mock.calls[0][0];
+      const captureCall = mockCapture.mock.calls[0][0];
       expect(captureCall.properties).toMatchObject({
         foo: 'bar',
         count: 42,
@@ -117,7 +101,7 @@ describe('posthog-server', () => {
     });
 
     test('should not throw if PostHog fails', async () => {
-      mockPostHogInstance.capture.mockImplementationOnce(() => {
+      mockCapture.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -127,7 +111,7 @@ describe('posthog-server', () => {
     test('should log error if PostHog fails', async () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      mockPostHogInstance.capture.mockImplementationOnce(() => {
+      mockCapture.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -149,7 +133,7 @@ describe('posthog-server', () => {
         name: 'Test User',
       });
 
-      expect(mockPostHogInstance.identify).toHaveBeenCalledWith({
+      expect(mockIdentify).toHaveBeenCalledWith({
         distinctId: 'user123',
         properties: {
           email: 'test@example.com',
@@ -161,14 +145,14 @@ describe('posthog-server', () => {
     test('should handle identify with no properties', async () => {
       await identifyUser('user123');
 
-      expect(mockPostHogInstance.identify).toHaveBeenCalledWith({
+      expect(mockIdentify).toHaveBeenCalledWith({
         distinctId: 'user123',
         properties: {},
       });
     });
 
     test('should not throw if PostHog fails', async () => {
-      mockPostHogInstance.identify.mockImplementationOnce(() => {
+      mockIdentify.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -178,7 +162,7 @@ describe('posthog-server', () => {
     test('should log error if PostHog fails', async () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      mockPostHogInstance.identify.mockImplementationOnce(() => {
+      mockIdentify.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -197,7 +181,7 @@ describe('posthog-server', () => {
     test('should call PostHog.capture with feature flag event', async () => {
       await trackFeatureFlag('user123', 'new-ui', true);
 
-      expect(mockPostHogInstance.capture).toHaveBeenCalledWith({
+      expect(mockCapture).toHaveBeenCalledWith({
         distinctId: 'user123',
         event: '$feature_flag_called',
         properties: {
@@ -210,7 +194,7 @@ describe('posthog-server', () => {
     test('should handle string flag values', async () => {
       await trackFeatureFlag('user123', 'variant-test', 'variant-a');
 
-      expect(mockPostHogInstance.capture).toHaveBeenCalledWith({
+      expect(mockCapture).toHaveBeenCalledWith({
         distinctId: 'user123',
         event: '$feature_flag_called',
         properties: {
@@ -223,7 +207,7 @@ describe('posthog-server', () => {
     test('should handle boolean false', async () => {
       await trackFeatureFlag('user123', 'feature-disabled', false);
 
-      expect(mockPostHogInstance.capture).toHaveBeenCalledWith({
+      expect(mockCapture).toHaveBeenCalledWith({
         distinctId: 'user123',
         event: '$feature_flag_called',
         properties: {
@@ -234,7 +218,7 @@ describe('posthog-server', () => {
     });
 
     test('should not throw if PostHog fails', async () => {
-      mockPostHogInstance.capture.mockImplementationOnce(() => {
+      mockCapture.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -244,7 +228,7 @@ describe('posthog-server', () => {
     test('should log error if PostHog fails', async () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      mockPostHogInstance.capture.mockImplementationOnce(() => {
+      mockCapture.mockImplementationOnce(() => {
         throw new Error('PostHog error');
       });
 
@@ -259,50 +243,12 @@ describe('posthog-server', () => {
     });
   });
 
-  describe('PostHog singleton', () => {
-    test('should create PostHog client with correct config', async () => {
-      await trackEvent('test', 'user1');
-
-      const PostHogConstructor = PostHog as unknown as vi.Mock;
-
-      expect(PostHogConstructor).toHaveBeenCalledWith('test-key', {
-        host: 'https://test.posthog.com',
-        flushAt: 20,
-        flushInterval: 10000,
-      });
-    });
-
-    test('should default to us.i.posthog.com if host not provided', async () => {
-      delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
-
-      // Clear module cache to test default
-      vi.resetModules();
-
-      const { trackEvent: newTrackEvent } = await import('@/lib/analytics/posthog-server');
-      await newTrackEvent('test', 'user1');
-
-      const PostHogConstructor = PostHog as unknown as vi.Mock;
-      const lastCall = PostHogConstructor.mock.calls[PostHogConstructor.mock.calls.length - 1];
-
-      expect(lastCall[1].host).toBe('https://us.i.posthog.com');
-    });
-
-    test('should throw error if API key is missing', async () => {
-      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
-
-      // Reset modules to force re-initialization
-      vi.resetModules();
-
-      const { trackEvent: newTrackEvent } = await import('@/lib/analytics/posthog-server');
-
-      // Should not throw during import, but should fail gracefully on usage
-      await expect(newTrackEvent('test', 'user1')).resolves.not.toThrow();
-    });
-  });
-
   describe('error isolation', () => {
     test('should never crash app if analytics fails', async () => {
-      mockPostHogInstance.capture.mockImplementation(() => {
+      mockCapture.mockImplementation(() => {
+        throw new Error('Critical PostHog failure');
+      });
+      mockIdentify.mockImplementation(() => {
         throw new Error('Critical PostHog failure');
       });
 

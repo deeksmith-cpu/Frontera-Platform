@@ -6,7 +6,7 @@ import { createMockConversation, createMockFrameworkState } from 'tests/mocks/fa
 // Mock dependencies
 const mockAuth = vi.fn();
 const mockSupabaseFrom = vi.fn();
-const mockTrackServerEvent = vi.fn();
+const mockTrackEvent = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('@clerk/nextjs/server', () => ({
   auth: () => mockAuth(),
@@ -18,8 +18,8 @@ vi.mock('@supabase/supabase-js', () => ({
   })),
 }));
 
-vi.mock('@/lib/analytics/strategy-coach', () => ({
-  trackServerEvent: (...args: unknown[]) => mockTrackServerEvent(...args),
+vi.mock('@/lib/analytics/posthog-server', () => ({
+  trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
 }));
 
 describe('GET /api/conversations', () => {
@@ -432,7 +432,7 @@ describe('POST /api/conversations', () => {
     });
     await POST(req);
 
-    expect(mockTrackServerEvent).toHaveBeenCalledWith(
+    expect(mockTrackEvent).toHaveBeenCalledWith(
       'strategy_coach_conversation_started',
       'user_123',
       expect.objectContaining({

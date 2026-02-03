@@ -19,62 +19,68 @@ type QueryBuilderMock = {
   filter: ReturnType<typeof vi.fn>;
 };
 
-// Create a chainable query builder mock
+// Create a chainable query builder mock that supports any query depth
 export const createMockQueryBuilder = (
   data: unknown = null,
   error: unknown = null
 ): QueryBuilderMock => {
   const mockResult = { data, error };
+  const arrayResult = { data: Array.isArray(data) ? data : data ? [data] : [], error };
 
-  const builder: QueryBuilderMock = {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    neq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue(mockResult),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    range: vi.fn().mockReturnThis(),
-    match: vi.fn().mockReturnThis(),
-    in: vi.fn().mockReturnThis(),
-    is: vi.fn().mockReturnThis(),
-    or: vi.fn().mockReturnThis(),
-    filter: vi.fn().mockReturnThis(),
+  // Create a recursive chainable object that always has all methods available
+  const createChainable = (): QueryBuilderMock => {
+    const chainable: QueryBuilderMock = {
+      select: vi.fn(),
+      insert: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      eq: vi.fn(),
+      neq: vi.fn(),
+      single: vi.fn().mockResolvedValue(mockResult),
+      order: vi.fn().mockResolvedValue(arrayResult),
+      limit: vi.fn(),
+      range: vi.fn(),
+      match: vi.fn(),
+      in: vi.fn(),
+      is: vi.fn(),
+      or: vi.fn(),
+      filter: vi.fn(),
+    };
+
+    // Make chainable methods return a new chainable (supports any depth)
+    chainable.select.mockImplementation(() => createChainable());
+    chainable.eq.mockImplementation(() => createChainable());
+    chainable.neq.mockImplementation(() => createChainable());
+    chainable.limit.mockImplementation(() => createChainable());
+    chainable.range.mockImplementation(() => createChainable());
+    chainable.match.mockImplementation(() => createChainable());
+    chainable.in.mockImplementation(() => createChainable());
+    chainable.is.mockImplementation(() => createChainable());
+    chainable.or.mockImplementation(() => createChainable());
+    chainable.filter.mockImplementation(() => createChainable());
+
+    // Insert returns object with select that resolves
+    chainable.insert.mockImplementation(() => ({
+      ...createChainable(),
+      select: vi.fn().mockResolvedValue(mockResult),
+    }));
+
+    // Update returns object with eq that resolves
+    chainable.update.mockImplementation(() => ({
+      ...createChainable(),
+      eq: vi.fn().mockResolvedValue(mockResult),
+    }));
+
+    // Delete returns object with eq that resolves
+    chainable.delete.mockImplementation(() => ({
+      ...createChainable(),
+      eq: vi.fn().mockResolvedValue(mockResult),
+    }));
+
+    return chainable;
   };
 
-  // Make terminal methods return the result
-  builder.select.mockImplementation(() => {
-    const chainable = { ...builder };
-    // Override to return array for non-single queries
-    chainable.eq = vi.fn().mockReturnValue({
-      ...chainable,
-      single: vi.fn().mockResolvedValue(mockResult),
-      order: vi.fn().mockResolvedValue({
-        data: Array.isArray(data) ? data : [data],
-        error
-      }),
-    });
-    return chainable;
-  });
-
-  builder.insert.mockImplementation(() => ({
-    ...builder,
-    select: vi.fn().mockResolvedValue(mockResult),
-  }));
-
-  builder.update.mockImplementation(() => ({
-    ...builder,
-    eq: vi.fn().mockResolvedValue(mockResult),
-  }));
-
-  builder.delete.mockImplementation(() => ({
-    ...builder,
-    eq: vi.fn().mockResolvedValue(mockResult),
-  }));
-
-  return builder;
+  return createChainable();
 };
 
 // Create mock Supabase client with configurable table data

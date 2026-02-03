@@ -6,6 +6,7 @@ import { createMockConversation, createMockMessage } from 'tests/mocks/factories
 // Mock dependencies
 const mockAuth = vi.fn();
 const mockSupabaseFrom = vi.fn();
+const mockTrackEvent = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('@clerk/nextjs/server', () => ({
   auth: () => mockAuth(),
@@ -15,6 +16,10 @@ vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
     from: mockSupabaseFrom,
   })),
+}));
+
+vi.mock('@/lib/analytics/posthog-server', () => ({
+  trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
 }));
 
 describe('GET /api/conversations/[id]', () => {
@@ -260,8 +265,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -294,8 +309,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -335,8 +360,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -365,8 +400,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -398,8 +443,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -415,16 +470,21 @@ describe('PATCH /api/conversations/[id]', () => {
   it('should return 500 on update failure', async () => {
     mockAuth.mockResolvedValue({ userId: 'user_123', orgId: 'org_456' });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({ data: null, error: { message: 'Update failed' } }),
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return {
+          update: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: null, error: { message: 'Update failed' } }),
+                }),
+              }),
             }),
           }),
-        }),
-      }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {
@@ -454,8 +514,18 @@ describe('PATCH /api/conversations/[id]', () => {
       }),
     });
 
-    mockSupabaseFrom.mockReturnValue({
-      update: mockUpdate,
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === 'conversations') {
+        return { update: mockUpdate };
+      }
+      if (table === 'conversation_messages') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ count: 5, error: null }),
+          }),
+        };
+      }
+      return {};
     });
 
     const req = new NextRequest('http://localhost:3000/api/conversations/conv_123', {

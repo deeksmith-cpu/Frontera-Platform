@@ -41,6 +41,11 @@ vi.mock('@/lib/analytics/strategy-coach', () => ({
   trackServerEvent: (...args: unknown[]) => mockTrackServerEvent(...args),
 }));
 
+// Also mock posthog-server since the route uses trackEvent from there
+vi.mock('@/lib/analytics/posthog-server', () => ({
+  trackEvent: (...args: unknown[]) => mockTrackServerEvent(...args),
+}));
+
 // Helper to create mock client context
 const createMockClientContext = () => ({
   companyName: 'Test Corp',
@@ -58,6 +63,39 @@ const createMockClientContext = () => ({
   clerkOrgId: 'org_456',
   clientId: 'client_123',
 });
+
+// Helper to create chainable Supabase query mock that supports any depth of .eq() calls
+type ChainableMock = {
+  eq: ReturnType<typeof vi.fn>;
+  single: ReturnType<typeof vi.fn>;
+  order: ReturnType<typeof vi.fn>;
+  select: ReturnType<typeof vi.fn>;
+};
+
+const createChainableQuery = (result: { data: unknown; error: unknown }): ChainableMock => {
+  const chainable: ChainableMock = {
+    eq: vi.fn(),
+    single: vi.fn().mockResolvedValue(result),
+    order: vi.fn().mockResolvedValue(result),
+    select: vi.fn(),
+  };
+  // Each .eq() returns a new chainable with .eq(), .single(), .order(), and .select()
+  chainable.eq.mockImplementation(() => createChainableQuery(result));
+  // .order() also returns a promise with the result
+  chainable.order.mockImplementation(() => Promise.resolve(result));
+  // .select() returns chainable for .single()
+  chainable.select.mockImplementation(() => createChainableQuery(result));
+  return chainable;
+};
+
+// Helper to create insert mock that chains .insert().select().single()
+const createInsertMock = (result: { data: unknown; error: unknown }) => {
+  return vi.fn().mockReturnValue({
+    select: vi.fn().mockReturnValue({
+      single: vi.fn().mockResolvedValue(result),
+    }),
+  });
+};
 
 describe('POST /api/conversations/[id]/messages', () => {
   beforeEach(() => {
@@ -89,13 +127,9 @@ describe('POST /api/conversations/[id]/messages', () => {
     mockSupabaseFrom.mockImplementation((table: string) => {
       if (table === 'conversations') {
         return {
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
-              }),
-            }),
-          }),
+          select: vi.fn().mockReturnValue(
+            createChainableQuery({ data: null, error: { code: 'PGRST116' } })
+          ),
         };
       }
       return {};
@@ -122,13 +156,9 @@ describe('POST /api/conversations/[id]/messages', () => {
     mockSupabaseFrom.mockImplementation((table: string) => {
       if (table === 'conversations') {
         return {
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-              }),
-            }),
-          }),
+          select: vi.fn().mockReturnValue(
+            createChainableQuery({ data: mockConversation, error: null })
+          ),
         };
       }
       return {};
@@ -161,23 +191,17 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
             update: mockUpdate,
           };
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: [], error: null }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: [], error: null })
+            ),
             insert: mockInsert,
           };
         }
@@ -221,22 +245,16 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
           };
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: existingMessages, error: null }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: existingMessages, error: null })
+            ),
           };
         }
         return {};
@@ -266,13 +284,9 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
             update: vi.fn().mockReturnValue({
               eq: vi.fn().mockResolvedValue({ error: null }),
             }),
@@ -280,12 +294,14 @@ describe('POST /api/conversations/[id]/messages', () => {
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: [], error: null }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: [], error: null })
+            ),
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'msg_123' }, error: null }),
               }),
             }),
-            insert: vi.fn().mockResolvedValue({ error: null }),
           };
         }
         return {};
@@ -310,8 +326,7 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockLoadClientContext.mockResolvedValue(createMockClientContext());
 
       const mockConversation = createMockConversation({ id: 'conv_123' });
-      const mockUserMessageInsert = vi.fn().mockResolvedValue({ error: null });
-      const mockAssistantMessageInsert = vi.fn().mockResolvedValue({ error: null });
+      const mockInsertFn = vi.fn();
 
       // Create a mock readable stream
       const encoder = new TextEncoder();
@@ -331,13 +346,9 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
             update: vi.fn().mockReturnValue({
               eq: vi.fn().mockResolvedValue({ error: null }),
             }),
@@ -345,12 +356,14 @@ describe('POST /api/conversations/[id]/messages', () => {
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: [], error: null }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: [], error: null })
+            ),
+            insert: mockInsertFn.mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'msg_123' }, error: null }),
               }),
             }),
-            insert: mockUserMessageInsert,
           };
         }
         return {};
@@ -366,7 +379,7 @@ describe('POST /api/conversations/[id]/messages', () => {
       expect(response.headers.get('Content-Type')).toBe('text/plain; charset=utf-8');
 
       // Verify user message was saved
-      expect(mockUserMessageInsert).toHaveBeenCalledWith(
+      expect(mockInsertFn).toHaveBeenCalledWith(
         expect.objectContaining({
           role: 'user',
           content: 'What are the market trends?',
@@ -421,13 +434,9 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
             update: vi.fn().mockReturnValue({
               eq: vi.fn().mockResolvedValue({ error: null }),
             }),
@@ -435,12 +444,14 @@ describe('POST /api/conversations/[id]/messages', () => {
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: existingMessages, error: null }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: existingMessages, error: null })
+            ),
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'msg_123' }, error: null }),
               }),
             }),
-            insert: vi.fn().mockResolvedValue({ error: null }),
           };
         }
         return {};
@@ -460,7 +471,8 @@ describe('POST /api/conversations/[id]/messages', () => {
           { role: 'assistant', content: 'Previous answer' },
         ]),
         'New question',
-        'Diana'
+        'conv_123', // conversationId
+        undefined   // researchContext
       );
     });
 
@@ -487,13 +499,9 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
             update: vi.fn().mockReturnValue({
               eq: vi.fn().mockResolvedValue({ error: null }),
             }),
@@ -501,12 +509,14 @@ describe('POST /api/conversations/[id]/messages', () => {
         }
         if (table === 'conversation_messages') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                order: vi.fn().mockResolvedValue({ data: [], error: null }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: [], error: null })
+            ),
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'msg_123' }, error: null }),
               }),
             }),
-            insert: vi.fn().mockResolvedValue({ error: null }),
           };
         }
         return {};
@@ -523,7 +533,8 @@ describe('POST /api/conversations/[id]/messages', () => {
         expect.any(Object),
         expect.any(Array),
         'Hello',
-        undefined
+        'conv_123', // conversationId
+        undefined   // researchContext
       );
     });
   });
@@ -532,6 +543,18 @@ describe('POST /api/conversations/[id]/messages', () => {
     it('should return 500 on unexpected error', async () => {
       mockAuth.mockResolvedValue({ userId: 'user_123', orgId: 'org_456' });
       mockCurrentUser.mockRejectedValue(new Error('Unexpected error'));
+
+      // Need to mock Supabase for error handler path
+      mockSupabaseFrom.mockImplementation((table: string) => {
+        if (table === 'conversations') {
+          return {
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: null, error: null })
+            ),
+          };
+        }
+        return {};
+      });
 
       const req = new NextRequest('http://localhost:3000/api/conversations/conv_123/messages', {
         method: 'POST',
@@ -554,13 +577,9 @@ describe('POST /api/conversations/[id]/messages', () => {
       mockSupabaseFrom.mockImplementation((table: string) => {
         if (table === 'conversations') {
           return {
-            select: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({ data: mockConversation, error: null }),
-                }),
-              }),
-            }),
+            select: vi.fn().mockReturnValue(
+              createChainableQuery({ data: mockConversation, error: null })
+            ),
           };
         }
         return {};
@@ -573,7 +592,7 @@ describe('POST /api/conversations/[id]/messages', () => {
       await POST(req, { params: Promise.resolve({ id: 'conv_123' }) });
 
       expect(mockTrackServerEvent).toHaveBeenCalledWith(
-        'strategy_coach_llm_error',
+        'strategy_coach_streaming_error',
         'user_123',
         expect.objectContaining({
           error_type: 'Error',

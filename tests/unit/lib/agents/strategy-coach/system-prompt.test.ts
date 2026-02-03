@@ -33,9 +33,9 @@ describe('System Prompt', () => {
   });
 
   describe('buildSystemPrompt', () => {
-    it('should include core identity section', () => {
+    it('should include core identity section', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('# Frontera Strategy Coach');
       expect(prompt).toContain('You are the Frontera Strategy Coach');
@@ -43,18 +43,18 @@ describe('System Prompt', () => {
       expect(prompt).toContain('## What You Are NOT');
     });
 
-    it('should include client context section', () => {
+    it('should include client context section', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Your Client: Acme Corp');
       expect(prompt).toContain('Industry: Technology');
       expect(prompt).toContain('Tier: enterprise');
     });
 
-    it('should include research playbook methodology', () => {
+    it('should include research playbook methodology', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Your Methodology: Product Strategy Research Playbook');
       expect(prompt).toContain('### Pillar 1: Macro Market Forces');
@@ -63,9 +63,9 @@ describe('System Prompt', () => {
       expect(prompt).toContain('### Cross-Pillar Synthesis');
     });
 
-    it('should include strategic flow canvas section', () => {
+    it('should include strategic flow canvas section', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Strategic Flow Canvas');
       expect(prompt).toContain('### Section 1: Market Reality');
@@ -75,9 +75,9 @@ describe('System Prompt', () => {
       expect(prompt).toContain('### Section 5: Strategic Context for Teams');
     });
 
-    it('should include strategic bets format', () => {
+    it('should include strategic bets format', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Strategic Bets Format');
       expect(prompt).toContain('**We believe**');
@@ -86,18 +86,18 @@ describe('System Prompt', () => {
       expect(prompt).toContain('**Success looks like**');
     });
 
-    it('should include tone guidelines', () => {
+    it('should include tone guidelines', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Your Tone & Voice');
       expect(prompt).toContain('Confident but not arrogant');
       expect(prompt).toContain('Futuristic but practical');
     });
 
-    it('should include response guidelines', () => {
+    it('should include response guidelines', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Response Guidelines');
       expect(prompt).toContain('### Structure');
@@ -106,186 +106,186 @@ describe('System Prompt', () => {
       expect(prompt).toContain('### Adaptive Workflow');
     });
 
-    it('should include current coaching state section', () => {
+    it('should include current coaching state section', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Current Coaching State');
       expect(prompt).toContain('Current Phase: Initial Discovery');
       expect(prompt).toContain('### Suggested Next Focus');
     });
 
-    it('should include progress summary in coaching state', () => {
+    it('should include progress summary in coaching state', async () => {
       const context = createTestContext();
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('Macro Market Forces: Complete');
       expect(prompt).toContain('Customer Research: Not Started');
     });
 
-    it('should include suggested next focus based on state', () => {
+    it('should include suggested next focus based on state', async () => {
       const context = createTestContext();
-      const prompt = buildSystemPrompt(context, baseState);
+      const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('Start with exploring Macro Market Forces');
     });
 
     describe('industry guidance', () => {
-      it('should include financial services guidance for banking', () => {
+      it('should include financial services guidance for banking', async () => {
         const context = createTestContext({ industry: 'Banking' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Financial Services');
         expect(prompt).toContain('Regulatory complexity');
         expect(prompt).toContain('Legacy systems');
       });
 
-      it('should include financial services guidance for insurance', () => {
+      it('should include financial services guidance for insurance', async () => {
         const context = createTestContext({ industry: 'Insurance' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Financial Services');
       });
 
-      it('should include financial services guidance for financial services', () => {
+      it('should include financial services guidance for financial services', async () => {
         const context = createTestContext({ industry: 'Financial Services' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Financial Services');
       });
 
-      it('should include healthcare guidance for health industry', () => {
+      it('should include healthcare guidance for health industry', async () => {
         const context = createTestContext({ industry: 'Healthcare' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Healthcare');
         expect(prompt).toContain('Patient outcomes');
         expect(prompt).toContain('Clinical evidence');
       });
 
-      it('should include healthcare guidance for pharma', () => {
+      it('should include healthcare guidance for pharma', async () => {
         const context = createTestContext({ industry: 'Pharmaceutical' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Healthcare');
       });
 
-      it('should include technology guidance for software', () => {
+      it('should include technology guidance for software', async () => {
         const context = createTestContext({ industry: 'Software' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Technology');
         expect(prompt).toContain('Pace of change');
         expect(prompt).toContain('Platform dynamics');
       });
 
-      it('should include technology guidance for SaaS', () => {
+      it('should include technology guidance for SaaS', async () => {
         const context = createTestContext({ industry: 'SaaS' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Technology');
       });
 
-      it('should include retail guidance for e-commerce', () => {
+      it('should include retail guidance for e-commerce', async () => {
         const context = createTestContext({ industry: 'E-commerce' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Retail & E-commerce');
         expect(prompt).toContain('Customer experience');
         expect(prompt).toContain('Omnichannel');
       });
 
-      it('should include retail guidance for consumer goods', () => {
+      it('should include retail guidance for consumer goods', async () => {
         const context = createTestContext({ industry: 'Consumer Products' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Retail & E-commerce');
       });
 
-      it('should include generic industry guidance for unknown industries', () => {
+      it('should include generic industry guidance for unknown industries', async () => {
         const context = createTestContext({ industry: 'Aerospace' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Industry Context: Aerospace');
         expect(prompt).toContain('Apply industry-specific knowledge');
       });
 
-      it('should not include industry section when industry is null', () => {
+      it('should not include industry section when industry is null', async () => {
         const context = createTestContext({ industry: null });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).not.toContain('## Industry Context');
       });
     });
 
     describe('strategic focus guidance', () => {
-      it('should include strategy to execution guidance', () => {
+      it('should include strategy to execution guidance', async () => {
         const context = createTestContext({ strategicFocus: 'strategy_to_execution' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Strategic Focus: Strategy to Execution');
         expect(prompt).toContain('Alignment mechanisms');
         expect(prompt).toContain('Communication cadences');
       });
 
-      it('should include product model guidance', () => {
+      it('should include product model guidance', async () => {
         const context = createTestContext({ strategicFocus: 'product_model' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Strategic Focus: Product Model Implementation');
         expect(prompt).toContain('Product thinking');
         expect(prompt).toContain('Team structures');
       });
 
-      it('should include team empowerment guidance', () => {
+      it('should include team empowerment guidance', async () => {
         const context = createTestContext({ strategicFocus: 'team_empowerment' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Strategic Focus: Team Empowerment');
         expect(prompt).toContain('Context not control');
         expect(prompt).toContain('Distributed leadership');
       });
 
-      it('should include mixed approach guidance', () => {
+      it('should include mixed approach guidance', async () => {
         const context = createTestContext({ strategicFocus: 'mixed' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Strategic Focus: Comprehensive Transformation');
         expect(prompt).toContain('Prioritize');
         expect(prompt).toContain('Sequence');
       });
 
-      it('should not include strategic focus guidance for other', () => {
+      it('should not include strategic focus guidance for other', async () => {
         const context = createTestContext({ strategicFocus: 'other' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         // Should not have a specific guidance section for 'other'
         expect(prompt).not.toContain('## Strategic Focus: Other');
       });
 
-      it('should not include strategic focus guidance when null', () => {
+      it('should not include strategic focus guidance when null', async () => {
         const context = createTestContext({ strategicFocus: null });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).not.toContain('## Strategic Focus:');
       });
     });
 
     describe('transform recovery guidance', () => {
-      it('should include transform recovery guidance when previousAttempts exists', () => {
+      it('should include transform recovery guidance when previousAttempts exists', async () => {
         const context = createTestContext({ previousAttempts: 'Failed transformation in 2020' });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).toContain('## Transform Recovery Awareness');
         expect(prompt).toContain('Acknowledge history');
         expect(prompt).toContain('Address skepticism');
       });
 
-      it('should not include transform recovery guidance when previousAttempts is null', () => {
+      it('should not include transform recovery guidance when previousAttempts is null', async () => {
         const context = createTestContext({ previousAttempts: null });
-        const prompt = buildSystemPrompt(context, baseState);
+        const prompt = await buildSystemPrompt(context, baseState);
 
         expect(prompt).not.toContain('## Transform Recovery Awareness');
       });
@@ -316,41 +316,12 @@ describe('System Prompt', () => {
         expect(message).toContain('guide TechCorp through');
       });
 
-      it('should include strategic focus description', () => {
-        const context = createTestContext({
-          strategicFocusDescription: 'bridging the gap between strategic vision and operational reality',
-        });
+      it('should include methodology introduction', () => {
+        const context = createTestContext();
         const message = generateOpeningMessage(context, baseState, 'Jane', false);
 
-        expect(message).toContain('your focus is on bridging the gap between strategic vision and operational reality');
-      });
-
-      it('should include pain points summary', () => {
-        const context = createTestContext({ painPoints: 'Teams are siloed and disconnected' });
-        const message = generateOpeningMessage(context, baseState, 'Jane', false);
-
-        expect(message).toContain('challenges around teams are siloed and disconnected');
-      });
-
-      it('should use default pain points when null', () => {
-        const context = createTestContext({ painPoints: null });
-        const message = generateOpeningMessage(context, baseState, 'Jane', false);
-
-        expect(message).toContain('improving product transformation outcomes');
-      });
-
-      it('should include target outcomes summary', () => {
-        const context = createTestContext({ targetOutcomes: 'Increase velocity by 40%' });
-        const message = generateOpeningMessage(context, baseState, 'Jane', false);
-
-        expect(message).toContain("you're targeting increase velocity by 40%");
-      });
-
-      it('should use default outcomes when null', () => {
-        const context = createTestContext({ targetOutcomes: null });
-        const message = generateOpeningMessage(context, baseState, 'Jane', false);
-
-        expect(message).toContain('achieving sustainable product-led growth');
+        expect(message).toContain('Product Strategy Research methodology');
+        expect(message).toContain("Let's explore your strategic landscape together");
       });
 
       it('should end with opening question about competitive dynamics', () => {
@@ -361,15 +332,11 @@ describe('System Prompt', () => {
         expect(message).toContain('InnovateCo right now?**');
       });
 
-      it('should truncate long pain points for opening', () => {
-        const longPainPoint =
-          'This is an extremely long pain point description that goes on and on for many sentences. It keeps describing various challenges in great detail.';
-        const context = createTestContext({ painPoints: longPainPoint });
+      it('should mention market forces', () => {
+        const context = createTestContext();
         const message = generateOpeningMessage(context, baseState, 'Jane', false);
 
-        // Should be truncated - first sentence or up to ~80 chars
-        expect(message).not.toContain(longPainPoint);
-        expect(message).toContain('challenges around');
+        expect(message).toContain('market forces shaping your transformation');
       });
     });
 
