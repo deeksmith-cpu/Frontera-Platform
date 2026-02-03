@@ -284,13 +284,44 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
           Viewing cached data — you&apos;re offline
         </div>
       )}
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Strategic Synthesis</h2>
-        <p className="text-sm text-slate-600 leading-relaxed">
-          AI-powered analysis of your research using the Playing to Win framework.
-          Opportunities are mapped by market attractiveness and capability fit.
-        </p>
+
+      {/* Section Header with Purpose & Context */}
+      <div className="bg-gradient-to-br from-purple-50 to-cyan-50 border border-purple-200 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Strategic Synthesis</h2>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              This is where your research transforms into strategic clarity. The AI synthesizes insights from all three territories
+              (Company, Customer, Competitor) to identify strategic opportunities using the <strong>Playing to Win</strong> framework.
+            </p>
+
+            {/* Purpose Box */}
+            <div className="bg-white/70 border border-purple-100 rounded-xl p-4 mb-4">
+              <h3 className="text-sm font-semibold text-purple-700 uppercase tracking-wider mb-2">Purpose</h3>
+              <p className="text-sm text-slate-700">
+                Generate a prioritised portfolio of strategic opportunities, each with a clear &quot;Where to Play&quot; and &quot;How to Win&quot;
+                hypothesis, scored by market attractiveness and your capability fit.
+              </p>
+            </div>
+
+            {/* What to Do Box */}
+            <div className="bg-white/70 border border-cyan-100 rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-cyan-700 uppercase tracking-wider mb-2">What To Do</h3>
+              <ol className="text-sm text-slate-700 space-y-1.5 list-decimal list-inside">
+                <li>Review your research completion status below — aim for at least 4 areas mapped</li>
+                <li>Click <strong>&quot;Generate Strategic Insights&quot;</strong> to run the AI synthesis</li>
+                <li>Explore the Strategic Opportunity Map to see how opportunities compare</li>
+                <li>Review each opportunity card, its evidence trails, and strategic tensions</li>
+                <li>When satisfied, proceed to <strong>Strategic Bets</strong> to turn insights into testable hypotheses</li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Research Progress Bar */}

@@ -273,22 +273,62 @@ export function BetsSection({ conversation }: BetsSectionProps) {
   const hasBets = betsData && betsData.portfolioSummary.totalBets > 0;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">      {/* Strategy Hierarchy Banner */}
-      <div className="bg-[#f4f4f7] rounded-2xl border border-slate-200 p-4">
-        <div className="flex items-center justify-center gap-3 text-sm">
-          <span className="text-slate-400">Strategic Intent</span>
-          <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="font-semibold text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">Product Initiatives</span>
-          <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="text-slate-400">Options (Team Level)</span>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Section Header with Purpose & Context */}
+      <div className="bg-gradient-to-br from-cyan-50 to-amber-50 border border-cyan-200 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-6 h-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Strategic Bets</h2>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              Transform strategic opportunities into <strong>testable hypotheses</strong> with clear success metrics and kill criteria.
+              Strategic bets are grouped under coherent <strong>Strategic Theses</strong> (offensive, defensive, or capability-building).
+            </p>
+
+            {/* Purpose Box */}
+            <div className="bg-white/70 border border-cyan-100 rounded-xl p-4 mb-4">
+              <h3 className="text-sm font-semibold text-cyan-700 uppercase tracking-wider mb-2">Purpose</h3>
+              <p className="text-sm text-slate-700">
+                Create a balanced portfolio of strategic bets that you can validate through experiments. Each bet has a clear
+                &quot;job to be done,&quot; belief, success metric, and — critically — a <strong>kill criteria</strong> and date to know when to stop.
+              </p>
+            </div>
+
+            {/* What to Do Box */}
+            <div className="bg-white/70 border border-amber-100 rounded-xl p-4 mb-4">
+              <h3 className="text-sm font-semibold text-amber-700 uppercase tracking-wider mb-2">What To Do</h3>
+              <ol className="text-sm text-slate-700 space-y-1.5 list-decimal list-inside">
+                <li>Click <strong>&quot;Generate from Synthesis&quot;</strong> to create AI-generated bets from your opportunities</li>
+                <li>Review each thesis and its associated bets — edit or refine as needed</li>
+                <li>Ensure all bets have kill criteria defined (required for export)</li>
+                <li>Use the checkboxes to select 3+ bets for your <strong>Product Strategy Draft</strong></li>
+                <li>Export your portfolio as a PDF for stakeholder review</li>
+              </ol>
+            </div>
+
+            {/* Strategy Hierarchy Banner */}
+            <div className="bg-[#f4f4f7] rounded-xl border border-slate-200 p-3">
+              <div className="flex items-center justify-center gap-3 text-sm">
+                <span className="text-slate-400">Strategic Intent</span>
+                <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="font-semibold text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">Product Initiatives</span>
+                <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="text-slate-400">Options (Team Level)</span>
+              </div>
+              <p className="text-xs text-slate-500 text-center mt-2">
+                You are operating at the <strong>Product Initiative</strong> level — strategic bets that test your Where-to-Play and How-to-Win choices.
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-xs text-slate-500 text-center mt-2">
-          You are operating at the <strong>Product Initiative</strong> level — strategic bets that test your Where-to-Play and How-to-Win choices.
-        </p>
       </div>
 
       {/* Error display */}
