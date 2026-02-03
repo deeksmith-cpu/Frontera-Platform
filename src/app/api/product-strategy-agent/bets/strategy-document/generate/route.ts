@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
 Industry: ${client.industry}
 Size: ${client.company_size}
 Strategic Focus: ${client.strategic_focus}
-Pain Points: ${client.pain_points?.join(', ') || 'N/A'}`;
+Pain Points: ${Array.isArray(client.pain_points) ? client.pain_points.join(', ') : (client.pain_points || 'N/A')}`;
 
     const discoveryContext = discoveryMaterials
       ?.map((doc: { filename: string; extracted_context: { text?: string } }) =>
