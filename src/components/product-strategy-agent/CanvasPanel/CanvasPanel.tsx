@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import posthog from 'posthog-js';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
 import { SynthesisSection } from './SynthesisSection';
+import { BetsSection } from './BetsSection';
 import { CaseLibrary } from './CaseLibrary';
 import type { Database } from '@/types/database';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Client = Database['public']['Tables']['clients']['Row'];
@@ -17,9 +19,10 @@ interface CanvasPanelProps {
   conversation: Conversation | null | undefined;
   clientContext?: Client | null;
   onClientContextUpdate?: (client: Client | null | undefined) => void;
+  onResearchContextChange?: (context: ActiveResearchContext | null) => void;
 }
 
-export function CanvasPanel({ conversation, clientContext, onClientContextUpdate }: CanvasPanelProps) {
+export function CanvasPanel({ conversation, clientContext, onClientContextUpdate, onResearchContextChange }: CanvasPanelProps) {
   // Extract current phase and highest phase reached from framework_state (must be before any early returns for hooks)
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const phase = frameworkState?.currentPhase as string | undefined;
@@ -31,6 +34,12 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
 
   // Canvas tab state: 'phase' shows the phase-specific content, 'cases' shows Case Library
   const [activeTab, setActiveTab] = useState<'phase' | 'cases'>('phase');
+  const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
+
+  // Bubble research context changes to parent
+  useEffect(() => {
+    onResearchContextChange?.(activeResearchContext);
+  }, [activeResearchContext, onResearchContextChange]);
 
   // Handle phase navigation via stepper clicks (must be before any early returns)
   const handlePhaseClick = useCallback(async (targetPhase: 'discovery' | 'research' | 'synthesis' | 'bets') => {
@@ -94,7 +103,7 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
       <HorizontalProgressStepper currentPhase={currentPhase} highestPhaseReached={highestPhaseReached} onPhaseClick={handlePhaseClick} />
 
       {/* Canvas tab bar */}
-      <div className="flex items-center gap-1 px-4 sm:px-6 md:px-10 pt-4 pb-0">
+      <div className="flex items-center gap-1 px-4 sm:px-6 md:px-8 pt-3 pb-0">
         <button
           onClick={() => { setActiveTab('phase'); posthog.capture('canvas_tab_switched', { tab: 'phase', phase: currentPhase }); }}
           className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-lg transition-all duration-300 ${
@@ -119,28 +128,20 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
         </button>
       </div>
 
-      <div ref={swipeRef} className="canvas-content flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 pt-4 md:pt-6">
+      <div ref={swipeRef} className="canvas-content flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pt-4 md:pt-6">
         {activeTab === 'cases' ? (
           <CaseLibrary conversation={conversation} />
         ) : (
           <>
             {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} onClientContextUpdate={onClientContextUpdate} />}
             {currentPhase === 'research' && (
-              <ResearchSection conversation={conversation} />
+              <ResearchSection conversation={conversation} onResearchContextChange={setActiveResearchContext} />
             )}
             {currentPhase === 'synthesis' && (
               <SynthesisSection conversation={conversation} />
             )}
             {currentPhase === 'bets' && (
-              <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold text-slate-900 mb-4">Strategic Bets Phase</h1>
-                <p className="text-lg text-slate-600 mb-8">
-                  Formulate hypothesis-driven strategic bets
-                </p>
-                <div className="bg-white rounded-2xl border border-slate-200 p-8">
-                  <p className="text-slate-600">Strategic bets framework coming soon...</p>
-                </div>
-              </div>
+              <BetsSection conversation={conversation} />
             )}
           </>
         )}

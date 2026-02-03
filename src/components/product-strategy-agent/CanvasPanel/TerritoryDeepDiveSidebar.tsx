@@ -29,6 +29,8 @@ interface TerritoryDeepDiveSidebarProps {
   activeAreaId: string | null;
   onSelectArea: (areaId: string) => void;
   onBack: () => void;
+  isCollapsed?: boolean;
+  onCollapse?: () => void;
 }
 
 export function TerritoryDeepDiveSidebar({
@@ -38,6 +40,8 @@ export function TerritoryDeepDiveSidebar({
   activeAreaId,
   onSelectArea,
   onBack,
+  isCollapsed = false,
+  onCollapse,
 }: TerritoryDeepDiveSidebarProps) {
   // Territory-specific colors using Frontera brand palette
   const territoryColors = {
@@ -122,40 +126,83 @@ export function TerritoryDeepDiveSidebar({
     </div>
 
     {/* Desktop Sidebar */}
-    <div className="territory-sidebar hidden md:flex flex-col h-full bg-white border-r-2 border-slate-200 w-1/4">
-      {/* Header */}
-      <div className={`p-6 bg-gradient-to-br ${colors.bg} text-white`}>
-        {/* Back Button */}
-        <button
-          onClick={onBack}
-          className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white font-semibold text-sm transition-all"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Overview
-        </button>
-
-        {/* Territory Title */}
-        <h2 className="text-2xl font-bold mb-2">{territoryTitle}</h2>
-        <p className="text-sm text-white/90">Deep Dive Research</p>
-
-        {/* Progress Bar */}
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Progress</span>
-            <span className="text-xs font-bold">
-              {mappedCount}/{totalAreas}
-            </span>
-          </div>
-          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+    <div className={`territory-sidebar hidden md:flex flex-col h-full bg-white border-r-2 border-slate-200 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-1/4'}`}>
+      {isCollapsed ? (
+        /* Collapsed Sidebar - Thin vertical bar */
+        <div className={`flex flex-col items-center h-full bg-gradient-to-b ${colors.bg} text-white p-2`}>
+          {/* Expand Button */}
+          {onCollapse && (
+            <button
+              onClick={onCollapse}
+              className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all mb-4"
+              aria-label="Expand sidebar"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+          {/* Vertical Progress Indicator */}
+          <div className="flex-1 w-2 bg-white/20 rounded-full overflow-hidden">
             <div
-              className="h-full bg-white transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
+              className="w-full bg-white transition-all duration-500"
+              style={{ height: `${progressPercent}%` }}
             />
           </div>
+          {/* Progress Count */}
+          <div className="mt-4 text-xs font-bold writing-mode-vertical">
+            {mappedCount}/{totalAreas}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Expanded Sidebar */
+        <>
+          {/* Header */}
+          <div className={`p-6 bg-gradient-to-br ${colors.bg} text-white`}>
+            {/* Back and Collapse Buttons */}
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={onBack}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white font-semibold text-sm transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
+              {onCollapse && (
+                <button
+                  onClick={onCollapse}
+                  className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-all"
+                  aria-label="Collapse sidebar"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {/* Territory Title */}
+            <h2 className="text-2xl font-bold mb-2">{territoryTitle}</h2>
+            <p className="text-sm text-white/90">Deep Dive Research</p>
+
+            {/* Progress Bar */}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold uppercase tracking-wider">Progress</span>
+                <span className="text-xs font-bold">
+                  {mappedCount}/{totalAreas}
+                </span>
+              </div>
+              <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
 
       {/* Research Areas Navigation */}
       <div className="flex-1 overflow-y-auto p-4">
@@ -226,21 +273,23 @@ export function TerritoryDeepDiveSidebar({
         </div>
       </div>
 
-      {/* Footer CTA */}
-      <div className="p-4 border-t border-slate-200 bg-slate-50">
-        <p className="text-xs text-slate-600 mb-2">
-          Complete all {totalAreas} research areas to unlock synthesis insights
-        </p>
-        <div className="flex items-center gap-2">
-          <div className={`flex-1 h-2 rounded-full bg-slate-200 overflow-hidden`}>
-            <div
-              className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-500`}
-              style={{ width: `${progressPercent}%` }}
-            />
+          {/* Footer CTA */}
+          <div className="p-4 border-t border-slate-200 bg-slate-50">
+            <p className="text-xs text-slate-600 mb-2">
+              Complete all {totalAreas} research areas to unlock synthesis insights
+            </p>
+            <div className="flex items-center gap-2">
+              <div className={`flex-1 h-2 rounded-full bg-slate-200 overflow-hidden`}>
+                <div
+                  className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-500`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span className="text-xs font-bold text-slate-700">{Math.round(progressPercent)}%</span>
+            </div>
           </div>
-          <span className="text-xs font-bold text-slate-700">{Math.round(progressPercent)}%</span>
-        </div>
-      </div>
+        </>
+      )}
     </div>
     </>
   );

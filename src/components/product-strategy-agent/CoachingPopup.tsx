@@ -5,6 +5,7 @@ import { Rnd } from 'react-rnd';
 import { CoachingPanel } from './CoachingPanel/CoachingPanel';
 import { useMediaQuery } from '@/hooks/useCoachPopup';
 import type { Database } from '@/types/database';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 
@@ -24,6 +25,7 @@ interface CoachingPopupProps {
     maxWidth: number;
     maxHeight: number;
   };
+  activeResearchContext?: ActiveResearchContext | null;
 }
 
 export function CoachingPopup({
@@ -37,6 +39,7 @@ export function CoachingPopup({
   userId,
   orgId,
   constraints,
+  activeResearchContext,
 }: CoachingPopupProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -116,6 +119,7 @@ export function CoachingPopup({
               userId={userId}
               orgId={orgId}
               onClose={onClose}
+              activeResearchContext={activeResearchContext}
             />
           </div>
         </div>
@@ -187,6 +191,7 @@ export function CoachingPopup({
             userId={userId}
             orgId={orgId}
             onClose={onClose}
+            activeResearchContext={activeResearchContext}
           />
         </div>
       </Rnd>

@@ -25,7 +25,29 @@
       "Bash(taskkill:*)",
       "Bash(node scripts/clear-messages.mjs:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(timeout 10 echo:*)",
+      "Bash(node scripts/generate-security-doc.mjs:*)",
+      "Bash(node scripts/generate-executive-summary-doc.mjs:*)",
+      "Bash(timeout 5 echo:*)",
+      "Bash(node scripts/convert-mockups-to-docx.mjs:*)",
+      "Bash(node scripts/convert-design-review-to-docx.mjs:*)",
+      "Bash(node scripts/convert-supplement-to-docx.mjs:*)",
+      "Bash(grep:*)",
+      "Bash(npm run test)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(node -e:*)",
+      "Bash(dir:*)",
+      "Bash(npx vitest:*)",
+      "Bash(git stash:*)",
+      "Bash(timeout:*)",
+      "Bash(printf:*)",
+      "Bash(npx vercel env add:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:www.lennysnewsletter.com)",
+      "Write",
+      "Edit"
     ]
   }
 }

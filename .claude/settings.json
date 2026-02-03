@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Get-ChildItem ''c:\\\\Users\\\\deeks\\\\frontera-platform\\\\src\\\\lib\\\\pdf\\\\synthesis-report\\\\*.tsx'' | ForEach-Object { Write-Host $_Name; \\(Get-Content $_FullName -Raw\\) -replace ''COLORS\\\\.indigo\\\\[600\\\\]'',''COLORS.navy.DEFAULT'' -replace ''COLORS\\\\.indigo\\\\[500\\\\]'',''COLORS.navy.DEFAULT'' -replace ''COLORS\\\\.indigo\\\\[50\\\\]'',''COLORS.gold[50]'' | Set-Content $_FullName -NoNewline }\")"
+    ]
+  }
+}

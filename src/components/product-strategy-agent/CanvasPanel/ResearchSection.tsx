@@ -6,19 +6,22 @@ import { CompanyTerritoryDeepDive } from './CompanyTerritoryDeepDive';
 import { CustomerTerritoryDeepDive } from './CustomerTerritoryDeepDive';
 import { CompetitorTerritoryDeepDive } from './CompetitorTerritoryDeepDive';
 import type { Database } from '@/types/database';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
 
 interface ResearchSectionProps {
   conversation: Conversation;
+  onResearchContextChange?: (context: ActiveResearchContext | null) => void;
 }
 
-export function ResearchSection({ conversation }: ResearchSectionProps) {
+export function ResearchSection({ conversation, onResearchContextChange }: ResearchSectionProps) {
   const [territoryInsights, setTerritoryInsights] = useState<TerritoryInsight[]>([]);
   const [selectedTerritory, setSelectedTerritory] = useState<'company' | 'customer' | 'competitor' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
 
   // Fetch territory insights on mount
   useEffect(() => {
@@ -38,6 +41,18 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
 
     fetchInsights();
   }, [conversation.id]);
+
+  // Clear context when returning to overview (no territory selected)
+  useEffect(() => {
+    if (!selectedTerritory) {
+      setActiveResearchContext(null);
+    }
+  }, [selectedTerritory]);
+
+  // Bubble context changes to parent
+  useEffect(() => {
+    onResearchContextChange?.(activeResearchContext);
+  }, [activeResearchContext, onResearchContextChange]);
 
   // Calculate territory status based on research areas
   const getTerritoryStatus = (territory: 'company' | 'customer' | 'competitor'): 'unexplored' | 'in_progress' | 'mapped' => {
@@ -99,6 +114,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onResearchContextChange={setActiveResearchContext}
       />
     );
   }
@@ -110,6 +126,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onResearchContextChange={setActiveResearchContext}
       />
     );
   }
@@ -121,6 +138,7 @@ export function ResearchSection({ conversation }: ResearchSectionProps) {
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onResearchContextChange={setActiveResearchContext}
       />
     );
   }

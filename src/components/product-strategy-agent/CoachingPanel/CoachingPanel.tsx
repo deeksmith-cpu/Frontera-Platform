@@ -9,6 +9,7 @@ import { ProactiveCoachMessage } from './ProactiveCoachMessage';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -20,6 +21,7 @@ interface CoachingPanelProps {
   onClose?: () => void;
   onCollapse?: () => void;
   mode?: 'popup' | 'sidepanel';
+  activeResearchContext?: ActiveResearchContext | null;
 }
 
 // Type for context awareness data used by smart prompts
@@ -34,7 +36,7 @@ interface SmartPromptsContext {
   synthesisAvailable: boolean;
 }
 
-export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode = 'popup' }: CoachingPanelProps) {
+export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode = 'popup', activeResearchContext }: CoachingPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -257,7 +259,10 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
       const response = await fetch(`/api/conversations/${conversation.id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content }),
+        body: JSON.stringify({
+          message: content,
+          researchContext: activeResearchContext,
+        }),
         signal: abortControllerRef.current.signal,
       });
 

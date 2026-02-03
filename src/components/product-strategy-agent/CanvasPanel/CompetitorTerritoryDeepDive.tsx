@@ -6,6 +6,7 @@ import { SuggestionPanel, SuggestionPanelLoading, SuggestionPanelError } from '.
 import { InlineCoachBar } from './InlineCoachBar';
 import { CompetitorIcon } from '@/components/icons/TerritoryIcons';
 import type { Database } from '@/types/database';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
@@ -22,6 +23,7 @@ interface CompetitorTerritoryDeepDiveProps {
   territoryInsights: TerritoryInsight[];
   onBack: () => void;
   onUpdate: (insights: TerritoryInsight[]) => void;
+  onResearchContextChange?: (context: ActiveResearchContext) => void;
 }
 
 // Market Context Territory Research Areas (MVP: 3 areas)
@@ -66,6 +68,7 @@ export function CompetitorTerritoryDeepDive({
   territoryInsights,
   onBack,
   onUpdate,
+  onResearchContextChange,
 }: CompetitorTerritoryDeepDiveProps) {
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
@@ -73,6 +76,8 @@ export function CompetitorTerritoryDeepDive({
   const [suggestions, setSuggestions] = useState<QuestionSuggestion[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [suggestionError, setSuggestionError] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [focusedQuestionIndex, setFocusedQuestionIndex] = useState<number | null>(null);
 
   // Handle inline coach bar suggestion apply
   const handleInlineBarApply = useCallback((questionIndex: number, text: string) => {
@@ -108,6 +113,27 @@ export function CompetitorTerritoryDeepDive({
       setSuggestionError(false);
     }
   }, [selectedArea, competitorInsights]);
+
+  // Propagate research context changes to parent
+  useEffect(() => {
+    if (selectedArea && onResearchContextChange) {
+      const currentArea = RESEARCH_AREAS.find((a) => a.id === selectedArea);
+      onResearchContextChange({
+        territory: 'competitor',
+        researchAreaId: selectedArea,
+        researchAreaTitle: currentArea?.title || null,
+        focusedQuestionIndex,
+        currentQuestion: focusedQuestionIndex !== null
+          ? currentArea?.questions[focusedQuestionIndex] || null
+          : null,
+        draftResponse: focusedQuestionIndex !== null
+          ? responses[focusedQuestionIndex] || null
+          : null,
+        currentResponses: responses,
+        updatedAt: Date.now(),
+      });
+    }
+  }, [selectedArea, focusedQuestionIndex, responses, onResearchContextChange]);
 
   const handleResponseChange = (questionIndex: number, value: string) => {
     setResponses((prev) => ({
@@ -240,6 +266,8 @@ export function CompetitorTerritoryDeepDive({
         activeAreaId={selectedArea}
         onSelectArea={setSelectedArea}
         onBack={onBack}
+        isCollapsed={sidebarCollapsed}
+        onCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
       {/* Main Content (75% width) */}
@@ -276,6 +304,7 @@ export function CompetitorTerritoryDeepDive({
                     <textarea
                       value={responses[index] || ''}
                       onChange={(e) => handleResponseChange(index, e.target.value)}
+                      onFocus={() => setFocusedQuestionIndex(index)}
                       placeholder="Share your insights here..."
                       rows={5}
                       className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#fbbf24]/20 focus:border-[#fbbf24] transition-all"
@@ -314,14 +343,15 @@ export function CompetitorTerritoryDeepDive({
       </div>
 
       {/* Action Buttons - Fixed Bottom */}
-      <div className="fixed bottom-0 left-0 md:left-[25%] right-0 z-30 px-4 md:px-8 pt-4 pb-4 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-6 shadow-lg">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+      <div className="fixed bottom-0 left-0 md:left-[25%] right-0 z-30 flex justify-center bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pt-2">
+        <div className="w-full max-w-4xl px-4 md:px-8 pb-4">
+          <div className="bg-white rounded-2xl border-2 border-slate-200 p-3 sm:p-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             {/* Coach Suggestion Button - for all questions at once */}
             <button
               onClick={handleGetSuggestions}
               disabled={isLoadingSuggestions}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-cyan-50 to-[#ecfeff] border-2 border-cyan-200 text-[#0891b2] rounded-xl text-sm sm:text-base font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 bg-gradient-to-r from-cyan-50 to-[#ecfeff] border-2 border-cyan-200 text-[#0891b2] rounded-xl text-xs sm:text-sm font-bold hover:border-cyan-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoadingSuggestions ? (
                 <>
@@ -340,7 +370,7 @@ export function CompetitorTerritoryDeepDive({
             <button
               onClick={() => handleSave('in_progress')}
               disabled={isSaving || Object.keys(responses).length === 0}
-              className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-slate-200 text-slate-900 rounded-xl text-sm sm:text-base font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 px-3 py-1.5 sm:px-4 bg-slate-200 text-slate-900 rounded-xl text-xs sm:text-sm font-bold hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSaving ? 'Saving...' : 'Save Progress'}
             </button>
@@ -349,17 +379,12 @@ export function CompetitorTerritoryDeepDive({
             <button
               onClick={() => handleSave('mapped')}
               disabled={isSaving || Object.keys(responses).length < currentArea.questions.length}
-              className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white rounded-xl text-sm sm:text-base font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
+              className="flex-1 px-3 py-1.5 sm:px-4 bg-gradient-to-r from-[#0891b2] to-[#0e7490] text-white rounded-xl text-xs sm:text-sm font-bold hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all shadow-lg"
             >
               {isSaving ? 'Saving...' : 'Mark as Mapped'}
             </button>
           </div>
-
-          {Object.keys(responses).length < currentArea.questions.length && (
-            <p className="text-sm text-center text-slate-500 mt-4">
-              Answer all {currentArea.questions.length} questions to mark this area as mapped
-            </p>
-          )}
+          </div>
         </div>
       </div>
     </div>

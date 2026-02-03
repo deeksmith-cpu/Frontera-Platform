@@ -1,0 +1,12 @@
+'use client';
+
+import { useState } from 'react';
+import type { StrategicThesis, StrategicBet } from '@/types/bets';
+import { BetCard } from './BetCard';
+
+interface ThesisGroupProps {
+  thesis: StrategicThesis;
+  bets: StrategicBet[];
+  onEditBet?: (bet: StrategicBet) => void;
+  onDeleteBet?: (betId: string) => void;
+}

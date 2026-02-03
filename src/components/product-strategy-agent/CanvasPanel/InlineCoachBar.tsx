@@ -272,16 +272,16 @@ export function InlineCoachBar({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2 px-4 py-3 bg-slate-50 border-t border-slate-200">
+          <div className="flex items-center justify-end gap-2 px-4 py-2.5 bg-slate-50 border-t border-slate-200">
             <button
               onClick={handleDismiss}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              className="px-3 py-1.5 sm:px-4 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
             >
               Dismiss
             </button>
             <button
               onClick={handleApply}
-              className={`flex items-center gap-2 px-4 py-2 bg-gradient-to-r ${colors.button} text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all`}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 bg-gradient-to-r ${colors.button} text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

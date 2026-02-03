@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { loadClientContext, formatClientContextForPrompt } from '@/lib/agents/strategy-coach/client-context';
+import { getPersonaSection } from '@/lib/agents/strategy-coach/personas';
 import { trackEvent } from '@/lib/analytics/posthog-server';
 
 /**
@@ -339,8 +340,15 @@ function buildCoachSuggestionPrompt(ctx: PromptContext): string {
   const industry = ctx.clientContext?.industry || 'technology';
   const companyName = ctx.clientContext?.companyName || 'this company';
 
-  // Supportive expert coach persona
-  sections.push(`You are a trusted strategy coach and ${industry} expert supporting ${companyName} in their strategic journey.
+  // Use selected persona if available, otherwise use supportive coach default
+  if (ctx.clientContext?.persona) {
+    const personaSection = getPersonaSection(ctx.clientContext.persona);
+    if (personaSection) {
+      sections.push(personaSection);
+    }
+  } else {
+    // Default supportive expert coach persona (fallback when no persona selected)
+    sections.push(`You are a trusted strategy coach and ${industry} expert supporting ${companyName} in their strategic journey.
 
 **Your role:**
 You have reviewed all available data about ${companyName}, their market position, and their strategic inputs. Now help them by synthesizing this with your knowledge of:
@@ -355,6 +363,7 @@ You have reviewed all available data about ${companyName}, their market position
 - Be SUPPORTIVE and ENCOURAGING - you're helping them succeed
 - Build on their thinking - acknowledge what's working, then add value
 - Share your expertise generously to help them see opportunities they might miss`);
+  }
 
   // Client context
   if (ctx.clientContext) {
@@ -388,24 +397,29 @@ You have reviewed all available data about ${companyName}, their market position
   }
 
   // Current question - THE FOCUS
-  sections.push('\n## QUESTION REQUIRING YOUR EXPERT RECOMMENDATION');
-  sections.push(`**Research Area:** ${ctx.researchAreaTitle}`);
+  sections.push('\n## SPECIFIC QUESTIONS REQUIRING DISTINCT EXPERT RECOMMENDATIONS');
+  sections.push(`**Research Area Context:** ${ctx.researchAreaTitle}`);
+  sections.push(`\n**CRITICAL:** Each question below addresses a DIFFERENT ASPECT of this research area. Your recommendations MUST be unique and question-specific. DO NOT provide similar answers across questions.`);
 
   ctx.questions.forEach((q, i) => {
     const existingResponse = ctx.existingResponses[i];
-    sections.push(`\n**Question ${i + 1}:** ${q}`);
+    sections.push(`\n**Question ${i + 1} (UNIQUE FOCUS):** ${q}`);
     if (existingResponse && existingResponse.trim()) {
       sections.push(`*User's current draft:* "${existingResponse}"`);
-      sections.push(`*Your task:* Build on their thinking. Acknowledge what's strong, then add specific market insights and strategic recommendations to make their response even more compelling.`);
+      sections.push(`*Your task:* Build on their thinking with insights SPECIFIC TO THIS QUESTION. Acknowledge what's strong, then add targeted recommendations that directly answer THIS question's unique focus.`);
     } else {
-      sections.push(`*Your task:* Provide a recommended answer they can use as a starting point, based on their company data and your market expertise.`);
+      sections.push(`*Your task:* Provide a recommended answer SPECIFIC TO THIS QUESTION, not generic territory advice. Focus on what makes THIS question different from the others.`);
     }
   });
 
   // Supportive but opinionated output format with clear structure
   sections.push(`\n## RESPONSE FORMAT
 
-CRITICAL: Your response MUST be specific to ${companyName} and their ${industry} context. Reference their actual company data, strategic materials, and market position. Do NOT provide generic advice.
+CRITICAL INSTRUCTIONS:
+1. Your response MUST be specific to ${companyName} and their ${industry} context
+2. Each question requires a DISTINCT, UNIQUE answer - DO NOT repeat similar insights across questions
+3. Focus on what makes EACH question different from the others
+4. Reference specific company data and materials for EACH question's unique focus
 
 For EACH question, provide your expert recommendation using this EXACT format:
 
@@ -435,9 +449,12 @@ Sources Hint: [Data sources relevant to ${companyName}'s specific situation]
 **CRITICAL REQUIREMENTS:**
 - Every bullet point MUST reference ${companyName}'s specific situation, not generic advice
 - Pull specific details from the COMPANY DATA and STRATEGIC MATERIALS sections above
+- Each question's answer MUST be DISTINCT - avoid repeating similar insights across questions
+- Focus on the UNIQUE aspect that each question is asking about
 - If you don't have specific information, make reasonable inferences based on their ${industry} context
 - Be CONFIDENT and SPECIFIC - vague suggestions are not helpful
 - Reference actual company details: their products, customers, challenges, or strategic goals
+- Ensure your answers to Question 1, 2, 3, etc. are clearly different from each other
 - Maximum 250 words per recommendation`);
 
   return sections.join('\n');

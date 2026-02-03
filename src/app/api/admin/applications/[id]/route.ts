@@ -245,7 +245,7 @@ export async function POST(
         emailAddress: email,
         role: "org:admin",
         inviterUserId: userId,
-        redirectUrl: `${baseUrl}/dashboard`,
+        redirectUrl: `${baseUrl}/sign-up`,
       });
     } catch (err: unknown) {
       console.error("Failed to send invitation:", err);

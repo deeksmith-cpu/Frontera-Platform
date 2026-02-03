@@ -339,6 +339,59 @@ export interface ExpertCitationRecord {
   created_at: string;
 }
 
+// Strategic Thesis (Phase 4 - Strategic Bets)
+export interface StrategicThesisRow {
+  id: string;
+  conversation_id: string;
+  title: string;
+  description: string;
+  opportunity_id: string;
+  ptw_winning_aspiration: string | null;
+  ptw_where_to_play: string | null;
+  ptw_how_to_win: string | null;
+  dhm_delight: string | null;
+  dhm_hard_to_copy: string | null;
+  dhm_margin_enhancing: string | null;
+  thesis_type: 'offensive' | 'defensive' | 'capability';
+  time_horizon: '90d' | '6m' | '12m' | '18m' | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Strategic Bet (Phase 4 - Strategic Bets)
+export interface StrategicBetRow {
+  id: string;
+  conversation_id: string;
+  strategic_thesis_id: string | null;
+  job_to_be_done: string;
+  belief: string;
+  bet: string;
+  success_metric: string;
+  kill_criteria: string | null;
+  kill_date: string | null;
+  status: 'draft' | 'proposed' | 'accepted' | 'prioritized';
+  opportunity_id: string;
+  evidence_links: Array<Record<string, unknown>>;
+  assumption_being_tested: string | null;
+  ptw_where_to_play: string | null;
+  ptw_how_to_win: string | null;
+  expected_impact: number | null;
+  certainty_of_impact: number | null;
+  clarity_of_levers: number | null;
+  uniqueness_of_levers: number | null;
+  overall_score: number | null;
+  priority_level: 'high' | 'medium' | 'low' | null;
+  confidence: 'low' | 'medium' | 'high' | null;
+  time_horizon: '90d' | '6m' | '12m' | '18m' | null;
+  risks: Record<string, unknown>;
+  depends_on: string[];
+  agent_generated: boolean;
+  agent_reasoning: string | null;
+  user_modified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -387,6 +440,16 @@ export interface Database {
         Insert: Omit<SynthesisOutput, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<SynthesisOutput, "id" | "created_at">>;
       };
+      strategic_theses: {
+        Row: StrategicThesisRow;
+        Insert: Omit<StrategicThesisRow, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategicThesisRow, 'id' | 'created_at'>>;
+      };
+      strategic_bets: {
+        Row: StrategicBetRow;
+        Insert: Omit<StrategicBetRow, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategicBetRow, 'id' | 'created_at'>>;
+      };
     };
   };
 }
@@ -399,7 +462,7 @@ export interface OnboardingFormData {
   companySize: string;
 
   // Step 2
-  strategicFocus: StrategicFocus | "";
+  strategicFocus: StrategicFocus | '';
   strategicFocusOther: string;
 
   // Step 3
@@ -414,17 +477,17 @@ export interface OnboardingFormData {
 }
 
 export const INITIAL_FORM_DATA: OnboardingFormData = {
-  companyName: "",
-  industry: "",
-  companySize: "",
-  strategicFocus: "",
-  strategicFocusOther: "",
-  painPoints: "",
-  previousAttempts: "",
-  additionalContext: "",
+  companyName: '',
+  industry: '',
+  companySize: '',
+  strategicFocus: '',
+  strategicFocusOther: '',
+  painPoints: '',
+  previousAttempts: '',
+  additionalContext: '',
   successMetrics: [],
-  targetOutcomes: "",
-  timelineExpectations: "",
+  targetOutcomes: '',
+  timelineExpectations: '',
 };
 
 export const INDUSTRIES = [

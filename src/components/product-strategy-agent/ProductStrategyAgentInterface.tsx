@@ -11,6 +11,7 @@ import { CoachingPanel } from './CoachingPanel/CoachingPanel';
 import { useCoachPopup, useMediaQuery } from '@/hooks/useCoachPopup';
 import { useCoachPanel } from '@/hooks/useCoachPanel';
 import type { Database } from '@/types/database';
+import type { ActiveResearchContext } from '@/types/research-context';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Client = Database['public']['Tables']['clients']['Row'];
@@ -29,6 +30,7 @@ export function ProductStrategyAgentInterface({
   clientContext: initialClientContext,
 }: ProductStrategyAgentInterfaceProps) {
   const [clientContext, setClientContext] = useState(initialClientContext);
+  const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
   const popup = useCoachPopup();
   const panel = useCoachPanel();
   const isMobile = useMediaQuery('(max-width: 1023px)');
@@ -60,7 +62,7 @@ export function ProductStrategyAgentInterface({
         className={`
           hidden md:flex flex-shrink-0 border-r border-slate-200 bg-white
           transition-all duration-300 overflow-hidden
-          ${panel.isCollapsed ? 'md:w-0' : 'md:w-[30%] md:min-w-[280px] lg:w-[35%] lg:min-w-[360px] lg:max-w-[480px]'}
+          ${panel.isCollapsed ? 'md:w-0' : 'md:w-[25%] md:min-w-[280px] lg:w-[25%] lg:min-w-[320px] lg:max-w-[420px]'}
         `}
       >
         {conversation && (
@@ -70,6 +72,7 @@ export function ProductStrategyAgentInterface({
             orgId={orgId}
             onCollapse={handlePanelCollapse}
             mode="sidepanel"
+            activeResearchContext={activeResearchContext}
           />
         )}
         {!conversation && (
@@ -97,6 +100,7 @@ export function ProductStrategyAgentInterface({
             conversation={conversation}
             clientContext={clientContext}
             onClientContextUpdate={setClientContext}
+            onResearchContextChange={setActiveResearchContext}
           />
         </div>
       </main>
@@ -120,6 +124,7 @@ export function ProductStrategyAgentInterface({
           userId={userId}
           orgId={orgId}
           constraints={popup.constraints}
+          activeResearchContext={activeResearchContext}
         />
       )}
     </div>

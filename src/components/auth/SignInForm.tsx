@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSignIn, useUser } from "@clerk/nextjs";
+import { useSignIn, useUser, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import type { SignInFormData } from "@/types/auth";
 
@@ -18,6 +18,7 @@ export default function SignInForm() {
   const searchParams = useSearchParams();
   const { signIn, setActive, isLoaded } = useSignIn();
   const { isSignedIn, isLoaded: userLoaded } = useUser();
+  const { signOut } = useClerk();
   const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<SignInFormData>(INITIAL_FORM_DATA);
   const [isLoading, setIsLoading] = useState(false);
@@ -135,8 +136,14 @@ export default function SignInForm() {
       } else if (firstError?.code === "form_identifier_not_found") {
         setError("No account found with this email. Please sign up first.");
       } else if (firstError?.code === "session_exists") {
-        setError("You're already signed in. Redirecting...");
-        window.location.href = "/dashboard";
+        // Clear the stale session and retry sign-in
+        try {
+          await signOut();
+          setError("Session cleared. Please try signing in again.");
+        } catch {
+          // If signOut fails, force a full reload to clear client state
+          window.location.href = "/sign-in";
+        }
       } else {
         const message = firstError?.longMessage ||
                        firstError?.message ||

@@ -125,7 +125,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
   };
 
   return (
-    <div className="horizontal-stepper py-3 px-4 md:py-4 md:px-8 bg-white border-b border-slate-100">
+    <div className="horizontal-stepper py-2 px-4 md:py-2.5 md:px-8 bg-white border-b border-slate-100">
       <div className="flex items-center justify-between max-w-5xl mx-auto overflow-x-auto">
         {STEPS.map((step, index) => {
           const isCurrent = index === currentIndex;
@@ -143,9 +143,9 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
               <button
                 onClick={() => isClickable && onPhaseClick(step.phase)}
                 disabled={isLocked || !onPhaseClick}
-                className={`group flex flex-col items-center flex-1 py-2 px-1 md:px-3 rounded-xl transition-all duration-300 ${
+                className={`group flex flex-col items-center flex-1 py-1.5 px-1 md:px-2 rounded-xl transition-all duration-300 ${
                   isClickable
-                    ? 'cursor-pointer hover:bg-slate-50 hover:-translate-y-1.5 hover:shadow-lg'
+                    ? 'cursor-pointer hover:bg-slate-50 hover:-translate-y-1 hover:shadow-md'
                     : isLocked
                     ? 'cursor-not-allowed opacity-60'
                     : ''
@@ -175,8 +175,8 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                   )}
                 </div>
 
-                {/* Labels */}
-                <div className="mt-1.5 md:mt-2 text-center">
+                {/* Labels - Only show title */}
+                <div className="mt-1 text-center">
                   <div
                     className={`text-[10px] sm:text-xs md:text-sm font-bold transition-colors duration-300 ${
                       isCurrent || isVisited ? 'text-slate-900' : 'text-slate-500'
@@ -184,28 +184,9 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                   >
                     {step.label}
                   </div>
-                  {/* Sublabel - hidden on mobile */}
-                  <div
-                    className={`hidden md:block text-[10px] uppercase tracking-wider font-semibold mt-0.5 transition-colors duration-300 ${
-                      isCurrent
-                        ? getTextColorClass(step.color)
-                        : isVisited
-                        ? 'text-slate-500'
-                        : 'text-slate-400'
-                    }`}
-                  >
-                    {step.sublabel}
-                  </div>
-                  {/* "You Are Here" indicator - only on desktop */}
+                  {/* Current indicator - just a dot */}
                   {isCurrent && (
-                    <div className="hidden md:flex mt-1 items-center justify-center gap-1 text-[9px] uppercase tracking-wide text-cyan-600 font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse" />
-                      You Are Here
-                    </div>
-                  )}
-                  {/* Mobile current indicator - just a dot */}
-                  {isCurrent && (
-                    <div className="flex md:hidden mt-1 justify-center">
+                    <div className="flex mt-0.5 justify-center">
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse" />
                     </div>
                   )}
@@ -215,7 +196,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
               {/* Connector Line with Phase-Specific Gradient */}
               {index < STEPS.length - 1 && (
                 <div
-                  className={`h-0.5 md:h-1 flex-1 mx-0.5 sm:mx-1 md:mx-3 mt-[-24px] md:mt-[-32px] transition-all duration-300 rounded-full ${
+                  className={`h-0.5 md:h-1 flex-1 mx-0.5 sm:mx-1 md:mx-3 mt-[-20px] transition-all duration-300 rounded-full ${
                     index < highestIndex
                       ? getConnectorGradient(step.color, nextStep.color)
                       : 'bg-slate-200'

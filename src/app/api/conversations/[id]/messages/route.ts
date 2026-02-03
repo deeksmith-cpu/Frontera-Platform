@@ -49,7 +49,7 @@ export async function POST(
 
     const { id: conversationId } = await params;
     const body = await req.json();
-    const { message } = body;
+    const { message, researchContext } = body;
 
     const supabase = getSupabaseAdmin();
 
@@ -178,7 +178,8 @@ export async function POST(
           frameworkState,
           chatHistory,
           message,
-          conversationId
+          conversationId,
+          researchContext
         );
 
     // Create a transform stream to collect the full response

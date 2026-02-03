@@ -5,6 +5,7 @@ import { FrameworkState, initializeFrameworkState } from "./framework-state";
 import { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
 import { buildProfilingSystemPrompt } from "./profiling-prompt";
 import type { ConversationMessage, ProfilingFrameworkState } from "@/types/database";
+import type { ActiveResearchContext } from "@/types/research-context";
 
 // Model configuration
 const MODEL = "claude-sonnet-4-20250514";
@@ -141,7 +142,8 @@ export async function streamMessage(
   frameworkState: FrameworkState,
   conversationHistory: ChatMessage[],
   userMessage: string,
-  conversationId?: string
+  conversationId?: string,
+  activeResearchContext?: ActiveResearchContext | null
 ): Promise<{
   stream: ReadableStream<Uint8Array>;
   getUsage: () => Promise<{ inputTokens: number; outputTokens: number }>;
@@ -149,7 +151,7 @@ export async function streamMessage(
   const anthropic = getAnthropicClient();
 
   // Build the system prompt
-  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId);
+  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
