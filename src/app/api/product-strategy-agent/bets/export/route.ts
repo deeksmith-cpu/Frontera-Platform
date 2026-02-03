@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import PDFDocument from 'pdfkit';
-import type { BetsResponse, StrategicThesis, StrategicBet } from '@/types/bets';
+import type { BetsResponse } from '@/types/bets';
 
 // =============================================================================
 // Brand Colors
@@ -10,47 +10,51 @@ import type { BetsResponse, StrategicThesis, StrategicBet } from '@/types/bets';
 
 const C = {
   navy: '#1a1f3a',
+  navyLight: '#2d3561',
   gold: '#fbbf24',
-  goldHover: '#f59e0b',
-  cyan600: '#0891b2',
-  cyan400: '#22d3ee',
-  cyan200: '#a5f3fc',
+  goldDark: '#d97706',
   cyan50: '#ecfeff',
-  slate900: '#0f172a',
-  slate700: '#334155',
-  slate600: '#475569',
-  slate500: '#64748b',
-  slate400: '#94a3b8',
-  slate300: '#cbd5e1',
-  slate200: '#e2e8f0',
-  slate100: '#f1f5f9',
-  slate50: '#f8fafc',
-  white: '#ffffff',
-  emerald600: '#059669',
-  emerald500: '#10b981',
+  cyan100: '#cffafe',
+  cyan200: '#a5f3fc',
+  cyan400: '#22d3ee',
+  cyan600: '#0891b2',
   emerald50: '#ecfdf5',
-  amber600: '#d97706',
-  amber500: '#f59e0b',
+  emerald600: '#059669',
   amber50: '#fffbeb',
-  purple600: '#9333ea',
+  amber600: '#d97706',
   purple50: '#faf5ff',
+  purple600: '#9333ea',
+  red50: '#fef2f2',
   red500: '#ef4444',
+  red600: '#dc2626',
+  slate50: '#f8fafc',
+  slate100: '#f1f5f9',
+  slate200: '#e2e8f0',
+  slate300: '#cbd5e1',
+  slate400: '#94a3b8',
+  slate500: '#64748b',
+  slate600: '#475569',
+  slate700: '#334155',
+  slate900: '#0f172a',
+  white: '#ffffff',
 };
 
 // =============================================================================
 // Layout Constants
 // =============================================================================
 
-const PAGE_W = 515.28; // A4 width minus 40+40 margins
-const M = 40;          // margin
-const FOOTER_Y = 790;
-const MAX_Y = 755;     // content must stop here
+const PAGE_W = 595.28; // A4 width
+const PAGE_H = 841.89; // A4 height
+const M = 50;          // margin
+const CONTENT_W = PAGE_W - M * 2;
+const FOOTER_Y = PAGE_H - 40;
+const MAX_Y = PAGE_H - 60;
 
 // =============================================================================
 // Helpers
 // =============================================================================
 
-function truncate(text: string, maxLength: number): string {
+function truncateText(text: string, maxLength: number): string {
   if (!text || text.length <= maxLength) return text || '';
   return text.substring(0, maxLength - 3) + '...';
 }
@@ -61,12 +65,12 @@ function formatDate(dateString: string | null): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function getThesisTypeColor(type: string): { bg: string; text: string } {
+function getThesisTypeColor(type: string): { bg: string; text: string; border: string } {
   switch (type) {
-    case 'offensive': return { bg: C.emerald50, text: C.emerald600 };
-    case 'defensive': return { bg: C.amber50, text: C.amber600 };
-    case 'capability': return { bg: C.purple50, text: C.purple600 };
-    default: return { bg: C.slate100, text: C.slate600 };
+    case 'offensive': return { bg: C.amber50, text: C.amber600, border: C.amber600 };
+    case 'defensive': return { bg: C.emerald50, text: C.emerald600, border: C.emerald600 };
+    case 'capability': return { bg: C.purple50, text: C.purple600, border: C.purple600 };
+    default: return { bg: C.slate100, text: C.slate600, border: C.slate300 };
   }
 }
 
@@ -80,26 +84,401 @@ function getBetStatusColor(status: string): { bg: string; text: string } {
   }
 }
 
-/** Check remaining space; if insufficient, start a fresh page. */
-function ensureSpace(doc: PDFKit.PDFDocument, needed: number) {
-  if (doc.y + needed > MAX_Y) {
-    doc.addPage();
+function drawCard(
+  pdf: PDFKit.PDFDocument,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  bgColor: string,
+  borderColor?: string
+) {
+  pdf.roundedRect(x, y, w, h, 8).fill(bgColor);
+  if (borderColor) {
+    pdf.roundedRect(x, y, w, h, 8).strokeColor(borderColor).lineWidth(1).stroke();
   }
 }
 
-/** Add footers to all buffered pages (call before doc.end). */
-function addFootersToAllPages(doc: PDFKit.PDFDocument, companyName?: string) {
-  const range = doc.bufferedPageRange();
-  for (let i = 0; i < range.count; i++) {
-    doc.switchToPage(range.start + i);
-    // Skip cover page (page 0)
-    if (i === 0) continue;
-    doc.save();
-    doc.fontSize(8).font('Helvetica').fillColor(C.slate400);
-    doc.text(companyName || 'Strategic Bets Portfolio', M, FOOTER_Y, { width: PAGE_W / 2, lineBreak: false });
-    doc.text(`${i}`, M + PAGE_W / 2, FOOTER_Y, { width: PAGE_W / 2, align: 'right', lineBreak: false });
-    doc.restore();
+function drawSectionHeader(pdf: PDFKit.PDFDocument, title: string, y: number): number {
+  // Gold accent bar
+  pdf.rect(M, y, 4, 24).fill(C.gold);
+
+  // Title
+  pdf.fontSize(18).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text(title.toUpperCase(), M + 16, y + 3, { width: CONTENT_W - 16 });
+
+  return pdf.y + 20;
+}
+
+function drawStatBox(
+  pdf: PDFKit.PDFDocument,
+  x: number,
+  y: number,
+  w: number,
+  value: string | number,
+  label: string,
+  accentColor: string
+) {
+  drawCard(pdf, x, y, w, 70, C.white, C.slate200);
+  pdf.rect(x, y, w, 4).fill(accentColor);
+
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text(String(value), x, y + 18, { width: w, align: 'center' });
+
+  pdf.fontSize(9).fillColor(C.slate600).font('Helvetica');
+  pdf.text(label.toUpperCase(), x, y + 50, { width: w, align: 'center' });
+}
+
+function addFooter(pdf: PDFKit.PDFDocument, pageNum: number) {
+  // Gold accent line
+  pdf.moveTo(M, FOOTER_Y).lineTo(PAGE_W - M, FOOTER_Y).strokeColor(C.gold).lineWidth(2).stroke();
+
+  // Footer text
+  pdf.fontSize(8).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Frontera AI Strategy Coach', M, FOOTER_Y + 10, { width: CONTENT_W / 2, align: 'left' });
+  pdf.text(`Page ${pageNum}`, M + CONTENT_W / 2, FOOTER_Y + 10, { width: CONTENT_W / 2, align: 'right' });
+}
+
+// =============================================================================
+// Cover Page
+// =============================================================================
+
+function renderCoverPage(
+  pdf: PDFKit.PDFDocument,
+  companyName: string,
+  betsData: BetsResponse,
+  dateStr: string
+) {
+  // Navy header section (top 35% of page)
+  const headerHeight = 300;
+  pdf.rect(0, 0, PAGE_W, headerHeight).fill(C.navy);
+
+  // Gold accent line at bottom of header
+  pdf.rect(0, headerHeight - 4, PAGE_W, 4).fill(C.gold);
+
+  // Decorative circles (subtle branding)
+  pdf.circle(PAGE_W - 80, 80, 120).fillOpacity(0.03).fill(C.gold);
+  pdf.circle(PAGE_W - 40, 160, 80).fillOpacity(0.05).fill(C.gold);
+  pdf.fillOpacity(1);
+
+  // Document type label
+  pdf.fontSize(11).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text('STRATEGIC BETS PORTFOLIO', M, 50, { width: CONTENT_W });
+
+  // Main title
+  pdf.fontSize(42).fillColor(C.white).font('Helvetica-Bold');
+  pdf.text('Strategic Bets', M, 85, { width: CONTENT_W });
+
+  // Company name
+  pdf.fontSize(24).fillColor(C.cyan400).font('Helvetica');
+  pdf.text(companyName, M, 140, { width: CONTENT_W });
+
+  // Date
+  pdf.fontSize(11).fillColor(C.slate400).font('Helvetica');
+  pdf.text(dateStr, M, 180, { width: CONTENT_W });
+
+  // Key metrics row
+  const metricsY = 220;
+
+  // Total Bets
+  pdf.fontSize(32).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text(String(betsData.portfolioSummary.totalBets), M, metricsY, { width: 100, align: 'left' });
+  pdf.fontSize(10).fillColor(C.slate400).font('Helvetica');
+  pdf.text('Total Bets', M, metricsY + 36, { width: 100, align: 'left' });
+
+  // Theses
+  pdf.fontSize(32).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text(String(betsData.portfolioSummary.totalTheses), M + 120, metricsY, { width: 100, align: 'left' });
+  pdf.fontSize(10).fillColor(C.slate400).font('Helvetica');
+  pdf.text('Theses', M + 120, metricsY + 36, { width: 100, align: 'left' });
+
+  // Avg Score
+  pdf.fontSize(32).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text(betsData.portfolioSummary.avgScore.toFixed(1), M + 240, metricsY, { width: 100, align: 'left' });
+  pdf.fontSize(10).fillColor(C.slate400).font('Helvetica');
+  pdf.text('Avg Score', M + 240, metricsY + 36, { width: 100, align: 'left' });
+
+  // Content section (below header)
+  let currentY = headerHeight + 30;
+
+  // Portfolio Summary Section
+  currentY = drawSectionHeader(pdf, 'Portfolio Summary', currentY);
+
+  // Stat boxes row
+  const statW = (CONTENT_W - 30) / 4;
+  drawStatBox(pdf, M, currentY, statW, betsData.portfolioSummary.totalBets, 'Total Bets', C.navy);
+  drawStatBox(pdf, M + statW + 10, currentY, statW, betsData.portfolioSummary.byThesisType.offensive, 'Offensive', C.amber600);
+  drawStatBox(pdf, M + (statW + 10) * 2, currentY, statW, betsData.portfolioSummary.byThesisType.defensive, 'Defensive', C.emerald600);
+  drawStatBox(pdf, M + (statW + 10) * 3, currentY, statW, betsData.portfolioSummary.byThesisType.capability, 'Capability', C.purple600);
+  currentY += 90;
+
+  // Kill dates warning if applicable
+  if (betsData.portfolioSummary.killDatesApproaching > 0) {
+    drawCard(pdf, M, currentY, CONTENT_W, 55, C.red50, C.red500);
+    pdf.fontSize(10).fillColor(C.red600).font('Helvetica-Bold');
+    pdf.text('⚠ KILL DATES APPROACHING', M + 16, currentY + 12, { width: CONTENT_W - 32 });
+    pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`${betsData.portfolioSummary.killDatesApproaching} bets have kill dates within 30 days`, M + 16, currentY + 32, { width: CONTENT_W - 32 });
+    currentY += 70;
   }
+
+  // Methodology badge
+  drawCard(pdf, M, currentY, CONTENT_W, 55, C.cyan50, C.cyan200);
+  pdf.fontSize(9).fillColor(C.slate500).font('Helvetica-Bold');
+  pdf.text('METHODOLOGY', M + 16, currentY + 12, { width: CONTENT_W - 32 });
+  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Hypothesis-Driven Strategy with Playing to Win', M + 16, currentY + 28, { width: CONTENT_W - 32 });
+}
+
+// =============================================================================
+// Portfolio Summary Page
+// =============================================================================
+
+function renderPortfolioPage(pdf: PDFKit.PDFDocument, betsData: BetsResponse, pageNum: number) {
+  let currentY = M;
+
+  // Page title
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Portfolio Analysis', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y;
+  pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Strategic thesis breakdown and scoring', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y + 30;
+
+  // Thesis type breakdown
+  currentY = drawSectionHeader(pdf, 'Thesis Type Distribution', currentY);
+
+  const byType = betsData.portfolioSummary.byThesisType;
+  const types = [
+    { key: 'offensive', label: 'Offensive Theses', desc: 'Growth and market capture', color: getThesisTypeColor('offensive') },
+    { key: 'defensive', label: 'Defensive Theses', desc: 'Protect competitive position', color: getThesisTypeColor('defensive') },
+    { key: 'capability', label: 'Capability Building', desc: 'Enable future opportunities', color: getThesisTypeColor('capability') },
+  ];
+
+  for (const { key, label, desc, color } of types) {
+    const count = byType[key as keyof typeof byType] || 0;
+
+    drawCard(pdf, M, currentY, CONTENT_W, 70, color.bg, color.border);
+
+    // Accent bar
+    pdf.rect(M, currentY, 4, 70).fill(color.border);
+
+    // Count circle
+    pdf.circle(M + 40, currentY + 35, 20).fill(color.border);
+    pdf.fontSize(18).fillColor(C.white).font('Helvetica-Bold');
+    pdf.text(String(count), M + 28, currentY + 28, { width: 24, align: 'center' });
+
+    // Label
+    pdf.fontSize(14).fillColor(C.navy).font('Helvetica-Bold');
+    pdf.text(label, M + 72, currentY + 18, { width: CONTENT_W - 88 });
+
+    // Description
+    pdf.fontSize(10).fillColor(C.slate600).font('Helvetica');
+    pdf.text(desc, M + 72, currentY + 38, { width: CONTENT_W - 88 });
+
+    currentY += 85;
+  }
+
+  // Average score highlight
+  currentY += 10;
+  drawCard(pdf, M, currentY, CONTENT_W, 80, C.navy);
+  pdf.fontSize(10).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text('AVERAGE PORTFOLIO SCORE', M + 16, currentY + 16, { width: CONTENT_W - 32 });
+  pdf.fontSize(36).fillColor(C.white).font('Helvetica-Bold');
+  pdf.text(`${betsData.portfolioSummary.avgScore.toFixed(1)}`, M + 16, currentY + 34, { width: CONTENT_W - 32 });
+  pdf.fontSize(10).fillColor(C.slate400).font('Helvetica');
+  pdf.text('out of 100', M + 80, currentY + 50, { width: CONTENT_W - 96 });
+  currentY += 100;
+
+  // Theses overview
+  if (betsData.theses.length > 0) {
+    currentY = drawSectionHeader(pdf, `Strategic Theses (${betsData.theses.length})`, currentY);
+
+    for (const thesis of betsData.theses) {
+      if (currentY + 60 > MAX_Y) break;
+
+      const thesisColor = getThesisTypeColor(thesis.thesisType);
+      drawCard(pdf, M, currentY, CONTENT_W, 50, C.white, C.slate200);
+      pdf.rect(M, currentY, 4, 50).fill(thesisColor.border);
+
+      // Type badge
+      pdf.roundedRect(PAGE_W - M - 80, currentY + 14, 70, 22, 4).fill(thesisColor.bg);
+      pdf.fontSize(8).font('Helvetica-Bold').fillColor(thesisColor.text);
+      pdf.text(thesis.thesisType.toUpperCase(), PAGE_W - M - 80, currentY + 21, { width: 70, align: 'center', lineBreak: false });
+
+      // Title
+      pdf.fontSize(11).fillColor(C.navy).font('Helvetica-Bold');
+      pdf.text(truncateText(thesis.title, 50), M + 16, currentY + 12, { width: CONTENT_W - 110 });
+
+      // Bet count
+      const betCount = thesis.bets?.length || 0;
+      pdf.fontSize(9).fillColor(C.slate500).font('Helvetica');
+      pdf.text(`${betCount} bet${betCount !== 1 ? 's' : ''}`, M + 16, currentY + 30, { width: CONTENT_W - 110 });
+
+      currentY += 60;
+    }
+  }
+
+  addFooter(pdf, pageNum);
+}
+
+// =============================================================================
+// Thesis & Bets Detail Pages
+// =============================================================================
+
+function renderThesisDetailsPages(
+  pdf: PDFKit.PDFDocument,
+  betsData: BetsResponse,
+  startPageNum: number
+): number {
+  let pageNum = startPageNum;
+
+  for (let thesisIndex = 0; thesisIndex < betsData.theses.length; thesisIndex++) {
+    const thesis = betsData.theses[thesisIndex];
+    const thesisColor = getThesisTypeColor(thesis.thesisType);
+    const bets = thesis.bets || [];
+
+    // Start new page for each thesis
+    pdf.addPage();
+    let currentY = M;
+
+    // Thesis header
+    pdf.fontSize(24).fillColor(C.navy).font('Helvetica-Bold');
+    pdf.text(`Thesis ${thesisIndex + 1}`, M, currentY, { width: CONTENT_W });
+    currentY = pdf.y;
+
+    // Thesis title
+    pdf.fontSize(16).fillColor(C.slate700).font('Helvetica');
+    pdf.text(truncateText(thesis.title, 70), M, currentY, { width: CONTENT_W });
+    currentY = pdf.y + 8;
+
+    // Type badge
+    pdf.roundedRect(M, currentY, 90, 24, 4).fill(thesisColor.bg);
+    pdf.fontSize(9).font('Helvetica-Bold').fillColor(thesisColor.text);
+    pdf.text(thesis.thesisType.toUpperCase(), M, currentY + 7, { width: 90, align: 'center', lineBreak: false });
+    currentY += 40;
+
+    // Thesis description
+    if (thesis.description) {
+      drawCard(pdf, M, currentY, CONTENT_W, 80, C.slate50, C.slate200);
+      pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
+      pdf.text(truncateText(thesis.description, 300), M + 16, currentY + 16, { width: CONTENT_W - 32, lineGap: 3 });
+      currentY += 95;
+    }
+
+    // Bets section header
+    currentY = drawSectionHeader(pdf, `Bets (${bets.length})`, currentY);
+
+    // Bets for this thesis
+    if (bets.length === 0) {
+      drawCard(pdf, M, currentY, CONTENT_W, 50, C.slate50, C.slate200);
+      pdf.fontSize(10).font('Helvetica-Oblique').fillColor(C.slate500);
+      pdf.text('No bets defined for this thesis yet', M, currentY + 18, { width: CONTENT_W, align: 'center' });
+      currentY += 65;
+    } else {
+      for (let betIdx = 0; betIdx < bets.length; betIdx++) {
+        const bet = bets[betIdx];
+
+        // Calculate card height
+        let cardHeight = 160;
+        if (bet.killCriteria) cardHeight += 30;
+        if (bet.assumptionBeingTested) cardHeight += 30;
+
+        // Check if we need a new page
+        if (currentY + cardHeight > MAX_Y) {
+          addFooter(pdf, pageNum++);
+          pdf.addPage();
+          currentY = M;
+        }
+
+        const statusColor = getBetStatusColor(bet.status);
+
+        // Card background
+        drawCard(pdf, M, currentY, CONTENT_W, cardHeight, C.white, C.slate200);
+
+        // Colored top bar
+        pdf.rect(M, currentY, CONTENT_W, 6).fill(thesisColor.border);
+
+        // Bet number badge
+        pdf.circle(M + 24, currentY + 35, 16).fill(C.navy);
+        pdf.fontSize(12).fillColor(C.white).font('Helvetica-Bold');
+        pdf.text(`${betIdx + 1}`, M + 16, currentY + 29, { width: 16, align: 'center' });
+
+        // Status badge
+        pdf.roundedRect(PAGE_W - M - 70, currentY + 14, 60, 22, 4).fill(statusColor.bg);
+        pdf.fontSize(8).font('Helvetica-Bold').fillColor(statusColor.text);
+        pdf.text(bet.status.toUpperCase(), PAGE_W - M - 70, currentY + 21, { width: 60, align: 'center', lineBreak: false });
+
+        // Score circle
+        const score = bet.scoring?.overallScore || 0;
+        pdf.circle(PAGE_W - M - 40, currentY + 60, 20).fill(C.navy);
+        pdf.fontSize(14).fillColor(C.gold).font('Helvetica-Bold');
+        pdf.text(String(score), PAGE_W - M - 52, currentY + 54, { width: 24, align: 'center' });
+        pdf.fontSize(7).fillColor(C.slate400).font('Helvetica');
+        pdf.text('SCORE', PAGE_W - M - 52, currentY + 82, { width: 24, align: 'center' });
+
+        // Bet title
+        let contentY = currentY + 20;
+        pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
+        pdf.text(truncateText(bet.bet, 60), M + 50, contentY, { width: CONTENT_W - 150 });
+        contentY = pdf.y + 12;
+
+        // Job to be done
+        pdf.fontSize(8).fillColor(C.cyan600).font('Helvetica-Bold');
+        pdf.text('JOB TO BE DONE', M + 16, contentY, { width: 80 });
+        pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+        pdf.text(truncateText(bet.jobToBeDone, 70), M + 100, contentY, { width: CONTENT_W - 180 });
+        contentY += 18;
+
+        // Belief
+        pdf.fontSize(8).fillColor(C.slate500).font('Helvetica-Bold');
+        pdf.text('BELIEF', M + 16, contentY, { width: 80 });
+        pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+        pdf.text(truncateText(bet.belief, 70), M + 100, contentY, { width: CONTENT_W - 180 });
+        contentY += 18;
+
+        // Success metric
+        pdf.fontSize(8).fillColor(C.emerald600).font('Helvetica-Bold');
+        pdf.text('SUCCESS', M + 16, contentY, { width: 80 });
+        pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+        pdf.text(truncateText(bet.successMetric, 70), M + 100, contentY, { width: CONTENT_W - 180 });
+        contentY += 18;
+
+        // Kill criteria
+        if (bet.killCriteria) {
+          pdf.fontSize(8).fillColor(C.red600).font('Helvetica-Bold');
+          pdf.text('KILL CRITERIA', M + 16, contentY, { width: 80 });
+          pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+          pdf.text(truncateText(bet.killCriteria, 60), M + 100, contentY, { width: CONTENT_W - 180 });
+          contentY += 18;
+        }
+
+        // Kill date
+        if (bet.killDate) {
+          const killDateApproaching = new Date(bet.killDate).getTime() - Date.now() < 30 * 24 * 60 * 60 * 1000;
+          pdf.fontSize(8).fillColor(killDateApproaching ? C.red600 : C.slate500).font('Helvetica-Bold');
+          pdf.text('KILL DATE', M + 16, contentY, { width: 80 });
+          pdf.fontSize(9).fillColor(killDateApproaching ? C.red600 : C.slate700).font(killDateApproaching ? 'Helvetica-Bold' : 'Helvetica');
+          pdf.text(formatDate(bet.killDate) + (killDateApproaching ? ' (Approaching!)' : ''), M + 100, contentY, { width: CONTENT_W - 180 });
+          contentY += 18;
+        }
+
+        // Assumption
+        if (bet.assumptionBeingTested) {
+          pdf.fontSize(8).fillColor(C.purple600).font('Helvetica-Bold');
+          pdf.text('ASSUMPTION', M + 16, contentY, { width: 80 });
+          pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+          pdf.text(truncateText(bet.assumptionBeingTested, 70), M + 100, contentY, { width: CONTENT_W - 180 });
+        }
+
+        currentY += cardHeight + 16;
+      }
+    }
+
+    addFooter(pdf, pageNum++);
+  }
+
+  return pageNum;
 }
 
 // =============================================================================
@@ -117,10 +496,9 @@ async function generatePdf(input: {
     year: 'numeric', month: 'long', day: 'numeric',
   });
 
-  const doc = new PDFDocument({
+  const pdf = new PDFDocument({
     size: 'A4',
-    margins: { top: M, bottom: 0, left: M, right: M },
-    autoFirstPage: true,
+    margins: { top: 0, bottom: 0, left: 0, right: 0 },
     bufferPages: true,
     info: {
       Title: `Strategic Bets - ${portfolioName}`,
@@ -129,325 +507,28 @@ async function generatePdf(input: {
   });
 
   const chunks: Buffer[] = [];
-  doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+  pdf.on('data', (chunk: Buffer) => chunks.push(chunk));
 
-  // ======================= COVER PAGE =======================
+  let pageNum = 1;
 
-  // Frontera logo box
-  doc.rect(M, 100, 60, 60).fill(C.navy);
-  doc.fontSize(28).font('Helvetica-Bold').fillColor(C.white)
-    .text('F', M, 116, { width: 60, align: 'center' });
+  // PAGE 1: COVER
+  renderCoverPage(pdf, portfolioName, betsData, dateStr);
+  addFooter(pdf, pageNum++);
 
-  // Gold accent line
-  doc.rect(M, 190, 80, 3).fill(C.gold);
+  // PAGE 2: PORTFOLIO SUMMARY
+  pdf.addPage();
+  renderPortfolioPage(pdf, betsData, pageNum++);
 
-  // Report type label
-  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
-    .text('STRATEGIC BETS PORTFOLIO', M, 220, { width: PAGE_W, characterSpacing: 2 });
-
-  // Company name
-  doc.fontSize(32).font('Helvetica-Bold').fillColor(C.slate900)
-    .text(portfolioName, M, 250, { width: PAGE_W });
-
-  // Navy accent line
-  const nb = doc.y + 10;
-  doc.rect(M, nb, 80, 3).fill(C.navy);
-
-  // Stats box
-  const statsY = nb + 40;
-  doc.roundedRect(M, statsY, PAGE_W, 100, 8).fillAndStroke(C.cyan50, C.cyan200);
-
-  doc.fontSize(8).font('Helvetica-Bold').fillColor(C.slate500)
-    .text('PORTFOLIO OVERVIEW', M, statsY + 16, { width: PAGE_W, align: 'center' });
-
-  // Stats grid
-  const statBoxW = PAGE_W / 2 - 20;
-  const col1X = M + 20;
-  const col2X = M + PAGE_W / 2 + 10;
-  const statY = statsY + 40;
-
-  // Total Bets
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
-    .text('Total Bets', col1X, statY, { width: statBoxW, lineBreak: false });
-  doc.fontSize(20).font('Helvetica-Bold').fillColor(C.navy)
-    .text(betsData.portfolioSummary.totalBets.toString(), col1X, statY + 16, { width: statBoxW, lineBreak: false });
-
-  // Total Theses
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
-    .text('Strategic Theses', col2X, statY, { width: statBoxW, lineBreak: false });
-  doc.fontSize(20).font('Helvetica-Bold').fillColor(C.navy)
-    .text(betsData.portfolioSummary.totalTheses.toString(), col2X, statY + 16, { width: statBoxW, lineBreak: false });
-
-  // Generated date
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate600)
-    .text(`Generated: ${dateStr}`, M, statsY + 82, { width: PAGE_W, align: 'center' });
-
-  // Footer
-  doc.fontSize(10).font('Helvetica').fillColor(C.slate400)
-    .text('Powered by Frontera AI Strategy Coach', M, 720, { width: PAGE_W, align: 'center' });
-  doc.fontSize(8).fillColor(C.slate300)
-    .text('www.frontera.ai', M, 736, { width: PAGE_W, align: 'center' });
-
-  // ======================= PORTFOLIO SUMMARY =======================
-
-  doc.addPage();
-  doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
-    .text('Portfolio Summary', M, M, { width: PAGE_W });
-  doc.moveDown(1);
-
-  // Breakdown by thesis type
-  doc.fontSize(14).font('Helvetica-Bold').fillColor(C.slate700)
-    .text('Strategic Thesis Breakdown', M, doc.y, { width: PAGE_W });
-  doc.moveDown(0.8);
-
-  const byType = betsData.portfolioSummary.byThesisType;
-  const types = [
-    { key: 'offensive', label: 'Offensive Theses', color: getThesisTypeColor('offensive') },
-    { key: 'defensive', label: 'Defensive Theses', color: getThesisTypeColor('defensive') },
-    { key: 'capability', label: 'Capability Building', color: getThesisTypeColor('capability') },
-  ];
-
-  for (const { key, label, color } of types) {
-    const count = byType[key as keyof typeof byType] || 0;
-    ensureSpace(doc, 70);
-
-    const cardY = doc.y;
-
-    // Card background
-    doc.roundedRect(M, cardY, PAGE_W, 56, 6).fillAndStroke(color.bg, C.slate200);
-
-    // Label
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(color.text)
-      .text(label.toUpperCase(), M + 16, cardY + 14, { width: PAGE_W - 32, lineBreak: false });
-
-    // Count
-    doc.fontSize(22).font('Helvetica-Bold').fillColor(C.slate900)
-      .text(count.toString(), M + 16, cardY + 30, { width: PAGE_W - 32, lineBreak: false });
-
-    doc.y = cardY + 68;
+  // PAGES 3+: THESIS DETAILS
+  if (betsData.theses.length > 0) {
+    pageNum = renderThesisDetailsPages(pdf, betsData, pageNum);
   }
 
-  // Kill dates approaching warning
-  if (betsData.portfolioSummary.killDatesApproaching > 0) {
-    ensureSpace(doc, 70);
-    const warnY = doc.y;
-
-    doc.roundedRect(M, warnY, PAGE_W, 56, 6).fillAndStroke(C.amber50, C.amber500);
-
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(C.amber600)
-      .text('KILL DATES APPROACHING', M + 16, warnY + 14, { width: PAGE_W - 32, lineBreak: false });
-
-    doc.fontSize(16).font('Helvetica-Bold').fillColor(C.slate900)
-      .text(`${betsData.portfolioSummary.killDatesApproaching} bets within 30 days`, M + 16, warnY + 32, { width: PAGE_W - 32 });
-
-    doc.y = warnY + 68;
-  }
-
-  // Average score
-  doc.moveDown(1.2);
-  doc.fontSize(12).font('Helvetica-Bold').fillColor(C.slate700)
-    .text(`Average Portfolio Score: ${betsData.portfolioSummary.avgScore.toFixed(1)}/10`, M, doc.y, { width: PAGE_W });
-
-  // ======================= THESIS & BET DETAILS =======================
-
-  for (let thesisIndex = 0; thesisIndex < betsData.theses.length; thesisIndex++) {
-    const thesis = betsData.theses[thesisIndex];
-    const thesisColor = getThesisTypeColor(thesis.thesisType);
-    const bets = thesis.bets || [];
-
-    // Start new page for each thesis
-    doc.addPage();
-
-    // Thesis header
-    doc.fontSize(18).font('Helvetica-Bold').fillColor(C.slate900)
-      .text(`Thesis ${thesisIndex + 1}: ${truncate(thesis.title, 60)}`, M, M, { width: PAGE_W });
-    doc.moveDown(0.4);
-
-    // Thesis type badge
-    doc.fontSize(8).font('Helvetica-Bold').fillColor(thesisColor.text)
-      .text(thesis.thesisType.toUpperCase(), M, doc.y, { width: PAGE_W, lineBreak: false });
-    doc.moveDown(0.6);
-
-    // Thesis description
-    if (thesis.description) {
-      doc.fontSize(10).font('Helvetica').fillColor(C.slate700)
-        .text(thesis.description, M, doc.y, { width: PAGE_W, lineGap: 3 });
-      doc.moveDown(0.8);
-    }
-
-    // Divider
-    doc.save();
-    const divY = doc.y;
-    doc.moveTo(M, divY).lineTo(M + PAGE_W, divY).strokeColor(C.slate200).lineWidth(1).stroke();
-    doc.restore();
-    doc.y = divY + 16;
-
-    // Bets for this thesis
-    if (bets.length === 0) {
-      const emptyY = doc.y;
-      doc.roundedRect(M, emptyY, PAGE_W, 40, 6).fill(C.slate50);
-      doc.fontSize(10).font('Helvetica-Oblique').fillColor(C.slate500)
-        .text('No bets defined for this thesis yet', M, emptyY + 14, { width: PAGE_W, align: 'center' });
-      doc.y = emptyY + 50;
-    } else {
-      for (const bet of bets) {
-        // Calculate approximate height needed
-        let estimatedHeight = 100;
-        if (bet.killCriteria) estimatedHeight += 30;
-        if (bet.killDate) estimatedHeight += 20;
-        if (bet.evidenceLinks && bet.evidenceLinks.length > 0) estimatedHeight += 30;
-        if (bet.assumptionBeingTested) estimatedHeight += 30;
-
-        ensureSpace(doc, estimatedHeight);
-
-        const statusColor = getBetStatusColor(bet.status);
-        const betCardY = doc.y;
-        let currentY = betCardY;
-
-        // Calculate card height by rendering content in memory
-        const startY = currentY;
-
-        // Bet header section
-        currentY += 14; // top padding
-
-        // Bet title (can wrap, estimate 2 lines max)
-        const titleLines = Math.ceil(bet.bet.length / 70);
-        currentY += Math.min(titleLines, 2) * 14;
-        currentY += 8; // spacing after title
-
-        // Kill criteria
-        if (bet.killCriteria) {
-          currentY += 10; // label
-          const criteriaLines = Math.ceil(bet.killCriteria.length / 90);
-          currentY += Math.min(criteriaLines, 2) * 11;
-          currentY += 8;
-        }
-
-        // Kill date
-        if (bet.killDate) {
-          currentY += 11;
-          currentY += 8;
-        }
-
-        // Evidence
-        if (bet.evidenceLinks && bet.evidenceLinks.length > 0) {
-          currentY += 10; // label
-          currentY += Math.min(bet.evidenceLinks.length, 2) * 11;
-          if (bet.evidenceLinks.length > 2) currentY += 11;
-          currentY += 8;
-        }
-
-        // Assumption
-        if (bet.assumptionBeingTested) {
-          currentY += 10; // label
-          const assumptionLines = Math.ceil(bet.assumptionBeingTested.length / 90);
-          currentY += Math.min(assumptionLines, 2) * 11;
-        }
-
-        currentY += 14; // bottom padding
-
-        const cardHeight = currentY - startY;
-
-        // Draw card background
-        doc.roundedRect(M, betCardY, PAGE_W, cardHeight, 8).fillAndStroke(C.white, C.slate200);
-
-        // Draw colored top bar
-        doc.save();
-        doc.rect(M, betCardY, PAGE_W, 4).fill(thesisColor.text);
-        doc.restore();
-
-        // Now draw actual content
-        currentY = betCardY + 14;
-
-        // Bet title
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(C.slate900)
-          .text(truncate(bet.bet, 80), M + 12, currentY, { width: PAGE_W - 90, lineBreak: true });
-
-        // Status badge (top-right corner)
-        doc.save();
-        doc.roundedRect(M + PAGE_W - 70, betCardY + 10, 62, 18, 4).fill(statusColor.bg);
-        doc.fontSize(7).font('Helvetica-Bold').fillColor(statusColor.text)
-          .text(bet.status.toUpperCase(), M + PAGE_W - 70, betCardY + 15, { width: 62, align: 'center', lineBreak: false });
-        doc.restore();
-
-        currentY += Math.min(Math.ceil(bet.bet.length / 70), 2) * 14 + 8;
-
-        // Kill criteria
-        if (bet.killCriteria) {
-          doc.fontSize(7).font('Helvetica-Bold').fillColor(C.slate500)
-            .text('KILL CRITERIA', M + 12, currentY, { width: PAGE_W - 24, lineBreak: false });
-          currentY += 10;
-
-          doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
-            .text(truncate(bet.killCriteria, 150), M + 12, currentY, { width: PAGE_W - 24, lineBreak: true });
-          currentY += Math.min(Math.ceil(bet.killCriteria.length / 90), 2) * 11 + 8;
-        }
-
-        // Kill date
-        if (bet.killDate) {
-          const killDateApproaching = new Date(bet.killDate).getTime() - Date.now() < 30 * 24 * 60 * 60 * 1000;
-
-          doc.fontSize(7).font('Helvetica-Bold').fillColor(C.slate500)
-            .text('KILL DATE: ', M + 12, currentY, { continued: true, lineBreak: false });
-
-          doc.fontSize(9).font(killDateApproaching ? 'Helvetica-Bold' : 'Helvetica')
-            .fillColor(killDateApproaching ? C.amber600 : C.slate600)
-            .text(formatDate(bet.killDate) + (killDateApproaching ? ' (Approaching)' : ''), { lineBreak: false });
-
-          currentY += 11 + 8;
-        }
-
-        // Evidence links
-        if (bet.evidenceLinks && bet.evidenceLinks.length > 0) {
-          doc.fontSize(7).font('Helvetica-Bold').fillColor(C.slate500)
-            .text(`EVIDENCE (${bet.evidenceLinks.length})`, M + 12, currentY, { width: PAGE_W - 24, lineBreak: false });
-          currentY += 10;
-
-          for (let i = 0; i < Math.min(2, bet.evidenceLinks.length); i++) {
-            doc.save();
-            doc.circle(M + 16, currentY + 4, 2).fill(C.cyan600);
-            doc.restore();
-
-            doc.fontSize(8).font('Helvetica').fillColor(C.slate600)
-              .text('Linked to opportunity evidence', M + 24, currentY, { width: PAGE_W - 36, lineBreak: false });
-            currentY += 11;
-          }
-
-          if (bet.evidenceLinks.length > 2) {
-            doc.fontSize(8).font('Helvetica-Oblique').fillColor(C.slate500)
-              .text(`+${bet.evidenceLinks.length - 2} more`, M + 24, currentY, { width: PAGE_W - 36, lineBreak: false });
-            currentY += 11;
-          }
-          currentY += 8;
-        }
-
-        // Assumption being tested
-        if (bet.assumptionBeingTested) {
-          doc.fontSize(7).font('Helvetica-Bold').fillColor(C.slate500)
-            .text('ASSUMPTION BEING TESTED', M + 12, currentY, { width: PAGE_W - 24, lineBreak: false });
-          currentY += 10;
-
-          doc.fontSize(9).font('Helvetica').fillColor(C.slate600)
-            .text(truncate(bet.assumptionBeingTested, 150), M + 12, currentY, { width: PAGE_W - 24, lineBreak: true });
-          currentY += Math.min(Math.ceil(bet.assumptionBeingTested.length / 90), 2) * 11;
-        }
-
-        // Move doc.y past the card
-        doc.y = betCardY + cardHeight + 16;
-      }
-    }
-  }
-
-  // Add footers to all pages (except cover) now that all content is laid out
-  addFootersToAllPages(doc, companyName);
-
-  // Flush buffered pages before ending
-  doc.flushPages();
-  doc.end();
+  pdf.end();
 
   return new Promise<Buffer>((resolve, reject) => {
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', (err: Error) => reject(err));
+    pdf.on('end', () => resolve(Buffer.concat(chunks)));
+    pdf.on('error', (err: Error) => reject(err));
   });
 }
 
