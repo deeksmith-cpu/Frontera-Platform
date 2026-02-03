@@ -9,6 +9,8 @@ interface ThesisGroupProps {
   bets: StrategicBet[];
   onEditBet?: (bet: StrategicBet) => void;
   onDeleteBet?: (betId: string) => void;
+  selectedBetIds?: string[];
+  onToggleSelectBet?: (betId: string) => void;
 }
 
 function getThesisTypeDisplay(type: string) {
@@ -30,7 +32,7 @@ function getTimeHorizonLabel(horizon: string) {
   }
 }
 
-export function ThesisGroup({ thesis, bets, onEditBet, onDeleteBet }: ThesisGroupProps) {
+export function ThesisGroup({ thesis, bets, onEditBet, onDeleteBet, selectedBetIds, onToggleSelectBet }: ThesisGroupProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
   const [showDHM, setShowDHM] = useState(false);
@@ -163,6 +165,8 @@ export function ThesisGroup({ thesis, bets, onEditBet, onDeleteBet }: ThesisGrou
                 onToggleExpand={() => setExpandedBetId(expandedBetId === bet.id ? null : bet.id)}
                 onEdit={onEditBet}
                 onDelete={onDeleteBet}
+                isSelected={selectedBetIds?.includes(bet.id)}
+                onToggleSelect={onToggleSelectBet}
               />
             ))
           )}

@@ -11,6 +11,8 @@ interface BetCardProps {
   onToggleExpand?: () => void;
   onEdit?: (bet: StrategicBet) => void;
   onDelete?: (betId: string) => void;
+  isSelected?: boolean;
+  onToggleSelect?: (betId: string) => void;
 }
 
 function ScoreBar({ label, value, color }: { label: string; value: number; color: string }) {
@@ -59,7 +61,7 @@ function getKillDateStatus(killDate: string): { label: string; className: string
   return { label: `${daysUntil}d remaining`, className: 'bg-slate-100 text-slate-600' };
 }
 
-export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDelete }: BetCardProps) {
+export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDelete, isSelected = false, onToggleSelect }: BetCardProps) {
   const [showEvidence, setShowEvidence] = useState(false);
   const [showRisks, setShowRisks] = useState(false);
 
@@ -67,11 +69,37 @@ export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDel
   const priorityDisplay = getPriorityDisplay(bet.priorityLevel);
   const killDateStatus = getKillDateStatus(bet.killDate);
 
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleSelect) {
+      onToggleSelect(bet.id);
+    }
+  };
+
   return (
-    <div className={`bg-white border rounded-2xl transition-all duration-300 ${isExpanded ? 'border-cyan-400 shadow-lg' : 'border-slate-200 hover:border-cyan-300 hover:shadow-md'}`}>
+    <div className={`bg-white border rounded-2xl transition-all duration-300 ${isExpanded ? 'border-cyan-400 shadow-lg' : isSelected ? 'border-cyan-500 bg-cyan-50/30 shadow-md' : 'border-slate-200 hover:border-cyan-300 hover:shadow-md'}`}>
       {/* Header - Always visible */}
       <div className="p-5 cursor-pointer" onClick={onToggleExpand}>
         <div className="flex items-start justify-between gap-4">
+          {/* Selection Checkbox */}
+          {onToggleSelect && (
+            <div className="flex-shrink-0 pt-1">
+              <button
+                onClick={handleCheckboxClick}
+                className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
+                  isSelected
+                    ? 'bg-cyan-600 border-cyan-600'
+                    : 'bg-white border-slate-300 hover:border-cyan-400'
+                }`}
+              >
+                {isSelected && (
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             {/* Status + Priority badges */}
             <div className="flex items-center gap-2 mb-2 flex-wrap">

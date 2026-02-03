@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Database } from '@/types/database';
-import type { BetsResponse, StrategicBet } from '@/types/bets';
+import type { BetsResponse, StrategicBet, StrategyDocumentContent } from '@/types/bets';
 import type { SynthesisResult } from '@/types/synthesis';
 import { ThesisGroup } from './ThesisGroup';
 import { BetCard } from './BetCard';
 import { CreateBetModal } from './CreateBetModal';
+import { BetSelectionPanel } from './BetSelectionPanel';
+import { StrategyDocumentPreview } from './StrategyDocumentPreview';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 
@@ -31,6 +33,15 @@ export function BetsSection({ conversation }: BetsSectionProps) {
   const [editingBet, setEditingBet] = useState<StrategicBet | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Selection state (for strategy document)
+  const [selectedBetIds, setSelectedBetIds] = useState<string[]>([]);
+
+  // Strategy document state
+  const [isCreatingStrategy, setIsCreatingStrategy] = useState(false);
+  const [strategyDocument, setStrategyDocument] = useState<{ id: string; content: StrategyDocumentContent } | null>(null);
+  const [showStrategyPreview, setShowStrategyPreview] = useState(false);
+  const [isExportingStrategy, setIsExportingStrategy] = useState(false);
   // Fetch bets data
   const fetchBets = useCallback(async () => {
     try {
@@ -162,6 +173,84 @@ export function BetsSection({ conversation }: BetsSectionProps) {
     }
   }, [conversation.id]);
 
+  // Selection handlers
+  const handleToggleSelectBet = useCallback((betId: string) => {
+    setSelectedBetIds((prev) =>
+      prev.includes(betId) ? prev.filter((id) => id !== betId) : [...prev, betId]
+    );
+  }, []);
+
+  // Strategy document handlers
+  const handleCreateStrategy = useCallback(async () => {
+    if (selectedBetIds.length < 3) {
+      alert('Please select at least 3 bets to create your Product Strategy Draft.');
+      return;
+    }
+
+    setIsCreatingStrategy(true);
+    try {
+      const response = await fetch('/api/product-strategy-agent/bets/strategy-document/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          selected_bet_ids: selectedBetIds,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        alert(errData.error || 'Failed to generate strategy document');
+        return;
+      }
+
+      const data = await response.json();
+      setStrategyDocument({ id: data.document_id, content: data.document_content });
+      setShowStrategyPreview(true);
+    } catch (err) {
+      console.error('Error creating strategy:', err);
+      alert('Failed to create strategy document. Please try again.');
+    } finally {
+      setIsCreatingStrategy(false);
+    }
+  }, [conversation.id, selectedBetIds]);
+
+  const handleExportStrategy = useCallback(async () => {
+    if (!strategyDocument) return;
+
+    setIsExportingStrategy(true);
+    try {
+      const response = await fetch('/api/product-strategy-agent/bets/strategy-document/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          document_id: strategyDocument.id,
+        }),
+      });
+
+      if (!response.ok) {
+        alert('Failed to export strategy document');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `product-strategy-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Error exporting strategy:', err);
+      alert('Failed to export strategy PDF. Please try again.');
+    } finally {
+      setIsExportingStrategy(false);
+    }
+  }, [conversation.id, strategyDocument]);
+
   // Quality gate check
   const qualityGateMet = betsData
     ? betsData.portfolioSummary.totalBets >= 3 &&
@@ -287,6 +376,8 @@ export function BetsSection({ conversation }: BetsSectionProps) {
                 bets={thesisWithBets.bets}
                 onEditBet={handleEditBet}
                 onDeleteBet={handleDeleteBet}
+                selectedBetIds={selectedBetIds}
+                onToggleSelectBet={handleToggleSelectBet}
               />
             ))}
           </div>
@@ -301,6 +392,8 @@ export function BetsSection({ conversation }: BetsSectionProps) {
                   bet={bet}
                   onEdit={handleEditBet}
                   onDelete={handleDeleteBet}
+                  isSelected={selectedBetIds.includes(bet.id)}
+                  onToggleSelect={handleToggleSelectBet}
                 />
               ))}
             </div>
@@ -354,6 +447,13 @@ export function BetsSection({ conversation }: BetsSectionProps) {
               </button>
             </div>
           </div>
+
+          {/* Bet Selection Panel */}
+          <BetSelectionPanel
+            selectedBetIds={selectedBetIds}
+            onCreateStrategy={handleCreateStrategy}
+            isCreating={isCreatingStrategy}
+          />
         </>
       )}
       {/* Create/Edit Modal */}
@@ -372,6 +472,18 @@ export function BetsSection({ conversation }: BetsSectionProps) {
             setEditingBet(null);
             await fetchBets();
           }}
+        />
+      )}
+
+      {/* Strategy Document Preview Modal */}
+      {showStrategyPreview && strategyDocument && (
+        <StrategyDocumentPreview
+          documentContent={strategyDocument.content}
+          documentId={strategyDocument.id}
+          conversationId={conversation.id}
+          onExportPDF={handleExportStrategy}
+          onClose={() => setShowStrategyPreview(false)}
+          isExporting={isExportingStrategy}
         />
       )}
     </div>

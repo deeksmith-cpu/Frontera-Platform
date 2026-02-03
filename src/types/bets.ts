@@ -136,3 +136,66 @@ export interface GenerateBetsResponse {
   theses: StrategicThesis[];
   bets: StrategicBet[];
 }
+
+export interface StrategyDocumentContent {
+  executiveSummary: {
+    companyOverview: string;
+    strategicIntent: string;
+    keyFindings: string[];
+    topOpportunities: string[];
+    recommendedBets: string;
+  };
+  ptwCascade: {
+    winningAspiration: string;
+    whereToPlay: string[];
+    howToWin: string[];
+    capabilities: string[];
+    managementSystems: string[];
+  };
+  selectedBets: Array<{
+    id: string;
+    thesisTitle: string;
+    thesisType: ThesisType;
+    hypothesis: {
+      job: string;
+      belief: string;
+      bet: string;
+      success: string;
+      kill: {
+        criteria: string;
+        date: string;
+      };
+    };
+    scoring: StrategicScoring;
+    risks: StrategicRisks;
+    evidence: EvidenceLink[];
+  }>;
+  portfolioView: {
+    coherenceAnalysis: string;
+    balance: {
+      offensive: number;
+      defensive: number;
+      capability: number;
+    };
+    sequencing: Array<{
+      betId: string;
+      dependsOn: string[];
+    }>;
+    resourceAllocation: Array<{
+      allocation: string;
+      betCount: number;
+    }>;
+    dhmCoverage: {
+      delight: number;
+      hardToCopy: number;
+      marginEnhancing: number;
+    };
+  };
+  nextSteps: {
+    validationTimeline: string;
+    governance: string;
+    trackingPlan: string;
+    killCriteriaReview: string;
+    nextTopics: string[];
+  };
+}
