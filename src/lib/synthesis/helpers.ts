@@ -112,9 +112,16 @@ export function determineConfidence(
 
 /**
  * Validate and normalize opportunity type
+ *
+ * @deprecated Legacy type validation. New opportunities should use 'paired_strategy'.
  */
 export function validateOpportunityType(type: string): OpportunityType {
-  const validTypes: OpportunityType[] = ['where_to_play', 'how_to_win', 'capability_gap'];
+  const validTypes: OpportunityType[] = [
+    'where_to_play',      // deprecated
+    'how_to_win',         // deprecated
+    'capability_gap',     // deprecated
+    'paired_strategy',    // new default
+  ];
 
   const normalized = type.toLowerCase().replace(/\s+/g, '_') as OpportunityType;
 
@@ -122,8 +129,8 @@ export function validateOpportunityType(type: string): OpportunityType {
     return normalized;
   }
 
-  // Default to where_to_play if invalid
-  return 'where_to_play';
+  // Default to paired_strategy for new opportunities
+  return 'paired_strategy';
 }
 
 /**
@@ -208,11 +215,26 @@ function parseOpportunity(raw: RawClaudeOpportunity): StrategicOpportunity {
     riskIfFalse: a.riskIfFalse || '',
   }));
 
+  // Validate WTP and HTW pairing (core of Playing to Win framework)
+  const whereToPlay = raw.ptw?.whereToPlay?.trim() || '';
+  const howToWin = raw.ptw?.howToWin?.trim() || '';
+
+  // Warn if WTP or HTW is missing (violates PTW framework)
+  if (!whereToPlay || !howToWin) {
+    console.warn(
+      `Opportunity "${raw.title}" missing WTP or HTW pairing - this violates Playing to Win framework`,
+      { whereToPlay: !!whereToPlay, howToWin: !!howToWin }
+    );
+  }
+
   return {
     id,
     title: raw.title || 'Untitled Opportunity',
     description: raw.description || '',
-    opportunityType: validateOpportunityType(raw.opportunityType || 'where_to_play'),
+    // opportunityType is now optional - default to 'paired_strategy' for new opportunities
+    opportunityType: raw.opportunityType
+      ? validateOpportunityType(raw.opportunityType)
+      : 'paired_strategy',
     scoring: {
       marketAttractiveness,
       capabilityFit,
@@ -223,8 +245,8 @@ function parseOpportunity(raw: RawClaudeOpportunity): StrategicOpportunity {
     confidence: determineConfidence(evidence.length, assumptions.length),
     ptw: {
       winningAspiration: raw.ptw?.winningAspiration || '',
-      whereToPlay: raw.ptw?.whereToPlay || '',
-      howToWin: raw.ptw?.howToWin || '',
+      whereToPlay,
+      howToWin,
       capabilitiesRequired: raw.ptw?.capabilitiesRequired || [],
       managementSystems: raw.ptw?.managementSystems || [],
     },

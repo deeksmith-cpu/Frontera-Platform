@@ -400,9 +400,14 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
           {/* Opportunity Cards */}
           {synthesis.opportunities.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
-                Strategic Opportunities ({synthesis.opportunities.length})
-              </h3>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Strategic Hypotheses ({synthesis.opportunities.length})
+                </h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Each hypothesis pairs a Where to Play choice with a How to Win advantage
+                </p>
+              </div>
               <div className="space-y-4">
                 {synthesis.opportunities.map((opportunity) => (
                   <div key={opportunity.id} id={`opportunity-${opportunity.id}`}>
@@ -457,36 +462,77 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-center gap-4 pt-6">
-            {/* Export PDF Button */}
-            <button
-              onClick={handleExportPDF}
-              disabled={isExporting}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#fbbf24] text-slate-900 font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isExporting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Generating PDF...</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Export PDF</span>
-                </>
-              )}
-            </button>
+          <div className="space-y-6 pt-6">
+            {/* Proceed to Strategic Bets CTA */}
+            <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 border-2 border-emerald-200 rounded-2xl p-6 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-lg font-bold text-slate-900">Strategic Synthesis Complete</h3>
+              </div>
+              <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
+                Your strategic opportunities are mapped and ready. Now translate these insights into testable strategic bets with clear hypotheses and success criteria.
+              </p>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/product-strategy-agent/phase', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        conversation_id: conversation.id,
+                        phase: 'bets',
+                      }),
+                    });
+                    if (response.ok) {
+                      window.location.reload();
+                    }
+                  } catch (error) {
+                    console.error('Failed to navigate to Strategic Bets:', error);
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                <span>Proceed to Strategic Bets</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
 
-            {/* Regenerate Button */}
-            <button
-              onClick={handleGenerateSynthesis}
-              disabled={isGenerating}
-              className="text-sm text-slate-500 hover:text-[#1a1f3a] font-medium transition-colors disabled:opacity-50"
-            >
-              {isGenerating ? 'Regenerating...' : 'Regenerate Synthesis'}
-            </button>
+            {/* Secondary Actions */}
+            <div className="flex items-center justify-center gap-4">
+              {/* Export PDF Button */}
+              <button
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#fbbf24] text-slate-900 font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Generating PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Export PDF</span>
+                  </>
+                )}
+              </button>
+
+              {/* Regenerate Button */}
+              <button
+                onClick={handleGenerateSynthesis}
+                disabled={isGenerating}
+                className="text-sm text-slate-500 hover:text-[#1a1f3a] font-medium transition-colors disabled:opacity-50"
+              >
+                {isGenerating ? 'Regenerating...' : 'Regenerate Synthesis'}
+              </button>
+            </div>
           </div>
 
           {/* Export Error */}

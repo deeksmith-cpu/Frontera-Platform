@@ -233,6 +233,28 @@ export async function POST(req: NextRequest) {
 
 ${researchContext}
 
+# Playing to Win Framework Principles
+
+**CRITICAL:** Where to Play and How to Win are INTERDEPENDENT strategic choices, not separate categories.
+
+Each opportunity must represent a COMPLETE strategic hypothesis where:
+- **WHERE to play** = Specific market segment, customer type, geography, or channel
+- **HOW to win** = The competitive advantage that makes sense GIVEN your where to play choice
+
+The pairing must be coherent: your choice of WHERE constrains and enables HOW you compete.
+
+**Good Pairing Example:**
+- WHERE: "Small-to-medium retail businesses (10-500 employees) without dedicated data teams"
+- HOW: "Automated AI analytics requiring zero technical expertise, 10x faster setup than enterprise tools"
+- WHY IT WORKS: SMB retailers lack data science resources, so easy automation is the key advantage
+
+**Bad Pairing Example:**
+- WHERE: "Enterprise healthcare organizations"
+- HOW: "Low-cost, self-service deployment model"
+- WHY IT FAILS: Enterprise healthcare expects high-touch service and compliance support, so self-service conflicts with segment needs
+
+Think: "If we focus on [THIS specific market], we can win by [THIS specific differentiation that makes sense for THAT market]"
+
 # Your Task
 
 Analyze this research to generate a strategic synthesis. Return your analysis as a **valid JSON object** with the following structure:
@@ -242,9 +264,9 @@ Analyze this research to generate a strategic synthesis. Return your analysis as
   "executiveSummary": "2-3 sentence strategic summary of the key findings and recommended direction",
   "opportunities": [
     {
-      "title": "Opportunity name (5-8 words)",
-      "description": "2-3 sentence description explaining the opportunity and why it matters",
-      "opportunityType": "where_to_play|how_to_win|capability_gap",
+      "title": "[Value Proposition] for [Target Segment]",
+      "description": "2-3 sentences explaining the PAIRED WTP+HTW strategy and why this combination creates competitive advantage",
+      "opportunityType": "paired_strategy",
       "scoring": {
         "marketAttractiveness": 1-10,
         "capabilityFit": 1-10,
@@ -258,16 +280,16 @@ Analyze this research to generate a strategic synthesis. Return your analysis as
         }
       ],
       "ptw": {
-        "winningAspiration": "What winning looks like for this opportunity",
-        "whereToPlay": "Specific segment, market, or customer focus",
-        "howToWin": "The competitive advantage or differentiation strategy",
-        "capabilitiesRequired": ["capability1", "capability2"],
-        "managementSystems": ["metric1", "metric2"]
+        "winningAspiration": "What winning looks like for THIS paired strategy",
+        "whereToPlay": "Specific market segment, customer type, geography, or channel (REQUIRED - be specific)",
+        "howToWin": "The competitive advantage or differentiation that makes sense GIVEN the whereToPlay choice (REQUIRED - explain the fit)",
+        "capabilitiesRequired": ["Capabilities needed to execute BOTH the WTP and HTW together"],
+        "managementSystems": ["Metrics to track progress on THIS integrated strategy"]
       },
       "assumptions": [
         {
           "category": "customer|company|competitor|economics",
-          "assumption": "A testable hypothesis that must be true for this opportunity to succeed",
+          "assumption": "A testable hypothesis about the WTP/HTW pairing that must be true for success",
           "testMethod": "How to validate this assumption",
           "riskIfFalse": "What happens if this assumption is wrong"
         }
@@ -297,6 +319,18 @@ Analyze this research to generate a strategic synthesis. Return your analysis as
 }
 \`\`\`
 
+## Title Guidelines
+
+Format: "[Value Proposition] for [Target Segment]" (4-6 words)
+
+Examples:
+- "AI-Powered Analytics for SMB Retailers"
+- "Enterprise Identity Platform for FinTech"
+- "Personalized Learning for Community Colleges"
+- "Automated Compliance for Mid-Market Banks"
+
+Capture BOTH where to play (segment) AND how to win (value proposition) in the title.
+
 ## Scoring Guidelines
 
 **Market Attractiveness (1-10):**
@@ -322,12 +356,13 @@ Analyze this research to generate a strategic synthesis. Return your analysis as
 
 ## Requirements
 
-1. Generate **3-5 strategic opportunities** across the three types (where_to_play, how_to_win, capability_gap)
-2. Generate **2-3 strategic tensions** where research insights conflict
-3. Provide **exactly 3 priority recommendations** as actionable next steps
-4. Include **at least 2 evidence quotes** per opportunity, citing the exact research
-5. Include **at least 2 WWHBT assumptions** per opportunity
-6. All JSON must be valid and parseable
+1. Generate **3-5 integrated strategic hypotheses** (NOT separate where_to_play/how_to_win/capability_gap types)
+2. Each opportunity MUST have coherent WTP+HTW pairing (explain why they fit together in the description)
+3. Generate **2-3 strategic tensions** where research insights conflict
+4. Provide **exactly 3 priority recommendations** as actionable next steps
+5. Include **at least 2 evidence quotes** per opportunity, citing the exact research
+6. Include **at least 2 WWHBT assumptions** per opportunity that test the WTP/HTW pairing
+7. All JSON must be valid and parseable
 
 Return ONLY the JSON object, no additional text before or after.`;
 
@@ -451,11 +486,26 @@ Return ONLY the JSON object, no additional text before or after.`;
       );
     }
 
-    // Update conversation phase to synthesis
+    // Update conversation phase to synthesis and unlock bets phase
+    // Fetch current framework_state to update it
+    const { data: currentConv } = await rawSupabase
+      .from('conversations')
+      .select('framework_state')
+      .eq('id', conversation_id)
+      .single();
+
+    const existingFrameworkState = (currentConv?.framework_state as Record<string, unknown>) || {};
+    const updatedFrameworkState = {
+      ...existingFrameworkState,
+      currentPhase: 'synthesis',
+      highestPhaseReached: 'bets', // Unlock bets phase after synthesis
+    };
+
     await rawSupabase
       .from('conversations')
       .update({
         current_phase: 'synthesis',
+        framework_state: updatedFrameworkState,
         updated_at: new Date().toISOString(),
       })
       .eq('id', conversation_id);

@@ -81,15 +81,8 @@ export function OpportunityCard({
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            {/* Type Badge */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                {formatOpportunityType(opportunity.opportunityType)}
-              </span>
-            </div>
-
-            {/* Title */}
-            <h4 className="text-base font-bold text-slate-900 leading-tight">
+            {/* Title (no type badge for paired strategies) */}
+            <h4 className="text-base font-bold text-slate-900 leading-tight mt-1">
               {opportunity.title}
             </h4>
 
@@ -167,7 +160,7 @@ export function OpportunityCard({
             />
           </div>
 
-          {/* PTW Summary Section */}
+          {/* PTW Summary Section - Emphasizing WTP/HTW Pairing */}
           <div className="border-t border-slate-100 pt-4">
             <button
               onClick={(e) => {
@@ -177,7 +170,7 @@ export function OpportunityCard({
               className="w-full flex items-center justify-between text-left"
             >
               <span className="text-sm font-semibold text-slate-900">
-                Playing to Win Mapping
+                Strategic Hypothesis (Where to Play + How to Win)
               </span>
               <svg
                 className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${showPTW ? 'rotate-180' : ''}`}
@@ -190,19 +183,49 @@ export function OpportunityCard({
             </button>
 
             {showPTW && (
-              <div className="mt-3 space-y-3 text-sm">
+              <div className="mt-3 space-y-4 text-sm">
+                {/* NEW: Gradient box highlighting WTP/HTW pairing */}
+                <div className="p-4 bg-gradient-to-r from-indigo-50 to-cyan-50 border border-indigo-200 rounded-xl">
+                  <div className="space-y-3">
+                    {/* Where to Play */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                          Where to Play
+                        </span>
+                      </div>
+                      <p className="text-slate-900 font-medium leading-relaxed">
+                        {opportunity.ptw.whereToPlay || 'Not defined'}
+                      </p>
+                    </div>
+
+                    {/* Visual Connector */}
+                    <div className="flex items-center justify-center">
+                      <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+                      </svg>
+                    </div>
+
+                    {/* How to Win */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-cyan-700 uppercase tracking-wider">
+                          How to Win
+                        </span>
+                      </div>
+                      <p className="text-slate-900 font-medium leading-relaxed">
+                        {opportunity.ptw.howToWin || 'Not defined'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Supporting Elements */}
                 <div>
                   <span className="font-semibold text-[#1a1f3a]">Winning Aspiration:</span>
                   <p className="text-slate-600 mt-0.5">{opportunity.ptw.winningAspiration || 'Not defined'}</p>
                 </div>
-                <div>
-                  <span className="font-semibold text-[#1a1f3a]">Where to Play:</span>
-                  <p className="text-slate-600 mt-0.5">{opportunity.ptw.whereToPlay || 'Not defined'}</p>
-                </div>
-                <div>
-                  <span className="font-semibold text-[#1a1f3a]">How to Win:</span>
-                  <p className="text-slate-600 mt-0.5">{opportunity.ptw.howToWin || 'Not defined'}</p>
-                </div>
+
                 {opportunity.ptw.capabilitiesRequired.length > 0 && (
                   <div>
                     <span className="font-semibold text-[#1a1f3a]">Capabilities Required:</span>

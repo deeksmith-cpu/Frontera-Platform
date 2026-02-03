@@ -1,6 +1,6 @@
 import React from 'react';
 import { Page, View, Text, Svg, Rect, Circle, G, Line } from '@react-pdf/renderer';
-import { styles, COLORS, QUADRANT_COLORS, OPPORTUNITY_TYPE_COLORS } from './styles';
+import { styles, COLORS, QUADRANT_COLORS } from './styles';
 import type { StrategicOpportunity } from '@/types/synthesis';
 import { PageFooter } from './PageFooter';
 
@@ -24,9 +24,15 @@ export function StrategicMapPage({ opportunities, companyName }: StrategicMapPag
     return { x, y };
   };
 
-  // Get dot color based on opportunity type
-  const getDotColor = (type: string) => {
-    return OPPORTUNITY_TYPE_COLORS[type as keyof typeof OPPORTUNITY_TYPE_COLORS] || COLORS.slate[500];
+  // Get dot color based on quadrant
+  const getDotColor = (quadrant: string) => {
+    switch (quadrant) {
+      case 'invest': return COLORS.emerald[500];
+      case 'explore': return COLORS.cyan[500];
+      case 'harvest': return COLORS.amber[500];
+      case 'divest': return COLORS.slate[400];
+      default: return COLORS.slate[500];
+    }
   };
 
   // Get dot size based on overall score
@@ -124,7 +130,7 @@ export function StrategicMapPage({ opportunities, companyName }: StrategicMapPag
           {/* Opportunity dots */}
           {opportunities.map((opp, index) => {
             const pos = getPosition(opp);
-            const color = getDotColor(opp.opportunityType);
+            const color = getDotColor(opp.quadrant);
             const size = getDotSize(opp.scoring.overallScore);
             return (
               <Circle
@@ -163,23 +169,6 @@ export function StrategicMapPage({ opportunities, companyName }: StrategicMapPag
         <View style={[styles.row, { gap: 4 }]}>
           <View style={{ width: 12, height: 12, backgroundColor: QUADRANT_COLORS.divest.bg, borderRadius: 2 }} />
           <Text style={styles.bodySmall}>DIVEST</Text>
-        </View>
-      </View>
-
-      {/* Legend - Opportunity Types */}
-      <Text style={[styles.label, styles.mb8]}>Opportunity Types</Text>
-      <View style={[styles.row, { gap: 16, marginBottom: 20 }]}>
-        <View style={[styles.row, { gap: 6 }]}>
-          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.navy.DEFAULT }} />
-          <Text style={styles.bodySmall}>Where to Play</Text>
-        </View>
-        <View style={[styles.row, { gap: 6 }]}>
-          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.cyan[600] }} />
-          <Text style={styles.bodySmall}>How to Win</Text>
-        </View>
-        <View style={[styles.row, { gap: 6 }]}>
-          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.amber[600] }} />
-          <Text style={styles.bodySmall}>Capability Gap</Text>
         </View>
       </View>
 

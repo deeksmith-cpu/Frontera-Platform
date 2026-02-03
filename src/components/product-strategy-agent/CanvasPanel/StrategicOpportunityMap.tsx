@@ -34,22 +34,25 @@ export function StrategicOpportunityMap({
     return { x, y };
   };
 
-  // Get color based on opportunity type and selection state
+  // Get color based on quadrant and selection state
   const getDotColor = (opp: StrategicOpportunity) => {
     const isSelected = opp.id === selectedOpportunityId;
     const isHovered = opp.id === hoveredId;
 
-    if (isSelected || isHovered) {
-      return 'bg-[#1a1f3a]';
-    }
+    // Selection/hover states
+    if (isSelected) return 'bg-[#fbbf24]';  // Gold for selected
+    if (isHovered) return 'bg-[#1a1f3a]';   // Navy for hover
 
-    switch (opp.opportunityType) {
-      case 'where_to_play':
-        return 'bg-indigo-500';
-      case 'how_to_win':
-        return 'bg-cyan-500';
-      case 'capability_gap':
+    // Color by QUADRANT (not type - more strategically meaningful)
+    switch (opp.quadrant) {
+      case 'invest':
+        return 'bg-emerald-500';
+      case 'explore':
+        return 'bg-blue-500';
+      case 'harvest':
         return 'bg-amber-500';
+      case 'divest':
+        return 'bg-slate-400';
       default:
         return 'bg-slate-500';
     }
@@ -70,16 +73,16 @@ export function StrategicOpportunityMap({
         <h3 className="text-lg font-bold text-slate-900">Strategic Opportunity Map</h3>
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
-            <span className="text-slate-600">Where to Play</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            <span className="text-slate-600">Invest</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
-            <span className="text-slate-600">How to Win</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+            <span className="text-slate-600">Explore</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-            <span className="text-slate-600">Capability Gap</span>
+            <span className="text-slate-600">Harvest</span>
           </div>
         </div>
       </div>

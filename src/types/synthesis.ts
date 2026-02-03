@@ -67,17 +67,33 @@ export type ConfidenceLevel = 'low' | 'medium' | 'high';
 
 /**
  * Type of strategic opportunity
+ *
+ * @deprecated 'where_to_play', 'how_to_win', and 'capability_gap' are deprecated.
+ * Use 'paired_strategy' for new opportunities. Legacy types kept for backward compatibility.
  */
-export type OpportunityType = 'where_to_play' | 'how_to_win' | 'capability_gap';
+export type OpportunityType =
+  | 'where_to_play'      // DEPRECATED
+  | 'how_to_win'         // DEPRECATED
+  | 'capability_gap'     // DEPRECATED
+  | 'paired_strategy';   // Integrated WTP+HTW strategic hypothesis
 
 /**
  * A strategic opportunity identified through research triangulation
+ *
+ * Each opportunity represents a complete Playing to Win strategic hypothesis,
+ * pairing a specific WHERE TO PLAY choice with a coherent HOW TO WIN advantage.
  */
 export interface StrategicOpportunity {
   id: string;
   title: string;
   description: string;
-  opportunityType: OpportunityType;
+
+  /**
+   * @deprecated Use ptw.whereToPlay and ptw.howToWin instead for WTP/HTW pairing.
+   * Kept for backward compatibility with existing synthesis outputs.
+   * New opportunities should use 'paired_strategy' or omit this field.
+   */
+  opportunityType?: OpportunityType;
 
   // Scoring and placement
   scoring: OpportunityScoring;

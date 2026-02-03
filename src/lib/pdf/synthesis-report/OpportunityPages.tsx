@@ -14,11 +14,6 @@ interface OpportunityPagesProps {
 function OpportunityCard({ opportunity, index }: { opportunity: StrategicOpportunity; index: number }) {
   const quadrantStyle = getQuadrantBadgeStyle(opportunity.quadrant);
 
-  // Format opportunity type
-  const formatType = (type: string) => {
-    return type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-  };
-
   // Get territory color
   const getTerritoryColor = (territory: string) => {
     return TERRITORY_COLORS[territory as keyof typeof TERRITORY_COLORS] || COLORS.slate[500];
@@ -77,9 +72,6 @@ function OpportunityCard({ opportunity, index }: { opportunity: StrategicOpportu
 
       {/* Description */}
       <Text style={[styles.bodySmall, styles.mb8]}>{opportunity.description}</Text>
-
-      {/* Type */}
-      <Text style={[styles.caption, styles.mb8]}>Type: {formatType(opportunity.opportunityType)}</Text>
 
       {/* Scoring Row */}
       <View style={[styles.row, styles.mb8, { gap: 12 }]}>
