@@ -388,24 +388,24 @@ function renderPTWCascade(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentCont
   currentY = pdf.y + 30;
 
   // Winning Aspiration (hero card)
-  drawCard(pdf, M, currentY, CONTENT_W, 90, C.navy);
+  drawCard(pdf, M, currentY, CONTENT_W, 110, C.navy);
   pdf.fontSize(10).fillColor(C.gold).font('Helvetica-Bold');
   pdf.text('WINNING ASPIRATION', M + 20, currentY + 16, { width: CONTENT_W - 40 });
-  pdf.fontSize(14).fillColor(C.white).font('Helvetica');
+  pdf.fontSize(12).fillColor(C.white).font('Helvetica');
   pdf.text(cascade.winningAspiration, M + 20, currentY + 36, { width: CONTENT_W - 40, lineGap: 3 });
-  currentY += 110;
+  currentY += 130;
 
   // Two-column layout
   const colW = (CONTENT_W - 20) / 2;
 
   // Where to Play
-  const wtpHeight = 140;
+  const wtpHeight = 180;
   drawCard(pdf, M, currentY, colW, wtpHeight, C.cyan50, C.cyan200);
   pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
   pdf.text('WHERE TO PLAY', M + 16, currentY + 14, { width: colW - 32 });
 
   let itemY = currentY + 34;
-  cascade.whereToPlay.slice(0, 4).forEach((wtp) => {
+  cascade.whereToPlay.slice(0, 5).forEach((wtp) => {
     pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
     pdf.text(`• ${wtp}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
     itemY = pdf.y + 6;
@@ -417,22 +417,22 @@ function renderPTWCascade(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentCont
   pdf.text('HOW TO WIN', M + colW + 36, currentY + 14, { width: colW - 32 });
 
   itemY = currentY + 34;
-  cascade.howToWin.slice(0, 4).forEach((htw) => {
+  cascade.howToWin.slice(0, 5).forEach((htw) => {
     pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
     pdf.text(`• ${htw}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
     itemY = pdf.y + 6;
   });
 
-  currentY += wtpHeight + 20;
+  currentY += wtpHeight + 16;
 
   // Capabilities
-  const capHeight = 120;
+  const capHeight = 160;
   drawCard(pdf, M, currentY, colW, capHeight, C.amber50, C.amber600);
   pdf.fontSize(10).fillColor(C.amber600).font('Helvetica-Bold');
   pdf.text('CORE CAPABILITIES', M + 16, currentY + 14, { width: colW - 32 });
 
   itemY = currentY + 34;
-  cascade.capabilities.slice(0, 4).forEach((cap) => {
+  cascade.capabilities.slice(0, 5).forEach((cap) => {
     pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
     pdf.text(`• ${cap}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
     itemY = pdf.y + 6;
@@ -444,7 +444,7 @@ function renderPTWCascade(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentCont
   pdf.text('MANAGEMENT SYSTEMS', M + colW + 36, currentY + 14, { width: colW - 32 });
 
   itemY = currentY + 34;
-  cascade.managementSystems.slice(0, 4).forEach((sys) => {
+  cascade.managementSystems.slice(0, 5).forEach((sys) => {
     pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
     pdf.text(`• ${sys}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
     itemY = pdf.y + 6;
