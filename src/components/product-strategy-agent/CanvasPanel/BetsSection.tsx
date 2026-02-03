@@ -30,6 +30,7 @@ export function BetsSection({ conversation }: BetsSectionProps) {
   // UI state
   const [editingBet, setEditingBet] = useState<StrategicBet | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   // Fetch bets data
   const fetchBets = useCallback(async () => {
     try {
@@ -127,6 +128,39 @@ export function BetsSection({ conversation }: BetsSectionProps) {
     setEditingBet(bet);
     setShowCreateModal(true);
   }, []);
+
+  // Handle export to PDF
+  const handleExportPDF = useCallback(async () => {
+    setIsExporting(true);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/bets/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversation.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Create download link
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `strategic-bets-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Error exporting PDF:', err);
+      alert('Failed to export PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [conversation.id]);
 
   // Quality gate check
   const qualityGateMet = betsData
@@ -300,13 +334,23 @@ export function BetsSection({ conversation }: BetsSectionProps) {
                 </span>
               )}
               <button
-                disabled={!qualityGateMet}
+                onClick={handleExportPDF}
+                disabled={!qualityGateMet || isExporting}
                 className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 bg-[#fbbf24] text-slate-900 text-xs sm:text-sm font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export Strategic Bets
+                {isExporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Strategic Bets
+                  </>
+                )}
               </button>
             </div>
           </div>
