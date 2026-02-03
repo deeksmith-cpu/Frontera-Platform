@@ -13,22 +13,40 @@ function getSupabaseAdmin() {
 // Brand colors
 const C = {
   navy: '#1a1f3a',
+  navyLight: '#2d3561',
   gold: '#fbbf24',
+  goldDark: '#d97706',
+  cyan50: '#ecfeff',
+  cyan100: '#cffafe',
   cyan200: '#a5f3fc',
+  cyan400: '#22d3ee',
   cyan600: '#0891b2',
-  slate900: '#0f172a',
-  slate700: '#334155',
-  slate600: '#475569',
-  slate500: '#64748b',
+  emerald50: '#ecfdf5',
+  emerald600: '#059669',
+  amber50: '#fffbeb',
+  amber600: '#d97706',
+  purple50: '#faf5ff',
+  purple600: '#9333ea',
+  red50: '#fef2f2',
+  red600: '#dc2626',
+  slate50: '#f8fafc',
+  slate100: '#f1f5f9',
+  slate200: '#e2e8f0',
   slate400: '#94a3b8',
+  slate500: '#64748b',
+  slate600: '#475569',
+  slate700: '#334155',
+  slate900: '#0f172a',
+  white: '#ffffff',
 };
 
 // Constants
-const M = 60; // margin
-const PAGE_W = 595.28 - M * 2; // A4 width minus margins
+const M = 50; // margin
+const PAGE_W = 595.28; // A4 width
+const PAGE_H = 841.89; // A4 height
+const CONTENT_W = PAGE_W - M * 2;
 
 // POST /api/product-strategy-agent/bets/strategy-document/export
-// Export 6-page Product Strategy Draft as PDF
 export async function POST(req: NextRequest) {
   try {
     const { userId, orgId } = await auth();
@@ -48,9 +66,7 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Fetch strategy document
     let query = supabase.from('strategy_documents').select('*');
-
     if (document_id) {
       query = query.eq('id', document_id);
     } else {
@@ -58,12 +74,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: strategyDoc, error: docError } = await query.single();
-
     if (docError || !strategyDoc) {
       return NextResponse.json({ error: 'Strategy document not found' }, { status: 404 });
     }
 
-    // Fetch client for company name
     const { data: client } = await supabase
       .from('clients')
       .select('company_name')
@@ -73,20 +87,13 @@ export async function POST(req: NextRequest) {
     const companyName = client?.company_name || 'Your Company';
     const doc: StrategyDocumentContent = strategyDoc.document_content;
 
-    console.log(`Generating Product Strategy PDF for: ${companyName}`);
-
-    // Generate PDF
     const pdfBuffer = await generateStrategyPDF(companyName, doc);
 
-    // Update exported_at timestamp
     await supabase
       .from('strategy_documents')
       .update({ exported_at: new Date().toISOString() })
       .eq('id', strategyDoc.id);
 
-    console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
-
-    // Return PDF
     const uint8Array = new Uint8Array(pdfBuffer);
     const filename = `product-strategy-${companyName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
 
@@ -104,7 +111,7 @@ export async function POST(req: NextRequest) {
 }
 
 // =============================================================================
-// PDF Generation
+// Types
 // =============================================================================
 
 interface StrategyDocumentContent {
@@ -159,34 +166,44 @@ interface StrategyDocumentContent {
   };
 }
 
+// =============================================================================
+// PDF Generation
+// =============================================================================
+
 async function generateStrategyPDF(companyName: string, doc: StrategyDocumentContent): Promise<Buffer> {
   const pdf = new PDFDocument({
     size: 'A4',
-    margins: { top: M, bottom: M, left: M, right: M },
+    margins: { top: 0, bottom: 0, left: 0, right: 0 },
     bufferPages: true,
   });
 
   const chunks: Buffer[] = [];
   pdf.on('data', (chunk: Buffer) => chunks.push(chunk));
 
-  // PAGE 1: EXECUTIVE SUMMARY
-  renderPage1(pdf, companyName, doc.executiveSummary);
+  let pageNum = 1;
+
+  // PAGE 1: COVER / EXECUTIVE SUMMARY
+  renderCoverPage(pdf, companyName, doc.executiveSummary, doc.selectedBets.length);
+  addFooter(pdf, pageNum++);
 
   // PAGE 2: PTW CASCADE
   pdf.addPage();
-  renderPage2(pdf, doc.ptwCascade);
+  renderPTWCascade(pdf, doc.ptwCascade);
+  addFooter(pdf, pageNum++);
 
-  // PAGES 3-4: SELECTED BETS
+  // PAGES 3+: STRATEGIC BETS
   pdf.addPage();
-  renderPages3and4(pdf, doc.selectedBets);
+  pageNum = renderStrategicBets(pdf, doc.selectedBets, pageNum);
 
-  // PAGE 5: PORTFOLIO VIEW
+  // PAGE: PORTFOLIO VIEW
   pdf.addPage();
-  renderPage5(pdf, doc.portfolioView);
+  renderPortfolioView(pdf, doc.portfolioView, doc.selectedBets.length);
+  addFooter(pdf, pageNum++);
 
-  // PAGE 6: NEXT STEPS
+  // PAGE: NEXT STEPS
   pdf.addPage();
-  renderPage6(pdf, doc.nextSteps);
+  renderNextSteps(pdf, doc.nextSteps);
+  addFooter(pdf, pageNum++);
 
   pdf.end();
   return new Promise<Buffer>((resolve, reject) => {
@@ -195,287 +212,438 @@ async function generateStrategyPDF(companyName: string, doc: StrategyDocumentCon
   });
 }
 
-function renderPage1(
+// =============================================================================
+// Helper Functions
+// =============================================================================
+
+function addFooter(pdf: PDFKit.PDFDocument, pageNum: number) {
+  // Gold accent line
+  pdf.moveTo(M, PAGE_H - 40).lineTo(PAGE_W - M, PAGE_H - 40).strokeColor(C.gold).lineWidth(2).stroke();
+
+  // Footer text
+  pdf.fontSize(8).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Frontera Product Strategy Coach', M, PAGE_H - 30, { width: CONTENT_W / 2, align: 'left' });
+  pdf.text(`Page ${pageNum}`, M + CONTENT_W / 2, PAGE_H - 30, { width: CONTENT_W / 2, align: 'right' });
+}
+
+function drawSectionHeader(pdf: PDFKit.PDFDocument, title: string, y: number, icon?: string): number {
+  // Gold accent bar
+  pdf.rect(M, y, 4, 24).fill(C.gold);
+
+  // Title
+  pdf.fontSize(18).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text(title.toUpperCase(), M + 16, y + 3, { width: CONTENT_W - 16 });
+
+  return pdf.y + 20;
+}
+
+function drawCard(
+  pdf: PDFKit.PDFDocument,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  bgColor: string,
+  borderColor?: string
+) {
+  pdf.roundedRect(x, y, w, h, 8).fill(bgColor);
+  if (borderColor) {
+    pdf.roundedRect(x, y, w, h, 8).strokeColor(borderColor).lineWidth(1).stroke();
+  }
+}
+
+function drawStatBox(
+  pdf: PDFKit.PDFDocument,
+  x: number,
+  y: number,
+  w: number,
+  value: string | number,
+  label: string,
+  accentColor: string
+) {
+  // Box
+  drawCard(pdf, x, y, w, 70, C.white, C.slate200);
+
+  // Accent top bar
+  pdf.rect(x, y, w, 4).fill(accentColor);
+
+  // Value
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text(String(value), x, y + 18, { width: w, align: 'center' });
+
+  // Label
+  pdf.fontSize(9).fillColor(C.slate600).font('Helvetica');
+  pdf.text(label.toUpperCase(), x, y + 50, { width: w, align: 'center' });
+}
+
+// =============================================================================
+// Page Renderers
+// =============================================================================
+
+function renderCoverPage(
   pdf: PDFKit.PDFDocument,
   companyName: string,
-  summary: StrategyDocumentContent['executiveSummary']
+  summary: StrategyDocumentContent['executiveSummary'],
+  betCount: number
 ) {
-  let currentY = M;
+  // Navy header section (top 35% of page)
+  const headerHeight = 300;
+  pdf.rect(0, 0, PAGE_W, headerHeight).fill(C.navy);
 
-  // Title
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('Product Strategy', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  // Gold accent line at bottom of header
+  pdf.rect(0, headerHeight - 4, PAGE_W, 4).fill(C.gold);
 
-  pdf.fontSize(14).fillColor(C.slate600).font('Helvetica');
-  pdf.text(companyName, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 30;
+  // Decorative circles (subtle branding)
+  pdf.circle(PAGE_W - 80, 80, 120).fillOpacity(0.03).fill(C.gold);
+  pdf.circle(PAGE_W - 40, 160, 80).fillOpacity(0.05).fill(C.gold);
+  pdf.fillOpacity(1);
 
-  // Company Overview
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('COMPANY OVERVIEW', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  // Document type label
+  pdf.fontSize(11).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text('PRODUCT STRATEGY DRAFT', M, 50, { width: CONTENT_W });
 
+  // Main title
+  pdf.fontSize(42).fillColor(C.white).font('Helvetica-Bold');
+  pdf.text('Product Strategy', M, 85, { width: CONTENT_W });
+
+  // Company name
+  pdf.fontSize(24).fillColor(C.cyan400).font('Helvetica');
+  pdf.text(companyName, M, 140, { width: CONTENT_W });
+
+  // Date
+  pdf.fontSize(11).fillColor(C.slate400).font('Helvetica');
+  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  pdf.text(dateStr, M, 180, { width: CONTENT_W });
+
+  // Key metrics row
+  const metricsY = 220;
+  const metricW = 100;
+  const metricGap = 20;
+
+  // Bets count
+  pdf.fontSize(32).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text(String(betCount), M, metricsY, { width: metricW, align: 'left' });
+  pdf.fontSize(10).fillColor(C.slate400).font('Helvetica');
+  pdf.text('Strategic Bets', M, metricsY + 36, { width: metricW, align: 'left' });
+
+  // Content section (below header)
+  let currentY = headerHeight + 30;
+
+  // Executive Summary Section
+  currentY = drawSectionHeader(pdf, 'Executive Summary', currentY);
+
+  // Company Overview card
+  drawCard(pdf, M, currentY, CONTENT_W, 80, C.slate50, C.slate200);
+  pdf.fontSize(10).fillColor(C.slate600).font('Helvetica-Bold');
+  pdf.text('COMPANY OVERVIEW', M + 16, currentY + 12, { width: CONTENT_W - 32 });
   pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(summary.companyOverview, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
+  pdf.text(summary.companyOverview, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
+  currentY += 95;
 
-  // Strategic Intent
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('STRATEGIC INTENT', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
+  // Strategic Intent card
+  drawCard(pdf, M, currentY, CONTENT_W, 70, C.cyan50, C.cyan200);
+  pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
+  pdf.text('STRATEGIC INTENT', M + 16, currentY + 12, { width: CONTENT_W - 32 });
   pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(summary.strategicIntent, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
+  pdf.text(summary.strategicIntent, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
+  currentY += 85;
+
+  // Two-column layout for findings and opportunities
+  const colW = (CONTENT_W - 16) / 2;
 
   // Key Findings
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('KEY FINDINGS FROM 3CS RESEARCH', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  drawCard(pdf, M, currentY, colW, 160, C.white, C.slate200);
+  pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('KEY FINDINGS', M + 12, currentY + 12, { width: colW - 24 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  summary.keyFindings.forEach(finding => {
-    pdf.text(`• ${finding}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  let findingY = currentY + 30;
+  summary.keyFindings.slice(0, 3).forEach((finding, i) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`${i + 1}. ${finding}`, M + 12, findingY, { width: colW - 24, lineGap: 2 });
+    findingY = pdf.y + 8;
   });
-  currentY += 14;
 
   // Top Opportunities
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('TOP STRATEGIC OPPORTUNITIES', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  drawCard(pdf, M + colW + 16, currentY, colW, 160, C.white, C.slate200);
+  pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('TOP OPPORTUNITIES', M + colW + 28, currentY + 12, { width: colW - 24 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  summary.topOpportunities.forEach(opp => {
-    pdf.text(`• ${opp}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  let oppY = currentY + 30;
+  summary.topOpportunities.slice(0, 3).forEach((opp, i) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`${i + 1}. ${opp}`, M + colW + 28, oppY, { width: colW - 24, lineGap: 2 });
+    oppY = pdf.y + 8;
   });
-  currentY += 14;
-
-  // Recommended Bets
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('RECOMMENDED BETS', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(summary.recommendedBets, M, currentY, { width: PAGE_W, lineGap: 2 });
 }
 
-function renderPage2(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentContent['ptwCascade']) {
+function renderPTWCascade(pdf: PDFKit.PDFDocument, cascade: StrategyDocumentContent['ptwCascade']) {
   let currentY = M;
 
-  // Title
-  pdf.fontSize(20).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('Playing to Win Cascade', M, currentY, { width: PAGE_W });
+  // Page title
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Playing to Win', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y;
+  pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Strategic Choices Cascade', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 30;
 
-  // Winning Aspiration
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('WINNING ASPIRATION', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  // Winning Aspiration (hero card)
+  drawCard(pdf, M, currentY, CONTENT_W, 90, C.navy);
+  pdf.fontSize(10).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.text('WINNING ASPIRATION', M + 20, currentY + 16, { width: CONTENT_W - 40 });
+  pdf.fontSize(14).fillColor(C.white).font('Helvetica');
+  pdf.text(cascade.winningAspiration, M + 20, currentY + 36, { width: CONTENT_W - 40, lineGap: 3 });
+  currentY += 110;
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(cascade.winningAspiration, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
+  // Two-column layout
+  const colW = (CONTENT_W - 20) / 2;
 
   // Where to Play
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('WHERE TO PLAY', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  const wtpHeight = 140;
+  drawCard(pdf, M, currentY, colW, wtpHeight, C.cyan50, C.cyan200);
+  pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
+  pdf.text('WHERE TO PLAY', M + 16, currentY + 14, { width: colW - 32 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  cascade.whereToPlay.forEach(wtp => {
-    pdf.text(`• ${wtp}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  let itemY = currentY + 34;
+  cascade.whereToPlay.slice(0, 4).forEach((wtp) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`• ${wtp}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
+    itemY = pdf.y + 6;
   });
-  currentY += 14;
 
   // How to Win
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('HOW TO WIN', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  drawCard(pdf, M + colW + 20, currentY, colW, wtpHeight, C.emerald50, C.emerald600);
+  pdf.fontSize(10).fillColor(C.emerald600).font('Helvetica-Bold');
+  pdf.text('HOW TO WIN', M + colW + 36, currentY + 14, { width: colW - 32 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  cascade.howToWin.forEach(htw => {
-    pdf.text(`• ${htw}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  itemY = currentY + 34;
+  cascade.howToWin.slice(0, 4).forEach((htw) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`• ${htw}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
+    itemY = pdf.y + 6;
   });
-  currentY += 14;
+
+  currentY += wtpHeight + 20;
 
   // Capabilities
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('CORE CAPABILITIES REQUIRED', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  const capHeight = 120;
+  drawCard(pdf, M, currentY, colW, capHeight, C.amber50, C.amber600);
+  pdf.fontSize(10).fillColor(C.amber600).font('Helvetica-Bold');
+  pdf.text('CORE CAPABILITIES', M + 16, currentY + 14, { width: colW - 32 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  cascade.capabilities.slice(0, 5).forEach(cap => {
-    pdf.text(`• ${cap}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  itemY = currentY + 34;
+  cascade.capabilities.slice(0, 4).forEach((cap) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`• ${cap}`, M + 16, itemY, { width: colW - 32, lineGap: 2 });
+    itemY = pdf.y + 6;
   });
-  currentY += 14;
 
   // Management Systems
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('MANAGEMENT SYSTEMS', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  drawCard(pdf, M + colW + 20, currentY, colW, capHeight, C.purple50, C.purple600);
+  pdf.fontSize(10).fillColor(C.purple600).font('Helvetica-Bold');
+  pdf.text('MANAGEMENT SYSTEMS', M + colW + 36, currentY + 14, { width: colW - 32 });
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  cascade.managementSystems.forEach(sys => {
-    pdf.text(`• ${sys}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  itemY = currentY + 34;
+  cascade.managementSystems.slice(0, 4).forEach((sys) => {
+    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+    pdf.text(`• ${sys}`, M + colW + 36, itemY, { width: colW - 32, lineGap: 2 });
+    itemY = pdf.y + 6;
   });
 }
 
-function renderPages3and4(pdf: PDFKit.PDFDocument, bets: StrategyDocumentContent['selectedBets']) {
+function renderStrategicBets(
+  pdf: PDFKit.PDFDocument,
+  bets: StrategyDocumentContent['selectedBets'],
+  startPageNum: number
+): number {
+  let pageNum = startPageNum;
   let currentY = M;
 
-  // Title
-  pdf.fontSize(20).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('Selected Strategic Bets', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 30;
+  // Page title
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Strategic Bets', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y;
+  pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
+  pdf.text(`${bets.length} bets selected for validation`, M, currentY, { width: CONTENT_W });
+  currentY = pdf.y + 25;
 
   bets.forEach((bet, idx) => {
+    const cardHeight = 220;
+
     // Check if we need a new page
-    if (currentY > 700) {
+    if (currentY + cardHeight > PAGE_H - 60) {
+      addFooter(pdf, pageNum++);
       pdf.addPage();
       currentY = M;
     }
 
     // Bet card
-    const cardHeight = 180;
-    pdf.roundedRect(M, currentY, PAGE_W, cardHeight, 8).fillAndStroke(C.cyan200, C.cyan600);
+    const thesisColors: Record<string, { bg: string; border: string; accent: string }> = {
+      offensive: { bg: C.amber50, border: C.amber600, accent: C.amber600 },
+      defensive: { bg: C.emerald50, border: C.emerald600, accent: C.emerald600 },
+      capability: { bg: C.purple50, border: C.purple600, accent: C.purple600 },
+    };
+    const colors = thesisColors[bet.thesisType] || thesisColors.offensive;
 
-    let contentY = currentY + 12;
+    drawCard(pdf, M, currentY, CONTENT_W, cardHeight, C.white, C.slate200);
 
-    // Title
-    pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-    pdf.text(`Bet ${idx + 1}: ${bet.thesisTitle}`, M + 12, contentY, { width: PAGE_W - 24 });
-    contentY = pdf.y + 8;
+    // Accent bar at top
+    pdf.rect(M, currentY, CONTENT_W, 6).fill(colors.accent);
 
-    // 5-part hypothesis
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`Job: ${bet.hypothesis.job}`, M + 12, contentY, { width: PAGE_W - 24, lineGap: 1 });
-    contentY = pdf.y + 4;
+    // Bet number badge
+    pdf.circle(M + 24, currentY + 30, 16).fill(C.navy);
+    pdf.fontSize(14).fillColor(C.white).font('Helvetica-Bold');
+    pdf.text(String(idx + 1), M + 16, currentY + 24, { width: 16, align: 'center' });
 
-    pdf.text(`Belief: ${bet.hypothesis.belief}`, M + 12, contentY, { width: PAGE_W - 24, lineGap: 1 });
-    contentY = pdf.y + 4;
+    // Thesis title and type
+    pdf.fontSize(14).fillColor(C.navy).font('Helvetica-Bold');
+    pdf.text(bet.thesisTitle, M + 50, currentY + 20, { width: CONTENT_W - 140 });
 
-    pdf.text(`Bet: ${bet.hypothesis.bet}`, M + 12, contentY, { width: PAGE_W - 24, lineGap: 1 });
-    contentY = pdf.y + 4;
+    // Type badge
+    pdf.fontSize(8).fillColor(colors.accent).font('Helvetica-Bold');
+    const typeLabel = bet.thesisType.toUpperCase();
+    pdf.roundedRect(PAGE_W - M - 80, currentY + 16, 65, 20, 10).fill(colors.bg);
+    pdf.text(typeLabel, PAGE_W - M - 78, currentY + 22, { width: 61, align: 'center' });
 
-    pdf.text(`Success: ${bet.hypothesis.success}`, M + 12, contentY, { width: PAGE_W - 24, lineGap: 1 });
-    contentY = pdf.y + 4;
+    // Score circle
+    pdf.circle(PAGE_W - M - 45, currentY + 60, 22).fill(C.navy);
+    pdf.fontSize(16).fillColor(C.gold).font('Helvetica-Bold');
+    pdf.text(String(bet.scoring.overallScore), PAGE_W - M - 60, currentY + 53, { width: 30, align: 'center' });
+    pdf.fontSize(7).fillColor(C.slate400).font('Helvetica');
+    pdf.text('SCORE', PAGE_W - M - 60, currentY + 85, { width: 30, align: 'center' });
 
-    pdf.text(`Kill: ${bet.hypothesis.kill.criteria} by ${bet.hypothesis.kill.date}`, M + 12, contentY, {
-      width: PAGE_W - 24,
-      lineGap: 1,
+    // Hypothesis content
+    let contentY = currentY + 50;
+    const labelW = 55;
+    const valueW = CONTENT_W - 130;
+
+    const hypothesisParts = [
+      { label: 'JOB', value: bet.hypothesis.job, color: C.cyan600 },
+      { label: 'BELIEF', value: bet.hypothesis.belief, color: C.slate600 },
+      { label: 'BET', value: bet.hypothesis.bet, color: C.navy },
+      { label: 'SUCCESS', value: bet.hypothesis.success, color: C.emerald600 },
+      { label: 'KILL', value: `${bet.hypothesis.kill.criteria} by ${bet.hypothesis.kill.date}`, color: C.red600 },
+    ];
+
+    hypothesisParts.forEach((part) => {
+      pdf.fontSize(8).fillColor(part.color).font('Helvetica-Bold');
+      pdf.text(part.label, M + 16, contentY, { width: labelW });
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(part.value, M + 16 + labelW, contentY, { width: valueW, lineGap: 1 });
+      contentY = Math.max(pdf.y + 6, contentY + 28);
     });
 
     currentY += cardHeight + 16;
   });
+
+  addFooter(pdf, pageNum++);
+  return pageNum;
 }
 
-function renderPage5(pdf: PDFKit.PDFDocument, portfolio: StrategyDocumentContent['portfolioView']) {
+function renderPortfolioView(
+  pdf: PDFKit.PDFDocument,
+  portfolio: StrategyDocumentContent['portfolioView'],
+  totalBets: number
+) {
   let currentY = M;
 
-  // Title
-  pdf.fontSize(20).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('Portfolio View', M, currentY, { width: PAGE_W });
+  // Page title
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Portfolio View', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y;
+  pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Strategic coherence and balance analysis', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 30;
+
+  // Stat boxes row
+  const statW = (CONTENT_W - 30) / 4;
+  drawStatBox(pdf, M, currentY, statW, totalBets, 'Total Bets', C.navy);
+  drawStatBox(pdf, M + statW + 10, currentY, statW, portfolio.balance.offensive, 'Offensive', C.amber600);
+  drawStatBox(pdf, M + (statW + 10) * 2, currentY, statW, portfolio.balance.defensive, 'Defensive', C.emerald600);
+  drawStatBox(pdf, M + (statW + 10) * 3, currentY, statW, portfolio.balance.capability, 'Capability', C.purple600);
+  currentY += 90;
 
   // Coherence Analysis
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('STRATEGIC COHERENCE', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
+  currentY = drawSectionHeader(pdf, 'Strategic Coherence', currentY);
+  drawCard(pdf, M, currentY, CONTENT_W, 100, C.slate50, C.slate200);
   pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(portfolio.coherenceAnalysis, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
-
-  // Balance
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('PORTFOLIO BALANCE', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(`• Offensive Bets: ${portfolio.balance.offensive}`, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 6;
-  pdf.text(`• Defensive Bets: ${portfolio.balance.defensive}`, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 6;
-  pdf.text(`• Capability Bets: ${portfolio.balance.capability}`, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 20;
+  pdf.text(portfolio.coherenceAnalysis, M + 16, currentY + 16, { width: CONTENT_W - 32, lineGap: 3 });
+  currentY += 120;
 
   // DHM Coverage
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('DHM COVERAGE', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  currentY = drawSectionHeader(pdf, 'DHM Coverage', currentY);
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(`• Delight: ${portfolio.dhmCoverage.delight} bets`, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 6;
-  pdf.text(`• Hard to Copy: ${portfolio.dhmCoverage.hardToCopy} bets`, M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 6;
-  pdf.text(`• Margin Enhancing: ${portfolio.dhmCoverage.marginEnhancing} bets`, M, currentY, { width: PAGE_W });
+  const dhmW = (CONTENT_W - 20) / 3;
+  const dhmItems = [
+    { label: 'Delight', value: portfolio.dhmCoverage.delight, color: C.cyan600, bg: C.cyan50 },
+    { label: 'Hard to Copy', value: portfolio.dhmCoverage.hardToCopy, color: C.amber600, bg: C.amber50 },
+    { label: 'Margin Enhancing', value: portfolio.dhmCoverage.marginEnhancing, color: C.emerald600, bg: C.emerald50 },
+  ];
+
+  dhmItems.forEach((item, i) => {
+    const x = M + i * (dhmW + 10);
+    drawCard(pdf, x, currentY, dhmW, 70, item.bg, item.color);
+    pdf.fontSize(24).fillColor(item.color).font('Helvetica-Bold');
+    pdf.text(String(item.value), x, currentY + 14, { width: dhmW, align: 'center' });
+    pdf.fontSize(9).fillColor(C.slate600).font('Helvetica');
+    pdf.text(item.label.toUpperCase(), x, currentY + 48, { width: dhmW, align: 'center' });
+  });
+  currentY += 95;
+
+  // Resource Allocation
+  currentY = drawSectionHeader(pdf, 'Resource Allocation', currentY);
+
+  portfolio.resourceAllocation.forEach((alloc) => {
+    drawCard(pdf, M, currentY, CONTENT_W, 35, C.white, C.slate200);
+    pdf.fontSize(10).fillColor(C.slate700).font('Helvetica-Bold');
+    pdf.text(alloc.allocation, M + 16, currentY + 12, { width: CONTENT_W / 2 });
+    pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+    pdf.text(`${alloc.betCount} bets`, M + CONTENT_W / 2, currentY + 12, { width: CONTENT_W / 2 - 16, align: 'right' });
+    currentY += 42;
+  });
 }
 
-function renderPage6(pdf: PDFKit.PDFDocument, nextSteps: StrategyDocumentContent['nextSteps']) {
+function renderNextSteps(pdf: PDFKit.PDFDocument, nextSteps: StrategyDocumentContent['nextSteps']) {
   let currentY = M;
 
-  // Title
-  pdf.fontSize(20).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('Next Steps & Governance', M, currentY, { width: PAGE_W });
+  // Page title
+  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text('Next Steps', M, currentY, { width: CONTENT_W });
+  currentY = pdf.y;
+  pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
+  pdf.text('Governance and validation roadmap', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 30;
 
-  // Validation Timeline
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('VALIDATION TIMELINE', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
+  // Info cards
+  const cards = [
+    { title: 'VALIDATION TIMELINE', content: nextSteps.validationTimeline, color: C.cyan600, bg: C.cyan50 },
+    { title: 'GOVERNANCE STRUCTURE', content: nextSteps.governance, color: C.purple600, bg: C.purple50 },
+    { title: 'SUCCESS METRIC TRACKING', content: nextSteps.trackingPlan, color: C.emerald600, bg: C.emerald50 },
+    { title: 'KILL CRITERIA REVIEW', content: nextSteps.killCriteriaReview, color: C.red600, bg: C.red50 },
+  ];
 
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(nextSteps.validationTimeline, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
-
-  // Governance
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('GOVERNANCE STRUCTURE', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(nextSteps.governance, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
-
-  // Tracking Plan
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('SUCCESS METRIC TRACKING', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(nextSteps.trackingPlan, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
-
-  // Kill Criteria Review
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('KILL CRITERIA REVIEW PROCESS', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(nextSteps.killCriteriaReview, M, currentY, { width: PAGE_W, lineGap: 2 });
-  currentY = pdf.y + 20;
-
-  // Next Topics
-  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text('RECOMMENDED NEXT CONVERSATION TOPICS', M, currentY, { width: PAGE_W });
-  currentY = pdf.y + 8;
-
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  nextSteps.nextTopics.forEach(topic => {
-    pdf.text(`• ${topic}`, M, currentY, { width: PAGE_W, lineGap: 2 });
-    currentY = pdf.y + 6;
+  cards.forEach((card) => {
+    drawCard(pdf, M, currentY, CONTENT_W, 85, card.bg, card.color);
+    pdf.fontSize(10).fillColor(card.color).font('Helvetica-Bold');
+    pdf.text(card.title, M + 16, currentY + 14, { width: CONTENT_W - 32 });
+    pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
+    pdf.text(card.content, M + 16, currentY + 32, { width: CONTENT_W - 32, lineGap: 2 });
+    currentY += 100;
   });
 
-  // Footer
-  currentY = 750;
-  pdf.fontSize(9).fillColor(C.slate400).font('Helvetica');
-  pdf.text('Generated with Frontera Product Strategy Coach', M, currentY, { width: PAGE_W, align: 'center' });
+  // Next conversation topics
+  if (currentY + 150 > PAGE_H - 60) {
+    currentY = PAGE_H - 200;
+  }
+  currentY = drawSectionHeader(pdf, 'Recommended Next Conversations', currentY);
+
+  nextSteps.nextTopics.forEach((topic, i) => {
+    drawCard(pdf, M, currentY, CONTENT_W, 30, C.white, C.slate200);
+    pdf.circle(M + 20, currentY + 15, 10).fill(C.gold);
+    pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+    pdf.text(String(i + 1), M + 15, currentY + 11, { width: 10, align: 'center' });
+    pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
+    pdf.text(topic, M + 40, currentY + 10, { width: CONTENT_W - 56 });
+    currentY += 38;
+  });
 }
