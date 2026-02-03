@@ -338,47 +338,59 @@ function renderCoverPage(
   // Executive Summary Section
   currentY = drawSectionHeader(pdf, 'Executive Summary', currentY);
 
-  // Company Overview card
-  drawCard(pdf, M, currentY, CONTENT_W, 80, C.slate50, C.slate200);
+  // Company Overview card - truncate to fit
+  const overviewText = truncateText(summary.companyOverview, 180);
+  drawCard(pdf, M, currentY, CONTENT_W, 75, C.slate50, C.slate200);
   pdf.fontSize(10).fillColor(C.slate600).font('Helvetica-Bold');
   pdf.text('COMPANY OVERVIEW', M + 16, currentY + 12, { width: CONTENT_W - 32 });
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(summary.companyOverview, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
-  currentY += 95;
+  pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+  pdf.text(overviewText, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
+  currentY += 88;
 
-  // Strategic Intent card
-  drawCard(pdf, M, currentY, CONTENT_W, 70, C.cyan50, C.cyan200);
+  // Strategic Intent card - truncate to fit
+  const intentText = truncateText(summary.strategicIntent, 150);
+  drawCard(pdf, M, currentY, CONTENT_W, 65, C.cyan50, C.cyan200);
   pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
   pdf.text('STRATEGIC INTENT', M + 16, currentY + 12, { width: CONTENT_W - 32 });
-  pdf.fontSize(10).fillColor(C.slate700).font('Helvetica');
-  pdf.text(summary.strategicIntent, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
-  currentY += 85;
+  pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+  pdf.text(intentText, M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
+  currentY += 78;
 
   // Two-column layout for findings and opportunities
   const colW = (CONTENT_W - 16) / 2;
+  const cardHeight = 155;
+  const maxItemChars = 90; // Max chars per item
 
   // Key Findings
-  drawCard(pdf, M, currentY, colW, 160, C.white, C.slate200);
+  drawCard(pdf, M, currentY, colW, cardHeight, C.white, C.slate200);
   pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('KEY FINDINGS', M + 12, currentY + 12, { width: colW - 24 });
 
   let findingY = currentY + 30;
+  const maxFindingY = currentY + cardHeight - 12;
   summary.keyFindings.slice(0, 3).forEach((finding, i) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`${i + 1}. ${finding}`, M + 12, findingY, { width: colW - 24, lineGap: 2 });
-    findingY = pdf.y + 8;
+    if (findingY < maxFindingY) {
+      const truncatedFinding = truncateText(finding, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`${i + 1}. ${truncatedFinding}`, M + 12, findingY, { width: colW - 24, lineGap: 1 });
+      findingY = Math.min(pdf.y + 6, maxFindingY);
+    }
   });
 
   // Top Opportunities
-  drawCard(pdf, M + colW + 16, currentY, colW, 160, C.white, C.slate200);
+  drawCard(pdf, M + colW + 16, currentY, colW, cardHeight, C.white, C.slate200);
   pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('TOP OPPORTUNITIES', M + colW + 28, currentY + 12, { width: colW - 24 });
 
   let oppY = currentY + 30;
+  const maxOppY = currentY + cardHeight - 12;
   summary.topOpportunities.slice(0, 3).forEach((opp, i) => {
-    pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
-    pdf.text(`${i + 1}. ${opp}`, M + colW + 28, oppY, { width: colW - 24, lineGap: 2 });
-    oppY = pdf.y + 8;
+    if (oppY < maxOppY) {
+      const truncatedOpp = truncateText(opp, maxItemChars);
+      pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
+      pdf.text(`${i + 1}. ${truncatedOpp}`, M + colW + 28, oppY, { width: colW - 24, lineGap: 1 });
+      oppY = Math.min(pdf.y + 6, maxOppY);
+    }
   });
 }
 
