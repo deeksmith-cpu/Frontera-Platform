@@ -194,12 +194,13 @@ export async function POST(req: NextRequest) {
 
     const rawSupabase = getRawSupabase();
 
-    // Fetch territory insights
+    // Fetch territory insights - count both in_progress and mapped as completed
+    // Users may have saved content without explicitly marking as mapped
     const { data: insights, error: insightsError } = await rawSupabase
       .from('territory_insights')
       .select('*')
       .eq('conversation_id', conversation_id)
-      .eq('status', 'mapped');
+      .in('status', ['in_progress', 'mapped']);
 
     if (insightsError) {
       console.error('Error fetching insights:', insightsError);
@@ -209,14 +210,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!insights || insights.length < 4) {
+    // Filter to only include insights that have actual responses (not just empty objects)
+    const insightsWithContent = insights?.filter(insight => {
+      const responses = insight.responses as Record<string, string> | null;
+      if (!responses) return false;
+      // Check if at least one response has meaningful content
+      return Object.values(responses).some(val => val && val.trim().length > 0);
+    }) || [];
+
+    if (insightsWithContent.length < 4) {
       return NextResponse.json(
-        { error: 'Insufficient research completed. Please complete at least 4 research areas.' },
+        { error: `Insufficient research completed. Please complete at least 4 research areas. You have ${insightsWithContent.length} area(s) with content.` },
         { status: 400 }
       );
     }
 
-    const typedInsights = insights as InsightRow[];
+    const typedInsights = insightsWithContent as InsightRow[];
 
     // Determine which territories have data
     const territoriesWithData: ('company' | 'customer' | 'competitor')[] = [];
