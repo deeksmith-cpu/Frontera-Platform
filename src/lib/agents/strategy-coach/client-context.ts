@@ -243,11 +243,17 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { data: insights } = await rawSupabase
+  // Load insights that are either mapped OR in_progress with content
+  const { data: insights, error } = await rawSupabase
     .from("territory_insights")
     .select("*")
     .eq("conversation_id", conversationId)
-    .eq("status", "mapped");
+    .in("status", ["mapped", "in_progress"]);
+
+  if (error) {
+    console.error("[loadTerritoryInsights] Error loading insights:", error);
+  }
+  console.log(`[loadTerritoryInsights] Found ${insights?.length || 0} territory insights for conversation ${conversationId}`);
 
   if (!insights || insights.length === 0) {
     return { company: [], customer: [], competitor: [] };
@@ -257,26 +263,35 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
   type InsightRow = { territory: string; research_area: string; responses: unknown };
   const typedInsights = insights as InsightRow[];
 
+  // Helper to check if an insight has actual content
+  const hasContent = (responses: unknown): boolean => {
+    if (!responses || typeof responses !== 'object') return false;
+    const responseObj = responses as Record<string, string>;
+    return Object.values(responseObj).some(val => val && val.trim().length > 0);
+  };
+
   const company = typedInsights
-    .filter((i) => i.territory === "company")
+    .filter((i) => i.territory === "company" && hasContent(i.responses))
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
     }));
 
   const customer = typedInsights
-    .filter((i) => i.territory === "customer")
+    .filter((i) => i.territory === "customer" && hasContent(i.responses))
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
     }));
 
   const competitor = typedInsights
-    .filter((i) => i.territory === "competitor")
+    .filter((i) => i.territory === "competitor" && hasContent(i.responses))
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
     }));
+
+  console.log(`[loadTerritoryInsights] With content: company=${company.length}, customer=${customer.length}, competitor=${competitor.length}`);
 
   return { company, customer, competitor };
 }
