@@ -82,6 +82,7 @@ function SignUpFormInner() {
     try {
       if (isInvitation && isLoaded && signUp) {
         // Use Clerk's signUp with invitation ticket
+        console.log("[SignUp] Creating account with invitation ticket...");
         const result = await signUp.create({
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -90,16 +91,39 @@ function SignUpFormInner() {
           ticket: ticket!,
         });
 
+        console.log("[SignUp] Result:", {
+          status: result.status,
+          missingFields: result.missingFields,
+          unverifiedFields: result.unverifiedFields,
+          verifications: result.verifications,
+          createdSessionId: result.createdSessionId,
+        });
+
         if (result.status === "complete") {
           // Invitation accepted, user joined the org
+          console.log("[SignUp] Complete - setting active session...");
           await setActive({ session: result.createdSessionId });
+          console.log("[SignUp] Session set, redirecting to dashboard...");
           window.location.href = "/dashboard";
           return;
         } else if (result.status === "missing_requirements") {
-          // May need email verification
-          await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-          setVerifying(true);
+          // Check what's actually missing
+          console.log("[SignUp] Missing requirements - checking fields...");
+
+          // If email verification is required
+          if (result.unverifiedFields?.includes("email_address")) {
+            console.log("[SignUp] Email verification required, preparing...");
+            await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+            setVerifying(true);
+          } else {
+            // Other requirements - show specific message
+            const missing = [...(result.missingFields || []), ...(result.unverifiedFields || [])];
+            console.error("[SignUp] Unexpected missing requirements:", missing);
+            setError(`Additional information required: ${missing.join(", ") || "unknown"}. Please contact support.`);
+          }
         } else {
+          // Log unexpected status for debugging
+          console.error("[SignUp] Unexpected status:", result.status, result);
           setError(`Sign-up requires additional steps (status: ${result.status}). Please contact support.`);
         }
       } else {
@@ -143,18 +167,30 @@ function SignUpFormInner() {
     setError(null);
 
     try {
+      console.log("[SignUp] Verifying email code...");
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
 
+      console.log("[SignUp] Verification result:", {
+        status: result.status,
+        missingFields: result.missingFields,
+        unverifiedFields: result.unverifiedFields,
+        createdSessionId: result.createdSessionId,
+      });
+
       if (result.status === "complete") {
+        console.log("[SignUp] Verification complete, setting session...");
         await setActive({ session: result.createdSessionId });
+        console.log("[SignUp] Session set, redirecting to dashboard...");
         window.location.href = "/dashboard";
         return;
       } else {
-        setError(`Verification incomplete (status: ${result.status})`);
+        console.error("[SignUp] Verification incomplete:", result);
+        setError(`Verification incomplete (status: ${result.status}). Please contact support.`);
       }
     } catch (err) {
+      console.error("[SignUp] Verification error:", err);
       const clerkErr = err as { errors?: Array<{ message: string; longMessage?: string }> };
       setError(clerkErr.errors?.[0]?.longMessage || clerkErr.errors?.[0]?.message || "Verification failed");
     } finally {
