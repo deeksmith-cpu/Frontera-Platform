@@ -52,6 +52,8 @@
   --color-silver: var(--silver);
   --color-silver-dark: var(--silver-dark);
   --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Fira Code', Consolas, monospace;
 
   /* Bold Design System - Phase Colors */
   /* Use Tailwind's default color scale (50-950) for consistency */

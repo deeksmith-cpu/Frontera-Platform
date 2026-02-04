@@ -88,15 +88,7 @@ export default function RootLayout({
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <link rel="apple-touch-icon" href="/frontera-logo-F.jpg" />
         </head>
-        <body
-          className={`${inter.variable} font-sans antialiased`}
-          style={{
-            // System font fallbacks for secondary fonts (reduces 4 network requests to 1)
-            '--font-display': 'Georgia, Cambria, "Times New Roman", serif',
-            '--font-mono': '"SF Mono", "Fira Code", Consolas, "Liberation Mono", monospace',
-            '--font-newsreader': 'Georgia, Cambria, "Times New Roman", serif',
-          } as React.CSSProperties}
-        >
+        <body className={`${inter.variable} font-sans antialiased`}>
           <PostHogProvider>
             <PostHogPageView />
             {children}
