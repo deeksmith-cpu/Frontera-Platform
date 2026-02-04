@@ -19,7 +19,6 @@ export default function SignInForm() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const { isSignedIn, isLoaded: userLoaded } = useUser();
   const { signOut } = useClerk();
-  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<SignInFormData>(INITIAL_FORM_DATA);
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
@@ -32,24 +31,21 @@ export default function SignInForm() {
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
 
-  // Prevent hydration mismatch by waiting for client-side mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Auth state derived from Clerk only (no mounted state needed)
+  const isReady = isLoaded && userLoaded;
 
-  // Redirect if already signed in - only after mount
+  // Redirect if already signed in
   useEffect(() => {
-    if (mounted && userLoaded && isSignedIn) {
-      // Use replace instead of push to avoid back button issues
+    if (isReady && isSignedIn) {
       router.replace("/dashboard");
     }
-  }, [mounted, userLoaded, isSignedIn, router]);
+  }, [isReady, isSignedIn, router]);
 
   useEffect(() => {
-    if (mounted && searchParams.get("registered") === "true") {
+    if (searchParams.get("registered") === "true") {
       setShowSuccess(true);
     }
-  }, [mounted, searchParams]);
+  }, [searchParams]);
 
   const handleOAuthSignIn = async (provider: "oauth_google" | "oauth_microsoft" | "oauth_apple") => {
     if (!isLoaded || !signIn) return;
@@ -227,22 +223,23 @@ export default function SignInForm() {
     setError(null);
   };
 
-  const isReady = mounted && isLoaded && userLoaded;
-
   return (
-    <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-      {/* Loading state */}
-      {!isReady && (
-        <div className="p-6 sm:p-10 flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading...</p>
-          </div>
+    <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[400px]">
+      {/* Loading overlay - fades out when ready */}
+      <div
+        className={`absolute inset-0 bg-white flex items-center justify-center z-10 transition-opacity duration-300 ${
+          isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+        aria-hidden={isReady}
+      >
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
         </div>
-      )}
+      </div>
 
-      {/* Main form - hidden until ready */}
-      <div className={`p-6 sm:p-10 ${!isReady ? 'hidden' : ''}`}>
+      {/* Main form - always rendered, fades in when ready */}
+      <div className={`p-6 sm:p-10 transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome back

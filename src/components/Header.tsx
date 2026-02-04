@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth, UserButton } from "@clerk/nextjs";
@@ -8,40 +8,16 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
-  const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch by waiting for client-side mount
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
-
-  // Show nothing until component is mounted and auth is loaded
-  if (!mounted || !isLoaded) {
-    return (
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] shadow-md">
-        <nav className="mx-auto max-w-7xl py-5 px-10" aria-label="Global">
-          <div className="flex items-center justify-between">
-            <div className="flex lg:flex-1">
-              <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2.5">
-                <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" />
-              </Link>
-            </div>
-            <div className="h-9 w-32" /> {/* Placeholder to prevent layout shift */}
-          </div>
-        </nav>
-      </header>
-    );
-  }
-
+  // Always render same DOM structure - use CSS transitions for auth-dependent elements
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] shadow-md">
       <nav className="mx-auto max-w-7xl py-5 px-10" aria-label="Global">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - always links to / on server, updates on client when isLoaded */}
           <div className="flex lg:flex-1">
-            <Link href={isSignedIn ? "/dashboard" : "/"} className="-m-1.5 p-1.5 flex items-center gap-2.5">
-              <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" />
+            <Link href={isLoaded && isSignedIn ? "/dashboard" : "/"} className="-m-1.5 p-1.5 flex items-center gap-2.5">
+              <Image src="/frontera-logo-white.jpg" alt="Frontera" width={140} height={36} className="h-9 w-auto object-contain" priority />
             </Link>
           </div>
 
@@ -66,27 +42,29 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Desktop nav */}
-          {!isSignedIn && (
-            <div className="hidden lg:flex lg:gap-x-10">
-              <Link href="/#problem" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
-                Why Frontera
-              </Link>
-              <Link href="/#solution" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
-                Platform
-              </Link>
-              <Link href="/#pricing" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
-                Pricing
-              </Link>
-              <Link href="/#testimonial" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
-                Case Studies
-              </Link>
-            </div>
-          )}
+          {/* Desktop nav - fades in when loaded, hidden if signed in */}
+          <div className={`hidden lg:flex lg:gap-x-10 transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${isLoaded && isSignedIn ? 'lg:hidden' : ''}`}>
+            <Link href="/#problem" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
+              Why Frontera
+            </Link>
+            <Link href="/#solution" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
+              Platform
+            </Link>
+            <Link href="/#pricing" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
+              Pricing
+            </Link>
+            <Link href="/#testimonial" className="text-sm font-semibold text-white/70 hover:text-white transition-colors duration-300">
+              Case Studies
+            </Link>
+          </div>
 
-          {/* CTA + Auth */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4">
-            {!isSignedIn && (
+          {/* CTA + Auth - fades in when loaded */}
+          <div className={`hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4 transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          }`}>
+            {isLoaded && !isSignedIn && (
               <>
                 <Link
                   href="/sign-in"
@@ -103,7 +81,7 @@ export default function Header() {
               </>
             )}
 
-            {isSignedIn && (
+            {isLoaded && isSignedIn && (
               <>
                 <Link
                   href="/dashboard"
@@ -129,8 +107,8 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
+        {/* Mobile menu - only shows when user clicks toggle, so JS is always loaded */}
+        {mobileMenuOpen && isLoaded && (
           <div className="lg:hidden border-t border-white/10">
             <div className="space-y-1 pb-4 pt-2">
               {!isSignedIn && (

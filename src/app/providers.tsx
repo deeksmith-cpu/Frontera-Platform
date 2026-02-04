@@ -2,32 +2,8 @@
 
 import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useUser, useOrganization } from '@clerk/nextjs'
-
-// Register service worker and initialize PostHog
-if (typeof window !== 'undefined') {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // SW registration failed silently
-    })
-  }
-
-  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
-  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
-
-  if (key && !(posthog as unknown as { __loaded?: boolean }).__loaded) {
-    posthog.init(key, {
-      api_host: host,
-      person_profiles: 'identified_only',
-      capture_pageview: false,
-      session_recording: {
-        maskAllInputs: false,
-        maskInputOptions: { password: true },
-      },
-    })
-  }
-}
 
 function PostHogUserIdentifier() {
   const { user, isSignedIn } = useUser()
@@ -64,6 +40,36 @@ function PostHogUserIdentifier() {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const initialized = useRef(false)
+
+  useEffect(() => {
+    // Only initialize once, after component mounts (non-blocking)
+    if (initialized.current) return
+    initialized.current = true
+
+    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
+    const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
+
+    if (key && !(posthog as unknown as { __loaded?: boolean }).__loaded) {
+      posthog.init(key, {
+        api_host: host,
+        person_profiles: 'identified_only',
+        capture_pageview: false,
+        session_recording: {
+          maskAllInputs: false,
+          maskInputOptions: { password: true },
+        },
+      })
+    }
+
+    // Register service worker (non-blocking)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {
+        // SW registration failed silently
+      })
+    }
+  }, [])
+
   return (
     <PHProvider client={posthog}>
       <PostHogUserIdentifier />
