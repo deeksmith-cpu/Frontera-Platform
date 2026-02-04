@@ -19,9 +19,12 @@ async function isSuperAdmin(userId: string): Promise<boolean> {
 
 export default async function DashboardPage() {
   const { userId, orgId, orgRole } = await auth();
+  console.log("[Dashboard] Auth state:", { userId: userId || 'none', orgId: orgId || 'none', orgRole: orgRole || 'none' });
+
   const user = await currentUser();
 
   if (!userId) {
+    console.log("[Dashboard] No userId, redirecting to /sign-in");
     redirect("/sign-in");
   }
 

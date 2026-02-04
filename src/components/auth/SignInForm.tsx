@@ -91,7 +91,7 @@ export default function SignInForm() {
         password: formData.password,
       });
 
-      console.log("Sign-in result:", {
+      console.log("[SignIn] Sign-in result:", {
         status: result.status,
         firstFactorVerification: result.firstFactorVerification,
         secondFactorVerification: result.secondFactorVerification,
@@ -101,7 +101,9 @@ export default function SignInForm() {
       });
 
       if (result.status === "complete") {
+        console.log("[SignIn] Status complete, setting active session:", result.createdSessionId);
         await setActive({ session: result.createdSessionId });
+        console.log("[SignIn] Session set successfully, navigating to /dashboard...");
         window.location.href = "/dashboard";
         return;
       } else if (result.status === "needs_first_factor") {

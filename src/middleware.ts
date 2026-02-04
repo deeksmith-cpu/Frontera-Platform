@@ -14,10 +14,17 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  const url = req.nextUrl.pathname;
+
   // Allow public routes without authentication
   if (isPublicRoute(req)) {
+    console.log(`[Middleware] Public route allowed: ${url}`);
     return;
   }
+
+  // Get auth state for debugging
+  const { userId, orgId } = await auth();
+  console.log(`[Middleware] Protected route: ${url}, userId: ${userId || 'none'}, orgId: ${orgId || 'none'}`);
 
   // Protect all other routes - redirect to sign-in if not authenticated
   await auth.protect();
