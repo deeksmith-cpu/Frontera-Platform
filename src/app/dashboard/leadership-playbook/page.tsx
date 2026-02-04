@@ -19,12 +19,13 @@ export default async function LeadershipPlaybookPage() {
     redirect('/sign-in');
   }
 
-  // Find the most recent conversation for this org
+  // Find the most recent Strategy Coach conversation for this org
   const supabase = getSupabaseAdmin();
   const { data: conversations } = await supabase
     .from('conversations')
     .select('id, framework_state')
     .eq('clerk_org_id', orgId)
+    .eq('agent_type', 'strategy_coach')
     .order('created_at', { ascending: false })
     .limit(1);
 
