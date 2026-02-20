@@ -233,9 +233,9 @@ function truncateText(text: string, maxLength: number): string {
  * Load territory insights for a conversation to provide research context to the agent.
  */
 export async function loadTerritoryInsights(conversationId: string): Promise<{
-  company: Array<{ area: string; responses: Record<string, string> }>;
-  customer: Array<{ area: string; responses: Record<string, string> }>;
-  competitor: Array<{ area: string; responses: Record<string, string> }>;
+  company: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
+  customer: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
+  competitor: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
 }> {
   // Use raw client to avoid type issues
   const rawSupabase = createClient(
@@ -260,7 +260,7 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
   }
 
   // Type the insights array
-  type InsightRow = { territory: string; research_area: string; responses: unknown };
+  type InsightRow = { territory: string; research_area: string; responses: unknown; confidence: unknown };
   const typedInsights = insights as InsightRow[];
 
   // Helper to check if an insight has actual content
@@ -275,6 +275,7 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
+      confidence: (i.confidence as Record<string, string>) || undefined,
     }));
 
   const customer = typedInsights
@@ -282,6 +283,7 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
+      confidence: (i.confidence as Record<string, string>) || undefined,
     }));
 
   const competitor = typedInsights
@@ -289,6 +291,7 @@ export async function loadTerritoryInsights(conversationId: string): Promise<{
     .map((i) => ({
       area: i.research_area,
       responses: i.responses as Record<string, string>,
+      confidence: (i.confidence as Record<string, string>) || undefined,
     }));
 
   console.log(`[loadTerritoryInsights] With content: company=${company.length}, customer=${customer.length}, competitor=${competitor.length}`);
@@ -381,44 +384,36 @@ export async function loadSynthesisOutput(conversationId: string): Promise<Synth
  * Format territory insights for the system prompt.
  */
 export function formatTerritoryInsightsForPrompt(insights: {
-  company: Array<{ area: string; responses: Record<string, string> }>;
-  customer: Array<{ area: string; responses: Record<string, string> }>;
-  competitor: Array<{ area: string; responses: Record<string, string> }>;
+  company: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
+  customer: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
+  competitor: Array<{ area: string; responses: Record<string, string>; confidence?: Record<string, string> }>;
 }): string {
   const sections: string[] = [];
 
-  if (insights.company.length > 0) {
-    sections.push("## Research Completed: Company Territory");
-    insights.company.forEach((insight) => {
-      sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
-      Object.entries(insight.responses).forEach(([question, answer]) => {
-        sections.push(`**Q:** ${question}`);
-        sections.push(`**A:** ${answer}`);
-      });
-    });
-  }
+  const confidenceLabel = (conf?: string) => {
+    if (!conf) return '';
+    if (conf === 'data') return ' [Based on Data]';
+    if (conf === 'experience') return ' [Based on Experience]';
+    if (conf === 'guess') return ' [This is a Guess - probe further]';
+    return '';
+  };
 
-  if (insights.customer.length > 0) {
-    sections.push("\n## Research Completed: Customer Territory");
-    insights.customer.forEach((insight) => {
+  const formatTerritory = (label: string, territory: typeof insights.company) => {
+    if (territory.length === 0) return;
+    sections.push(`\n## Research Completed: ${label}`);
+    territory.forEach((insight) => {
       sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
       Object.entries(insight.responses).forEach(([question, answer]) => {
+        const conf = insight.confidence?.[question];
         sections.push(`**Q:** ${question}`);
-        sections.push(`**A:** ${answer}`);
+        sections.push(`**A:** ${answer}${confidenceLabel(conf)}`);
       });
     });
-  }
+  };
 
-  if (insights.competitor.length > 0) {
-    sections.push("\n## Research Completed: Market Context Territory");
-    insights.competitor.forEach((insight) => {
-      sections.push(`\n### ${insight.area.replace(/_/g, " ").toUpperCase()}`);
-      Object.entries(insight.responses).forEach(([question, answer]) => {
-        sections.push(`**Q:** ${question}`);
-        sections.push(`**A:** ${answer}`);
-      });
-    });
-  }
+  formatTerritory("Company Territory", insights.company);
+  formatTerritory("Customer Territory", insights.customer);
+  formatTerritory("Market Context Territory", insights.competitor);
 
   return sections.join("\n");
 }

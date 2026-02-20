@@ -228,20 +228,17 @@ export default function SignInForm() {
   return (
     <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[400px]">
       {/* Loading overlay - fades out when ready */}
-      <div
-        className={`absolute inset-0 bg-white flex items-center justify-center z-10 transition-opacity duration-300 ${
-          isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-        aria-hidden={isReady}
-      >
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+      {!isReady && (
+        <div className="p-6 sm:p-10 flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-[#1a1f3a] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading...</p>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Main form - always rendered, fades in when ready */}
-      <div className={`p-6 sm:p-10 transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Main form - only rendered when ready (avoids hydration mismatch) */}
+      <div className={`p-6 sm:p-10 ${isReady ? '' : 'hidden'}`}>
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome back

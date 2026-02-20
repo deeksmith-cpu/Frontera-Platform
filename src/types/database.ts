@@ -265,6 +265,7 @@ export interface TerritoryInsight {
   territory: "company" | "customer" | "competitor";
   research_area: string;
   responses: Record<string, unknown>;
+  confidence: Record<string, "data" | "experience" | "guess"> | null;
   status: "unexplored" | "in_progress" | "mapped";
   updated_at: string;
   created_at: string;
@@ -404,6 +405,78 @@ export interface StrategicBetRow {
   updated_at: string;
 }
 
+// Strategic Maturity Assessment
+export interface StrategicAssessment {
+  id: string;
+  clerk_user_id: string;
+  clerk_org_id: string;
+  responses: Record<string, unknown>;
+  dimension_scores: Record<string, unknown>;
+  archetype: string;
+  strengths: string[];
+  growth_areas: string[];
+  overall_maturity: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Strategic Artefact (Phase 5 - Activation)
+export interface StrategicArtefact {
+  id: string;
+  conversation_id: string;
+  clerk_org_id: string;
+  artefact_type: 'team_brief' | 'guardrails' | 'okr_cascade' | 'decision_framework' | 'stakeholder_pack' | 'evidence_summary';
+  title: string;
+  content: Record<string, unknown>;
+  audience: string | null;
+  share_token: string | null;
+  is_living: boolean;
+  source_bet_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Strategy Signal (Phase 6 - Living Strategy)
+export interface StrategySignal {
+  id: string;
+  conversation_id: string;
+  clerk_org_id: string;
+  signal_type: 'competitor' | 'customer' | 'market' | 'internal';
+  title: string;
+  description: string;
+  impact_assessment: string | null;
+  linked_assumption_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+// Strategy Version (Phase 6 - Living Strategy)
+export interface StrategyVersion {
+  id: string;
+  conversation_id: string;
+  clerk_org_id: string;
+  version_number: number;
+  snapshot: Record<string, unknown>;
+  change_narrative: string | null;
+  trigger: 'phase_completion' | 'manual' | 'signal_triggered' | 'review';
+  created_at: string;
+}
+
+// Assumption Register (Living Strategy)
+export interface AssumptionRecord {
+  id: string;
+  conversation_id: string;
+  clerk_org_id: string;
+  assumption_text: string;
+  source: string;
+  status: 'untested' | 'validated' | 'invalidated';
+  evidence: string | null;
+  linked_bet_ids: string[];
+  linked_signal_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -466,6 +539,31 @@ export interface Database {
         Row: StrategyDocumentRow;
         Insert: Omit<StrategyDocumentRow, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<StrategyDocumentRow, 'id' | 'created_at'>>;
+      };
+      strategic_assessments: {
+        Row: StrategicAssessment;
+        Insert: Omit<StrategicAssessment, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategicAssessment, 'id' | 'created_at'>>;
+      };
+      strategic_artefacts: {
+        Row: StrategicArtefact;
+        Insert: Omit<StrategicArtefact, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategicArtefact, 'id' | 'created_at'>>;
+      };
+      strategy_signals: {
+        Row: StrategySignal;
+        Insert: Omit<StrategySignal, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<StrategySignal, 'id' | 'created_at'>>;
+      };
+      strategy_versions: {
+        Row: StrategyVersion;
+        Insert: Omit<StrategyVersion, 'id' | 'created_at'>;
+        Update: Partial<Omit<StrategyVersion, 'id' | 'created_at'>>;
+      };
+      assumption_register: {
+        Row: AssumptionRecord;
+        Insert: Omit<AssumptionRecord, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<AssumptionRecord, 'id' | 'created_at'>>;
       };
     };
   };

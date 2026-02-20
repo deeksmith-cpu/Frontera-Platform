@@ -502,7 +502,7 @@ export function getTensionById(id: string): StrategicTension | null {
 export function matchTensionToSynthesis(tensionDescription: string): StrategicTension | null {
   const lower = tensionDescription.toLowerCase();
 
-  // Score each tension by keyword overlap
+  // Score each tension by keyword overlap across all text fields
   let bestMatch: StrategicTension | null = null;
   let bestScore = 0;
 
@@ -511,10 +511,13 @@ export function matchTensionToSynthesis(tensionDescription: string): StrategicTe
     const keywords = [
       tension.title.toLowerCase(),
       tension.description.toLowerCase(),
-      ...tension.topicTags.map(t => t.toLowerCase()),
+      tension.positionA.argument.toLowerCase(),
+      tension.positionB.argument.toLowerCase(),
+      tension.neutralQuestion.toLowerCase(),
+      ...tension.topicTags.map(t => t.replace(/-/g, ' ').toLowerCase()),
     ].join(' ');
 
-    // Simple word overlap scoring
+    // Word overlap scoring
     const words = lower.split(/\s+/);
     for (const word of words) {
       if (word.length > 3 && keywords.includes(word)) score++;
@@ -526,7 +529,10 @@ export function matchTensionToSynthesis(tensionDescription: string): StrategicTe
     }
   }
 
-  return bestScore >= 2 ? bestMatch : null;
+  // Always return a match — the user explicitly clicked "Enter Debate Mode"
+  // so they expect a debate to open. If keyword scoring found nothing
+  // (bestScore === 0), fall back to the first tension in the map.
+  return bestMatch || TENSION_MAP[0] || null;
 }
 
 /**

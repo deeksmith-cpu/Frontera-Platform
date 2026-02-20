@@ -47,7 +47,11 @@
       "Bash(python:*)",
       "WebFetch(domain:www.lennysnewsletter.com)",
       "Write",
-      "Edit"
+      "Edit",
+      "Bash(find:*)",
+      "Bash(robocopy:*)",
+      "Bash(powershell:*)",
+      "Bash(del \"c:\\\\Users\\\\deeks\\\\frontera-platform\\\\update-v2-paths.ps1\")"
     ]
   }
 }

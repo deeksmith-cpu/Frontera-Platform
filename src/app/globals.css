@@ -159,6 +159,34 @@ h1, h2, h3, h4, h5, h6 {
   animation: slideUp 0.3s ease-out forwards;
 }
 
+/* Slide In Right Animation for Mobile Context Panel */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Slide In Left Animation for Mobile Sidebar Drawer */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
 /* Glass Effect for Premium Cards */
 .glass-card {
   background: rgba(255, 255, 255, 0.9);

@@ -1,0 +1,158 @@
+import { auth } from '@clerk/nextjs/server';
+import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
+import PDFDocument from 'pdfkit';
+
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('Missing Supabase config');
+  return createClient(url, key);
+}
+
+/**
+ * POST /api/product-strategy-agent-v2/activation/team-briefs/export
+ * Export a team brief as PDF.
+ */
+export async function POST(req: NextRequest) {
+  const { userId, orgId } = await auth();
+  if (!userId || !orgId) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const { artefactId } = body;
+
+  if (!artefactId) {
+    return Response.json({ error: 'Missing artefactId' }, { status: 400 });
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { data: artefact, error } = await supabase
+    .from('strategic_artefacts')
+    .select('*')
+    .eq('id', artefactId)
+    .eq('clerk_org_id', orgId)
+    .single();
+
+  if (error || !artefact) {
+    return Response.json({ error: 'Artefact not found' }, { status: 404 });
+  }
+
+  const content = artefact.content as Record<string, unknown>;
+  const pdfBuffer = await generateTeamBriefPdf(artefact.title, content);
+
+  const uint8Array = new Uint8Array(pdfBuffer);
+  return new NextResponse(uint8Array, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="team-brief-${new Date().toISOString().split('T')[0]}.pdf"`,
+    },
+  });
+}
+
+async function generateTeamBriefPdf(
+  title: string,
+  content: Record<string, unknown>
+): Promise<Buffer> {
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: { top: 60, bottom: 60, left: 60, right: 60 },
+    bufferPages: true,
+  });
+
+  const chunks: Buffer[] = [];
+  doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+  const NAVY = '#1a1f3a';
+  const GOLD = '#fbbf24';
+  const pageWidth = 475;
+
+  // Header
+  doc.rect(0, 0, 595, 80).fill(NAVY);
+  doc.fontSize(20).fillColor('#ffffff').font('Helvetica-Bold');
+  doc.text(title, 60, 30, { width: pageWidth });
+
+  let currentY = 100;
+
+  // Strategic Context
+  if (content.strategicContext) {
+    doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+    doc.text('Strategic Context', 60, currentY, { width: pageWidth });
+    currentY = doc.y + 8;
+    doc.fontSize(10).fillColor('#475569').font('Helvetica');
+    doc.text(content.strategicContext as string, 60, currentY, { width: pageWidth, lineGap: 2 });
+    currentY = doc.y + 20;
+  }
+
+  // Problem Statement
+  if (content.problemStatement) {
+    doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+    doc.text('Problem Statement', 60, currentY, { width: pageWidth });
+    currentY = doc.y + 8;
+    doc.fontSize(10).fillColor('#475569').font('Helvetica');
+    doc.text(content.problemStatement as string, 60, currentY, { width: pageWidth, lineGap: 2 });
+    currentY = doc.y + 20;
+  }
+
+  // Success Criteria
+  const successCriteria = content.successCriteria as string[] | undefined;
+  if (successCriteria && successCriteria.length > 0) {
+    doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+    doc.text('Success Criteria', 60, currentY, { width: pageWidth });
+    currentY = doc.y + 8;
+    doc.fontSize(10).fillColor('#475569').font('Helvetica');
+    for (const criterion of successCriteria) {
+      doc.text(`• ${criterion}`, 70, currentY, { width: pageWidth - 10 });
+      currentY = doc.y + 4;
+    }
+    currentY += 16;
+  }
+
+  // Guardrails
+  const guardrails = content.guardrails as { weWill?: string[]; weWillNot?: string[] } | undefined;
+  if (guardrails) {
+    doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+    doc.text('Strategic Guardrails', 60, currentY, { width: pageWidth });
+    currentY = doc.y + 12;
+
+    if (guardrails.weWill) {
+      doc.roundedRect(60, currentY, pageWidth / 2 - 8, 16, 4).fill(GOLD);
+      doc.fontSize(9).fillColor(NAVY).font('Helvetica-Bold');
+      doc.text('WE WILL', 68, currentY + 4, { width: pageWidth / 2 - 24 });
+      currentY = doc.y + 8;
+      doc.fontSize(10).fillColor('#475569').font('Helvetica');
+      for (const item of guardrails.weWill) {
+        doc.text(`✓ ${item}`, 68, currentY, { width: pageWidth / 2 - 16 });
+        currentY = doc.y + 4;
+      }
+    }
+    currentY += 16;
+  }
+
+  // Kill Criteria
+  if (content.killCriteria) {
+    doc.fontSize(14).fillColor(NAVY).font('Helvetica-Bold');
+    doc.text('Kill Criteria', 60, currentY, { width: pageWidth });
+    currentY = doc.y + 8;
+    doc.fontSize(10).fillColor('#ef4444').font('Helvetica');
+    doc.text(content.killCriteria as string, 60, currentY, { width: pageWidth, lineGap: 2 });
+    currentY = doc.y + 20;
+  }
+
+  // Footer
+  doc.fontSize(8).fillColor('#94a3b8').font('Helvetica');
+  doc.text(
+    `Generated by Frontera Strategy Coach • ${new Date().toLocaleDateString()}`,
+    60,
+    currentY + 20,
+    { width: pageWidth, align: 'center' }
+  );
+
+  doc.end();
+  return new Promise<Buffer>((resolve, reject) => {
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
+  });
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Database } from '@/types/database';
 import type { SynthesisResult, EvidenceLink, StrategicTension as SynthesisTensionType } from '@/types/synthesis';
 import { StrategicOpportunityMap } from './StrategicOpportunityMap';
@@ -57,6 +57,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
   // Debate Mode state
   const [activeDebate, setActiveDebate] = useState<{ synthesisTension: SynthesisTensionType; expertTension: ExpertTension } | null>(null);
   const [debateDecisions, setDebateDecisions] = useState<DebateDecision[]>([]);
+  const debateCardRef = useRef<HTMLDivElement>(null);
 
   // Fetch territory insights on mount
   useEffect(() => {
@@ -132,13 +133,26 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
     fetchDebateDecisions();
   }, [conversation.id]);
 
+  // Auto-scroll to debate card when it appears
+  useEffect(() => {
+    if (activeDebate && debateCardRef.current) {
+      debateCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [activeDebate]);
+
   // Enter debate mode for a tension
   const handleEnterDebate = useCallback((tensionDescription: string) => {
-    if (!synthesis) return;
+    console.log('[DebateMode] handleEnterDebate called with:', tensionDescription);
+    if (!synthesis) {
+      console.log('[DebateMode] No synthesis available, aborting');
+      return;
+    }
     const synthTension = synthesis.tensions.find(t => t.description === tensionDescription);
+    console.log('[DebateMode] Found synthesis tension:', !!synthTension);
     if (!synthTension) return;
 
     const matched = matchTensionToSynthesis(tensionDescription);
+    console.log('[DebateMode] Matched expert tension:', matched?.id, matched?.title);
     if (matched) {
       setActiveDebate({ synthesisTension: synthTension, expertTension: matched });
     }
@@ -460,12 +474,14 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
 
           {/* Active Debate */}
           {activeDebate && (
-            <DebateCard
-              synthesyisTension={activeDebate.synthesisTension}
-              expertTension={activeDebate.expertTension}
-              onDecision={handleDebateDecision}
-              existingDecision={debateDecisions.find(d => d.tensionId === activeDebate.expertTension.id)}
-            />
+            <div ref={debateCardRef}>
+              <DebateCard
+                synthesyisTension={activeDebate.synthesisTension}
+                expertTension={activeDebate.expertTension}
+                onDecision={handleDebateDecision}
+                existingDecision={debateDecisions.find(d => d.tensionId === activeDebate.expertTension.id)}
+              />
+            </div>
           )}
 
           {/* Strategic Tensions */}

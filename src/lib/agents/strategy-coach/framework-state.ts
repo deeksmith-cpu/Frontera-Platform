@@ -36,7 +36,7 @@ export interface FrameworkState {
   version: number; // Schema version for future migrations
 
   // Current phase of the coaching journey
-  currentPhase: "discovery" | "research" | "synthesis" | "planning";
+  currentPhase: "discovery" | "research" | "synthesis" | "planning" | "activation" | "review";
 
   // Research Playbook progress (Phase 1)
   researchPillars: {
@@ -57,8 +57,35 @@ export interface FrameworkState {
   // Captured strategic bets
   strategicBets: StrategicBet[];
 
+  // Micro-synthesis results per territory (generated when all 3 areas are mapped)
+  microSynthesisResults?: {
+    company?: {
+      keyFindings: Array<{ title: string; description: string; evidenceBase: string; confidence: string }>;
+      overallConfidence: string;
+      strategicImplication: string;
+      generatedAt: string;
+    };
+    customer?: {
+      keyFindings: Array<{ title: string; description: string; evidenceBase: string; confidence: string }>;
+      overallConfidence: string;
+      strategicImplication: string;
+      generatedAt: string;
+    };
+    competitor?: {
+      keyFindings: Array<{ title: string; description: string; evidenceBase: string; confidence: string }>;
+      overallConfidence: string;
+      strategicImplication: string;
+      generatedAt: string;
+    };
+  };
+
   // Key insights captured during coaching
   keyInsights: string[];
+
+  // Strategic Maturity Assessment archetype
+  archetype?: 'operator' | 'visionary' | 'analyst' | 'diplomat';
+  archetypeLabel?: string;
+  overallMaturity?: number;
 
   // Session metadata
   sessionCount: number;
@@ -153,6 +180,8 @@ export function getProgressSummary(state: FrameworkState): string {
     research: "Strategic Research - exploring market, customer, and colleague insights",
     synthesis: "Strategic Synthesis - developing Where to Play and How to Win hypotheses",
     planning: "Action Planning - creating actionable strategic outputs",
+    activation: "Strategic Activation - generating team briefs, guardrails, OKRs, and stakeholder packs",
+    review: "Living Strategy - tracking assumptions, signals, and strategy evolution",
   };
   sections.push(`Current Phase: ${phaseDescriptions[state.currentPhase]}`);
 
