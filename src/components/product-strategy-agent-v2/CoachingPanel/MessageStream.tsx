@@ -20,6 +20,8 @@ interface WelcomeProps {
   synthesisAvailable: boolean;
   hasHistory: boolean;
   onShowHistory: () => void;
+  hasUserEngaged: boolean;
+  materialsCount: number;
 }
 
 interface MessageStreamProps {
@@ -75,6 +77,8 @@ export function MessageStream({
           onSendPrompt={onSendFollowup || (() => {})}
           hasHistory={welcomeProps.hasHistory}
           onShowHistory={welcomeProps.onShowHistory}
+          hasUserEngaged={welcomeProps.hasUserEngaged}
+          materialsCount={welcomeProps.materialsCount}
         />
       )}
       {messages.map((message, index) => (

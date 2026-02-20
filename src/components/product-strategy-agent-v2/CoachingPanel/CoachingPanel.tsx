@@ -473,6 +473,8 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
             synthesisAvailable: smartPromptsContext?.synthesisAvailable ?? false,
             hasHistory: sessionStartRef.current > 0 && !showHistory,
             onShowHistory: () => setShowHistory(true),
+            hasUserEngaged: (showHistory ? messages : messages.slice(sessionStartRef.current)).some(m => m.role === 'user'),
+            materialsCount: smartPromptsContext?.materialsCount ?? 0,
           }}
         />
       </div>

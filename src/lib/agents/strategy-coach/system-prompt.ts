@@ -286,15 +286,20 @@ ${nextFocus}
 Where would you like to pick up?`;
   }
 
-  // New conversation - concise opening (context shown in canvas)
-  return `Welcome, ${name}. I'm your Strategy Coach from Frontera, here to guide ${company} through your product strategy transformation.
+  // New conversation — personal welcome, no methodology lecture (handled by SessionWelcome card)
+  const focusLine = context.strategicFocus
+    ? `\nI can see you're focused on **${context.strategicFocusDescription || context.strategicFocus}** — that's exactly where we'll build from.`
+    : '';
 
-Let's explore your strategic landscape together.
+  const painLine = context.painPoints
+    ? `\n${context.painPoints.split(',')[0].trim()} stands out as a key challenge — let's make sure our strategy addresses that head-on.`
+    : '';
 
-I'll guide you through our Product Strategy Research methodology, starting with understanding the market forces shaping your transformation.
+  const contextLines = (focusLine || painLine) ? `${focusLine}${painLine}\n` : '\n';
 
-
-**What competitive dynamics or market shifts are making product transformation urgent for ${company} right now?**`;
+  return `Welcome, ${name}. I'm Marcus, your Strategy Coach, here to guide ${company} through your product strategy transformation.
+${contextLines}
+**To get us started: what's the most pressing strategic question on your mind about ${company}'s future direction?**`;
 }
 
 // ============================================================================
