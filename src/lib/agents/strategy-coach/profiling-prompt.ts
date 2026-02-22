@@ -54,28 +54,8 @@ PACING RULES:
 - When you move to a new dimension, briefly acknowledge what they shared, then ask about the next topic.
 - Do NOT go deep into strategy questions — save that for the coaching phase. Keep this focused on learning about THEM as a person.`);
 
-  // Completion triggers based on state
-  if (state.status === 'awaiting_summary') {
-    sections.push(`CRITICAL — FINAL MESSAGE:
-This is your FINAL response in the profiling conversation. You have gathered enough information across all dimensions. You MUST now:
-1. Write a warm summary paragraph reflecting what you learned about ${name}
-2. Recommend a coaching persona (marcus, elena, or richard) with reasoning
-3. End with the [PROFILE_SUMMARY] JSON marker block
-Do NOT ask any more questions. Generate the summary NOW.`);
-  } else if (currentDim >= 5 && dimensionsCompleted.length >= 4) {
-    sections.push(`COMPLETION REQUIRED:
-You have covered all 5 dimensions. In your NEXT response, you MUST:
-1. Write a warm summary paragraph reflecting what you learned about ${name}
-2. Recommend a coaching persona (marcus, elena, or richard) with reasoning
-3. End with the [PROFILE_SUMMARY] JSON marker block
-Do NOT ask any more questions. It is time to wrap up.`);
-  }
-
-  // Extraction instructions
-  sections.push(`PROFILE EXTRACTION:
-When you have covered all 5 dimensions (or the user signals they want to wrap up), generate a structured profile summary. End your FINAL message with the following marker block containing valid JSON:
-
-[PROFILE_SUMMARY]
+  // Profile summary marker template (shared across completion states)
+  const markerTemplate = `[PROFILE_SUMMARY]
 {
   "role": {
     "title": "their role title",
@@ -113,9 +93,49 @@ When you have covered all 5 dimensions (or the user signals they want to wrap up
     "reasoning": "why this persona fits"
   }
 }
-[/PROFILE_SUMMARY]
+[/PROFILE_SUMMARY]`;
 
-IMPORTANT: Before the marker, write a warm summary paragraph addressed to the user, reflecting what you learned and what you'll recommend. The JSON marker should be the very last thing in your message. Only include the marker in your FINAL profiling message when all dimensions are covered.`);
+  // Completion triggers based on state — these OVERRIDE the normal extraction instructions
+  if (state.status === 'awaiting_summary') {
+    sections.push(`=== MANDATORY ACTION — THIS IS YOUR FINAL MESSAGE ===
+
+You have gathered enough information. This response MUST be your final profiling message.
+
+DO THIS NOW (no exceptions):
+1. Write 2-3 warm sentences summarizing what you learned about ${name} — their role, goals, style, and what makes them tick.
+2. Explain which coaching persona you recommend (Marcus, Elena, or Richard) and WHY it fits them specifically.
+3. End your message with the JSON marker block below. Fill in ALL fields based on what you learned. Use "not discussed" for anything not covered.
+
+The marker block is REQUIRED — the system uses it to save the profile. Without it, the profile will not be saved and the user will be stuck. Do NOT ask any follow-up questions. Do NOT ask if they're ready. Just generate the summary and marker NOW.
+
+${markerTemplate}`);
+  } else if (currentDim >= 5 && dimensionsCompleted.length >= 4) {
+    sections.push(`=== COMPLETION REQUIRED — WRAP UP NOW ===
+
+You have covered all 5 dimensions. Your NEXT response MUST conclude the profiling.
+
+DO THIS:
+1. Write 2-3 warm sentences summarizing what you learned about ${name}.
+2. Recommend a coaching persona (Marcus, Elena, or Richard) with specific reasoning.
+3. End with the JSON marker block below. Fill in ALL fields. Use "not discussed" for gaps.
+
+Do NOT ask more questions. Do NOT ask "are you ready to move on?" — just generate the summary.
+
+${markerTemplate}`);
+  } else {
+    // Normal extraction instructions (only shown when not in completion state)
+    sections.push(`PROFILE COMPLETION:
+When you have covered all 5 dimensions (or the user signals they want to wrap up), you MUST end the conversation by:
+1. Writing a warm summary paragraph addressed to the user
+2. Recommending a coaching persona (Marcus, Elena, or Richard)
+3. Including the JSON marker block below as the VERY LAST thing in your message
+
+CRITICAL: Do NOT verbally recommend a coach and then ask follow-up questions. When you make the recommendation, you MUST include the marker in the SAME message. The marker is what triggers profile completion — without it, the conversation will not end.
+
+${markerTemplate}
+
+The marker must be the last thing in your message. Fill in all fields based on what you learned.`);
+  }
 
   return sections.join('\n\n---\n\n');
 }

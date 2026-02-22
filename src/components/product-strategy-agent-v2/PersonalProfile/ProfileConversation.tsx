@@ -22,12 +22,14 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
   const [isLoadingOpening, setIsLoadingOpening] = useState(true);
+  const [isProfileDone, setIsProfileDone] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Estimate dimension progress from message count
   const exchangeCount = messages.filter(m => m.role === 'user').length;
   const estimatedDimension = Math.min(5, Math.floor(exchangeCount / 2) + 1);
+  const showCompleteButton = estimatedDimension >= 5 && !isProfileDone && !isStreaming;
 
   // Auto-scroll
   useEffect(() => {
@@ -89,12 +91,22 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
     return text.replace(/\[PROFILE_SUMMARY\][\s\S]*?\[\/PROFILE_SUMMARY\]/, '').trim();
   };
 
-  const handleSend = useCallback(async () => {
-    const trimmed = input.trim();
-    if (!trimmed || isStreaming) return;
+  // Handle profile completion — save and notify parent
+  const completeProfile = useCallback(async (profile: PersonalProfileData) => {
+    setIsProfileDone(true);
+    await fetch('/api/product-strategy-agent-v2/personal-profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversation_id: conversationId, profileData: profile }),
+    });
+    onProfileComplete(profile);
+  }, [conversationId, onProfileComplete]);
+
+  const sendMessage = useCallback(async (messageText: string) => {
+    if (!messageText.trim() || isStreaming || isProfileDone) return;
 
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: trimmed }]);
+    setMessages(prev => [...prev, { role: 'user', content: messageText.trim() }]);
     setIsStreaming(true);
     setStreamingContent('');
 
@@ -102,7 +114,7 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
       const res = await fetch(`/api/conversations/${conversationId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed }),
+        body: JSON.stringify({ message: messageText.trim() }),
       });
 
       if (!res.ok || !res.body) throw new Error('Stream failed');
@@ -125,20 +137,23 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
       // Check for profile extraction
       const profile = extractProfile(fullText);
       if (profile) {
-        // Save profile via API
-        await fetch('/api/product-strategy-agent-v2/personal-profile', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ conversation_id: conversationId, profileData: profile }),
-        });
-        onProfileComplete(profile);
+        await completeProfile(profile);
       }
     } catch (err) {
       console.error('Streaming error:', err);
     } finally {
       setIsStreaming(false);
     }
-  }, [input, isStreaming, conversationId, extractProfile, onProfileComplete]);
+  }, [isStreaming, isProfileDone, conversationId, extractProfile, completeProfile]);
+
+  const handleSend = useCallback(() => {
+    sendMessage(input);
+  }, [input, sendMessage]);
+
+  // "Complete My Profile" fallback — sends a trigger message to force the summary
+  const handleCompleteProfile = useCallback(() => {
+    sendMessage("That covers everything — please complete my profile and recommend a coach.");
+  }, [sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,6 +161,8 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
       handleSend();
     }
   };
+
+  const inputDisabled = isStreaming || isProfileDone;
 
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl border border-slate-200 overflow-hidden">
@@ -157,7 +174,9 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
           </Link>
           <div>
             <h2 className="text-sm font-bold text-white">Personal Profile</h2>
-            <p className="text-xs text-slate-400">Getting to know you as a leader</p>
+            <p className="text-xs text-slate-400">
+              {isProfileDone ? 'Profile complete!' : 'Getting to know you as a leader'}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -167,18 +186,30 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
               <div
                 key={dim}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  dim <= estimatedDimension ? 'bg-[#fbbf24]' : 'bg-slate-600'
+                  isProfileDone
+                    ? 'bg-emerald-400'
+                    : dim <= estimatedDimension ? 'bg-[#fbbf24]' : 'bg-slate-600'
                 }`}
               />
             ))}
-            <span className="text-xs text-slate-400 ml-1">{estimatedDimension}/5</span>
+            <span className="text-xs text-slate-400 ml-1">
+              {isProfileDone ? (
+                <svg className="w-3.5 h-3.5 text-emerald-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                `${estimatedDimension}/5`
+              )}
+            </span>
           </div>
-          <button
-            onClick={onSkip}
-            className="text-xs text-slate-400 hover:text-white transition-colors"
-          >
-            Skip for now
-          </button>
+          {!isProfileDone && (
+            <button
+              onClick={onSkip}
+              className="text-xs text-slate-400 hover:text-white transition-colors"
+            >
+              Skip for now
+            </button>
+          )}
         </div>
       </div>
 
@@ -223,29 +254,56 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="px-6 py-4 border-t border-slate-100">
-        <div className="flex items-end gap-3">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Share your thoughts..."
-            rows={1}
-            disabled={isStreaming}
-            className="flex-1 text-sm p-3 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400"
-          />
+      {/* Complete Profile fallback button — appears when all dimensions covered */}
+      {showCompleteButton && (
+        <div className="px-6 py-3 border-t border-emerald-100 bg-emerald-50/50">
           <button
-            onClick={handleSend}
-            disabled={!input.trim() || isStreaming}
-            className="inline-flex items-center justify-center rounded-lg bg-[#fbbf24] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-[#f59e0b] focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={handleCompleteProfile}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
+            Complete My Profile
           </button>
+          <p className="text-xs text-slate-500 text-center mt-1.5">
+            All dimensions covered — ready to generate your coaching profile
+          </p>
         </div>
+      )}
+
+      {/* Input — disabled after profile completion */}
+      <div className="px-6 py-4 border-t border-slate-100">
+        {isProfileDone ? (
+          <div className="flex items-center justify-center gap-2 py-2 text-emerald-700 text-sm font-semibold">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Profile complete — loading your summary...
+          </div>
+        ) : (
+          <div className="flex items-end gap-3">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Share your thoughts..."
+              rows={1}
+              disabled={inputDisabled}
+              className="flex-1 text-sm p-3 border border-slate-200 rounded-lg bg-white text-slate-900 resize-none transition-all leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400"
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || inputDisabled}
+              className="inline-flex items-center justify-center rounded-lg bg-[#fbbf24] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-[#f59e0b] focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
