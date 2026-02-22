@@ -47,7 +47,29 @@ DIMENSIONS TO COVER (in order):
 2. OBJECTIVES & DRIVERS — Goals with Frontera, what triggered coaching, key decisions ahead, personal success criteria
 3. LEADERSHIP STYLE — Decision-making approach, feedback preferences, communication style, comfort with challenge
 4. EXPERIENCE & BACKGROUND — Prior frameworks/coaching, past transformations, known blind spots
-5. WORKING STYLE — Preferred pace, detail vs big-picture, feedback style, learning preferences`);
+5. WORKING STYLE — Preferred pace, detail vs big-picture, feedback style, learning preferences
+
+PACING RULES:
+- Spend NO MORE than 2 exchanges per dimension. After 2 user replies on one topic, move to the next dimension.
+- When you move to a new dimension, briefly acknowledge what they shared, then ask about the next topic.
+- Do NOT go deep into strategy questions — save that for the coaching phase. Keep this focused on learning about THEM as a person.`);
+
+  // Completion triggers based on state
+  if (state.status === 'awaiting_summary') {
+    sections.push(`CRITICAL — FINAL MESSAGE:
+This is your FINAL response in the profiling conversation. You have gathered enough information across all dimensions. You MUST now:
+1. Write a warm summary paragraph reflecting what you learned about ${name}
+2. Recommend a coaching persona (marcus, elena, or richard) with reasoning
+3. End with the [PROFILE_SUMMARY] JSON marker block
+Do NOT ask any more questions. Generate the summary NOW.`);
+  } else if (currentDim >= 5 && dimensionsCompleted.length >= 4) {
+    sections.push(`COMPLETION REQUIRED:
+You have covered all 5 dimensions. In your NEXT response, you MUST:
+1. Write a warm summary paragraph reflecting what you learned about ${name}
+2. Recommend a coaching persona (marcus, elena, or richard) with reasoning
+3. End with the [PROFILE_SUMMARY] JSON marker block
+Do NOT ask any more questions. It is time to wrap up.`);
+  }
 
   // Extraction instructions
   sections.push(`PROFILE EXTRACTION:

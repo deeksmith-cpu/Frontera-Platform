@@ -11,7 +11,7 @@ import {
 } from "@/lib/agents/strategy-coach";
 import { generateOpeningMessage } from "@/lib/agents/strategy-coach/system-prompt";
 import { generateProfilingOpeningMessage } from "@/lib/agents/strategy-coach/profiling-prompt";
-import { initializeProfilingState } from "@/lib/agents/strategy-coach/profiling-state";
+import { initializeProfilingState, advanceProfilingState } from "@/lib/agents/strategy-coach/profiling-state";
 import type { ProfilingFrameworkState } from "@/types/database";
 import { trackEvent } from "@/lib/analytics/posthog-server";
 
@@ -212,59 +212,96 @@ export async function POST(
             .select()
             .single();
 
-          // Update conversation last_message_at and increment message count
-          const previousPhase = frameworkState.currentPhase;
+          // Update conversation state — profiling vs coaching
+          if (isProfilingConversation) {
+            // Profiling: advance dimension state based on message count
+            const profilingState = (conversation.framework_state as unknown as ProfilingFrameworkState) || initializeProfilingState();
+            const userMsgCount = messages.filter(m => m.role === 'user').length + 1; // +1 for current message
+            const responseHasSummary = fullResponse.includes('[PROFILE_SUMMARY]');
 
-          const updatedState = {
-            ...frameworkState,
-            totalMessageCount: (frameworkState.totalMessageCount || 0) + 2,
-            lastActivityAt: new Date().toISOString(),
-          };
+            const updatedProfilingState = advanceProfilingState(
+              profilingState,
+              userMsgCount,
+              responseHasSummary
+            );
 
-          await supabase
-            .from("conversations")
-            .update({
-              last_message_at: new Date().toISOString(),
-              framework_state: updatedState,
-            })
-            .eq("id", conversationId);
+            await supabase
+              .from("conversations")
+              .update({
+                last_message_at: new Date().toISOString(),
+                framework_state: updatedProfilingState,
+              })
+              .eq("id", conversationId);
 
-          // Track message received
-          if (assistantMessageData) {
-            await trackEvent("strategy_coach_message_received", userId, {
-              org_id: orgId,
-              conversation_id: conversationId,
-              message_id: assistantMessageData.id,
-              response_length: fullResponse.length,
-              streaming_duration_ms: streamDuration,
-              framework_phase: updatedState.currentPhase,
-              phase_changed: updatedState.currentPhase !== previousPhase,
-            });
-          }
+            // Track profiling message
+            if (assistantMessageData) {
+              await trackEvent("profiling_message_received", userId, {
+                org_id: orgId,
+                conversation_id: conversationId,
+                message_id: assistantMessageData.id,
+                response_length: fullResponse.length,
+                streaming_duration_ms: streamDuration,
+                current_dimension: updatedProfilingState.currentDimension,
+                dimensions_completed: updatedProfilingState.dimensionsCompleted.length,
+                profiling_status: updatedProfilingState.status,
+                has_summary: responseHasSummary,
+              });
+            }
+          } else {
+            // Coaching: update framework state as before
+            const previousPhase = frameworkState.currentPhase;
 
-          // Track phase transition
-          if (updatedState.currentPhase !== previousPhase) {
-            await trackEvent("strategy_coach_phase_transitioned", userId, {
-              org_id: orgId,
-              conversation_id: conversationId,
-              from_phase: previousPhase,
-              to_phase: updatedState.currentPhase,
-              message_count_in_phase: updatedState.totalMessageCount || 0,
-            });
-          }
+            const updatedState = {
+              ...frameworkState,
+              totalMessageCount: (frameworkState.totalMessageCount || 0) + 2,
+              lastActivityAt: new Date().toISOString(),
+            };
 
-          // Track strategic bet creation
-          const previousBetCount = frameworkState.strategicBets?.length || 0;
-          const newBetCount = updatedState.strategicBets?.length || 0;
-          if (newBetCount > previousBetCount && updatedState.strategicBets) {
-            const latestBet = updatedState.strategicBets[newBetCount - 1];
-            await trackEvent("strategy_coach_bet_created", userId, {
-              org_id: orgId,
-              conversation_id: conversationId,
-              bet_count: newBetCount,
-              bet_belief: latestBet?.belief?.substring(0, 100) || "Unknown",
-              pillar_source: latestBet?.pillarSource || "unknown",
-            });
+            await supabase
+              .from("conversations")
+              .update({
+                last_message_at: new Date().toISOString(),
+                framework_state: updatedState,
+              })
+              .eq("id", conversationId);
+
+            // Track message received
+            if (assistantMessageData) {
+              await trackEvent("strategy_coach_message_received", userId, {
+                org_id: orgId,
+                conversation_id: conversationId,
+                message_id: assistantMessageData.id,
+                response_length: fullResponse.length,
+                streaming_duration_ms: streamDuration,
+                framework_phase: updatedState.currentPhase,
+                phase_changed: updatedState.currentPhase !== previousPhase,
+              });
+            }
+
+            // Track phase transition
+            if (updatedState.currentPhase !== previousPhase) {
+              await trackEvent("strategy_coach_phase_transitioned", userId, {
+                org_id: orgId,
+                conversation_id: conversationId,
+                from_phase: previousPhase,
+                to_phase: updatedState.currentPhase,
+                message_count_in_phase: updatedState.totalMessageCount || 0,
+              });
+            }
+
+            // Track strategic bet creation
+            const previousBetCount = frameworkState.strategicBets?.length || 0;
+            const newBetCount = updatedState.strategicBets?.length || 0;
+            if (newBetCount > previousBetCount && updatedState.strategicBets) {
+              const latestBet = updatedState.strategicBets[newBetCount - 1];
+              await trackEvent("strategy_coach_bet_created", userId, {
+                org_id: orgId,
+                conversation_id: conversationId,
+                bet_count: newBetCount,
+                bet_belief: latestBet?.belief?.substring(0, 100) || "Unknown",
+                pillar_source: latestBet?.pillarSource || "unknown",
+              });
+            }
           }
         } catch (err) {
           console.error("Error saving assistant message:", err);

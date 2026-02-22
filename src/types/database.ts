@@ -67,7 +67,7 @@ export interface PersonalProfileData {
   };
 }
 
-export type ProfilingStatus = 'not_started' | 'in_progress' | 'completed';
+export type ProfilingStatus = 'not_started' | 'in_progress' | 'awaiting_summary' | 'completed';
 
 export interface ProfilingFrameworkState {
   status: ProfilingStatus;
