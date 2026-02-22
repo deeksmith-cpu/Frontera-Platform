@@ -136,7 +136,7 @@ export default async function DashboardPage() {
           </Link>
 
           {/* Product Strategy Agent MVP 2.0 */}
-          <Link href="/dashboard/product-strategy-agent-v2" className="block">
+          <a href="/dashboard/product-strategy-agent-v2" className="block">
             <div className="rounded-2xl border border-[#1a1f3a]/20 bg-[#ecfeff] p-6 transition-all duration-300 hover:shadow-lg hover:border-[#1a1f3a]/40">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
                 </svg>
               </div>
             </div>
-          </Link>
+          </a>
 
           {/* Leadership Playbook */}
           <Link href="/dashboard/leadership-playbook" className="block">
