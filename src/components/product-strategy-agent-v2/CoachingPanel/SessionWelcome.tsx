@@ -347,9 +347,6 @@ export function SessionWelcome({
           </div>
         </div>
 
-        {/* Mini phase timeline — Discovery only */}
-        {isDiscovery && <MiniPhaseTimeline currentPhase={currentPhase} />}
-
         {/* Quick start checklist — Discovery only */}
         {isDiscovery && <QuickStartChecklist materialsCount={materialsCount} />}
 

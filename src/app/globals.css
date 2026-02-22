@@ -51,9 +51,10 @@
   --color-teal-light: var(--cyan-400);
   --color-silver: var(--silver);
   --color-silver-dark: var(--silver-dark);
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-jakarta), system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'Fira Code', Consolas, monospace;
+  --font-code: var(--font-mono-accent), ui-monospace, 'SF Mono', 'Fira Code', Consolas, monospace;
 
   /* Bold Design System - Phase Colors */
   /* Use Tailwind's default color scale (50-950) for consistency */
@@ -102,7 +103,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
   line-height: 1.6;
 }
 
@@ -275,6 +276,44 @@ a:focus-visible {
 .animate-fadeInUp {
   animation: fadeInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) backwards;
 }
+
+/* Orchestrated Entrance Animations */
+@keyframes entranceFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entranceSlideRight {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes entranceSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-entrance {
+  animation: entranceFadeUp 0.5s ease-out both;
+}
+
+.animate-entrance-left {
+  animation: entranceSlideRight 0.5s ease-out both;
+}
+
+.animate-entrance-down {
+  animation: entranceSlideDown 0.4s ease-out both;
+}
+
+/* Stagger delay utilities */
+.animate-delay-0 { animation-delay: 0ms; }
+.animate-delay-75 { animation-delay: 75ms; }
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-150 { animation-delay: 150ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+.animate-delay-400 { animation-delay: 400ms; }
+.animate-delay-500 { animation-delay: 500ms; }
 
 /* Custom Scrollbar for Strategy Coach */
 .strategy-coach-v2 ::-webkit-scrollbar {
@@ -467,6 +506,28 @@ a:focus-visible {
 
 .hover\:shadow-gold-xl:hover {
   box-shadow: var(--box-shadow-gold-xl);
+}
+
+/* Ring-pulse animation for active phase dots */
+@keyframes ringPulse {
+  0% { box-shadow: 0 0 0 0 currentColor; }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.animate-ring-pulse {
+  animation: ringPulse 2s ease-out infinite;
+}
+
+/* Button spring effect on click */
+@keyframes buttonSpring {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.active\:animate-spring:active {
+  animation: buttonSpring 0.2s ease-out;
 }
 
 /* Safe Area Utilities for notched/rounded devices */

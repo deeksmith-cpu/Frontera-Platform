@@ -2,6 +2,8 @@ import {
   ClientContext,
   formatClientContextForPrompt,
   formatPersonalProfileForPrompt,
+  loadUploadedMaterials,
+  formatUploadedMaterialsForPrompt,
   loadTerritoryInsights,
   loadSynthesisOutput,
   formatTerritoryInsightsForPrompt,
@@ -132,6 +134,19 @@ export async function buildSystemPrompt(
   // Personal profile (if available)
   if (context.personalProfile) {
     sections.push(formatPersonalProfileForPrompt(context.personalProfile));
+  }
+
+  // Uploaded strategic materials — available in all phases
+  if (conversationId) {
+    const materials = await loadUploadedMaterials(conversationId);
+    console.log(`[buildSystemPrompt] Loaded ${materials.length} uploaded materials for conversation ${conversationId}`);
+    if (materials.length > 0) {
+      const materialsPrompt = formatUploadedMaterialsForPrompt(materials);
+      console.log(`[buildSystemPrompt] Materials prompt section: ${materialsPrompt.length} chars, ${materials.filter(m => m.text).length} with content, ${materials.filter(m => !m.text).length} metadata-only`);
+      sections.push(materialsPrompt);
+    }
+  } else {
+    console.log('[buildSystemPrompt] No conversationId provided — skipping materials loading');
   }
 
   // Industry-specific guidance

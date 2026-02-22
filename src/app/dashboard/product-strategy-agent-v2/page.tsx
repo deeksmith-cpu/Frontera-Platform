@@ -13,7 +13,7 @@ function getSupabaseAdmin() {
   return createClient(url, key);
 }
 
-export default async function ProductStrategyAgentPage() {
+export default async function ProductStrategyAgentV2Page() {
   const { userId, orgId } = await auth();
 
   if (!userId) {
@@ -44,11 +44,13 @@ export default async function ProductStrategyAgentPage() {
     console.log('Client lookup (may be expected if no client exists):', clientError.message);
   }
 
-  // Get or create active conversation for this org
+  // Get or create active strategy_coach conversation for this org
+  // Filter by agent_type to avoid accidentally picking up profiling conversations
   const { data: existingConversations, error: fetchError } = await supabase
     .from('conversations')
     .select('*')
     .eq('clerk_org_id', orgId)
+    .eq('agent_type', 'strategy_coach')
     .order('created_at', { ascending: false })
     .limit(1);
 

@@ -72,19 +72,23 @@ export function AchievementBadges({ achievements, isIconOnly = false }: Achievem
           <div
             key={badge.id}
             className="relative"
-            title={badge.label}
+            title={`${badge.label}${badge.earned ? ' ✓' : ''}`}
           >
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 ${
                 badge.earned
-                  ? 'bg-[#fbbf24]/20 text-[#fbbf24]'
+                  ? 'bg-[#fbbf24]/25 text-[#fbbf24] ring-1 ring-[#fbbf24]/40'
                   : 'bg-white/5 text-white/20'
               }`}
             >
               <AchievementIcon id={badge.id} className="w-3.5 h-3.5" />
             </div>
             {badge.earned && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#151930] flex items-center justify-center">
+                <svg className="w-1.5 h-1.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
             )}
           </div>
         ))}
@@ -104,18 +108,22 @@ export function AchievementBadges({ achievements, isIconOnly = false }: Achievem
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
                 badge.earned
-                  ? 'bg-[#fbbf24]/20 text-[#fbbf24] hover:scale-110'
+                  ? 'bg-[#fbbf24]/25 text-[#fbbf24] ring-1 ring-[#fbbf24]/40 hover:scale-110'
                   : 'bg-white/5 text-white/20'
               }`}
             >
               <AchievementIcon id={badge.id} className="w-5 h-5" />
             </div>
             {badge.earned && (
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#1a1f3a]" />
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#151930] flex items-center justify-center">
+                <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
             )}
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 bg-slate-800 text-white text-[9px] rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
-              {badge.label}
+              {badge.label}{badge.earned ? ' ✓' : ''}
             </div>
           </div>
         ))}

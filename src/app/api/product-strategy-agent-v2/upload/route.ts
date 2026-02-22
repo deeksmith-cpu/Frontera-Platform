@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { trackEvent } from '@/lib/analytics/posthog-server';
+import { extractTextFromFile, extractTextFromUrl } from '@/lib/document-extraction';
 
 // Route segment config for file uploads
 export const runtime = 'nodejs';
@@ -61,17 +62,39 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
       }
 
+      // Fetch and extract text content from the URL
+      let extractedContext: Record<string, unknown> = {};
+      const extraction = await extractTextFromUrl(url);
+      if (extraction) {
+        extractedContext = {
+          text: extraction.text,
+          source: url,
+          generated_by: 'user_upload',
+          ...(extraction.pageCount ? { page_count: extraction.pageCount } : {}),
+        };
+        console.log(`[upload] Extracted ${extraction.text.length} chars from URL: ${url}`);
+      } else {
+        extractedContext = {
+          source: url,
+          generated_by: 'user_upload',
+          extraction_note: 'Content could not be fetched from this URL',
+        };
+        console.warn(`[upload] Could not extract content from URL: ${url}`);
+      }
+
       // Create uploaded_materials record for URL
+      const hostname = (() => { try { return new URL(url).hostname; } catch { return url; } })();
       const { data: material, error: materialError } = await rawSupabase
         .from('uploaded_materials')
         .insert({
           conversation_id,
-          filename: new URL(url).hostname,
+          filename: hostname,
           file_type: 'url',
           file_url: url,
-          file_size: null,
-          extracted_context: {},
-          processing_status: 'pending',
+          file_size: extraction?.text.length || null,
+          extracted_context: extractedContext,
+          processing_status: 'completed',
+          processed_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -83,16 +106,6 @@ export async function POST(req: NextRequest) {
           { status: 500 }
         );
       }
-
-      // TODO: Trigger background job to fetch and process URL content
-      // For now, mark as completed
-      await rawSupabase
-        .from('uploaded_materials')
-        .update({
-          processing_status: 'completed',
-          processed_at: new Date().toISOString(),
-        })
-        .eq('id', (material as { id: string }).id);
 
       trackEvent('psa_url_imported', userId, { org_id: orgId, conversation_id, url });
       return NextResponse.json(material);
@@ -170,39 +183,36 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // TODO: Upload to Supabase Storage (requires 'strategy-materials' bucket)
-      // For MVP testing, we'll skip actual file upload and just store metadata
       const fileExt = file.name.split('.').pop();
       const fileName = `${conversation_id}/${Date.now()}.${fileExt}`;
 
-      // Temporary: Skip storage upload for MVP testing
-      // In production, uncomment the storage upload code below
-      /*
-      const fileBuffer = await file.arrayBuffer();
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('strategy-materials')
-        .upload(fileName, fileBuffer, {
-          contentType: file.type,
-          upsert: false,
-        });
+      // Read file buffer and extract text content
+      const fileBuffer = Buffer.from(await file.arrayBuffer());
+      let extractedContext: Record<string, unknown> = {};
 
-      if (uploadError) {
-        console.error('Storage upload error:', uploadError);
-        return NextResponse.json(
-          { error: 'Failed to upload file to storage' },
-          { status: 500 }
-        );
+      const extraction = await extractTextFromFile(fileBuffer, fileExt || '', file.name);
+      if (extraction) {
+        extractedContext = {
+          text: extraction.text,
+          source: file.name,
+          generated_by: 'user_upload',
+          ...(extraction.pageCount ? { page_count: extraction.pageCount } : {}),
+        };
+        console.log(`[upload] Extracted ${extraction.text.length} chars from ${file.name}`);
+      } else {
+        // Images or unsupported formats — store metadata only
+        extractedContext = {
+          source: file.name,
+          generated_by: 'user_upload',
+          extraction_note: 'Text extraction not available for this file type',
+        };
+        console.log(`[upload] No text extraction for ${file.name} (${fileExt})`);
       }
 
-      const { data: urlData } = supabase.storage
-        .from('strategy-materials')
-        .getPublicUrl(fileName);
-      */
-
-      // Temporary placeholder URL for MVP testing
+      // Placeholder URL for MVP (Supabase Storage upload can be enabled later)
       const urlData = { publicUrl: `/uploads/${fileName}` };
 
-      // Create uploaded_materials record
+      // Create uploaded_materials record with extracted content
       const { data: material, error: materialError } = await rawSupabase
         .from('uploaded_materials')
         .insert({
@@ -211,8 +221,9 @@ export async function POST(req: NextRequest) {
           file_type: fileExt || 'unknown',
           file_url: urlData.publicUrl,
           file_size: file.size,
-          extracted_context: {},
-          processing_status: 'pending',
+          extracted_context: extractedContext,
+          processing_status: 'completed',
+          processed_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -225,22 +236,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // TODO: Trigger background job to extract text and process content
-      // For now, mark as completed
-      await rawSupabase
-        .from('uploaded_materials')
-        .update({
-          processing_status: 'completed',
-          processed_at: new Date().toISOString(),
-        })
-        .eq('id', (material as { id: string }).id);
-
       trackEvent('psa_file_uploaded', userId, {
         org_id: orgId,
         conversation_id,
         file_name: file.name,
         file_type: fileExt,
         file_size: file.size,
+        extracted_chars: extraction?.text.length || 0,
       });
       return NextResponse.json(material);
     }

@@ -110,6 +110,13 @@ export function SessionHeader({
                 isLoading={isPersonaLoading}
               />
             )}
+
+            {/* Dev debug: conversation ID (only in development) */}
+            {process.env.NODE_ENV === 'development' && (
+              <span className="text-[9px] text-slate-300 font-mono" title={conversation.id}>
+                id: {conversation.id.slice(0, 8)}
+              </span>
+            )}
           </div>
         </div>
 

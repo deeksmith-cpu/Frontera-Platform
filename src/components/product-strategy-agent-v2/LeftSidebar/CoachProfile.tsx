@@ -26,7 +26,7 @@ export function CoachProfile({ personaId, isIconOnly = false }: CoachProfileProp
   if (isIconOnly) {
     return (
       <div className="flex justify-center py-3">
-        <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition-transform duration-300 hover:scale-110" suppressHydrationWarning>
+        <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition-transform duration-300 hover:scale-110">
           <Image
             src="/avatars/marcus.jpg"
             alt="Marcus"
@@ -40,7 +40,7 @@ export function CoachProfile({ personaId, isIconOnly = false }: CoachProfileProp
   }
 
   return (
-    <div className="flex items-center gap-3 px-4 py-4" suppressHydrationWarning>
+    <div className="flex items-center gap-3 px-4 py-4">
       <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition-transform duration-300 hover:scale-110">
         <Image
           src="/avatars/marcus.jpg"

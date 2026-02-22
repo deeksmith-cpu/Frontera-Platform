@@ -46,7 +46,7 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
   const [smartPromptsContext, setSmartPromptsContext] = useState<SmartPromptsContext | undefined>(undefined);
-  const [lastActivityAt, setLastActivityAt] = useState<number>(Date.now());
+  const [lastActivityAt, setLastActivityAt] = useState<number>(0);
   const [currentPersona, setCurrentPersona] = useState<PersonaId | undefined>(undefined);
   const [isPersonaLoading, setIsPersonaLoading] = useState(false);
   const [capturedInsights, setCapturedInsights] = useState<Set<string>>(new Set());
@@ -139,36 +139,33 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
   }, [activeResearchContext?.territory, messages.length]);
 
   // Fetch context awareness data for smart prompts
-  useEffect(() => {
+  const refreshContextData = useCallback(async () => {
     if (!conversation) return;
-
-    const conversationId = conversation.id;
-
-    async function fetchContextData() {
-      try {
-        const response = await fetch(
-          `/api/product-strategy-agent-v2/context-awareness?conversation_id=${conversationId}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setSmartPromptsContext({
-            phase: currentPhase,
-            materialsCount: data.materialsCount ?? 0,
-            territoryProgress: data.territoryProgress ?? {
-              company: { mapped: 0, total: 3 },
-              customer: { mapped: 0, total: 3 },
-              competitor: { mapped: 0, total: 3 },
-            },
-            synthesisAvailable: data.synthesisAvailable ?? false,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching context data for smart prompts:', error);
+    try {
+      const response = await fetch(
+        `/api/product-strategy-agent-v2/context-awareness?conversation_id=${conversation.id}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSmartPromptsContext({
+          phase: currentPhase,
+          materialsCount: data.materialsCount ?? 0,
+          territoryProgress: data.territoryProgress ?? {
+            company: { mapped: 0, total: 3 },
+            customer: { mapped: 0, total: 3 },
+            competitor: { mapped: 0, total: 3 },
+          },
+          synthesisAvailable: data.synthesisAvailable ?? false,
+        });
       }
+    } catch (error) {
+      console.error('Error fetching context data for smart prompts:', error);
     }
-
-    fetchContextData();
   }, [conversation, currentPhase]);
+
+  useEffect(() => {
+    refreshContextData();
+  }, [refreshContextData]);
 
   // Fetch persona preference
   useEffect(() => {
@@ -483,6 +480,8 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
           onSendMessage={handleSendMessage}
           isDisabled={isLoading || isStreaming}
           smartPromptsContext={smartPromptsContext}
+          conversationId={conversation?.id}
+          onMaterialsChanged={refreshContextData}
         />
       </div>
     </aside>

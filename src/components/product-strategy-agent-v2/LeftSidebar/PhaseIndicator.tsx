@@ -45,7 +45,7 @@ export function PhaseIndicator({ currentPhase, isIconOnly = false, variant = 'si
                   <span
                     className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300 ${
                       isActive
-                        ? `${phase.pillDot} animate-pulse`
+                        ? `${phase.pillDot} animate-ring-pulse`
                         : isComplete
                           ? phase.dotComplete
                           : 'bg-slate-300'
@@ -86,7 +86,7 @@ export function PhaseIndicator({ currentPhase, isIconOnly = false, variant = 'si
               key={phase.id}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 isActive
-                  ? `${phase.dotActive} animate-pulse`
+                  ? `${phase.dotActive} animate-ring-pulse`
                   : isComplete
                     ? phase.dotComplete
                     : 'bg-white/20'
@@ -117,7 +117,7 @@ export function PhaseIndicator({ currentPhase, isIconOnly = false, variant = 'si
                 <span
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                     isActive
-                      ? `${phase.dotActive} animate-pulse`
+                      ? `${phase.dotActive} animate-ring-pulse`
                       : isComplete
                         ? phase.dotComplete
                         : 'bg-white/20'

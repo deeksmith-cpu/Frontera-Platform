@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 
 export type LayoutPanel = 'sidebar' | 'coach' | 'canvas';
 
@@ -35,7 +35,14 @@ function getBreakpoint(): 'mobile' | 'tablet' | 'desktop' {
   return 'desktop';
 }
 
+// Hydration-safe mount detection using useSyncExternalStore
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
+
 export function useStrategyLayout(): UseStrategyLayoutReturn {
+  const isMounted = useIsMounted();
   const [breakpoint, setBreakpoint] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMobileCanvasOpen, setIsMobileCanvasOpen] = useState(false);
@@ -75,17 +82,22 @@ export function useStrategyLayout(): UseStrategyLayoutReturn {
     setIsCanvasHidden(prev => !prev);
   }, []);
 
-  const isSidebarOpen = breakpoint === 'desktop' || breakpoint === 'tablet';
-  const isSidebarIconOnly = breakpoint === 'tablet';
-  const isCanvasVisible = breakpoint === 'desktop' && !isCanvasHidden;
+  // Before mount, return consistent desktop defaults to match SSR
+  const isSidebarOpen = isMounted
+    ? breakpoint === 'desktop' || breakpoint === 'tablet'
+    : true;
+  const isSidebarIconOnly = isMounted ? breakpoint === 'tablet' : false;
+  const isCanvasVisible = isMounted
+    ? breakpoint === 'desktop' && !isCanvasHidden
+    : true;
 
   return {
     isSidebarOpen,
     isSidebarIconOnly,
     isCanvasVisible,
-    isMobileDrawerOpen,
-    isMobileCanvasOpen,
-    breakpoint,
+    isMobileDrawerOpen: isMounted ? isMobileDrawerOpen : false,
+    isMobileCanvasOpen: isMounted ? isMobileCanvasOpen : false,
+    breakpoint: isMounted ? breakpoint : 'desktop',
     toggleMobileDrawer,
     toggleMobileCanvas,
     closeOverlays,

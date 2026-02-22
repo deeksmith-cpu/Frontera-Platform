@@ -230,6 +230,119 @@ function truncateText(text: string, maxLength: number): string {
 }
 
 /**
+ * Load uploaded materials for a conversation to provide document context to the agent.
+ * Returns completed materials with their extracted content (text, topics, source).
+ */
+export async function loadUploadedMaterials(conversationId: string): Promise<Array<{
+  filename: string;
+  fileType: string;
+  text: string | null;
+  source: string | null;
+  topics: string | null;
+  isAiGenerated: boolean;
+}>> {
+  const rawSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: materials, error } = await rawSupabase
+    .from("uploaded_materials")
+    .select("filename, file_type, extracted_context, processing_status")
+    .eq("conversation_id", conversationId)
+    .eq("processing_status", "completed")
+    .order("uploaded_at", { ascending: true });
+
+  if (error) {
+    console.error("[loadUploadedMaterials] Error:", error);
+    return [];
+  }
+
+  if (!materials || materials.length === 0) {
+    console.log(`[loadUploadedMaterials] No completed materials found for conversation ${conversationId}`);
+    return [];
+  }
+
+  console.log(`[loadUploadedMaterials] Found ${materials.length} materials:`, materials.map((m: { filename: string; file_type: string }) => `${m.filename} (${m.file_type})`));
+
+  type MaterialRow = {
+    filename: string;
+    file_type: string;
+    extracted_context: Record<string, unknown> | null;
+  };
+
+  return (materials as MaterialRow[]).map((m) => {
+    const ctx = m.extracted_context || {};
+    return {
+      filename: m.filename,
+      fileType: m.file_type,
+      text: typeof ctx.text === "string" ? ctx.text : null,
+      source: typeof ctx.source === "string" ? ctx.source : null,
+      topics: typeof ctx.topics === "string" ? ctx.topics : null,
+      isAiGenerated: ctx.generated_by === "ai_research_assistant",
+    };
+  });
+}
+
+/**
+ * Format uploaded materials for the system prompt.
+ * Includes document names and any extracted text content so the coach can reference them.
+ */
+export function formatUploadedMaterialsForPrompt(
+  materials: Array<{
+    filename: string;
+    fileType: string;
+    text: string | null;
+    source: string | null;
+    topics: string | null;
+    isAiGenerated: boolean;
+  }>
+): string {
+  if (materials.length === 0) return "";
+
+  const sections: string[] = [];
+  sections.push("## Uploaded Strategic Materials");
+  sections.push("");
+  sections.push(`**IMPORTANT: You DO have access to ${materials.length} uploaded document(s).** If earlier messages in this conversation said otherwise, those are outdated — the document access has been resolved. Reference these documents using [Doc:filename] citation format. Acknowledge their content when relevant.`);
+  sections.push("");
+
+  // Separate materials with content from metadata-only
+  const withContent = materials.filter((m) => m.text && m.text.length > 0);
+  const metadataOnly = materials.filter((m) => !m.text || m.text.length === 0);
+
+  // Materials with extracted content
+  for (const mat of withContent) {
+    const sourceNote = mat.source && mat.source !== "AI-generated research" ? ` | Source: ${mat.source}` : "";
+    const suffix = mat.isAiGenerated ? " (AI Research)" : "";
+    sections.push(`### [Doc:${mat.filename}]${suffix}`);
+    sections.push(`Type: ${mat.fileType.toUpperCase()}${sourceNote}`);
+    if (mat.topics) {
+      sections.push(`Topics: ${mat.topics}`);
+    }
+    // Include full text, truncated at 4000 chars per document to manage prompt size
+    const text = mat.text!;
+    if (text.length > 4000) {
+      sections.push(text.substring(0, 4000) + "\n[... document truncated for brevity ...]");
+    } else {
+      sections.push(text);
+    }
+    sections.push("");
+  }
+
+  // Metadata-only materials (no extracted text yet)
+  if (metadataOnly.length > 0) {
+    sections.push("### Other Uploaded Documents (content not yet extracted)");
+    for (const mat of metadataOnly) {
+      sections.push(`- **${mat.filename}** (${mat.fileType.toUpperCase()})`);
+    }
+    sections.push("");
+    sections.push("Note: These documents have been uploaded but their text content has not been extracted yet. The client may reference them in conversation — acknowledge them and ask the client to share relevant details verbally.");
+  }
+
+  return sections.join("\n");
+}
+
+/**
  * Load territory insights for a conversation to provide research context to the agent.
  */
 export async function loadTerritoryInsights(conversationId: string): Promise<{

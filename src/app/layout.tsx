@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./providers";
@@ -20,7 +20,7 @@ const clerkAppearance = {
     colorInputBackground: '#ffffff',
     colorInputText: '#0f172a',
     borderRadius: '0.75rem',           // rounded-xl
-    fontFamily: 'var(--font-inter), system-ui, -apple-system, sans-serif',
+    fontFamily: 'var(--font-jakarta), system-ui, -apple-system, sans-serif',
     fontSize: '0.875rem',
   },
   elements: {
@@ -36,13 +36,20 @@ const clerkAppearance = {
   },
 };
 
-// Only load Inter - the primary brand font
-// Other fonts use system fallbacks to reduce network requests and improve first load
-const inter = Inter({
+// Plus Jakarta Sans — distinctive geometric heading font (replaces Inter)
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-jakarta",
   display: "swap",
   preload: true,
+});
+
+// JetBrains Mono — accent monospace for data, metrics, phase labels
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-accent",
+  display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {
@@ -88,7 +95,7 @@ export default function RootLayout({
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <link rel="apple-touch-icon" href="/frontera-logo-F.jpg" />
         </head>
-        <body className={`${inter.variable} font-sans antialiased`}>
+        <body className={`${jakarta.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
           <PostHogProvider>
             <PostHogPageView />
             {children}

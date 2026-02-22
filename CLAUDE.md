@@ -210,8 +210,9 @@ Frontera's design system creates a premium, authoritative, and distinctive aesth
 ### Typography
 
 **Font Stack:**
-- **Headings**: Inter (loaded via Google Fonts)
+- **Headings/UI**: Plus Jakarta Sans (`--font-jakarta`, loaded via Google Fonts) — geometric, modern, warm
 - **Body**: System UI stack (`system-ui, -apple-system, sans-serif`)
+- **Data/Metrics Accent**: JetBrains Mono (`font-code` utility) — for phase %, XP, counts, debug text
 
 **Hierarchy:**
 - **Headings**: `font-bold` with appropriate text sizes
@@ -389,17 +390,50 @@ import Image from 'next/image';
 - Slate-700 on white: 8.59:1 (AAA)
 - Navy `#1a1f3a` on white: 15.39:1 (AAA)
 
+### Background Atmosphere
+
+**Gradient Recipes:**
+- **Main canvas**: `background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #ecfeff 100%)` (slate with hint of cyan)
+- **Navy surfaces** (header, sidebar): `background: linear-gradient(180deg, #1e2440 0%, #151930 100%)`
+- **Canvas header**: `bg-white/80 backdrop-blur-sm` for frosted glass effect
+
+**Decorative Elements:**
+- Sidebar: Topographic contour-line SVG pattern at 3% opacity (terrain mapping metaphor)
+- Header: Gold accent bottom border `border-b-2 border-[#fbbf24]/30`
+- Canvas header: Cyan top accent `border-t-2 border-t-cyan-200/40`
+
+### Card Surface Treatment
+
+**Standard cards:** `rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300`
+**Featured/data cards:** Add `shadow-cyan-100/50` for subtle cyan shadow tint
+**Active cards:** Add `ring-2` with territory-appropriate ring colour
+
 ### Animation Guidelines
 
-**Acceptable Animations:**
-- `animate-pulse` - loading states, status dots
-- `hover:scale-105` / `hover:scale-110` - interactive feedback
-- `transition-all duration-300` - state changes
+**Entrance Animations (page load):**
+- `.animate-entrance` — fade up (0.5s ease-out)
+- `.animate-entrance-left` — slide from left (0.5s ease-out)
+- `.animate-entrance-down` — slide from top (0.4s ease-out)
+- Stagger with `.animate-delay-{0|75|100|150|200|300|400|500}`
+
+**Orchestrated load sequence:**
+1. Header slides down (0ms)
+2. Sidebar slides from left (75ms)
+3. Centre panel fades up (150ms)
+4. Canvas panel fades up (300ms)
+5. Canvas cards stagger (200ms, 300ms)
+
+**Micro-interactions:**
+- `.animate-ring-pulse` — radiating ring on active phase dots (replaces `animate-pulse`)
+- `.active\:animate-spring` — button spring effect on click
+- `animate-pulse` — loading states only
+- `hover:scale-105` / `hover:scale-110` — interactive feedback
+- `transition-all duration-300` — state changes
 
 **Avoid:**
 - Excessive motion (causes accessibility issues)
-- Animations longer than 300ms
-- Animations on initial page load (except loading states)
+- Animations longer than 500ms (except orchestrated entrance)
+- Layout-shifting animations
 
 ### Design Checklist
 
@@ -414,7 +448,7 @@ When creating new components, ensure:
 - [ ] Focus states use gold ring (`focus:ring-[#fbbf24]`)
 - [ ] Disabled states reduce opacity and prevent interaction
 - [ ] All transitions use `duration-300`
-- [ ] Typography uses Inter for headings, system fonts for body
+- [ ] Typography uses Plus Jakarta Sans for headings/UI, system fonts for body, JetBrains Mono (`font-code`) for data
 - [ ] Labels use `uppercase tracking-wider`
 - [ ] Spacing uses consistent gap/padding values
 - [ ] Images use Next.js Image component

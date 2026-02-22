@@ -154,9 +154,9 @@ export function ProductStrategyAgentInterface({
   const activeTerritory = activeResearchContext?.territory || null;
 
   return (
-    <div className="product-strategy-agent h-screen flex flex-col overflow-hidden bg-slate-50" suppressHydrationWarning>
+    <div className="product-strategy-agent h-screen flex flex-col overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #ecfeff 100%)' }}>
       {/* FULL-WIDTH TITLE BAR */}
-      <header className="flex items-center justify-between px-4 md:px-6 py-2 bg-[#1a1f3a] text-white flex-shrink-0">
+      <header className="flex items-center justify-between px-4 md:px-6 py-2 text-white flex-shrink-0 border-b-2 border-[#fbbf24]/30 animate-entrance-down" style={{ background: 'linear-gradient(180deg, #1e2440 0%, #151930 100%)' }}>
         {/* Left: hamburger (mobile) + F icon + stacked title */}
         <div className="flex items-center gap-3">
           {/* Mobile hamburger */}
@@ -270,7 +270,7 @@ export function ProductStrategyAgentInterface({
         )}
 
         {/* CENTRE COACHING PANEL (~50%) - Always visible */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-white min-w-0">
+        <div className="flex-1 flex flex-col overflow-hidden bg-white min-w-0 animate-entrance animate-delay-150">
           {/* Phase navigation bar */}
           <PhaseIndicator currentPhase={currentPhase} variant="topbar" onPhaseClick={handlePhaseClick} />
 
@@ -297,7 +297,7 @@ export function ProductStrategyAgentInterface({
 
         {/* RIGHT LIVE CANVAS (~30%) - Desktop only */}
         {layout.isCanvasVisible && (
-          <div className="w-[30%] flex-shrink-0 hidden lg:flex">
+          <div className="w-[30%] flex-shrink-0 hidden lg:flex animate-entrance animate-delay-300">
             <LiveCanvas
               currentPhase={currentPhase}
               territoryProgress={territoryProgress}

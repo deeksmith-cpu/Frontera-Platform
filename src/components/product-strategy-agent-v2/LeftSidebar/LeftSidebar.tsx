@@ -64,7 +64,7 @@ export function LeftSidebar({
 
   if (isIconOnly) {
     return (
-      <aside className="h-full bg-[#1a1f3a] flex flex-col flex-shrink-0 transition-all duration-300 w-[60px]">
+      <aside className="h-full flex flex-col flex-shrink-0 transition-all duration-300 w-[60px]" style={{ background: 'linear-gradient(180deg, #1e2440 0%, #151930 100%)' }}>
         {/* Icon-only: compact layout */}
         <div className="flex-shrink-0 py-2">
           <XPBar level={level} currentXP={xpTotal} nextLevelXP={xpForNextLevel} isIconOnly />
@@ -90,7 +90,23 @@ export function LeftSidebar({
   }
 
   return (
-    <aside className="h-full bg-[#1a1f3a] flex flex-col flex-shrink-0 transition-all duration-300 w-64">
+    <aside className="h-full flex flex-col flex-shrink-0 transition-all duration-300 w-64 relative animate-entrance-left animate-delay-75" style={{ background: 'linear-gradient(180deg, #1e2440 0%, #151930 100%)' }}>
+      {/* Topographic terrain pattern overlay */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ opacity: 0.03 }}>
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="topo-lines" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+              <path d="M0 60 Q30 40 60 60 T120 60" fill="none" stroke="white" strokeWidth="1" />
+              <path d="M0 30 Q30 10 60 30 T120 30" fill="none" stroke="white" strokeWidth="0.8" />
+              <path d="M0 90 Q30 70 60 90 T120 90" fill="none" stroke="white" strokeWidth="0.6" />
+              <circle cx="40" cy="50" r="20" fill="none" stroke="white" strokeWidth="0.5" />
+              <circle cx="40" cy="50" r="35" fill="none" stroke="white" strokeWidth="0.4" />
+              <circle cx="90" cy="100" r="15" fill="none" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#topo-lines)" />
+        </svg>
+      </div>
       {/* Back to Landscape */}
       <div className="flex-shrink-0 px-4 pt-3 pb-1">
         <Link

@@ -110,7 +110,7 @@ export default async function DashboardPage() {
           <ProfileCard status={profileStatus} profile={profileData} />
 
           {/* Product Strategy Agent */}
-          <Link href="/dashboard/product-strategy-agent" className="block">
+          <Link href="/dashboard/product-strategy-agent" className="block" prefetch={false}>
             <div className="rounded-2xl border border-[#1a1f3a]/20 bg-[#ecfeff] p-6 transition-all duration-300 hover:shadow-lg hover:border-[#1a1f3a]/40">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
