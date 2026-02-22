@@ -36,45 +36,6 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
 
-  // Fetch opening message or load existing messages
-  useEffect(() => {
-    async function fetchOpening() {
-      try {
-        const res = await fetch(`/api/conversations/${conversationId}/messages`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: '' }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.content) {
-            setMessages([{ role: 'assistant', content: data.content }]);
-          } else if (data.existingMessages && data.existingMessages > 0) {
-            // Conversation already has messages — load them
-            const convRes = await fetch(`/api/conversations/${conversationId}`);
-            if (convRes.ok) {
-              const convData = await convRes.json();
-              if (convData.messages && Array.isArray(convData.messages)) {
-                const loaded: ChatMessage[] = convData.messages
-                  .filter((m: { role: string }) => m.role === 'user' || m.role === 'assistant')
-                  .map((m: { role: string; content: string }) => ({
-                    role: m.role as 'user' | 'assistant',
-                    content: m.content,
-                  }));
-                setMessages(loaded);
-              }
-            }
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch opening message:', err);
-      } finally {
-        setIsLoadingOpening(false);
-      }
-    }
-    fetchOpening();
-  }, [conversationId]);
-
   // Parse profile from assistant message
   const extractProfile = useCallback((text: string): PersonalProfileData | null => {
     const match = text.match(/\[PROFILE_SUMMARY\]([\s\S]*?)\[\/PROFILE_SUMMARY\]/);
@@ -101,6 +62,62 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
     });
     onProfileComplete(profile);
   }, [conversationId, onProfileComplete]);
+
+  // Scan all assistant messages for a profile summary marker
+  const scanMessagesForProfile = useCallback((msgs: ChatMessage[]): PersonalProfileData | null => {
+    for (const msg of msgs) {
+      if (msg.role === 'assistant') {
+        const profile = extractProfile(msg.content);
+        if (profile) return profile;
+      }
+    }
+    return null;
+  }, [extractProfile]);
+
+  // Fetch opening message or load existing messages
+  useEffect(() => {
+    async function fetchOpening() {
+      try {
+        const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: '' }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.content) {
+            setMessages([{ role: 'assistant', content: data.content }]);
+          } else if (data.existingMessages && data.existingMessages > 0) {
+            // Conversation already has messages — load them
+            const convRes = await fetch(`/api/conversations/${conversationId}`);
+            if (convRes.ok) {
+              const convData = await convRes.json();
+              if (convData.messages && Array.isArray(convData.messages)) {
+                const loaded: ChatMessage[] = convData.messages
+                  .filter((m: { role: string }) => m.role === 'user' || m.role === 'assistant')
+                  .map((m: { role: string; content: string }) => ({
+                    role: m.role as 'user' | 'assistant',
+                    content: m.content,
+                  }));
+                setMessages(loaded);
+
+                // Check if a profile was already generated but not processed
+                const existingProfile = scanMessagesForProfile(loaded);
+                if (existingProfile) {
+                  completeProfile(existingProfile);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch opening message:', err);
+      } finally {
+        setIsLoadingOpening(false);
+      }
+    }
+    fetchOpening();
+  }, [conversationId, scanMessagesForProfile, completeProfile]);
 
   const sendMessage = useCallback(async (messageText: string) => {
     if (!messageText.trim() || isStreaming || isProfileDone) return;
@@ -150,9 +167,18 @@ export function ProfileConversation({ conversationId, onProfileComplete, onSkip 
     sendMessage(input);
   }, [input, sendMessage]);
 
+  // Track whether we've already tried the complete button
+  const completeAttemptRef = useRef(0);
+
   // "Complete My Profile" fallback — sends a trigger message to force the summary
   const handleCompleteProfile = useCallback(() => {
-    sendMessage("That covers everything — please complete my profile and recommend a coach.");
+    completeAttemptRef.current += 1;
+    if (completeAttemptRef.current > 1) {
+      // Second attempt — more forceful message
+      sendMessage("Please generate my profile summary now with the JSON marker block.");
+    } else {
+      sendMessage("That covers everything — please complete my profile and recommend a coach.");
+    }
   }, [sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
