@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { TerritoryCard } from './TerritoryCard';
 import { TerritorialInsightSummary } from './TerritorialInsightSummary';
 import { CompanyTerritoryDeepDive } from './CompanyTerritoryDeepDive';
@@ -69,29 +69,30 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
     }
   }, [conversation.framework_state]);
 
-  // Fetch territory insights on mount and poll for updates
-  useEffect(() => {
-    async function fetchInsights() {
-      try {
-        const response = await fetch(`/api/product-strategy-agent-v2/territories?conversation_id=${conversation.id}`);
-        if (response.ok) {
-          const insights: TerritoryInsight[] = await response.json();
-          setTerritoryInsights(insights);
-        }
-      } catch (error) {
-        console.error('Error fetching territory insights:', error);
-      } finally {
-        setIsLoading(false);
+  // Fetch territory insights - exposed for manual refresh after saves
+  const fetchInsights = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/product-strategy-agent-v2/territories?conversation_id=${conversation.id}`);
+      if (response.ok) {
+        const insights: TerritoryInsight[] = await response.json();
+        setTerritoryInsights(insights);
       }
+    } catch (error) {
+      console.error('Error fetching territory insights:', error);
+    } finally {
+      setIsLoading(false);
     }
+  }, [conversation.id]);
 
+  // Fetch on mount and poll for updates
+  useEffect(() => {
     fetchInsights();
 
-    // Poll for updates every 15 seconds (matches other components)
-    const pollInterval = setInterval(fetchInsights, 15000);
+    // Poll for updates every 5 seconds (reduced from 15s for better responsiveness)
+    const pollInterval = setInterval(fetchInsights, 5000);
 
     return () => clearInterval(pollInterval);
-  }, [conversation.id]);
+  }, [fetchInsights]);
 
   // Clear context when returning to overview (no territory selected)
   useEffect(() => {
@@ -165,6 +166,7 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onRefresh={fetchInsights}
         onResearchContextChange={setActiveResearchContext}
       />
     );
@@ -177,6 +179,7 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onRefresh={fetchInsights}
         onResearchContextChange={setActiveResearchContext}
       />
     );
@@ -189,6 +192,7 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
         territoryInsights={territoryInsights}
         onBack={handleBackToOverview}
         onUpdate={(insights) => setTerritoryInsights(insights)}
+        onRefresh={fetchInsights}
         onResearchContextChange={setActiveResearchContext}
       />
     );

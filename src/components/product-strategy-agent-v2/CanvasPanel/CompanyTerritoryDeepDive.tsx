@@ -24,6 +24,7 @@ interface CompanyTerritoryDeepDiveProps {
   territoryInsights: TerritoryInsight[];
   onBack: () => void;
   onUpdate: (insights: TerritoryInsight[]) => void;
+  onRefresh?: () => Promise<void>;
   onResearchContextChange?: (context: ActiveResearchContext) => void;
 }
 
@@ -66,6 +67,7 @@ export function CompanyTerritoryDeepDive({
   territoryInsights,
   onBack,
   onUpdate,
+  onRefresh,
   onResearchContextChange,
 }: CompanyTerritoryDeepDiveProps) {
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
@@ -222,6 +224,11 @@ export function CompanyTerritoryDeepDive({
       );
       updatedInsights.push(updatedInsight);
       onUpdate(updatedInsights);
+
+      // Trigger immediate refresh to ensure all components see the update
+      if (onRefresh) {
+        await onRefresh();
+      }
 
       // If marked as mapped, go back to area selection
       if (status === 'mapped') {
