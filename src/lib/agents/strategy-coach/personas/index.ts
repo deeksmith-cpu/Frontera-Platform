@@ -137,7 +137,7 @@ export const PERSONA_OPTIONS: readonly PersonaOption[] = [
   // Expert Sparring Partners (UC2)
   {
     id: 'growth-architect',
-    name: 'Growth Architect',
+    name: 'Priya',
     title: 'The Growth Architect',
     tagline: "Growth is a system, not a series of hacks. Let's map your loops.",
     bestFor: ['Product-led growth', 'Activation & retention', 'Growth experiments'],
@@ -148,7 +148,7 @@ export const PERSONA_OPTIONS: readonly PersonaOption[] = [
   },
   {
     id: 'product-purist',
-    name: 'Product Purist',
+    name: 'Hana',
     title: 'The Product Purist',
     tagline: "What is the core job this product does? Strip everything else.",
     bestFor: ['Product craft', 'Speed & focus', 'Opinionated design'],
@@ -159,7 +159,7 @@ export const PERSONA_OPTIONS: readonly PersonaOption[] = [
   },
   {
     id: 'scale-navigator',
-    name: 'Scale Navigator',
+    name: 'Kofi',
     title: 'The Scale Navigator',
     tagline: "What got you here won't get you there. Let's navigate the next stage.",
     bestFor: ['Scaling organizations', 'Org design', 'Portfolio management'],

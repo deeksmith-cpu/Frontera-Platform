@@ -43,15 +43,24 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch persona' }, { status: 500 });
     }
 
-    const coachingPreferences = client?.coaching_preferences as { persona?: PersonaId } | null;
+    const coachingPreferences = client?.coaching_preferences as {
+      persona?: PersonaId;
+      auto_recommended?: boolean;
+      selected_at?: string;
+    } | null;
     const existingPersona = coachingPreferences?.persona || null;
+    const wasManuallySelected = coachingPreferences?.auto_recommended === false;
 
-    // If a persona is already set, return it
-    if (existingPersona) {
+    // Debug logging (can be removed after testing)
+    console.log('[Persona API] existing:', existingPersona, '| manual:', wasManuallySelected);
+
+    // If user MANUALLY selected a persona (not auto-recommended), use it
+    if (existingPersona && wasManuallySelected) {
       return NextResponse.json({ persona: existingPersona });
     }
 
-    // No persona set — check if the user's profiling has a recommendation
+    // Check if the user's profiling has a recommendation (always check if not manually selected)
+
     const { data: profConv } = await supabase
       .from('conversations')
       .select('framework_state')
@@ -69,20 +78,28 @@ export async function GET() {
       const recommended = coachingApproach?.recommendedPersona as PersonaId | undefined;
 
       if (recommended && VALID_PERSONAS.includes(recommended)) {
-        // Auto-set the recommended persona so it persists
-        await supabase
-          .from('clients')
-          .update({
-            coaching_preferences: {
-              persona: recommended,
-              selected_at: new Date().toISOString(),
-              auto_recommended: true,
-            },
-          })
-          .eq('clerk_org_id', orgId);
+        console.log('[Persona API] profiling recommends:', recommended);
+        // Only update if different from existing or not set
+        if (recommended !== existingPersona) {
+          await supabase
+            .from('clients')
+            .update({
+              coaching_preferences: {
+                persona: recommended,
+                selected_at: new Date().toISOString(),
+                auto_recommended: true,
+              },
+            })
+            .eq('clerk_org_id', orgId);
+        }
 
         return NextResponse.json({ persona: recommended });
       }
+    }
+
+    // Fall back to existing auto-recommended persona if profiling has no recommendation
+    if (existingPersona) {
+      return NextResponse.json({ persona: existingPersona });
     }
 
     return NextResponse.json({ persona: null });

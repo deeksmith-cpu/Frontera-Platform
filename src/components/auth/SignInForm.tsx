@@ -30,6 +30,7 @@ export default function SignInForm() {
   const [verificationCode, setVerificationCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
+  const [availableSecondFactors, setAvailableSecondFactors] = useState<string[]>([]);
 
   // Auth state derived from Clerk only (no mounted state needed)
   const isReady = isLoaded && userLoaded;
@@ -112,7 +113,16 @@ export default function SignInForm() {
         setError(`First factor verification needed. Available methods: ${factors || "none"}`);
       } else if (result.status === "needs_second_factor") {
         // 2FA is enabled - transition to verification step
-        console.log("Second factor required, supported methods:", result.supportedSecondFactors);
+        const factors = result.supportedSecondFactors?.map(f => f.strategy) || [];
+        console.log("Second factor required, supported methods:", factors);
+
+        // If no second factors are available, show error instead of broken verification screen
+        if (factors.length === 0) {
+          setError("Two-factor authentication is required but no methods are available. Please contact support.");
+          return;
+        }
+
+        setAvailableSecondFactors(factors);
         setVerificationStep("second_factor");
         setError(null);
       } else if (result.status === "needs_identifier") {
@@ -153,26 +163,44 @@ export default function SignInForm() {
     }
   };
 
-  // Send email verification code for 2FA
-  const handleSendEmailCode = async () => {
-    if (!signIn) return;
+  // Determine which 2FA strategy to use
+  const getPreferredStrategy = (): "email_code" | "phone_code" | "totp" | null => {
+    // Prefer email_code, then phone_code, then totp
+    if (availableSecondFactors.includes("email_code")) return "email_code";
+    if (availableSecondFactors.includes("phone_code")) return "phone_code";
+    if (availableSecondFactors.includes("totp")) return "totp";
+    return null;
+  };
+
+  const preferredStrategy = getPreferredStrategy();
+
+  // Send verification code for 2FA (email or phone)
+  const handleSendCode = async () => {
+    if (!signIn || !preferredStrategy || preferredStrategy === "totp") return;
 
     setSendingCode(true);
     setError(null);
 
     try {
-      // Prepare the second factor with email code
+      // Prepare the second factor with the available strategy
       const result = await signIn.prepareSecondFactor({
-        strategy: "email_code",
+        strategy: preferredStrategy,
       });
 
-      console.log("Email code prepared:", result);
+      console.log(`${preferredStrategy} code prepared:`, result);
       setCodeSent(true);
       setError(null);
     } catch (err: unknown) {
-      console.error("Error sending email code:", err);
-      const error = err as { errors?: Array<{ message: string; longMessage?: string }> };
-      setError(error.errors?.[0]?.longMessage || error.errors?.[0]?.message || "Failed to send verification code");
+      console.error(`Error sending ${preferredStrategy} code:`, err);
+      const error = err as { errors?: Array<{ code?: string; message: string; longMessage?: string }> };
+      const firstError = error.errors?.[0];
+
+      // Provide helpful error messages
+      if (firstError?.code === "form_identifier_not_found") {
+        setError("Unable to send verification code. Please check your account settings in Clerk.");
+      } else {
+        setError(firstError?.longMessage || firstError?.message || "Failed to send verification code. Please try again.");
+      }
     } finally {
       setSendingCode(false);
     }
@@ -182,14 +210,14 @@ export default function SignInForm() {
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!signIn || !verificationCode) return;
+    if (!signIn || !verificationCode || !preferredStrategy) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
       const result = await signIn.attemptSecondFactor({
-        strategy: "email_code",
+        strategy: preferredStrategy,
         code: verificationCode,
       });
 
@@ -223,6 +251,7 @@ export default function SignInForm() {
     setVerificationCode("");
     setCodeSent(false);
     setError(null);
+    setAvailableSecondFactors([]);
   };
 
   return (
@@ -265,26 +294,85 @@ export default function SignInForm() {
           <div className="space-y-6">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-[#1a1f3a]/10 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                {preferredStrategy === "totp" ? (
+                  <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                ) : preferredStrategy === "phone_code" ? (
+                  <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8 text-[#1a1f3a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                )}
               </div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">
                 Two-Factor Authentication
               </h2>
               <p className="text-gray-600 text-sm">
-                {codeSent
-                  ? `We've sent a verification code to ${formData.email}`
-                  : "Click below to receive a verification code via email"
-                }
+                {preferredStrategy === "totp" ? (
+                  "Enter the code from your authenticator app"
+                ) : codeSent ? (
+                  preferredStrategy === "phone_code"
+                    ? "We've sent a verification code to your phone"
+                    : `We've sent a verification code to ${formData.email}`
+                ) : (
+                  preferredStrategy === "phone_code"
+                    ? "Click below to receive a verification code via SMS"
+                    : "Click below to receive a verification code via email"
+                )}
+              </p>
+              {/* Debug info */}
+              <p className="text-xs text-gray-400 mt-2">
+                Available methods: {availableSecondFactors.join(", ") || "none detected"}
               </p>
             </div>
 
-            {!codeSent ? (
+            {/* For TOTP, show code input directly */}
+            {preferredStrategy === "totp" ? (
+              <form onSubmit={handleVerifyCode} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Authenticator Code
+                  </label>
+                  <input
+                    type="text"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="Enter 6-digit code"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 transition-all outline-none text-center text-2xl tracking-widest font-mono"
+                    autoFocus
+                    maxLength={6}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={verificationCode.length !== 6 || isLoading}
+                  className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                    verificationCode.length === 6 && !isLoading
+                      ? "bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify & Sign In"
+                  )}
+                </button>
+              </form>
+            ) : !codeSent ? (
+              /* For email/phone, need to send code first */
               <button
                 type="button"
-                onClick={handleSendEmailCode}
-                disabled={sendingCode}
+                onClick={handleSendCode}
+                disabled={sendingCode || !preferredStrategy}
                 className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-[#1a1f3a] text-white hover:bg-[#2d3561] shadow-lg shadow-[#1a1f3a]/25 disabled:opacity-50"
               >
                 {sendingCode ? (
@@ -292,11 +380,19 @@ export default function SignInForm() {
                     <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Sending code...
                   </>
+                ) : !preferredStrategy ? (
+                  "No verification method available"
                 ) : (
                   <>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                    {preferredStrategy === "phone_code" ? (
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    )}
                     Send Verification Code
                   </>
                 )}
@@ -339,7 +435,7 @@ export default function SignInForm() {
 
                 <button
                   type="button"
-                  onClick={handleSendEmailCode}
+                  onClick={handleSendCode}
                   disabled={sendingCode}
                   className="w-full text-sm text-[#1a1f3a] hover:underline disabled:opacity-50"
                 >
