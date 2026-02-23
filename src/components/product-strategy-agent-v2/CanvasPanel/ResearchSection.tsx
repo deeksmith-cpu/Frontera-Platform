@@ -69,7 +69,7 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
     }
   }, [conversation.framework_state]);
 
-  // Fetch territory insights on mount
+  // Fetch territory insights on mount and poll for updates
   useEffect(() => {
     async function fetchInsights() {
       try {
@@ -86,6 +86,11 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
     }
 
     fetchInsights();
+
+    // Poll for updates every 15 seconds (matches other components)
+    const pollInterval = setInterval(fetchInsights, 15000);
+
+    return () => clearInterval(pollInterval);
   }, [conversation.id]);
 
   // Clear context when returning to overview (no territory selected)
