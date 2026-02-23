@@ -6,6 +6,7 @@ import { ThinkingIndicator } from './ThinkingIndicator';
 import { StreamingMessage } from './StreamingMessage';
 import { SessionWelcome } from './SessionWelcome';
 import type { Database } from '@/types/database';
+import type { CardAction } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -36,6 +37,8 @@ interface MessageStreamProps {
   onCaptureInsight?: (messageId: string, territory: string, content: string) => void;
   capturedInsights?: Set<string>;
   welcomeProps?: WelcomeProps;
+  onCardAction?: (action: CardAction) => void;
+  onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
 }
 
 export function MessageStream({
@@ -50,6 +53,8 @@ export function MessageStream({
   onCaptureInsight,
   capturedInsights,
   welcomeProps,
+  onCardAction,
+  onNavigateToCanvas,
 }: MessageStreamProps) {
   const streamRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +96,8 @@ export function MessageStream({
           onSendFollowup={onSendFollowup}
           onCaptureInsight={onCaptureInsight}
           isCaptured={capturedInsights?.has(message.id) || false}
+          onCardAction={onCardAction}
+          onNavigateToCanvas={onNavigateToCanvas}
         />
       ))}
       {isLoading && <ThinkingIndicator />}

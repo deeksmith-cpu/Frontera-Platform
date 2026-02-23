@@ -9,9 +9,12 @@ import { EvidenceLinks, FormattedContent, parseEvidenceReferences, EvidenceRef }
 import { MessageTypeBadge } from './MessageTypeBadge';
 import { MessageReactions } from './MessageReactions';
 import { FrameworkImage, parseFrameworkMarkers } from './FrameworkImage';
+import { CardRenderer } from './cards';
 import { stripResearchMarkers } from '@/lib/agents/strategy-coach/research-extractor';
 import { classifyMessage } from '@/lib/agents/strategy-coach/message-classifier';
+import { parseCardMarkers } from '@/lib/utils/card-parser';
 import type { Database } from '@/types/database';
+import type { CardAction } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -24,6 +27,8 @@ interface MessageProps {
   onNavigateToEvidence?: (ref: EvidenceRef) => void;
   onCaptureInsight?: (messageId: string, territory: string, content: string) => void;
   isCaptured?: boolean;
+  onCardAction?: (action: CardAction) => void;
+  onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
 }
 
 // Parse [Insight:territory:summary] markers from coach messages
@@ -66,6 +71,8 @@ export function Message({
   onNavigateToEvidence,
   onCaptureInsight,
   isCaptured = false,
+  onCardAction,
+  onNavigateToCanvas,
 }: MessageProps) {
   const isAgent = message.role === 'assistant';
   const timeAgo = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
@@ -91,11 +98,17 @@ export function Message({
     return parseEvidenceReferences(message.content);
   }, [isAgent, message.content]);
 
-  // Parse insight markers from assistant messages
-  const { cleanContent, insights: proposedInsights } = useMemo(() => {
-    if (!isAgent) return { cleanContent: message.content, insights: [] };
-    return parseInsightMarkers(message.content);
+  // Parse card markers from assistant messages
+  const { textContent: contentAfterCards, cards } = useMemo(() => {
+    if (!isAgent) return { textContent: message.content, cards: [] };
+    return parseCardMarkers(message.content);
   }, [isAgent, message.content]);
+
+  // Parse insight markers from assistant messages (after card extraction)
+  const { cleanContent, insights: proposedInsights } = useMemo(() => {
+    if (!isAgent) return { cleanContent: contentAfterCards, insights: [] };
+    return parseInsightMarkers(contentAfterCards);
+  }, [isAgent, contentAfterCards]);
 
   // Classify message type for badge
   const classification = useMemo(() => {
@@ -233,6 +246,21 @@ export function Message({
       <div className={`message-content pl-10 text-sm leading-relaxed whitespace-pre-wrap ${
         isAgent ? 'text-slate-700' : 'text-slate-900'
       }`}>
+        {/* Render rich coaching cards */}
+        {isAgent && cards.length > 0 && (
+          <div className="space-y-3 mb-4 -ml-10">
+            {cards.map((card) => (
+              <CardRenderer
+                key={card.id}
+                card={card}
+                onAction={onCardAction}
+                onDismiss={(cardId) => onCardAction?.({ cardId, action: 'dismiss' })}
+                onNavigateToCanvas={onNavigateToCanvas}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Render content with evidence highlighting for assistant messages */}
         {isAgent && references.length > 0 ? (
           <FormattedContent

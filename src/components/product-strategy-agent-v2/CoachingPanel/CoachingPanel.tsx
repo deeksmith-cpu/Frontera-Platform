@@ -6,11 +6,14 @@ import { CoachContextAwareness } from './CoachContextAwareness';
 import { MessageStream } from './MessageStream';
 import { CoachingInput } from './CoachingInput';
 import { ProactiveCoachMessage } from './ProactiveCoachMessage';
+import { WhatsNextCard } from './cards';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
+import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
 import { extractResearchMarkers } from '@/lib/agents/strategy-coach/research-extractor';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 import type { ActiveResearchContext } from '@/types/research-context';
+import type { Phase, CardAction } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -74,6 +77,12 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
     onSendMessage: (msg) => handleSendMessage(msg),
     isEnabled: mode === 'sidepanel', // Only enable proactive triggers in sidepanel mode
   });
+
+  // What's Next progress tracking for sticky card
+  const whatsNextData = useWhatsNextProgress(
+    conversation?.id || null,
+    currentPhase as Phase
+  );
 
   // Fetch messages for active conversation
   useEffect(() => {
@@ -475,6 +484,18 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
           }}
         />
       </div>
+      {/* What's Next Card - sticky progress tracker */}
+      {isSidepanel && whatsNextData && (
+        <div className="flex-shrink-0">
+          <WhatsNextCard
+            data={whatsNextData}
+            onNavigateToPhase={(phase) => {
+              // TODO: Implement navigation to phase in CanvasPanel
+              console.log('Navigate to phase:', phase);
+            }}
+          />
+        </div>
+      )}
       <div className="flex-shrink-0">
         <CoachingInput
           onSendMessage={handleSendMessage}
