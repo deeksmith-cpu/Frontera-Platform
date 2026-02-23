@@ -106,17 +106,41 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
     onResearchContextChange?.(activeResearchContext);
   }, [activeResearchContext, onResearchContextChange]);
 
+  // Map V2 territory names to V1 framework_state pillar names
+  // company → colleague (internal/organizational context)
+  // customer → customer
+  // competitor → macroMarket (external market forces)
+  const TERRITORY_TO_PILLAR_MAP: Record<string, string> = {
+    company: 'colleague',
+    customer: 'customer',
+    competitor: 'macroMarket',
+  };
+
   // Calculate territory status based on research areas
+  // Falls back to framework_state.researchPillars if territory_insights is empty
   const getTerritoryStatus = (territory: 'company' | 'customer' | 'competitor'): 'unexplored' | 'in_progress' | 'mapped' => {
     const territoryAreas = territoryInsights.filter((t) => t.territory === territory);
 
-    if (territoryAreas.length === 0) return 'unexplored';
+    // First check territory_insights table
+    if (territoryAreas.length > 0) {
+      const mappedCount = territoryAreas.filter((t) => t.status === 'mapped').length;
+      const expectedCount = 3; // MVP: 3 areas per territory
 
-    const mappedCount = territoryAreas.filter((t) => t.status === 'mapped').length;
-    const expectedCount = territory === 'competitor' ? 3 : 3; // MVP: 3 areas per territory
+      if (mappedCount === expectedCount) return 'mapped';
+      if (mappedCount > 0 || territoryAreas.some((t) => t.status === 'in_progress')) return 'in_progress';
+      return 'unexplored';
+    }
 
-    if (mappedCount === expectedCount) return 'mapped';
-    if (mappedCount > 0 || territoryAreas.some((t) => t.status === 'in_progress')) return 'in_progress';
+    // Fallback: check framework_state.researchPillars (for chat-based completion)
+    const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+    if (frameworkState?.researchPillars) {
+      const pillars = frameworkState.researchPillars as Record<string, { started?: boolean; completed?: boolean }>;
+      const pillarName = TERRITORY_TO_PILLAR_MAP[territory];
+      const pillar = pillars[pillarName];
+
+      if (pillar?.completed) return 'mapped';
+      if (pillar?.started) return 'in_progress';
+    }
 
     return 'unexplored';
   };
@@ -154,9 +178,27 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
     }
   };
 
-  // Check if all territories are fully mapped
+  // Check if all territories are fully mapped (with framework_state fallback)
+  const allTerritoriesMapped = useMemo(() => {
+    // First check territory_insights table
+    const mappedAreasCount = territoryInsights.filter((t) => t.status === 'mapped').length;
+    if (mappedAreasCount >= 9) return true;
+
+    // Fallback: check framework_state.researchPillars
+    const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+    if (frameworkState?.researchPillars) {
+      const pillars = frameworkState.researchPillars as Record<string, { completed?: boolean }>;
+      const allPillarsComplete =
+        pillars.macroMarket?.completed &&
+        pillars.customer?.completed &&
+        pillars.colleague?.completed;
+      if (allPillarsComplete) return true;
+    }
+
+    return false;
+  }, [territoryInsights, conversation.framework_state]);
+
   const mappedAreasCount = territoryInsights.filter((t) => t.status === 'mapped').length;
-  const allTerritoriesMapped = mappedAreasCount >= 9;
 
   // Deep dive view
   if (selectedTerritory === 'company') {

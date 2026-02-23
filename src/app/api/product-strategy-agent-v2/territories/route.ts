@@ -65,6 +65,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Debug: Log territory insights for troubleshooting
+    console.log('[Territories API] conversation_id:', conversation_id);
+    console.log('[Territories API] insights count:', insights?.length || 0);
+    if (insights && insights.length > 0) {
+      console.log('[Territories API] statuses:', insights.map(i => `${i.territory}/${i.research_area}: ${i.status}`));
+    }
+
     trackEvent('psa_territories_viewed', userId, {
       org_id: orgId,
       conversation_id,
