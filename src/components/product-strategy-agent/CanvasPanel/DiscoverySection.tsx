@@ -755,18 +755,28 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
                 <div className="flex items-center gap-4">
                   <button
                     onClick={async () => {
-                      // Transition to landscape phase
-                      const response = await fetch(`/api/product-strategy-agent/phase`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          conversation_id: conversation.id,
-                          phase: 'research',
-                        }),
-                      });
+                      try {
+                        // Transition to landscape/research phase
+                        const response = await fetch(`/api/product-strategy-agent/phase`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            conversation_id: conversation.id,
+                            phase: 'research',
+                          }),
+                        });
 
-                      if (response.ok) {
-                        window.location.reload();
+                        if (response.ok) {
+                          // Reload to show the updated phase
+                          window.location.reload();
+                        } else {
+                          const errorData = await response.json().catch(() => ({}));
+                          console.error('Phase transition failed:', errorData);
+                          alert(`Failed to transition: ${errorData.error || 'Unknown error'}`);
+                        }
+                      } catch (err) {
+                        console.error('Phase transition error:', err);
+                        alert('Network error. Please try again.');
                       }
                     }}
                     className="px-8 py-4 bg-[#fbbf24] text-slate-900 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300"

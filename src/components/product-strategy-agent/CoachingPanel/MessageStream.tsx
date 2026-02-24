@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo, useCallback, useState } from 'react';
 import { Message } from './Message';
 import { ThinkingIndicator } from './ThinkingIndicator';
 import { StreamingMessage } from './StreamingMessage';
+import { CardRenderer } from './cards';
+import { parseCardMarkers, hasCardMarkers } from '@/lib/utils/card-parser';
 import type { Database } from '@/types/database';
+import type { CardAction, ExplanationCardData, RequestCardData, DebateIdeaCardData } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -18,6 +21,8 @@ interface MessageStreamProps {
   onSendFollowup?: (question: string) => void;
   onCaptureInsight?: (messageId: string, territory: string, content: string) => void;
   capturedInsights?: Set<string>;
+  onCardAction?: (action: CardAction) => void;
+  onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
 }
 
 export function MessageStream({
@@ -30,8 +35,11 @@ export function MessageStream({
   onSendFollowup,
   onCaptureInsight,
   capturedInsights,
+  onCardAction,
+  onNavigateToCanvas,
 }: MessageStreamProps) {
   const streamRef = useRef<HTMLDivElement>(null);
+  const [dismissedCards, setDismissedCards] = useState<Set<string>>(new Set());
 
   // Auto-scroll to bottom on new messages and during streaming
   useEffect(() => {
@@ -45,6 +53,35 @@ export function MessageStream({
     .filter(({ m }) => m.role === 'assistant')
     .pop()?.i ?? -1;
 
+  // Parse cards from messages and memoize results
+  const parsedMessages = useMemo(() => {
+    return messages.map((message) => {
+      if (message.role === 'assistant' && hasCardMarkers(message.content)) {
+        const parsed = parseCardMarkers(message.content);
+        return {
+          message,
+          textContent: parsed.textContent,
+          cards: parsed.cards,
+        };
+      }
+      return {
+        message,
+        textContent: message.content,
+        cards: [] as Array<ExplanationCardData | RequestCardData | DebateIdeaCardData>,
+      };
+    });
+  }, [messages]);
+
+  // Handle card dismiss
+  const handleCardDismiss = useCallback((cardId: string) => {
+    setDismissedCards((prev) => new Set([...prev, cardId]));
+  }, []);
+
+  // Handle card actions
+  const handleCardAction = useCallback((action: CardAction) => {
+    onCardAction?.(action);
+  }, [onCardAction]);
+
   return (
     <div ref={streamRef} className="message-stream h-full overflow-y-auto p-6 flex flex-col gap-6 bg-slate-50">
       {messages.length === 0 && !isLoading && !isStreaming && (
@@ -53,17 +90,52 @@ export function MessageStream({
           <p>Let&apos;s begin by exploring your strategic context.</p>
         </div>
       )}
-      {messages.map((message, index) => (
-        <Message
-          key={message.id}
-          message={message}
-          isLastMessage={index === lastAssistantIndex && !isStreaming && !isLoading}
-          currentPhase={currentPhase}
-          onSendFollowup={onSendFollowup}
-          onCaptureInsight={onCaptureInsight}
-          isCaptured={capturedInsights?.has(message.id) || false}
-        />
+
+      {parsedMessages.map(({ message, textContent, cards }, index) => (
+        <div key={message.id} className="message-with-cards">
+          {/* Render cards first (above the message text) */}
+          {cards.length > 0 && (
+            <div className="cards-container flex flex-col gap-4 mb-4">
+              {cards
+                .filter((card) => !dismissedCards.has(card.id))
+                .map((card) => (
+                  <CardRenderer
+                    key={card.id}
+                    card={card}
+                    onAction={handleCardAction}
+                    onDismiss={handleCardDismiss}
+                    onNavigateToCanvas={onNavigateToCanvas}
+                  />
+                ))}
+            </div>
+          )}
+
+          {/* Render the text content (if any remains after card extraction) */}
+          {textContent.trim() && (
+            <Message
+              message={{ ...message, content: textContent }}
+              isLastMessage={index === lastAssistantIndex && !isStreaming && !isLoading}
+              currentPhase={currentPhase}
+              onSendFollowup={onSendFollowup}
+              onCaptureInsight={onCaptureInsight}
+              isCaptured={capturedInsights?.has(message.id) || false}
+            />
+          )}
+
+          {/* If no text content but message is from user, still show it */}
+          {!textContent.trim() && message.role === 'user' && (
+            <Message
+              message={message}
+              isLastMessage={false}
+              currentPhase={currentPhase}
+              onSendFollowup={onSendFollowup}
+              onCaptureInsight={onCaptureInsight}
+              isCaptured={false}
+            />
+          )}
+        </div>
       ))}
+
       {isLoading && <ThinkingIndicator />}
       {isStreaming && streamingContent && (
         <StreamingMessage content={streamingContent} onStop={onStopGeneration} />

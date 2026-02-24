@@ -3,12 +3,14 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import posthog from 'posthog-js';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
+import { useSectionSummary } from '@/hooks/useSectionSummary';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
 import { SynthesisSection } from './SynthesisSection';
 import { BetsSection } from './BetsSection';
 import { CaseLibrary } from './CaseLibrary';
+import { SectionSummaryPanel } from './SectionSummary';
 import type { Database } from '@/types/database';
 import type { ActiveResearchContext } from '@/types/research-context';
 
@@ -35,6 +37,11 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
   // Canvas tab state: 'phase' shows the phase-specific content, 'cases' shows Case Library
   const [activeTab, setActiveTab] = useState<'phase' | 'cases'>('phase');
   const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
+
+  // Section summary data for micro-rewards and progress tracking
+  const { data: sectionSummaryData, latestAchievement, dismissAchievement } = useSectionSummary(
+    conversation?.id ?? null
+  );
 
   // Bubble research context changes to parent
   useEffect(() => {
@@ -133,6 +140,15 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
           <CaseLibrary conversation={conversation} />
         ) : (
           <>
+            {/* Section Summary Panel with progress and micro-rewards */}
+            {sectionSummaryData && (
+              <SectionSummaryPanel
+                data={sectionSummaryData}
+                latestAchievement={latestAchievement}
+                onDismissAchievement={dismissAchievement}
+              />
+            )}
+
             {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} onClientContextUpdate={onClientContextUpdate} />}
             {currentPhase === 'research' && (
               <ResearchSection conversation={conversation} onResearchContextChange={setActiveResearchContext} />
