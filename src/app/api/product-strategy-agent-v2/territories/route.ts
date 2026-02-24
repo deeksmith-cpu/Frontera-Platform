@@ -69,7 +69,9 @@ export async function GET(req: NextRequest) {
     console.log('[Territories API] conversation_id:', conversation_id);
     console.log('[Territories API] insights count:', insights?.length || 0);
     if (insights && insights.length > 0) {
-      console.log('[Territories API] statuses:', insights.map(i => `${i.territory}/${i.research_area}: ${i.status}`));
+      // Type assertion for insights to avoid 'never' inference
+      const typedInsights = insights as Array<{ territory: string; research_area: string; status: string }>;
+      console.log('[Territories API] statuses:', typedInsights.map(i => `${i.territory}/${i.research_area}: ${i.status}`));
     }
 
     trackEvent('psa_territories_viewed', userId, {
