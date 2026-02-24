@@ -51,8 +51,7 @@ function getPriorityDisplay(priority: string) {
   }
 }
 
-function getKillDateStatus(killDate: string): { label: string; className: string } | null {
-  if (!killDate) return null;
+function getKillDateStatus(killDate: string): { label: string; className: string } {
   const now = new Date();
   const kill = new Date(killDate);
   const daysUntil = Math.ceil((kill.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -67,7 +66,7 @@ export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDel
 
   const statusDisplay = getStatusDisplay(bet.status);
   const priorityDisplay = getPriorityDisplay(bet.priorityLevel);
-  const killDateStatus = getKillDateStatus(bet.killDate);
+  const killDateStatus = bet.killDate ? getKillDateStatus(bet.killDate) : null;
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -115,7 +114,10 @@ export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDel
                 </span>
               )}
               {killDateStatus && (
-                <span className={`text-xs font-semibold py-1 px-2.5 rounded-full ${killDateStatus.className}`}>
+                <span
+                  suppressHydrationWarning
+                  className={`text-xs font-semibold py-1 px-2.5 rounded-full ${killDateStatus.className}`}
+                >
                   {killDateStatus.label}
                 </span>
               )}
@@ -170,7 +172,9 @@ export function BetCard({ bet, isExpanded = false, onToggleExpand, onEdit, onDel
                 <span className="font-semibold text-red-800">Kill Criteria:</span>
                 <p className="text-slate-700 mt-0.5">{bet.killCriteria || 'Not defined'}</p>
                 {bet.killDate && (
-                  <p className="text-xs text-red-600 mt-1">Kill date: {new Date(bet.killDate).toLocaleDateString()}</p>
+                  <p suppressHydrationWarning className="text-xs text-red-600 mt-1">
+                    Kill date: {new Date(bet.killDate).toLocaleDateString()}
+                  </p>
                 )}
               </div>
             </div>

@@ -6,14 +6,15 @@ import { CoachContextAwareness } from './CoachContextAwareness';
 import { MessageStream } from './MessageStream';
 import { CoachingInput } from './CoachingInput';
 import { ProactiveCoachMessage } from './ProactiveCoachMessage';
-import { WhatsNextCard } from './cards';
+import { WhatsNextCard, ResearchProgressCard } from './cards';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
 import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
+import { useResearchProgress } from '@/hooks/useResearchProgress';
 import { extractResearchMarkers } from '@/lib/agents/strategy-coach/research-extractor';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 import type { ActiveResearchContext } from '@/types/research-context';
-import type { Phase, CardAction } from '@/types/coaching-cards';
+import type { Phase, QuestionCardData, ConfidenceLevel, CoachReview } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -83,6 +84,14 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
     conversation?.id || null,
     currentPhase as Phase
   );
+
+  // Research progress tracking for question cards
+  const { progress: researchProgress, refresh: refreshResearchProgress } = useResearchProgress(
+    conversation?.id || null
+  );
+
+  // Track answered questions for QuestionCard rendering
+  const [answeredQuestions, setAnsweredQuestions] = useState<Map<string, { answer: string; confidence: ConfidenceLevel | null }>>(new Map());
 
   // Fetch messages for active conversation
   useEffect(() => {
@@ -223,6 +232,148 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
       abortControllerRef.current.abort();
     }
   }, []);
+
+  // Build answered questions map from research progress
+  useEffect(() => {
+    if (!researchProgress) return;
+
+    const newAnsweredQuestions = new Map<string, { answer: string; confidence: ConfidenceLevel | null }>();
+
+    researchProgress.territories.forEach((territory) => {
+      territory.areas.forEach((area) => {
+        area.questions.forEach((question) => {
+          if (question.answered && question.answer) {
+            const key = `${territory.territory}:${area.id}:${question.index}`;
+            newAnsweredQuestions.set(key, {
+              answer: question.answer,
+              confidence: (question.confidence as ConfidenceLevel) || null,
+            });
+          }
+        });
+      });
+    });
+
+    setAnsweredQuestions(newAnsweredQuestions);
+  }, [researchProgress]);
+
+  // Handle QuestionCard submission
+  const handleQuestionSubmit = useCallback(async (
+    card: QuestionCardData,
+    answer: string,
+    confidence: ConfidenceLevel | null
+  ): Promise<boolean> => {
+    if (!conversation) return false;
+
+    try {
+      // Fetch existing responses for this research area
+      const getResponse = await fetch(
+        `/api/product-strategy-agent-v2/territories?conversation_id=${conversation.id}`
+      );
+
+      let existingResponses: Record<string, string> = {};
+      let existingConfidence: Record<string, string> = {};
+
+      if (getResponse.ok) {
+        const insights = await getResponse.json();
+        const existing = insights.find(
+          (i: { territory: string; research_area: string }) =>
+            i.territory === card.territory && i.research_area === card.research_area
+        );
+        if (existing?.responses) {
+          existingResponses = existing.responses as Record<string, string>;
+        }
+        if (existing?.confidence) {
+          existingConfidence = existing.confidence as Record<string, string>;
+        }
+      }
+
+      // Update with new answer
+      const responses: Record<string, string> = {
+        ...existingResponses,
+        [card.question_index]: answer,
+      };
+
+      const confidenceMap: Record<string, string> = {
+        ...existingConfidence,
+        ...(confidence ? { [card.question_index]: confidence } : {}),
+      };
+
+      // Determine status based on how many questions are answered
+      const answeredCount = Object.keys(responses).filter(k => responses[k]?.trim()).length;
+      const status = answeredCount >= card.total_questions ? 'mapped' : 'in_progress';
+
+      // Save to API
+      const response = await fetch('/api/product-strategy-agent-v2/territories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: card.territory,
+          research_area: card.research_area,
+          responses,
+          confidence: confidenceMap,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save answer');
+      }
+
+      // Update local state
+      const key = `${card.territory}:${card.research_area}:${card.question_index}`;
+      setAnsweredQuestions(prev => new Map(prev).set(key, { answer, confidence }));
+
+      // Refresh research progress
+      await refreshResearchProgress();
+
+      // Award XP for answering a research question
+      onAwardXP?.('research_captured', {
+        territory: card.territory,
+        area: card.research_area,
+        questionIndex: card.question_index,
+      });
+
+      // Notify parent to refresh canvas data
+      onResearchCapture?.();
+
+      return true;
+    } catch (error) {
+      console.error('Error submitting question answer:', error);
+      return false;
+    }
+  }, [conversation, refreshResearchProgress, onAwardXP, onResearchCapture]);
+
+  // Handle QuestionCard review request
+  const handleQuestionReview = useCallback(async (
+    card: QuestionCardData,
+    draftAnswer: string
+  ): Promise<CoachReview | null> => {
+    if (!conversation) return null;
+
+    try {
+      const response = await fetch('/api/product-strategy-agent-v2/coach-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory: card.territory,
+          research_area: card.research_area,
+          question_index: card.question_index,
+          draft_answer: draftAnswer,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get coach review');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error getting coach review:', error);
+      return null;
+    }
+  }, [conversation]);
 
   // Capture insight handler
   const handleCaptureInsight = useCallback(async (messageId: string, territory: string, content: string) => {
@@ -482,16 +633,59 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
             hasUserEngaged: (showHistory ? messages : messages.slice(sessionStartRef.current)).some(m => m.role === 'user'),
             materialsCount: smartPromptsContext?.materialsCount ?? 0,
           }}
+          onQuestionSubmit={handleQuestionSubmit}
+          onQuestionReview={handleQuestionReview}
+          answeredQuestions={answeredQuestions}
         />
       </div>
-      {/* What's Next Card - sticky progress tracker */}
-      {isSidepanel && whatsNextData && (
+      {/* Research Progress Card - sticky tracker during research phase */}
+      {isSidepanel && currentPhase === 'research' && researchProgress && (
+        <div className="flex-shrink-0">
+          <ResearchProgressCard
+            currentArea={researchProgress.currentArea}
+            territoryProgress={researchProgress.territories.find(
+              t => t.territory === researchProgress.currentTerritory
+            ) || null}
+            isAreaComplete={researchProgress.currentArea?.status === 'mapped'}
+            onContinue={() => {
+              // Send message to coach to continue with next question
+              const areaName = researchProgress.currentArea?.title || 'current research area';
+              handleSendMessage(`Let's continue with the next question for ${areaName}.`);
+            }}
+            onStartNextArea={() => {
+              // Send message to coach to move to next research area
+              handleSendMessage("I'm ready to move on to the next research area.");
+            }}
+          />
+        </div>
+      )}
+      {/* What's Next Card - sticky progress tracker for non-research phases */}
+      {isSidepanel && currentPhase !== 'research' && whatsNextData && (
         <div className="flex-shrink-0">
           <WhatsNextCard
             data={whatsNextData}
-            onNavigateToPhase={(phase) => {
-              // TODO: Implement navigation to phase in CanvasPanel
-              console.log('Navigate to phase:', phase);
+            onNavigateToPhase={async (phase) => {
+              try {
+                const response = await fetch('/api/product-strategy-agent-v2/phase', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    conversation_id: conversation?.id,
+                    phase,
+                  }),
+                });
+
+                if (response.ok) {
+                  window.location.reload();
+                } else {
+                  const errorData = await response.json().catch(() => ({}));
+                  console.error('Phase navigation failed:', errorData);
+                  alert(`Failed to navigate: ${errorData.error || 'Unknown error'}`);
+                }
+              } catch (err) {
+                console.error('Phase navigation error:', err);
+                alert('Network error. Please try again.');
+              }
             }}
           />
         </div>

@@ -16,13 +16,13 @@ export function CanvasHeader({ conversation, onPhaseChange }: CanvasHeaderProps)
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleExport = () => {
-    console.log('Export clicked');
     // TODO: Implement export modal (deferred to post-MVP)
+    alert('Export feature coming soon! Your strategy insights will be exportable as PDF and PowerPoint.');
   };
 
   const handleShare = () => {
-    console.log('Share clicked');
     // TODO: Implement share functionality (deferred to post-MVP)
+    alert('Share feature coming soon! You will be able to share strategy documents with your team.');
   };
 
   const handleGenerateInsights = async () => {

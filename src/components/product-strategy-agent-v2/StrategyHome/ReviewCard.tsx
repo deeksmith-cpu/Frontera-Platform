@@ -47,7 +47,10 @@ export function ReviewCard({ upcomingReviews }: ReviewCardProps) {
           return (
             <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50/50">
               {days !== null && (
-                <span className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full border ${getUrgencyColor(days)}`}>
+                <span
+                  suppressHydrationWarning
+                  className={`flex-shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full border ${getUrgencyColor(days)}`}
+                >
                   {days < 0 ? 'Overdue' : days === 0 ? 'Today' : `${days}d`}
                 </span>
               )}
@@ -56,7 +59,7 @@ export function ReviewCard({ upcomingReviews }: ReviewCardProps) {
                   {item.job_to_be_done}
                 </p>
                 {item.kill_date && (
-                  <p className="text-[11px] text-slate-400">
+                  <p suppressHydrationWarning className="text-[11px] text-slate-400">
                     Kill date: {new Date(item.kill_date).toLocaleDateString()}
                   </p>
                 )}

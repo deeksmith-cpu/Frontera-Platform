@@ -39,6 +39,16 @@ interface StrategyHomeDashboardProps {
 export function StrategyHomeDashboard({ userName }: StrategyHomeDashboardProps) {
   const [data, setData] = useState<HomeData | null>(null);
   const [loading, setLoading] = useState(true);
+  // Use state for greeting to avoid hydration mismatch (Date-based on client only)
+  const [greeting, setGreeting] = useState('Welcome');
+
+  useEffect(() => {
+    // Set greeting on client side only to avoid hydration mismatch
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 18) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+  }, []);
 
   useEffect(() => {
     async function loadHomeData() {
@@ -68,7 +78,6 @@ export function StrategyHomeDashboard({ userName }: StrategyHomeDashboardProps) 
     );
   }
 
-  const greeting = getGreeting();
   const phase = data?.progress?.phase || 'discovery';
   const archetype = data?.assessment?.archetype || null;
 
@@ -130,9 +139,3 @@ export function StrategyHomeDashboard({ userName }: StrategyHomeDashboardProps) 
   );
 }
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
-}

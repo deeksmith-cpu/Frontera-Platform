@@ -241,6 +241,46 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
         </div>
       </div>
 
+      {/* Discovery Phase Purpose & Instructions */}
+      <div className="bg-gradient-to-br from-emerald-50 to-cyan-50 border border-emerald-200 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Discovery</h2>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-3">Context Setting</p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              Establish the strategic foundation for your coaching journey. This phase captures essential information about your
+              <strong> organization</strong>, <strong>strategic priorities</strong>, and <strong>key challenges</strong> that will guide all subsequent analysis.
+            </p>
+
+            {/* Purpose Box */}
+            <div className="bg-white/70 border border-emerald-100 rounded-xl p-4 mb-4">
+              <h3 className="text-sm font-semibold text-emerald-700 uppercase tracking-wider mb-2">Purpose</h3>
+              <p className="text-sm text-slate-700">
+                Build a rich strategic baseline by providing company context and uploading relevant materials. The more context you share,
+                the more tailored and insightful your AI-powered strategic recommendations will be.
+              </p>
+            </div>
+
+            {/* What to Do Box */}
+            <div className="bg-white/70 border border-cyan-100 rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-cyan-700 uppercase tracking-wider mb-2">What To Do</h3>
+              <ol className="text-sm text-slate-700 space-y-1.5 list-decimal list-inside">
+                <li>Review your <strong>Company Strategic Context</strong> below — edit if details need updating</li>
+                <li>Upload <strong>strategic materials</strong> (annual reports, strategy decks, market research) — minimum 1 required</li>
+                <li>Optionally use the <strong>AI Research Assistant</strong> to discover additional public information</li>
+                <li>Engage with the <strong>Strategy Coach</strong> in the chat panel to discuss your strategic situation</li>
+                <li>When ready, click <strong>&quot;Begin Terrain Mapping&quot;</strong> to proceed to the Research phase</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Strategic Context Tile */}
       {clientContext && (
         <div className="strategic-context-tile bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -755,18 +795,28 @@ export function DiscoverySection({ conversation, clientContext, onClientContextU
                 <div className="flex items-center gap-4">
                   <button
                     onClick={async () => {
-                      // Transition to landscape phase
-                      const response = await fetch(`/api/product-strategy-agent-v2/phase`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          conversation_id: conversation.id,
-                          phase: 'research',
-                        }),
-                      });
+                      try {
+                        // Transition to landscape/research phase
+                        const response = await fetch(`/api/product-strategy-agent-v2/phase`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            conversation_id: conversation.id,
+                            phase: 'research',
+                          }),
+                        });
 
-                      if (response.ok) {
-                        window.location.reload();
+                        if (response.ok) {
+                          // Reload to show the updated phase
+                          window.location.reload();
+                        } else {
+                          const errorData = await response.json().catch(() => ({}));
+                          console.error('Phase transition failed:', errorData);
+                          alert(`Failed to transition: ${errorData.error || 'Unknown error'}`);
+                        }
+                      } catch (err) {
+                        console.error('Phase transition error:', err);
+                        alert('Network error. Please try again.');
                       }
                     }}
                     className="px-8 py-4 bg-[#fbbf24] text-slate-900 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300"

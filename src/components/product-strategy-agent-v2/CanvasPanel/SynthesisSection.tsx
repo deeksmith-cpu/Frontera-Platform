@@ -225,7 +225,7 @@ export function SynthesisSection({ conversation }: SynthesisSectionProps) {
   // Handle evidence navigation
   const handleEvidenceClick = useCallback((evidence: EvidenceLink) => {
     // TODO: Navigate to source research area
-    console.log('Navigate to evidence:', evidence);
+    alert(`Evidence source: ${evidence.territory} territory - ${evidence.researchArea.replace(/_/g, ' ')}\n\nNavigation to source coming soon!`);
   }, []);
 
   // Handle PDF export
