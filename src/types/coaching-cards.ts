@@ -7,7 +7,9 @@
 // Card Base Types
 // =============================================================================
 
-export type CardType = 'explanation' | 'request' | 'debate' | 'whats_next';
+export type CardType = 'explanation' | 'request' | 'debate' | 'whats_next' | 'question';
+
+export type Territory = 'company' | 'customer' | 'competitor';
 
 export type Phase = 'discovery' | 'research' | 'synthesis' | 'bets';
 
@@ -152,6 +154,146 @@ export interface WhatsNextCardData extends BaseCard {
 }
 
 // =============================================================================
+// Question Card (Form-based research questions)
+// =============================================================================
+
+export type ConfidenceLevel = 'data' | 'experience' | 'guess';
+
+export interface QuestionCardData extends BaseCard {
+  type: 'question';
+  /** Territory this question belongs to */
+  territory: Territory;
+  /** Research area ID (e.g., 'company_foundation', 'customer_segmentation') */
+  research_area: string;
+  /** Question index within the research area (0, 1, 2) */
+  question_index: number;
+  /** The question text */
+  question: string;
+  /** Total questions in this research area */
+  total_questions: number;
+  /** Research area title for display */
+  research_area_title?: string;
+}
+
+export interface AnsweredCardData {
+  /** Territory this answer belongs to */
+  territory: Territory;
+  /** Research area ID */
+  research_area: string;
+  /** Question index */
+  question_index: number;
+  /** The question text */
+  question: string;
+  /** User's answer */
+  answer: string;
+  /** Confidence level */
+  confidence: ConfidenceLevel | null;
+  /** When the answer was submitted */
+  submitted_at?: string;
+}
+
+// =============================================================================
+// Resource Linking Types
+// =============================================================================
+
+export type ResourceType = 'podcast' | 'book' | 'article' | 'framework' | 'video';
+
+export interface ResourceLink {
+  /** Unique identifier */
+  id: string;
+  /** Type of resource */
+  type: ResourceType;
+  /** Resource title */
+  title: string;
+  /** Author or creator */
+  author?: string;
+  /** Source name (e.g., "Lenny's Podcast", "HBR") */
+  source: string;
+  /** External URL if available */
+  url?: string;
+  /** Why this is relevant to the question */
+  relevance: string;
+  /** Optional episode/chapter info */
+  episodeInfo?: string;
+  /** Optional key quote or insight */
+  keyInsight?: string;
+}
+
+// =============================================================================
+// Coach Context Types (Full context for coaching API)
+// =============================================================================
+
+export interface CoachContextMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp?: string;
+}
+
+export interface CoachContextMaterial {
+  id: string;
+  filename: string;
+  file_type: string;
+  extractedContext?: string;
+}
+
+export interface CoachContext {
+  /** Company information */
+  companyName: string;
+  industry?: string;
+  companySize?: string;
+  strategicFocus?: string[];
+
+  /** Current conversation context */
+  conversationId: string;
+  currentPhase: Phase;
+  recentMessages: CoachContextMessage[];
+
+  /** Research context */
+  allTerritoryInsights: AnsweredCardData[];
+  currentQuestion?: QuestionCardData;
+  draftAnswer?: string;
+
+  /** Uploaded materials */
+  uploadedMaterials: CoachContextMaterial[];
+
+  /** Framework state */
+  frameworkState?: Record<string, unknown>;
+}
+
+// =============================================================================
+// Coach Review Types (Critical assessment response)
+// =============================================================================
+
+export interface CoachChallenge {
+  /** Challenge question to prompt deeper thinking */
+  question: string;
+  /** Why this challenge is relevant */
+  rationale?: string;
+}
+
+export interface CoachEnhancement {
+  /** Suggestion to improve the answer */
+  suggestion: string;
+  /** Example of how to apply it */
+  example?: string;
+}
+
+export interface CoachReview {
+  /** Overall assessment summary */
+  summary: string;
+  /** Strengths identified in the answer */
+  strengths?: string[];
+  /** Challenges to prompt deeper thinking */
+  challenges: CoachChallenge[];
+  /** Specific enhancement suggestions */
+  enhancements: CoachEnhancement[];
+  /** Relevant resources */
+  resources: ResourceLink[];
+  /** Suggested improved text (user can apply) */
+  suggestedRevision?: string;
+}
+
+// =============================================================================
 // Union Types
 // =============================================================================
 
@@ -159,7 +301,8 @@ export type CoachingCard =
   | ExplanationCardData
   | RequestCardData
   | DebateIdeaCardData
-  | WhatsNextCardData;
+  | WhatsNextCardData
+  | QuestionCardData;
 
 // =============================================================================
 // Parsing Types
@@ -167,7 +310,7 @@ export type CoachingCard =
 
 export interface ParsedMessageContent {
   textContent: string;
-  cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData>;
+  cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData>;
 }
 
 // =============================================================================

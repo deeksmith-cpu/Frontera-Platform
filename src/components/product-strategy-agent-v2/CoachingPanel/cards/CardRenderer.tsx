@@ -4,19 +4,28 @@ import type {
   ExplanationCardData,
   RequestCardData,
   DebateIdeaCardData,
+  QuestionCardData,
+  ConfidenceLevel,
+  CoachReview,
   CardAction,
 } from '@/types/coaching-cards';
 import { ExplanationCard } from './ExplanationCard';
 import { RequestCard } from './RequestCard';
 import { DebateCard } from './DebateCard';
+import { QuestionCard } from './QuestionCard';
 
-type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData;
+type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData;
 
 interface CardRendererProps {
   card: RenderableCard;
+  conversationId?: string;
   onAction?: (action: CardAction) => void;
   onDismiss?: (cardId: string) => void;
   onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
+  onQuestionSubmit?: (answer: string, confidence: ConfidenceLevel | null) => Promise<boolean>;
+  onQuestionReview?: (draftAnswer: string) => Promise<CoachReview | null>;
+  existingAnswer?: string;
+  existingConfidence?: ConfidenceLevel | null;
 }
 
 /**
@@ -27,9 +36,14 @@ interface CardRendererProps {
  */
 export function CardRenderer({
   card,
+  conversationId,
   onAction,
   onDismiss,
   onNavigateToCanvas,
+  onQuestionSubmit,
+  onQuestionReview,
+  existingAnswer,
+  existingConfidence,
 }: CardRendererProps) {
   switch (card.type) {
     case 'explanation':
@@ -55,6 +69,22 @@ export function CardRenderer({
         <DebateCard
           data={card}
           onAction={onAction}
+        />
+      );
+
+    case 'question':
+      if (!conversationId || !onQuestionSubmit) {
+        console.warn('QuestionCard requires conversationId and onQuestionSubmit');
+        return null;
+      }
+      return (
+        <QuestionCard
+          data={card}
+          conversationId={conversationId}
+          onSubmit={onQuestionSubmit}
+          onRequestReview={onQuestionReview}
+          existingAnswer={existingAnswer}
+          existingConfidence={existingConfidence}
         />
       );
 

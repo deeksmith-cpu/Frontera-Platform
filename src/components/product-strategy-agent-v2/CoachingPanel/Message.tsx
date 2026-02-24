@@ -9,12 +9,12 @@ import { EvidenceLinks, FormattedContent, parseEvidenceReferences, EvidenceRef }
 import { MessageTypeBadge } from './MessageTypeBadge';
 import { MessageReactions } from './MessageReactions';
 import { FrameworkImage, parseFrameworkMarkers } from './FrameworkImage';
-import { CardRenderer } from './cards';
+import { CardRenderer, AnsweredCard } from './cards';
 import { stripResearchMarkers } from '@/lib/agents/strategy-coach/research-extractor';
 import { classifyMessage } from '@/lib/agents/strategy-coach/message-classifier';
 import { parseCardMarkers } from '@/lib/utils/card-parser';
 import type { Database } from '@/types/database';
-import type { CardAction } from '@/types/coaching-cards';
+import type { CardAction, ConfidenceLevel, CoachReview, QuestionCardData } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -29,6 +29,12 @@ interface MessageProps {
   isCaptured?: boolean;
   onCardAction?: (action: CardAction) => void;
   onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
+  /** Handler for QuestionCard submission */
+  onQuestionSubmit?: (card: QuestionCardData, answer: string, confidence: ConfidenceLevel | null) => Promise<boolean>;
+  /** Handler for QuestionCard review request */
+  onQuestionReview?: (card: QuestionCardData, draftAnswer: string) => Promise<CoachReview | null>;
+  /** Map of answered questions: key = territory:research_area:question_index */
+  answeredQuestions?: Map<string, { answer: string; confidence: ConfidenceLevel | null }>;
 }
 
 // Parse [Insight:territory:summary] markers from coach messages
@@ -73,6 +79,9 @@ export function Message({
   isCaptured = false,
   onCardAction,
   onNavigateToCanvas,
+  onQuestionSubmit,
+  onQuestionReview,
+  answeredQuestions,
 }: MessageProps) {
   const isAgent = message.role === 'assistant';
   const timeAgo = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
@@ -249,15 +258,76 @@ export function Message({
         {/* Render rich coaching cards */}
         {isAgent && cards.length > 0 && (
           <div className="space-y-3 mb-4 -ml-10">
-            {cards.map((card) => (
-              <CardRenderer
-                key={card.id}
-                card={card}
-                onAction={onCardAction}
-                onDismiss={(cardId) => onCardAction?.({ cardId, action: 'dismiss' })}
-                onNavigateToCanvas={onNavigateToCanvas}
-              />
-            ))}
+            {cards.map((card) => {
+              // Handle question cards specially - check if already answered
+              if (card.type === 'question') {
+                const questionCard = card as QuestionCardData;
+                const answerKey = `${questionCard.territory}:${questionCard.research_area}:${questionCard.question_index}`;
+                const existingAnswer = answeredQuestions?.get(answerKey);
+
+                if (existingAnswer) {
+                  // Render as AnsweredCard since question has been answered
+                  return (
+                    <AnsweredCard
+                      key={card.id}
+                      data={{
+                        territory: questionCard.territory,
+                        research_area: questionCard.research_area,
+                        question_index: questionCard.question_index,
+                        question: questionCard.question,
+                        answer: existingAnswer.answer,
+                        confidence: existingAnswer.confidence,
+                      }}
+                      conversationId={conversationId || ''}
+                      questionText={questionCard.question}
+                      totalQuestions={questionCard.total_questions}
+                      researchAreaTitle={questionCard.research_area_title}
+                      onUpdate={async (answer, confidence) => {
+                        if (onQuestionSubmit) {
+                          return onQuestionSubmit(questionCard, answer, confidence);
+                        }
+                        return false;
+                      }}
+                      onRequestReview={onQuestionReview ? async (draft) => {
+                        return onQuestionReview(questionCard, draft);
+                      } : undefined}
+                    />
+                  );
+                }
+
+                // Render as active QuestionCard
+                return (
+                  <CardRenderer
+                    key={card.id}
+                    card={card}
+                    conversationId={conversationId}
+                    onAction={onCardAction}
+                    onDismiss={(cardId) => onCardAction?.({ cardId, action: 'dismiss' })}
+                    onNavigateToCanvas={onNavigateToCanvas}
+                    onQuestionSubmit={async (answer, confidence) => {
+                      if (onQuestionSubmit) {
+                        return onQuestionSubmit(questionCard, answer, confidence);
+                      }
+                      return false;
+                    }}
+                    onQuestionReview={onQuestionReview ? async (draft) => {
+                      return onQuestionReview(questionCard, draft);
+                    } : undefined}
+                  />
+                );
+              }
+
+              // Render other card types normally
+              return (
+                <CardRenderer
+                  key={card.id}
+                  card={card}
+                  onAction={onCardAction}
+                  onDismiss={(cardId) => onCardAction?.({ cardId, action: 'dismiss' })}
+                  onNavigateToCanvas={onNavigateToCanvas}
+                />
+              );
+            })}
           </div>
         )}
 

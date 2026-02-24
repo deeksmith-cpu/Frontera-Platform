@@ -6,7 +6,7 @@ import { ThinkingIndicator } from './ThinkingIndicator';
 import { StreamingMessage } from './StreamingMessage';
 import { SessionWelcome } from './SessionWelcome';
 import type { Database } from '@/types/database';
-import type { CardAction } from '@/types/coaching-cards';
+import type { CardAction, ConfidenceLevel, CoachReview, QuestionCardData } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -39,6 +39,12 @@ interface MessageStreamProps {
   welcomeProps?: WelcomeProps;
   onCardAction?: (action: CardAction) => void;
   onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
+  /** Handler for QuestionCard submission */
+  onQuestionSubmit?: (card: QuestionCardData, answer: string, confidence: ConfidenceLevel | null) => Promise<boolean>;
+  /** Handler for QuestionCard review request */
+  onQuestionReview?: (card: QuestionCardData, draftAnswer: string) => Promise<CoachReview | null>;
+  /** Map of answered questions: key = territory:research_area:question_index */
+  answeredQuestions?: Map<string, { answer: string; confidence: ConfidenceLevel | null }>;
 }
 
 export function MessageStream({
@@ -55,6 +61,9 @@ export function MessageStream({
   welcomeProps,
   onCardAction,
   onNavigateToCanvas,
+  onQuestionSubmit,
+  onQuestionReview,
+  answeredQuestions,
 }: MessageStreamProps) {
   const streamRef = useRef<HTMLDivElement>(null);
 
@@ -98,6 +107,9 @@ export function MessageStream({
           isCaptured={capturedInsights?.has(message.id) || false}
           onCardAction={onCardAction}
           onNavigateToCanvas={onNavigateToCanvas}
+          onQuestionSubmit={onQuestionSubmit}
+          onQuestionReview={onQuestionReview}
+          answeredQuestions={answeredQuestions}
         />
       ))}
       {isLoading && <ThinkingIndicator />}
