@@ -72,8 +72,8 @@ function getWelcomeContent(
     if (!territory) {
       return {
         greeting: 'Ready to map your strategic terrain.',
-        subtitle: 'Select a territory in the sidebar to begin your research.',
-        prompts: [],
+        subtitle: 'Select a territory card in the Strategy Canvas to begin exploring your Company, Customer, or Market Context.',
+        prompts: ['Help me understand the territories', 'Where should I start?'],
       };
     }
 

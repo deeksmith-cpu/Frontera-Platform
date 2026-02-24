@@ -648,13 +648,35 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
             ) || null}
             isAreaComplete={researchProgress.currentArea?.status === 'mapped'}
             onContinue={() => {
-              // Send message to coach to continue with next question
-              const areaName = researchProgress.currentArea?.title || 'current research area';
-              handleSendMessage(`Let's continue with the next question for ${areaName}.`);
+              // Send message with explicit research context for the coach to emit a QuestionCard
+              const area = researchProgress.currentArea;
+              if (!area) return;
+
+              const questionIndex = researchProgress.currentQuestionIndex ?? 0;
+              const territory = area.territory;
+              const areaId = area.id;
+              const areaTitle = area.title;
+
+              // Include explicit context so the coach knows exactly what QuestionCard to emit
+              handleSendMessage(
+                `[RESEARCH_CONTEXT:${territory}:${areaId}:${questionIndex}]\n` +
+                `I'm ready for Question ${questionIndex + 1} in the ${areaTitle} research area.`
+              );
             }}
             onStartNextArea={() => {
-              // Send message to coach to move to next research area
-              handleSendMessage("I'm ready to move on to the next research area.");
+              // Find the next incomplete area
+              const nextArea = researchProgress.territories
+                .flatMap(t => t.areas)
+                .find(a => a.status !== 'mapped');
+
+              if (nextArea) {
+                handleSendMessage(
+                  `[RESEARCH_CONTEXT:${nextArea.territory}:${nextArea.id}:0]\n` +
+                  `I'm ready to start the ${nextArea.title} research area.`
+                );
+              } else {
+                handleSendMessage("I've completed all research areas. What's next?");
+              }
             }}
           />
         </div>
