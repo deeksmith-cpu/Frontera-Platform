@@ -8,11 +8,12 @@ import type {
   ExplanationCardData,
   RequestCardData,
   DebateIdeaCardData,
+  QuestionCardData,
   CardType,
 } from '@/types/coaching-cards';
 
 // Card marker pattern: [CARD:type]{ json }[/CARD]
-const CARD_PATTERN = /\[CARD:(explanation|request|debate)\]([\s\S]*?)\[\/CARD\]/g;
+const CARD_PATTERN = /\[CARD:(explanation|request|debate|question)\]([\s\S]*?)\[\/CARD\]/g;
 
 /**
  * Generate a deterministic card ID based on type and index
@@ -37,7 +38,7 @@ function validateAndEnhanceCard(
   rawData: Record<string, unknown>,
   index: number,
   rawJson: string
-): ExplanationCardData | RequestCardData | DebateIdeaCardData | null {
+): ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | null {
   const baseCard = {
     id: generateCardId(type, index, rawJson),
     dismissible: true,
@@ -103,6 +104,23 @@ function validateAndEnhanceCard(
       } satisfies DebateIdeaCardData;
     }
 
+    case 'question': {
+      if (!rawData.territory || !rawData.research_area || rawData.question_index === undefined || !rawData.question) {
+        console.warn('Question card missing required fields (territory, research_area, question_index, question)');
+        return null;
+      }
+      return {
+        ...baseCard,
+        type: 'question',
+        territory: rawData.territory as QuestionCardData['territory'],
+        research_area: String(rawData.research_area),
+        research_area_title: rawData.research_area_title as string | undefined,
+        question_index: Number(rawData.question_index),
+        question: String(rawData.question),
+        total_questions: Number(rawData.total_questions) || 3,
+      } satisfies QuestionCardData;
+    }
+
     default:
       return null;
   }
@@ -116,7 +134,7 @@ function validateAndEnhanceCard(
  * Output: { textContent: "Here's some guidance  More text", cards: [...] }
  */
 export function parseCardMarkers(content: string): ParsedMessageContent {
-  const cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData> = [];
+  const cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData> = [];
   let textContent = content;
 
   // Reset regex lastIndex for fresh matching
