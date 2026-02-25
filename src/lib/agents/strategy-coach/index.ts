@@ -153,9 +153,8 @@ export async function streamMessage(
   // Parse [RESEARCH_CONTEXT:...] marker from user message for explicit QuestionCard requests
   // This happens when user clicks "Continue to Question X" button
   const questionCardRequest = parseResearchContextMarker(userMessage);
-  if (questionCardRequest) {
-    console.log(`[streamMessage] Detected QuestionCard request: ${questionCardRequest.territory}/${questionCardRequest.areaId}/${questionCardRequest.questionIndex}`);
-  }
+  console.log(`[streamMessage] User message: "${userMessage.substring(0, 100)}..."`);
+  console.log(`[streamMessage] parseResearchContextMarker result:`, questionCardRequest);
 
   // Build the system prompt with optional QuestionCard request override
   const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext, questionCardRequest);

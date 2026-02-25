@@ -51,7 +51,8 @@
       "Bash(find:*)",
       "Bash(robocopy:*)",
       "Bash(powershell:*)",
-      "Bash(del \"c:\\\\Users\\\\deeks\\\\frontera-platform\\\\update-v2-paths.ps1\")"
+      "Bash(del \"c:\\\\Users\\\\deeks\\\\frontera-platform\\\\update-v2-paths.ps1\")",
+      "Bash(python3:*)"
     ]
   }
 }

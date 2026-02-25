@@ -189,9 +189,16 @@ export async function POST(
         const text = new TextDecoder().decode(chunk);
         fullResponse += text;
         controller.enqueue(chunk);
+        // Log chunks for debugging
+        if (fullResponse.length < 500) {
+          console.log(`[messages/route] Streaming chunk, total so far: ${fullResponse.length} chars`);
+        }
       },
       async flush() {
         // Save the assistant message after streaming completes
+        console.log(`[messages/route] Stream complete. Total response length: ${fullResponse.length}`);
+        console.log(`[messages/route] Response contains [CARD:question]: ${fullResponse.includes('[CARD:question]')}`);
+        console.log(`[messages/route] Response first 500 chars: ${fullResponse.substring(0, 500)}`);
         try {
           const usage = await getUsage();
           const streamDuration = Date.now() - startTime;

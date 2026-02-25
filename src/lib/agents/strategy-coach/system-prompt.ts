@@ -57,11 +57,14 @@ export function parseResearchContextMarker(userMessage: string): QuestionCardReq
  * This overrides all other instructions when the user clicks "Continue to Question X".
  */
 function formatQuestionCardRequestInstruction(request: QuestionCardRequest): string {
+  console.log(`[formatQuestionCardRequestInstruction] Looking up question for: ${request.territory}/${request.areaId}/${request.questionIndex}`);
   const question = getQuestionByIndex(request.territory, request.areaId, request.questionIndex);
   const areaTitle = getResearchAreaTitle(request.territory, request.areaId);
+  console.log(`[formatQuestionCardRequestInstruction] Found question:`, question);
+  console.log(`[formatQuestionCardRequestInstruction] Area title:`, areaTitle);
 
   if (!question) {
-    console.warn(`[QuestionCardRequest] Question not found: ${request.territory}/${request.areaId}/${request.questionIndex}`);
+    console.error(`[QuestionCardRequest] Question not found: ${request.territory}/${request.areaId}/${request.questionIndex}`);
     return '';
   }
 
@@ -197,10 +200,17 @@ export async function buildSystemPrompt(
   // FIRST: If explicit QuestionCard request, add TOP-PRIORITY instruction
   // This must come BEFORE everything else to override all other guidelines
   if (questionCardRequest) {
+    console.log(`[buildSystemPrompt] Processing QuestionCard request:`, questionCardRequest);
     const mandatoryInstruction = formatQuestionCardRequestInstruction(questionCardRequest);
+    console.log(`[buildSystemPrompt] Generated mandatory instruction length: ${mandatoryInstruction.length}`);
     if (mandatoryInstruction) {
       sections.push(mandatoryInstruction);
+      console.log(`[buildSystemPrompt] Injected mandatory QuestionCard instruction at position 0`);
+    } else {
+      console.error(`[buildSystemPrompt] Failed to generate mandatory instruction!`);
     }
+  } else {
+    console.log(`[buildSystemPrompt] No questionCardRequest provided`);
   }
 
   // Core identity
