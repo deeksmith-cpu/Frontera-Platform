@@ -356,7 +356,10 @@ export async function buildSystemPrompt(
   }
 
   // Active research context - user's current focus in the research phase
-  if (activeResearchContext && activeResearchContext.territory) {
+  // SKIP this when we have a questionCardRequest to avoid conflicting instructions
+  // (questionCardRequest has explicit "emit this exact card" while formatActiveResearchContext
+  // says "ask questions conversationally" - they conflict!)
+  if (activeResearchContext && activeResearchContext.territory && !questionCardRequest) {
     sections.push(formatActiveResearchContext(activeResearchContext));
   }
 
