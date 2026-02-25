@@ -165,22 +165,45 @@ export async function POST(
     const chatHistory = messagesToChatHistory(messages);
 
     // Stream the response — profiling or coaching
-    const { stream, getUsage } = isProfilingConversation
-      ? await streamProfilingMessage(
-          clientContext,
-          (conversation.framework_state as unknown as ProfilingFrameworkState) || initializeProfilingState(),
-          chatHistory,
-          message,
-          userName
-        )
-      : await streamMessage(
-          clientContext,
-          frameworkState,
-          chatHistory,
-          message,
-          conversationId,
-          researchContext
-        );
+    let stream: ReadableStream<Uint8Array>;
+    let getUsage: () => Promise<{ inputTokens: number; outputTokens: number }>;
+
+    try {
+      console.log(`[messages/route] About to call streamMessage. User message: "${message.substring(0, 100)}..."`);
+      console.log(`[messages/route] Has RESEARCH_CONTEXT marker: ${message.includes('[RESEARCH_CONTEXT:')}`);
+
+      const result = isProfilingConversation
+        ? await streamProfilingMessage(
+            clientContext,
+            (conversation.framework_state as unknown as ProfilingFrameworkState) || initializeProfilingState(),
+            chatHistory,
+            message,
+            userName
+          )
+        : await streamMessage(
+            clientContext,
+            frameworkState,
+            chatHistory,
+            message,
+            conversationId,
+            researchContext
+          );
+
+      stream = result.stream;
+      getUsage = result.getUsage;
+      console.log(`[messages/route] streamMessage returned successfully`);
+    } catch (streamError) {
+      console.error(`[messages/route] Error in streamMessage:`, streamError);
+      console.error(`[messages/route] Error stack:`, streamError instanceof Error ? streamError.stack : 'No stack');
+      return new Response(
+        JSON.stringify({
+          error: "Failed to generate AI response",
+          details: streamError instanceof Error ? streamError.message : String(streamError),
+          stack: streamError instanceof Error ? streamError.stack : undefined,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // Create a transform stream to collect the full response
     let fullResponse = "";

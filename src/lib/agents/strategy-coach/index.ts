@@ -152,12 +152,26 @@ export async function streamMessage(
 
   // Parse [RESEARCH_CONTEXT:...] marker from user message for explicit QuestionCard requests
   // This happens when user clicks "Continue to Question X" button
-  const questionCardRequest = parseResearchContextMarker(userMessage);
-  console.log(`[streamMessage] User message: "${userMessage.substring(0, 100)}..."`);
-  console.log(`[streamMessage] parseResearchContextMarker result:`, questionCardRequest);
+  let questionCardRequest;
+  try {
+    questionCardRequest = parseResearchContextMarker(userMessage);
+    console.log(`[streamMessage] User message: "${userMessage.substring(0, 100)}..."`);
+    console.log(`[streamMessage] parseResearchContextMarker result:`, questionCardRequest);
+  } catch (parseError) {
+    console.error(`[streamMessage] Error parsing RESEARCH_CONTEXT marker:`, parseError);
+    throw parseError;
+  }
 
   // Build the system prompt with optional QuestionCard request override
-  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext, questionCardRequest);
+  let systemPrompt: string;
+  try {
+    console.log(`[streamMessage] About to build system prompt...`);
+    systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext, questionCardRequest);
+    console.log(`[streamMessage] System prompt built successfully, length: ${systemPrompt.length}`);
+  } catch (promptError) {
+    console.error(`[streamMessage] Error building system prompt:`, promptError);
+    throw promptError;
+  }
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
