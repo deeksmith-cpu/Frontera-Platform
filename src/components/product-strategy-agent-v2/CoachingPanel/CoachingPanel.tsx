@@ -484,8 +484,14 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
         }
       }
 
+      // DEBUG: Log the full response to see if card markers are present
+      console.log('[CoachingPanel] Full AI response:', assistantContent);
+      console.log('[CoachingPanel] Response contains [CARD:question]:', assistantContent.includes('[CARD:question]'));
+      console.log('[CoachingPanel] Response first 500 chars:', assistantContent.substring(0, 500));
+
       // Extract research captures before adding to messages
       const extraction = extractResearchMarkers(assistantContent);
+      console.log('[CoachingPanel] After extractResearchMarkers - cleanContent:', extraction.cleanContent.substring(0, 300));
 
       // Add completed assistant message (with markers stripped)
       if (assistantContent) {

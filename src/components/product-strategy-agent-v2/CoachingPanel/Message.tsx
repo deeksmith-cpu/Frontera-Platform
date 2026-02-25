@@ -110,8 +110,13 @@ export function Message({
   // Parse card markers from assistant messages
   const { textContent: contentAfterCards, cards } = useMemo(() => {
     if (!isAgent) return { textContent: message.content, cards: [] };
-    return parseCardMarkers(message.content);
-  }, [isAgent, message.content]);
+    const result = parseCardMarkers(message.content);
+    // DEBUG: Log card parsing results
+    console.log('[Message] Parsing cards from message:', message.id);
+    console.log('[Message] Message content has [CARD:question]:', message.content.includes('[CARD:question]'));
+    console.log('[Message] Cards found:', result.cards.length, result.cards.map(c => c.type));
+    return result;
+  }, [isAgent, message.content, message.id]);
 
   // Parse insight markers from assistant messages (after card extraction)
   const { cleanContent, insights: proposedInsights } = useMemo(() => {
