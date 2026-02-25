@@ -28,11 +28,12 @@ export interface TerritoryResearch {
 }
 
 // ── Company Territory ───────────────────────────────────────────────
+// NOTE: Area IDs must match useResearchProgress.ts for UI consistency
 
 const COMPANY_AREAS: ResearchArea[] = [
   {
-    id: 'core_capabilities',
-    title: 'Core Capabilities & Constraints',
+    id: 'company_foundation',
+    title: 'Company Foundation',
     description:
       "What are your organization's unique strengths, and what fundamental constraints shape your strategic options?",
     questions: [
@@ -43,8 +44,8 @@ const COMPANY_AREAS: ResearchArea[] = [
     ],
   },
   {
-    id: 'resource_reality',
-    title: 'Resource Reality',
+    id: 'strategic_position',
+    title: 'Strategic Position',
     description:
       'What team, technology, and funding realities will enable or constrain your strategy execution?',
     questions: [
@@ -55,8 +56,8 @@ const COMPANY_AREAS: ResearchArea[] = [
     ],
   },
   {
-    id: 'product_portfolio',
-    title: 'Product Portfolio & Market Position',
+    id: 'competitive_advantages',
+    title: 'Competitive Advantages',
     description:
       'How do your current products perform in the market, and what does your portfolio reveal about strategic direction?',
     questions: [
