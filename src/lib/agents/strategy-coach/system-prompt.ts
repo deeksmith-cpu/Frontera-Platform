@@ -20,7 +20,81 @@ import type { ActiveResearchContext } from "@/types/research-context";
 import {
   formatResearchContextForPrompt,
   TERRITORY_RESEARCH,
+  getQuestionByIndex,
+  getResearchAreaTitle,
 } from "./research-questions";
+
+/**
+ * Request for a specific QuestionCard from the UI.
+ * Parsed from [RESEARCH_CONTEXT:territory:area_id:question_index] marker.
+ */
+export interface QuestionCardRequest {
+  territory: 'company' | 'customer' | 'competitor';
+  areaId: string;
+  questionIndex: number;
+}
+
+/**
+ * Parse [RESEARCH_CONTEXT:territory:area_id:question_index] marker from user message.
+ * Returns null if no marker found.
+ */
+export function parseResearchContextMarker(userMessage: string): QuestionCardRequest | null {
+  const match = userMessage.match(/\[RESEARCH_CONTEXT:(\w+):(\w+):(\d+)\]/);
+  if (!match) return null;
+
+  const territory = match[1] as QuestionCardRequest['territory'];
+  if (!['company', 'customer', 'competitor'].includes(territory)) return null;
+
+  return {
+    territory,
+    areaId: match[2],
+    questionIndex: parseInt(match[3], 10),
+  };
+}
+
+/**
+ * Format a mandatory QuestionCard instruction to inject at the TOP of the system prompt.
+ * This overrides all other instructions when the user clicks "Continue to Question X".
+ */
+function formatQuestionCardRequestInstruction(request: QuestionCardRequest): string {
+  const question = getQuestionByIndex(request.territory, request.areaId, request.questionIndex);
+  const areaTitle = getResearchAreaTitle(request.territory, request.areaId);
+
+  if (!question) {
+    console.warn(`[QuestionCardRequest] Question not found: ${request.territory}/${request.areaId}/${request.questionIndex}`);
+    return '';
+  }
+
+  // Escape the question text for JSON embedding
+  const escapedQuestion = question.text.replace(/"/g, '\\"');
+
+  return `## MANDATORY QUESTION CARD RESPONSE
+
+**THIS INSTRUCTION OVERRIDES ALL OTHER GUIDELINES. FOLLOW IT EXACTLY.**
+
+The user clicked "Continue to Question ${request.questionIndex + 1}" button. You MUST respond with:
+
+1. A brief, friendly intro sentence (1-2 sentences max)
+2. Then IMMEDIATELY emit this EXACT card (copy-paste this precisely):
+
+[CARD:question]
+{"territory": "${request.territory}", "research_area": "${request.areaId}", "research_area_title": "${areaTitle}", "question_index": ${request.questionIndex}, "question": "${escapedQuestion}", "total_questions": 4}
+[/CARD]
+
+**CRITICAL REQUIREMENTS:**
+- The [CARD:question] marker MUST appear in your response
+- Copy the JSON exactly as shown above — do NOT modify or paraphrase
+- Do NOT ask the question conversationally — the card will display it
+- Do NOT emit [ResearchCapture:...] markers in this response
+- Failure to include the card breaks the UI
+
+**Example valid response:**
+"Great, let's continue exploring ${areaTitle}. Here's your next question:"
+
+[CARD:question]
+{"territory": "${request.territory}", "research_area": "${request.areaId}", "research_area_title": "${areaTitle}", "question_index": ${request.questionIndex}, "question": "${escapedQuestion}", "total_questions": 4}
+[/CARD]`;
+}
 
 /**
  * Format active research context for system prompt.
@@ -108,14 +182,26 @@ Guide them to choose a research area to start exploring. Ask which area they'd l
  * Build the dynamic system prompt for the Strategy Coach.
  * Incorporates client context, coaching methodology, and current progress.
  * Optionally includes research insights and synthesis if conversationId is provided.
+ *
+ * @param questionCardRequest - If provided, injects a TOP-PRIORITY instruction to emit a specific QuestionCard
  */
 export async function buildSystemPrompt(
   context: ClientContext,
   state: FrameworkState,
   conversationId?: string,
-  activeResearchContext?: ActiveResearchContext | null
+  activeResearchContext?: ActiveResearchContext | null,
+  questionCardRequest?: QuestionCardRequest | null
 ): Promise<string> {
   const sections: string[] = [];
+
+  // FIRST: If explicit QuestionCard request, add TOP-PRIORITY instruction
+  // This must come BEFORE everything else to override all other guidelines
+  if (questionCardRequest) {
+    const mandatoryInstruction = formatQuestionCardRequestInstruction(questionCardRequest);
+    if (mandatoryInstruction) {
+      sections.push(mandatoryInstruction);
+    }
+  }
 
   // Core identity
   sections.push(CORE_IDENTITY);

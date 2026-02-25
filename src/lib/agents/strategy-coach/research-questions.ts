@@ -173,6 +173,26 @@ export function getAreaIds(territory: 'company' | 'customer' | 'competitor'): st
   return t?.areas.map((a) => a.id) ?? [];
 }
 
+/** Get a specific question by territory, area, and index */
+export function getQuestionByIndex(
+  territory: 'company' | 'customer' | 'competitor',
+  areaId: string,
+  questionIndex: number
+): ResearchQuestion | null {
+  const area = getResearchArea(territory, areaId);
+  if (!area) return null;
+  return area.questions.find((q) => q.index === questionIndex) ?? null;
+}
+
+/** Get the title of a research area */
+export function getResearchAreaTitle(
+  territory: 'company' | 'customer' | 'competitor',
+  areaId: string
+): string {
+  const area = getResearchArea(territory, areaId);
+  return area?.title ?? areaId;
+}
+
 /** Format research context for system prompt injection */
 export function formatResearchContextForPrompt(
   territory: 'company' | 'customer' | 'competitor',

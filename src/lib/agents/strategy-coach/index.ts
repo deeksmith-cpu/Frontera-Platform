@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getPostHogServer } from "@/lib/analytics/posthog-server";
 import { ClientContext, loadClientContext } from "./client-context";
 import { FrameworkState, initializeFrameworkState } from "./framework-state";
-import { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
+import { buildSystemPrompt, generateOpeningMessage, parseResearchContextMarker } from "./system-prompt";
 import { buildProfilingSystemPrompt } from "./profiling-prompt";
 import type { ConversationMessage, ProfilingFrameworkState } from "@/types/database";
 import type { ActiveResearchContext } from "@/types/research-context";
@@ -150,8 +150,15 @@ export async function streamMessage(
 }> {
   const anthropic = getAnthropicClient();
 
-  // Build the system prompt
-  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext);
+  // Parse [RESEARCH_CONTEXT:...] marker from user message for explicit QuestionCard requests
+  // This happens when user clicks "Continue to Question X" button
+  const questionCardRequest = parseResearchContextMarker(userMessage);
+  if (questionCardRequest) {
+    console.log(`[streamMessage] Detected QuestionCard request: ${questionCardRequest.territory}/${questionCardRequest.areaId}/${questionCardRequest.questionIndex}`);
+  }
+
+  // Build the system prompt with optional QuestionCard request override
+  const systemPrompt = await buildSystemPrompt(context, frameworkState, conversationId, activeResearchContext, questionCardRequest);
 
   // Prepare messages for Claude
   const messages: Anthropic.MessageParam[] = [
@@ -319,7 +326,8 @@ export { loadClientContext } from "./client-context";
 export type { ClientContext } from "./client-context";
 export { initializeFrameworkState, updateFrameworkState, calculateProgress } from "./framework-state";
 export type { FrameworkState } from "./framework-state";
-export { buildSystemPrompt, generateOpeningMessage } from "./system-prompt";
+export { buildSystemPrompt, generateOpeningMessage, parseResearchContextMarker } from "./system-prompt";
+export type { QuestionCardRequest } from "./system-prompt";
 export { buildProfilingSystemPrompt, generateProfilingOpeningMessage } from "./profiling-prompt";
 export { initializeProfilingState } from "./profiling-state";
 export type { ProfilingFrameworkState } from "@/types/database";
