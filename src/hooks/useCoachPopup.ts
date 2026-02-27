@@ -157,6 +157,7 @@ export function useMediaQuery(query: string): boolean {
     if (typeof window === 'undefined') return;
 
     const mediaQuery = window.matchMedia(query);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMatches(mediaQuery.matches);
 
     const handler = (event: MediaQueryListEvent) => {
