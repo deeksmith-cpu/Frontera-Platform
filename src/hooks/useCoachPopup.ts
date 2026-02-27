@@ -147,11 +147,9 @@ export function useCoachPopup() {
  * Simple media query hook for responsive behavior
  */
 export function useMediaQuery(query: string): boolean {
-  // Use lazy initialization to reduce hydration mismatches
-  const [matches, setMatches] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia(query).matches;
-  });
+  // MUST start false to match server render — lazy init would cause hydration
+  // mismatch when this hook controls conditional rendering (e.g. CoachingPopup)
+  const [matches, setMatches] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
