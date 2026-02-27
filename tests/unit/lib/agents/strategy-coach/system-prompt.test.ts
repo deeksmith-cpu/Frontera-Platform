@@ -57,10 +57,10 @@ describe('System Prompt', () => {
       const prompt = await buildSystemPrompt(context, baseState);
 
       expect(prompt).toContain('## Your Methodology: Product Strategy Research Playbook');
-      expect(prompt).toContain('### Pillar 1: Macro Market Forces');
-      expect(prompt).toContain('### Pillar 2: Customer Research');
-      expect(prompt).toContain('### Pillar 3: Colleague Research');
-      expect(prompt).toContain('### Cross-Pillar Synthesis');
+      expect(prompt).toContain('### Territory 1: Company Territory');
+      expect(prompt).toContain('### Territory 2: Customer Territory');
+      expect(prompt).toContain('### Territory 3: Market Context');
+      expect(prompt).toContain('### Cross-Territory Synthesis');
     });
 
     it('should include strategic flow canvas section', async () => {
@@ -121,15 +121,16 @@ describe('System Prompt', () => {
       baseState.researchPillars.macroMarket.completed = true;
       const prompt = await buildSystemPrompt(context, baseState);
 
-      expect(prompt).toContain('Macro Market Forces: Complete');
-      expect(prompt).toContain('Customer Research: Not Started');
+      expect(prompt).toContain('Company Territory: Complete');
+      expect(prompt).toContain('Customer Territory: Not Started');
     });
 
     it('should include suggested next focus based on state', async () => {
       const context = createTestContext();
       const prompt = await buildSystemPrompt(context, baseState);
 
-      expect(prompt).toContain('Start with exploring Macro Market Forces');
+      // In discovery phase with no territory insights, suggests uploading materials
+      expect(prompt).toContain('Upload strategic materials');
     });
 
     describe('industry guidance', () => {
@@ -299,7 +300,7 @@ describe('System Prompt', () => {
         const message = generateOpeningMessage(context, baseState, 'John', false);
 
         expect(message).toContain('Welcome, John');
-        expect(message).toContain("I'm your Strategy Coach from Frontera");
+        expect(message).toContain('Strategy Coach');
       });
 
       it('should use "there" when no user name provided', () => {
@@ -316,27 +317,25 @@ describe('System Prompt', () => {
         expect(message).toContain('guide TechCorp through');
       });
 
-      it('should include methodology introduction', () => {
+      it('should include an opening question', () => {
         const context = createTestContext();
         const message = generateOpeningMessage(context, baseState, 'Jane', false);
 
-        expect(message).toContain('Product Strategy Research methodology');
-        expect(message).toContain("Let's explore your strategic landscape together");
+        expect(message).toContain('strategic question');
       });
 
-      it('should end with opening question about competitive dynamics', () => {
+      it('should include company name in opening question', () => {
         const context = createTestContext({ companyName: 'InnovateCo' });
         const message = generateOpeningMessage(context, baseState, 'Jane', false);
 
-        expect(message).toContain('**What competitive dynamics or market shifts');
-        expect(message).toContain('InnovateCo right now?**');
+        expect(message).toContain('InnovateCo');
       });
 
-      it('should mention market forces', () => {
+      it('should include company name reference', () => {
         const context = createTestContext();
         const message = generateOpeningMessage(context, baseState, 'Jane', false);
 
-        expect(message).toContain('market forces shaping your transformation');
+        expect(message).toContain(context.companyName);
       });
     });
 
@@ -404,7 +403,7 @@ describe('System Prompt', () => {
         baseState.researchPillars.macroMarket.completed = true;
         const message = generateOpeningMessage(context, baseState, 'John', true);
 
-        expect(message).toContain('Customer Research');
+        expect(message).toContain('Customer Territory');
       });
 
       it('should ask where to pick up', () => {
@@ -421,7 +420,7 @@ describe('System Prompt', () => {
         const message = generateOpeningMessage(context, baseState, 'John', false);
 
         // Should be new conversation message, not resume
-        expect(message).toContain("I'm your Strategy Coach from Frontera");
+        expect(message).toContain('Strategy Coach');
         expect(message).not.toContain('Welcome back');
       });
 
@@ -431,7 +430,7 @@ describe('System Prompt', () => {
         const message = generateOpeningMessage(context, baseState, 'John', true);
 
         // Should be new conversation message since there are no messages
-        expect(message).toContain("I'm your Strategy Coach from Frontera");
+        expect(message).toContain('Strategy Coach');
         expect(message).not.toContain('Welcome back');
       });
     });

@@ -22,9 +22,10 @@ interface CanvasPanelProps {
   clientContext?: Client | null;
   onClientContextUpdate?: (client: Client | null | undefined) => void;
   onResearchContextChange?: (context: ActiveResearchContext | null) => void;
+  onConversationUpdate?: (conversation: Conversation) => void;
 }
 
-export function CanvasPanel({ conversation, clientContext, onClientContextUpdate, onResearchContextChange }: CanvasPanelProps) {
+export function CanvasPanel({ conversation, clientContext, onClientContextUpdate, onResearchContextChange, onConversationUpdate }: CanvasPanelProps) {
   // Extract current phase and highest phase reached from framework_state (must be before any early returns for hooks)
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const phase = frameworkState?.currentPhase as string | undefined;
@@ -65,13 +66,26 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
       });
 
       if (response.ok) {
-        // Reload to show the new phase
-        window.location.reload();
+        const data = await response.json();
+        // Update conversation state in-place instead of reloading
+        if (data.conversation && onConversationUpdate) {
+          onConversationUpdate(data.conversation);
+        } else {
+          // Fallback: update local conversation object
+          const updatedConversation = {
+            ...conversation,
+            framework_state: {
+              ...(conversation.framework_state as Record<string, unknown>),
+              currentPhase: targetPhase,
+            },
+          } as Conversation;
+          onConversationUpdate?.(updatedConversation);
+        }
       }
     } catch (error) {
       console.error('Failed to navigate to phase:', error);
     }
-  }, [conversation, currentPhase]);
+  }, [conversation, currentPhase, onConversationUpdate]);
 
   // Swipe gesture for phase navigation (touch devices only)
   const phaseOrder: ('discovery' | 'research' | 'synthesis' | 'bets')[] = useMemo(
@@ -151,7 +165,7 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
 
             {currentPhase === 'discovery' && <DiscoverySection conversation={conversation} clientContext={clientContext} onClientContextUpdate={onClientContextUpdate} />}
             {currentPhase === 'research' && (
-              <ResearchSection conversation={conversation} onResearchContextChange={setActiveResearchContext} />
+              <ResearchSection conversation={conversation} onResearchContextChange={setActiveResearchContext} onConversationUpdate={onConversationUpdate} />
             )}
             {currentPhase === 'synthesis' && (
               <SynthesisSection conversation={conversation} />

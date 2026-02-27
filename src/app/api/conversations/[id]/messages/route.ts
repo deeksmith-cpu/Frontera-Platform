@@ -292,6 +292,8 @@ export async function POST(
               .update({
                 last_message_at: new Date().toISOString(),
                 framework_state: updatedState,
+                // Keep current_phase column in sync with framework_state.currentPhase
+                ...(updatedState.currentPhase ? { current_phase: updatedState.currentPhase } : {}),
               })
               .eq("id", conversationId);
 

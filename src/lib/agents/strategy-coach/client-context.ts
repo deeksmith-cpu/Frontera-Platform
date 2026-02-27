@@ -343,6 +343,33 @@ export function formatUploadedMaterialsForPrompt(
 }
 
 /**
+ * Load lightweight territory insight summaries (territory, research_area, status only).
+ * Used for progress calculation without loading full response content.
+ */
+export async function loadTerritoryInsightSummaries(conversationId: string): Promise<Array<{
+  territory: string;
+  research_area: string;
+  status: string;
+}>> {
+  const rawSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: insights, error } = await rawSupabase
+    .from("territory_insights")
+    .select("territory, research_area, status")
+    .eq("conversation_id", conversationId);
+
+  if (error) {
+    console.error("[loadTerritoryInsightSummaries] Error:", error);
+    return [];
+  }
+
+  return (insights || []) as Array<{ territory: string; research_area: string; status: string }>;
+}
+
+/**
  * Load territory insights for a conversation to provide research context to the agent.
  */
 export async function loadTerritoryInsights(conversationId: string): Promise<{

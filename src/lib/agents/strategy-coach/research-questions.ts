@@ -226,12 +226,8 @@ ${questionLines.join('\n')}
 ### Instructions
 - Focus on the NEXT UNANSWERED question. Ask it conversationally, adapting to the user's context.
 - Probe for depth: ask follow-up questions if the answer is vague or surface-level.
-- When the user provides a sufficiently detailed answer, distill it into a concise summary and emit:
-  [ResearchCapture:${territory}:${areaId}:{questionIndex}:{Distilled answer text}]
-- This marker is parsed by the system — the user does NOT see it. Do NOT reference it.
-- After capturing, acknowledge the answer briefly and transition to the next unanswered question.
-- When ALL questions in this area are answered, emit:
-  [AreaComplete:${territory}:${areaId}]
-- Then suggest moving to the next research area or territory.
+- When the user provides a sufficiently detailed answer, acknowledge it briefly and transition to the next unanswered question.
+- When ALL questions in this area are answered, summarize key insights and suggest moving to the next research area or territory.
+- The user saves their answers via the canvas panel forms — your role is to coach them toward better, deeper answers.
 `;
 }

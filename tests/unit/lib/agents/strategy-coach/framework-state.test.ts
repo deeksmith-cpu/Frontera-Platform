@@ -202,12 +202,13 @@ describe('Framework State Management', () => {
       });
 
       it('should round progress values correctly', () => {
-        // One pillar started = 16.67% research = 8.33% overall
+        // One pillar started = 16.67% research → rounds to 17%
+        // Overall = 17 * 0.5 = 8.5 → rounds to 9
         baseState.researchPillars.macroMarket.started = true;
         const progress = calculateProgress(baseState);
 
         expect(progress.researchProgress).toBe(17);
-        expect(progress.overall).toBe(8); // Math.round(8.33)
+        expect(progress.overall).toBe(9); // Math.round(17 * 0.5)
       });
     });
   });
@@ -234,7 +235,7 @@ describe('Framework State Management', () => {
       baseState.currentPhase = 'research';
       const summary = getProgressSummary(baseState);
       expect(summary).toContain('Strategic Research');
-      expect(summary).toContain('exploring market, customer, and colleague insights');
+      expect(summary).toContain('mapping Company, Customer, and Market Context territories');
     });
 
     it('should show synthesis phase description correctly', () => {
@@ -252,21 +253,21 @@ describe('Framework State Management', () => {
 
     it('should include research pillar status', () => {
       const summary = getProgressSummary(baseState);
-      expect(summary).toContain('Macro Market Forces: Not Started');
-      expect(summary).toContain('Customer Research: Not Started');
-      expect(summary).toContain('Colleague Research: Not Started');
+      expect(summary).toContain('Company Territory: Not Started');
+      expect(summary).toContain('Customer Territory: Not Started');
+      expect(summary).toContain('Market Context: Not Started');
     });
 
     it('should show In Progress for started pillars', () => {
       baseState.researchPillars.macroMarket.started = true;
       const summary = getProgressSummary(baseState);
-      expect(summary).toContain('Macro Market Forces: In Progress');
+      expect(summary).toContain('Company Territory: In Progress');
     });
 
     it('should show Complete for completed pillars', () => {
       baseState.researchPillars.macroMarket.completed = true;
       const summary = getProgressSummary(baseState);
-      expect(summary).toContain('Macro Market Forces: Complete');
+      expect(summary).toContain('Company Territory: Complete');
     });
 
     it('should include canvas progress when progress > 0', () => {
@@ -440,56 +441,55 @@ describe('Framework State Management', () => {
       baseState = initializeFrameworkState();
     });
 
-    it('should suggest macro market when nothing started', () => {
+    it('should suggest starting research when nothing started', () => {
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Macro Market Forces');
-      expect(suggestion).toContain('competitive landscape');
+      expect(suggestion).toContain('Start mapping');
+      expect(suggestion).toContain('Company');
     });
 
-    it('should suggest continuing macro market when started but not complete', () => {
+    it('should suggest continuing Company Territory when started but not complete', () => {
       baseState.researchPillars.macroMarket.started = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Continue exploring Macro Market Forces');
+      expect(suggestion).toContain('Continue exploring Company Territory');
     });
 
-    it('should suggest customer research after macro market complete', () => {
+    it('should suggest Customer Territory after Company complete', () => {
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Customer Research');
-      expect(suggestion).toContain('segmentation');
-      expect(suggestion).toContain('jobs-to-be-done');
+      expect(suggestion).toContain('Customer Territory');
+      expect(suggestion).toContain('unmet needs');
     });
 
-    it('should suggest continuing customer research when started', () => {
+    it('should suggest continuing Customer Territory when started', () => {
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Continue Customer Research');
+      expect(suggestion).toContain('Continue Customer Territory');
     });
 
-    it('should suggest colleague research after customer complete', () => {
+    it('should suggest Market Context after Customer complete', () => {
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Colleague Research');
-      expect(suggestion).toContain('leadership');
+      expect(suggestion).toContain('Market Context');
+      expect(suggestion).toContain('competitors');
     });
 
-    it('should suggest continuing colleague research when started', () => {
+    it('should suggest completing Market Context when started', () => {
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;
       baseState.researchPillars.customer.completed = true;
       baseState.researchPillars.colleague.started = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('Complete Colleague Research');
+      expect(suggestion).toContain('Complete Market Context');
     });
 
-    it('should suggest synthesis when all pillars complete', () => {
+    it('should suggest synthesis when all territories mapped', () => {
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;
@@ -497,7 +497,7 @@ describe('Framework State Management', () => {
       baseState.researchPillars.colleague.started = true;
       baseState.researchPillars.colleague.completed = true;
       const suggestion = suggestNextFocus(baseState);
-      expect(suggestion).toContain('All research pillars complete');
+      expect(suggestion).toContain('All territories mapped');
       expect(suggestion).toContain('synthesize');
       expect(suggestion).toContain('Where to Play');
     });
@@ -516,7 +516,6 @@ describe('Framework State Management', () => {
     });
 
     it('should suggest customer insights canvas section after market reality', () => {
-      // Set all pillars complete to pass pillar checks
       baseState.researchPillars.macroMarket.started = true;
       baseState.researchPillars.macroMarket.completed = true;
       baseState.researchPillars.customer.started = true;

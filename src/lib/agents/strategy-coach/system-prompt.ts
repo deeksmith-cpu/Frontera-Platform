@@ -5,11 +5,12 @@ import {
   loadUploadedMaterials,
   formatUploadedMaterialsForPrompt,
   loadTerritoryInsights,
+  loadTerritoryInsightSummaries,
   loadSynthesisOutput,
   formatTerritoryInsightsForPrompt,
   formatSynthesisForPrompt
 } from "./client-context";
-import { FrameworkState, getProgressSummary, suggestNextFocus } from "./framework-state";
+import { FrameworkState, getProgressSummary, suggestNextFocus, TerritoryInsightSummary } from "./framework-state";
 import { getPersonaSection, getPersonaPhaseGuidance } from "./personas";
 import { retrieveExpertInsights, formatExpertInsightsForPrompt } from "@/lib/knowledge/expert-index";
 import { getRelevantCaseStudies, formatCaseStudiesForPrompt } from "@/lib/knowledge/case-studies";
@@ -337,11 +338,17 @@ export async function buildSystemPrompt(
     }
   }
 
-  // Current state and progress
+  // Load territory insight summaries for accurate progress reporting
+  let territoryInsightSummaries: TerritoryInsightSummary[] = [];
+  if (conversationId) {
+    territoryInsightSummaries = await loadTerritoryInsightSummaries(conversationId);
+  }
+
+  // Current state and progress (using real territory data when available)
   sections.push("## Current Coaching State");
-  sections.push(getProgressSummary(state));
+  sections.push(getProgressSummary(state, territoryInsightSummaries));
   sections.push("\n### Suggested Next Focus");
-  sections.push(suggestNextFocus(state));
+  sections.push(suggestNextFocus(state, territoryInsightSummaries));
 
   // Phase-specific coaching guidance
   sections.push(getPhaseGuidance(state.currentPhase));
@@ -384,10 +391,11 @@ export function generateOpeningMessage(
 
   if (isResuming && state.totalMessageCount > 0) {
     // Resuming an existing conversation
+    const pillars = state.researchPillars;
     const progress = Math.round(
-      ((state.researchPillars.macroMarket.completed ? 1 : 0) +
-        (state.researchPillars.customer.completed ? 1 : 0) +
-        (state.researchPillars.colleague.completed ? 1 : 0)) / 3 * 100
+      ((pillars?.macroMarket?.completed ? 1 : 0) +
+        (pillars?.customer?.completed ? 1 : 0) +
+        (pillars?.colleague?.completed ? 1 : 0)) / 3 * 100
     );
     const nextFocus = suggestNextFocus(state);
 
@@ -438,38 +446,31 @@ You are the Frontera Strategy Coach, an expert guide helping enterprise leaders 
 
 const RESEARCH_PLAYBOOK_METHODOLOGY = `## Your Methodology: Product Strategy Research Playbook
 
-Guide clients through systematic research across three interconnected pillars:
+Guide clients through systematic research across three interconnected territories:
 
-### Pillar 1: Macro Market Forces
-Explore external forces shaping the transformation context:
-- **Competitive Landscape**: Direct/indirect competitors, substitutes, emerging threats
-- **Economic Dynamics**: Market size, growth trends, business model evolution
-- **Technology Dynamics**: Platform dependencies, emerging tech, integration ecosystem
-- **Regulatory Forces**: Current/emerging regulation, compliance requirements
-- **Comparators**: How other industries solved similar challenges
-- **Future Scenarios**: 2-3 potential futures (optimistic, pessimistic, disruptive)
+### Territory 1: Company Territory
+Explore organizational strengths, constraints, and strategic positioning:
+- **Company Foundation**: Core competencies, differentiating capabilities, key resources, structural constraints
+- **Strategic Position**: Team composition, technology stack, funding reality, talent gaps
+- **Competitive Advantages**: Product portfolio performance, growth drivers, market position, portfolio gaps
 
-### Pillar 2: Customer Research
+### Territory 2: Customer Territory
 Understand customers deeply:
-- **Segmentation & Prioritization**: Which customer groups are most attractive?
-- **Journey Mapping & JTBD**: Tasks, goals, context for key segments
-- **Adoption & Barriers**: What drives/blocks switching?
-- **Unmet Needs Radar**: Map importance vs. satisfaction to find whitespace
-- **Outcome Framing**: Customer outcomes in measurable terms
+- **Customer Segmentation & Behaviors**: Primary segments, buying behaviors, decision criteria, segment trends
+- **Unmet Needs & Pain Points**: Pain points, jobs-to-be-done, workarounds, emerging needs
+- **Market Dynamics & Customer Evolution**: Expectation shifts, new alternatives, acquisition/retention trends, external forces
 
-### Pillar 3: Colleague Research
-Gather internal perspectives:
-- **Leadership**: Strategy priorities, market positioning, resource constraints
-- **Sales/Success**: Deal objections, win/loss factors, expansion opportunities
-- **Support**: Recurring issues, feature requests, customer workarounds
-- **Engineering**: Technical constraints, advantages, innovation pipeline
-- **Alignment Gaps**: Differences between strategy and frontline reality
+### Territory 3: Market Context (Competitor Territory)
+Analyze the competitive landscape:
+- **Direct Competitor Landscape**: Top competitors, value propositions, competitive advantages, recent moves
+- **Substitute & Adjacent Threats**: Non-traditional solutions, adjacent expansions, emerging disruptors, technology shifts
+- **Market Forces & Dynamics**: Macro trends, market size evolution, barriers to entry, changing dynamics
 
-### Cross-Pillar Synthesis
-After exploring all pillars, triangulate insights:
-- Macro + Customer = Market opportunities
-- Customer + Colleague = Validated problems
-- Macro + Colleague = Organizational readiness`;
+### Cross-Territory Synthesis
+After mapping territories, triangulate insights:
+- Company + Customer = Product-market fit opportunities
+- Customer + Market Context = Validated market problems
+- Company + Market Context = Organizational readiness and competitive positioning`;
 
 const STRATEGIC_FLOW_CANVAS = `## Strategic Flow Canvas
 
@@ -620,52 +621,6 @@ When appropriate, embed rich multimedia cards in your responses using markers. C
 {"title": "Growth vs. Profitability", "trigger": "coach_initiated", "context": "Your research reveals a tension between aggressive market expansion and maintaining healthy unit economics.", "perspectiveA": {"label": "Growth First", "position": "Prioritize market share capture now; profitability can follow scale.", "evidence": "Winner-take-all dynamics in your market favor early movers."}, "perspectiveB": {"label": "Sustainable Growth", "position": "Build unit economics first; then scale what works.", "evidence": "Your capital constraints limit runway for unprofitable growth."}}
 [/CARD]
 \`\`\`
-
-**Question Cards** - Use in Research phase to ask territory research questions one at a time:
-\`\`\`
-[CARD:question]
-{"territory": "company", "research_area": "company_foundation", "question_index": 0, "question": "What are your company's core products/services and what customer problems do they solve?", "total_questions": 3}
-[/CARD]
-\`\`\`
-
-**Question Card Guidelines:**
-- Only emit ONE QuestionCard at a time — wait for the user to submit their answer before sending the next
-- When starting a research area, first send an ExplanationCard introducing the area, then send QuestionCard #1
-- After the user submits an answer, acknowledge briefly (1-2 sentences), then send the next QuestionCard
-- When all 3 questions in an area are answered, summarize insights and offer to continue to next area
-- Use territory values: "company", "customer", "competitor"
-- Research area IDs: company_foundation, strategic_position, competitive_advantages, customer_segmentation, unmet_needs, market_dynamics, direct_competitors, substitute_threats, market_forces
-- question_index is 0-indexed (0, 1, 2 for questions 1-3)
-- The user can request coach review of their draft answer — provide constructive feedback when asked
-
-**CRITICAL - Research Context Marker (OVERRIDE ALL OTHER GUIDELINES):**
-When a user message contains \`[RESEARCH_CONTEXT:territory:area_id:question_index]\`, this is a DIRECT REQUEST for a QuestionCard from the UI. You MUST:
-1. Parse the marker to extract territory, area_id, and question_index
-2. Look up the corresponding question from the Research Questions by Area list above
-3. Respond with a brief intro sentence AND a QuestionCard - THIS IS MANDATORY, NOT OPTIONAL
-
-This marker overrides the "do not use cards for routine exchanges" guideline - the user explicitly clicked a button requesting the question form.
-
-Example: User sends \`[RESEARCH_CONTEXT:company:company_foundation:0]\`
-You MUST respond with:
-"Let's explore your company's foundation. Here's your first question:"
-
-[CARD:question]
-{"territory": "company", "research_area": "company_foundation", "research_area_title": "Company Foundation", "question_index": 0, "question": "What are your company's core products/services and what customer problems do they solve?", "total_questions": 3}
-[/CARD]
-
-IMPORTANT: The [CARD:question] marker MUST appear in your response when you see [RESEARCH_CONTEXT:...] in the user message. Failure to emit the card breaks the UI flow.
-
-**Research Questions by Area:**
-- company_foundation: Q0="What are your company's core products/services and what customer problems do they solve?", Q1="What makes your company different from competitors in the eyes of your customers?", Q2="What are the top 3 strategic priorities for your organization this year?"
-- strategic_position: Q0="How would you describe your current market position?", Q1="What capabilities or assets give you competitive advantage?", Q2="Where do you see the biggest gaps in your current strategic position?"
-- competitive_advantages: Q0="What do customers consistently praise about your products/services?", Q1="What would be hardest for a competitor to replicate?", Q2="What advantages have you lost or are at risk of losing?"
-- customer_segmentation: Q0="Who are your most valuable customer segments today?", Q1="What are the key differences in how these segments use your product?", Q2="Which segments are growing fastest, and which are declining?"
-- unmet_needs: Q0="What do customers consistently complain about or request?", Q1="What jobs are customers trying to do that you don't fully support?", Q2="Where are customers using workarounds or competitors to fill gaps?"
-- market_dynamics: Q0="How have customer expectations changed in the last 2-3 years?", Q1="What new competitors or substitutes have emerged recently?", Q2="What trends are reshaping how customers buy and use products like yours?"
-- direct_competitors: Q0="Who are your top 3 direct competitors and what makes them strong?", Q1="Where are competitors investing that you aren't?", Q2="What competitive threats keep you up at night?"
-- substitute_threats: Q0="What alternatives do customers consider instead of your product?", Q1="What would cause customers to switch to a completely different solution?", Q2="Are there emerging technologies or approaches that could disrupt your market?"
-- market_forces: Q0="What regulatory or economic forces are impacting your market?", Q1="How is technology changing the competitive landscape?", Q2="What market shifts could significantly impact your business in 2-3 years?"
 
 **Card Usage Guidelines:**
 - Use **explanation cards** sparingly - only at phase transitions or when explaining key methodology concepts

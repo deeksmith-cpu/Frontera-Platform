@@ -14,9 +14,10 @@ type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'
 interface ResearchSectionProps {
   conversation: Conversation;
   onResearchContextChange?: (context: ActiveResearchContext | null) => void;
+  onConversationUpdate?: (conversation: Conversation) => void;
 }
 
-export function ResearchSection({ conversation, onResearchContextChange }: ResearchSectionProps) {
+export function ResearchSection({ conversation, onResearchContextChange, onConversationUpdate }: ResearchSectionProps) {
   const [territoryInsights, setTerritoryInsights] = useState<TerritoryInsight[]>([]);
   const [selectedTerritory, setSelectedTerritory] = useState<'company' | 'customer' | 'competitor' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,19 +92,33 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
       });
 
       if (response.ok) {
-        window.location.reload();
+        const data = await response.json();
+        // Update conversation state in-place instead of reloading
+        if (data.conversation && onConversationUpdate) {
+          onConversationUpdate(data.conversation);
+        } else {
+          const updatedConversation = {
+            ...conversation,
+            framework_state: {
+              ...(conversation.framework_state as Record<string, unknown>),
+              currentPhase: 'synthesis',
+            },
+          } as Conversation;
+          onConversationUpdate?.(updatedConversation);
+        }
       } else {
         console.error('Failed to navigate to synthesis phase');
-        setIsNavigating(false);
       }
     } catch (error) {
       console.error('Error navigating to synthesis:', error);
+    } finally {
       setIsNavigating(false);
     }
   };
 
-  // Check if all territories are fully mapped
+  // Check research progress — minimum 4 mapped areas to unlock synthesis (matching API threshold)
   const mappedAreasCount = territoryInsights.filter((t) => t.status === 'mapped').length;
+  const synthesisReady = mappedAreasCount >= 4;
   const allTerritoriesMapped = mappedAreasCount >= 9;
 
   // Deep dive view
@@ -226,10 +241,10 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
       )}
 
       {/* Progress Indicator or Proceed to Synthesis CTA */}
-      {allTerritoriesMapped ? (
-        <div className="mt-12 p-6 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-2xl border-2 border-emerald-300 shadow-lg">
+      {synthesisReady ? (
+        <div className={`mt-12 p-6 rounded-2xl border-2 shadow-lg ${allTerritoriesMapped ? 'bg-gradient-to-r from-emerald-50 to-cyan-50 border-emerald-300' : 'bg-gradient-to-r from-amber-50 to-cyan-50 border-amber-300'}`}>
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+            <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center shadow-md ${allTerritoriesMapped ? 'bg-gradient-to-r from-emerald-500 to-cyan-500' : 'bg-gradient-to-r from-amber-500 to-cyan-500'}`}>
               <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -240,9 +255,13 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-slate-900 mb-1">All Territories Mapped!</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">
+                {allTerritoriesMapped ? 'All Territories Mapped!' : 'Synthesis Ready'}
+              </h3>
               <p className="text-sm text-slate-600">
-                Your strategic terrain is fully explored. Proceed to synthesis to uncover strategic opportunities and insights.
+                {allTerritoriesMapped
+                  ? 'Your strategic terrain is fully explored. Proceed to synthesis to uncover strategic opportunities and insights.'
+                  : `You've mapped ${mappedAreasCount} of 9 areas — enough to generate insights. More areas = richer synthesis.`}
               </p>
             </div>
             <button
@@ -282,7 +301,7 @@ export function ResearchSection({ conversation, onResearchContextChange }: Resea
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-slate-900 mb-1">Research Progress</h3>
               <p className="text-sm text-slate-600">
-                Complete all territories to unlock synthesis and strategic insights.
+                Map at least 4 research areas to unlock synthesis. More areas = richer strategic insights.
               </p>
             </div>
             <div className="text-right">

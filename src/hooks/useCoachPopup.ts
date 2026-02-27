@@ -67,26 +67,24 @@ function isValidSize(size: { width: number; height: number }): boolean {
 }
 
 export function useCoachPopup() {
-  const [state, setState] = useState<CoachPopupState>(DEFAULT_STATE);
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  // Use lazy initialization to avoid SSR/client hydration mismatch
+  const [state, setState] = useState<CoachPopupState>(() => {
     const saved = loadSavedState();
     if (saved) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setState(prev => ({
-        ...prev,
+      return {
+        ...DEFAULT_STATE,
         position: saved.position && isValidPosition(saved.position)
           ? saved.position
-          : prev.position,
+          : DEFAULT_STATE.position,
         size: saved.size && isValidSize(saved.size)
           ? saved.size
-          : prev.size,
+          : DEFAULT_STATE.size,
         // Always start closed
         isOpen: false,
-      }));
+      };
     }
-  }, []);
+    return DEFAULT_STATE;
+  });
 
   // Save to localStorage when position/size changes (debounced via callback)
   const persistState = useCallback((position: { x: number; y: number }, size: { width: number; height: number }) => {
@@ -149,13 +147,16 @@ export function useCoachPopup() {
  * Simple media query hook for responsive behavior
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  // Use lazy initialization to reduce hydration mismatches
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(query).matches;
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const mediaQuery = window.matchMedia(query);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMatches(mediaQuery.matches);
 
     const handler = (event: MediaQueryListEvent) => {

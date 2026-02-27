@@ -24,13 +24,19 @@ interface ProductStrategyAgentInterfaceProps {
 }
 
 export function ProductStrategyAgentInterface({
-  conversation,
+  conversation: initialConversation,
   userId,
   orgId,
   clientContext: initialClientContext,
 }: ProductStrategyAgentInterfaceProps) {
+  const [conversation, setConversation] = useState(initialConversation);
   const [clientContext, setClientContext] = useState(initialClientContext);
   const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
+
+  // Update conversation when a phase transition occurs (avoids full page reload)
+  const handleConversationUpdate = useCallback((updated: Conversation) => {
+    setConversation(updated);
+  }, []);
   const popup = useCoachPopup();
   const panel = useCoachPanel();
   const isMobile = useMediaQuery('(max-width: 1023px)');
@@ -101,6 +107,7 @@ export function ProductStrategyAgentInterface({
             clientContext={clientContext}
             onClientContextUpdate={setClientContext}
             onResearchContextChange={setActiveResearchContext}
+            onConversationUpdate={handleConversationUpdate}
           />
         </div>
       </main>

@@ -27,10 +27,11 @@ interface CompanyTerritoryDeepDiveProps {
 }
 
 // Company Territory Research Areas (MVP: 3 areas)
+// IDs MUST match research-questions.ts (SSOT) for system prompt + progress tracking
 const RESEARCH_AREAS = [
   {
-    id: 'core_capabilities',
-    title: 'Core Capabilities & Constraints',
+    id: 'company_foundation',
+    title: 'Company Foundation',
     description: 'What are your organization\'s unique strengths, and what fundamental constraints shape your strategic options?',
     questions: [
       'What are your organization\'s core competencies and differentiating capabilities?',
@@ -40,8 +41,8 @@ const RESEARCH_AREAS = [
     ],
   },
   {
-    id: 'resource_reality',
-    title: 'Resource Reality',
+    id: 'strategic_position',
+    title: 'Strategic Position',
     description: 'What team, technology, and funding realities will enable or constrain your strategy execution?',
     questions: [
       'What is the current composition and skill distribution of your team?',
@@ -51,8 +52,8 @@ const RESEARCH_AREAS = [
     ],
   },
   {
-    id: 'product_portfolio',
-    title: 'Product Portfolio & Market Position',
+    id: 'competitive_advantages',
+    title: 'Competitive Advantages',
     description: 'How do your current products perform in the market, and what does your portfolio reveal about strategic direction?',
     questions: [
       'What products/services comprise your current portfolio and how do they perform?',

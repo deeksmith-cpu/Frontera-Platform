@@ -38,6 +38,9 @@ export interface FrameworkState {
   // Current phase of the coaching journey
   currentPhase: "discovery" | "research" | "synthesis" | "planning" | "activation" | "review";
 
+  // Highest phase the user has reached (for stepper navigation)
+  highestPhaseReached?: "discovery" | "research" | "synthesis" | "planning" | "activation" | "review";
+
   // Research Playbook progress (Phase 1)
   researchPillars: {
     macroMarket: PillarProgress; // Competitive, economic, tech, regulatory forces
@@ -100,6 +103,7 @@ export function initializeFrameworkState(): FrameworkState {
   return {
     version: 1,
     currentPhase: "discovery",
+    highestPhaseReached: "discovery",
 
     researchPillars: {
       macroMarket: { started: false, completed: false, insights: [] },
@@ -124,21 +128,78 @@ export function initializeFrameworkState(): FrameworkState {
 }
 
 /**
- * Calculate overall progress percentage through the methodology.
+ * Territory insight data structure for computing real progress
+ * from the territory_insights table (bypasses dead researchPillars model).
  */
-export function calculateProgress(state: FrameworkState): {
+export interface TerritoryInsightSummary {
+  territory: string;
+  research_area: string;
+  status: string;
+}
+
+/**
+ * Calculate research progress from actual territory_insights data.
+ * 9 total research areas (3 per territory). Each mapped area = 1/9.
+ * Each in_progress area = 0.5/9.
+ */
+export function calculateResearchProgressFromInsights(
+  insights: TerritoryInsightSummary[]
+): {
+  overall: number;
+  byTerritory: Record<string, { mapped: number; inProgress: number; total: number }>;
+} {
+  const territories = ['company', 'customer', 'competitor'];
+  const areasPerTerritory = 3;
+  const totalAreas = territories.length * areasPerTerritory;
+
+  const byTerritory: Record<string, { mapped: number; inProgress: number; total: number }> = {};
+  let totalScore = 0;
+
+  for (const t of territories) {
+    const territoryInsights = insights.filter((i) => i.territory === t);
+    const mapped = territoryInsights.filter((i) => i.status === 'mapped').length;
+    const inProgress = territoryInsights.filter((i) => i.status === 'in_progress').length;
+
+    byTerritory[t] = { mapped, inProgress, total: areasPerTerritory };
+    totalScore += mapped + inProgress * 0.5;
+  }
+
+  return {
+    overall: Math.round((totalScore / totalAreas) * 100),
+    byTerritory,
+  };
+}
+
+/**
+ * Calculate overall progress percentage through the methodology.
+ * When territoryInsights are provided, uses real data instead of the dead researchPillars model.
+ */
+export function calculateProgress(state: FrameworkState, territoryInsights?: TerritoryInsightSummary[]): {
   overall: number;
   researchProgress: number;
   canvasProgress: number;
 } {
-  // Research pillars (3 pillars, each worth 1/3)
-  const pillars = state.researchPillars;
-  const pillarScores = [
-    pillars.macroMarket.completed ? 1 : pillars.macroMarket.started ? 0.5 : 0,
-    pillars.customer.completed ? 1 : pillars.customer.started ? 0.5 : 0,
-    pillars.colleague.completed ? 1 : pillars.colleague.started ? 0.5 : 0,
-  ];
-  const researchProgress = (pillarScores.reduce((a, b) => a + b, 0) / 3) * 100;
+  let researchProgress: number;
+
+  if (territoryInsights && territoryInsights.length > 0) {
+    // Use real territory insights data
+    const insightProgress = calculateResearchProgressFromInsights(territoryInsights);
+    researchProgress = insightProgress.overall;
+  } else {
+    // Fallback to legacy researchPillars model
+    const defaultPillar = { started: false, completed: false, insights: [] };
+    const pillars = state.researchPillars || {
+      macroMarket: defaultPillar,
+      customer: defaultPillar,
+      colleague: defaultPillar,
+    };
+    const pillarScores = [
+      pillars.macroMarket?.completed ? 1 : pillars.macroMarket?.started ? 0.5 : 0,
+      pillars.customer?.completed ? 1 : pillars.customer?.started ? 0.5 : 0,
+      pillars.colleague?.completed ? 1 : pillars.colleague?.started ? 0.5 : 0,
+    ];
+    researchProgress = Math.round((pillarScores.reduce((a, b) => a + b, 0) / 3) * 100);
+  }
 
   // Canvas sections (5 sections, each worth 1/5)
   const canvas = state.canvasProgress || {
@@ -155,29 +216,30 @@ export function calculateProgress(state: FrameworkState): {
     canvas.strategicSynthesis,
     canvas.teamContext,
   ];
-  const canvasProgressValue = (canvasSections.filter(Boolean).length / 5) * 100;
+  const canvasProgressValue = Math.round((canvasSections.filter(Boolean).length / 5) * 100);
 
   // Overall: 50% research, 50% canvas
-  const overall = researchProgress * 0.5 + canvasProgressValue * 0.5;
+  const overall = Math.round(researchProgress * 0.5 + canvasProgressValue * 0.5);
 
   return {
-    overall: Math.round(overall),
-    researchProgress: Math.round(researchProgress),
-    canvasProgress: Math.round(canvasProgressValue),
+    overall,
+    researchProgress,
+    canvasProgress: canvasProgressValue,
   };
 }
 
 /**
  * Get a human-readable summary of the current state for the system prompt.
+ * When territoryInsights are provided, reports real research progress instead of dead pillar model.
  */
-export function getProgressSummary(state: FrameworkState): string {
-  const progress = calculateProgress(state);
+export function getProgressSummary(state: FrameworkState, territoryInsights?: TerritoryInsightSummary[]): string {
+  const progress = calculateProgress(state, territoryInsights);
   const sections: string[] = [];
 
   // Phase
   const phaseDescriptions: Record<FrameworkState["currentPhase"], string> = {
     discovery: "Initial Discovery - understanding context and goals",
-    research: "Strategic Research - exploring market, customer, and colleague insights",
+    research: "Strategic Research - mapping Company, Customer, and Market Context territories",
     synthesis: "Strategic Synthesis - developing Where to Play and How to Win hypotheses",
     planning: "Action Planning - creating actionable strategic outputs",
     activation: "Strategic Activation - generating team briefs, guardrails, OKRs, and stakeholder packs",
@@ -185,16 +247,42 @@ export function getProgressSummary(state: FrameworkState): string {
   };
   sections.push(`Current Phase: ${phaseDescriptions[state.currentPhase]}`);
 
-  // Research pillars status
-  sections.push("\nResearch Playbook Progress:");
-  const pillarStatus = (p: PillarProgress) =>
-    p.completed ? "Complete" : p.started ? "In Progress" : "Not Started";
-  sections.push(`- Macro Market Forces: ${pillarStatus(state.researchPillars.macroMarket)}`);
-  sections.push(`- Customer Research: ${pillarStatus(state.researchPillars.customer)}`);
-  sections.push(`- Colleague Research: ${pillarStatus(state.researchPillars.colleague)}`);
+  // Territory research progress (from real data when available)
+  if (territoryInsights && territoryInsights.length > 0) {
+    const insightProgress = calculateResearchProgressFromInsights(territoryInsights);
+    sections.push("\nTerritory Research Progress:");
+
+    const territoryLabels: Record<string, string> = {
+      company: "Company Territory",
+      customer: "Customer Territory",
+      competitor: "Market Context",
+    };
+
+    for (const [t, label] of Object.entries(territoryLabels)) {
+      const tp = insightProgress.byTerritory[t];
+      if (tp) {
+        const statusParts: string[] = [];
+        if (tp.mapped > 0) statusParts.push(`${tp.mapped} mapped`);
+        if (tp.inProgress > 0) statusParts.push(`${tp.inProgress} in progress`);
+        const remaining = tp.total - tp.mapped - tp.inProgress;
+        if (remaining > 0) statusParts.push(`${remaining} unexplored`);
+        sections.push(`- ${label}: ${statusParts.join(", ")} (${tp.total} areas)`);
+      }
+    }
+    sections.push(`Research Progress: ${insightProgress.overall}%`);
+  } else {
+    // Fallback to legacy pillar model
+    sections.push("\nResearch Playbook Progress:");
+    const pillarStatus = (p?: PillarProgress) =>
+      p?.completed ? "Complete" : p?.started ? "In Progress" : "Not Started";
+    const pillars = state.researchPillars;
+    sections.push(`- Company Territory: ${pillarStatus(pillars?.macroMarket)}`);
+    sections.push(`- Customer Territory: ${pillarStatus(pillars?.customer)}`);
+    sections.push(`- Market Context: ${pillarStatus(pillars?.colleague)}`);
+  }
 
   // Canvas progress
-  if (progress.canvasProgress > 0) {
+  if (progress.canvasProgress > 0 && state.canvasProgress) {
     sections.push("\nStrategic Flow Canvas:");
     if (state.canvasProgress.marketReality) sections.push("- Market Reality: Complete");
     if (state.canvasProgress.customerInsights) sections.push("- Customer Insights: Complete");
@@ -204,12 +292,12 @@ export function getProgressSummary(state: FrameworkState): string {
   }
 
   // Strategic bets
-  if (state.strategicBets.length > 0) {
+  if (state.strategicBets?.length > 0) {
     sections.push(`\nStrategic Bets Captured: ${state.strategicBets.length}`);
   }
 
   // Key insights
-  if (state.keyInsights.length > 0) {
+  if (state.keyInsights?.length > 0) {
     sections.push(`\nKey Insights Captured: ${state.keyInsights.length}`);
   }
 
@@ -293,54 +381,113 @@ export function updateFrameworkState(
 
 /**
  * Suggest the next coaching focus based on current state.
+ * When territoryInsights are provided, uses real data instead of dead researchPillars model.
  */
-export function suggestNextFocus(state: FrameworkState): string {
+export function suggestNextFocus(state: FrameworkState, territoryInsights?: TerritoryInsightSummary[]): string {
+  // Use real territory insights when available
+  if (territoryInsights && territoryInsights.length >= 0) {
+    const insightProgress = calculateResearchProgressFromInsights(territoryInsights);
+    const { byTerritory } = insightProgress;
+
+    // Discovery phase - suggest starting research
+    if (state.currentPhase === "discovery") {
+      return "Upload strategic materials and explore your organization's context. When ready, proceed to Map Your Strategic Terrain.";
+    }
+
+    // Research phase - guide through territories
+    if (state.currentPhase === "research") {
+      const company = byTerritory.company;
+      const customer = byTerritory.customer;
+      const competitor = byTerritory.competitor;
+
+      // Check if no research done yet
+      const totalMapped = (company?.mapped || 0) + (customer?.mapped || 0) + (competitor?.mapped || 0);
+      const totalInProgress = (company?.inProgress || 0) + (customer?.inProgress || 0) + (competitor?.inProgress || 0);
+
+      if (totalMapped === 0 && totalInProgress === 0) {
+        return "Start mapping your strategic terrain. Pick a territory card below — Company is a great starting point since you know your organization best.";
+      }
+
+      // Suggest completing in-progress areas first
+      if (company && company.inProgress > 0) {
+        return "Continue mapping the Company Territory — you have research areas in progress. Complete them to build your strategic foundation.";
+      }
+      if (customer && customer.inProgress > 0) {
+        return "Continue mapping the Customer Territory — finish your in-progress research areas to deepen customer understanding.";
+      }
+      if (competitor && competitor.inProgress > 0) {
+        return "Continue mapping Market Context — complete your in-progress research areas to understand the competitive landscape.";
+      }
+
+      // Suggest starting unexplored territories
+      if (company && company.mapped < company.total) {
+        return `Company Territory has ${company.total - company.mapped} unexplored areas. Map them to strengthen your strategic foundation.`;
+      }
+      if (customer && customer.mapped < customer.total) {
+        return `Customer Territory has ${customer.total - customer.mapped} unexplored areas. Understanding customer needs is critical for synthesis.`;
+      }
+      if (competitor && competitor.mapped < competitor.total) {
+        return `Market Context has ${competitor.total - competitor.mapped} unexplored areas. Complete the competitive picture before synthesis.`;
+      }
+
+      // All territories mapped - suggest synthesis
+      if (totalMapped >= 4) {
+        return "You've mapped enough territory to generate strategic insights. Consider proceeding to Synthesis, or continue mapping for richer results.";
+      }
+    }
+
+    // Synthesis/Planning phases
+    if (state.currentPhase === "synthesis" || state.currentPhase === "planning") {
+      const canvas = state.canvasProgress;
+      if (!canvas?.marketReality) return "Define Market Reality section of the Strategic Flow Canvas.";
+      if (!canvas?.customerInsights) return "Define Customer Insights section of the Strategic Flow Canvas.";
+      if (!canvas?.organizationalContext) return "Define Organizational Context section.";
+      if (!canvas?.strategicSynthesis) return "Develop Strategic Synthesis — Where to Play and How to Win.";
+      if (!canvas?.teamContext) return "Create Strategic Context for Teams.";
+    }
+
+    return "Review and refine your strategic outputs, or explore additional areas of interest.";
+  }
+
+  // Legacy fallback using researchPillars
   const pillars = state.researchPillars;
 
-  // If no pillars started, suggest starting with macro market
-  if (!pillars.macroMarket.started && !pillars.customer.started && !pillars.colleague.started) {
-    return "Start with exploring Macro Market Forces - competitive landscape, technology dynamics, and market trends.";
+  if (!pillars || (!pillars.macroMarket?.started && !pillars.customer?.started && !pillars.colleague?.started)) {
+    return "Start mapping your strategic terrain. Pick a territory — Company is a great starting point.";
   }
 
-  // If macro started but not complete, continue there
-  if (pillars.macroMarket.started && !pillars.macroMarket.completed) {
-    return "Continue exploring Macro Market Forces to develop a complete picture of the competitive and market landscape.";
+  if (pillars.macroMarket?.started && !pillars.macroMarket?.completed) {
+    return "Continue exploring Company Territory to develop a complete picture of your organizational capabilities.";
   }
 
-  // If customer not started, suggest that
-  if (!pillars.customer.started) {
-    return "Move to Customer Research - explore segmentation, jobs-to-be-done, and unmet needs.";
+  if (!pillars.customer?.started) {
+    return "Move to Customer Territory — explore segmentation, unmet needs, and market dynamics.";
   }
 
-  // If customer started but not complete
-  if (pillars.customer.started && !pillars.customer.completed) {
-    return "Continue Customer Research to fully understand customer segments and their needs.";
+  if (pillars.customer?.started && !pillars.customer?.completed) {
+    return "Continue Customer Territory research to fully understand customer segments and their needs.";
   }
 
-  // If colleague not started
-  if (!pillars.colleague.started) {
-    return "Explore Colleague Research - gather insights from leadership, sales, support, and engineering teams.";
+  if (!pillars.colleague?.started) {
+    return "Explore Market Context — analyze competitors, substitutes, and market forces.";
   }
 
-  // If colleague started but not complete
-  if (pillars.colleague.started && !pillars.colleague.completed) {
-    return "Complete Colleague Research by exploring remaining internal perspectives.";
+  if (pillars.colleague?.started && !pillars.colleague?.completed) {
+    return "Complete Market Context research by exploring remaining competitive dynamics.";
   }
 
-  // All pillars complete - move to synthesis
-  if (pillars.macroMarket.completed && pillars.customer.completed && pillars.colleague.completed) {
-    if (!state.canvasProgress.strategicSynthesis) {
-      return "All research pillars complete. Ready to synthesize findings into Where to Play and How to Win hypotheses.";
+  if (pillars.macroMarket?.completed && pillars.customer?.completed && pillars.colleague?.completed) {
+    if (!state.canvasProgress?.strategicSynthesis) {
+      return "All territories mapped. Ready to synthesize findings into Where to Play and How to Win hypotheses.";
     }
   }
 
-  // Canvas in progress
   if (state.currentPhase === "synthesis" || state.currentPhase === "planning") {
     const canvas = state.canvasProgress;
     if (!canvas.marketReality) return "Define Market Reality section of the Strategic Flow Canvas.";
     if (!canvas.customerInsights) return "Define Customer Insights section of the Strategic Flow Canvas.";
     if (!canvas.organizationalContext) return "Define Organizational Context section.";
-    if (!canvas.strategicSynthesis) return "Develop Strategic Synthesis - Where to Play and How to Win.";
+    if (!canvas.strategicSynthesis) return "Develop Strategic Synthesis — Where to Play and How to Win.";
     if (!canvas.teamContext) return "Create Strategic Context for Teams.";
   }
 
