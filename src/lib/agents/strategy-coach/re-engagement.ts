@@ -79,18 +79,20 @@ function getGentleNudge(phase: string, mapped: number, total: number): string {
 }
 
 function getModerateReminder(phase: string, mapped: number, total: number, archetype: string | null): string {
-  const archetyeNudge = archetype === 'visionary'
+  const archetypeNudge = archetype === 'visionary'
     ? " Your vision needs grounding in structured research."
     : archetype === 'operator'
     ? " Step back from execution to invest in strategic clarity."
     : archetype === 'analyst'
     ? " Your analysis is incomplete — more data will sharpen your decisions."
+    : archetype === 'diplomat'
+    ? " Your stakeholders need a strategy backed by evidence — let's build that foundation."
     : "";
 
   if (phase === 'research') {
-    return `It's been over a week. Your ${mapped > 0 ? mapped + '/' + total + ' mapped territories are waiting' : 'Competitor Territory is still unmapped'} for your attention.${archetyeNudge}`;
+    return `It's been over a week. Your ${mapped > 0 ? mapped + '/' + total + ' mapped territories are waiting' : 'Competitor Territory is still unmapped'} for your attention.${archetypeNudge}`;
   }
-  return `Your strategy work has been paused for over a week. Strategic momentum matters — competitors don't pause.${archetyeNudge}`;
+  return `Your strategy work has been paused for over a week. Strategic momentum matters — competitors don't pause.${archetypeNudge}`;
 }
 
 function getUrgentReengagement(phase: string, mapped: number, betCount: number): string {

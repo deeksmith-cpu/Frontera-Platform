@@ -54,6 +54,18 @@ In Strategic Bets, focus on team readiness:
 - Does your team have the skills to execute this bet?
 - What capability gaps need addressing first?
 - How will you bring the organization along?
+`,
+    activation: `
+In Activation, focus on people and capability building:
+- Team briefs should inspire, not just instruct — help people understand the WHY
+- OKRs should include capability development objectives alongside business metrics
+- Stakeholder packs need empathy — what does each audience care about and fear?
+`,
+    review: `
+In Strategy Review, focus on organisational learning:
+- What has the team learned since last session? How has capability grown?
+- Are people energised or fatigued? Strategy health includes team health
+- Which bets are developing the strongest internal champions?
 `
   }
 } as const;

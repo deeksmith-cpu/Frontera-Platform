@@ -46,7 +46,7 @@ const ARCHETYPES: Record<ArchetypeId, Omit<ArchetypeResult, 'strengths' | 'growt
     description:
       'You excel at turning plans into results. Your teams know what to do, metrics are tracked, and initiatives move with discipline. Your growth edge is stepping back to question whether you\'re executing on the right strategy.',
     coachingStyle:
-      'Help this user zoom out from execution to strategic questions. Challenge them to question assumptions, not just optimise outcomes. Push for more market research and vision refinement.',
+      'Help this user zoom out from execution to strategic questions. Challenge them to question assumptions, not just optimise outcomes. Push for more market research and vision refinement. Key coaching direction: ZOOM OUT — pull them from tactics to strategy at every opportunity.',
   },
   visionary: {
     archetype: 'visionary',
@@ -54,7 +54,7 @@ const ARCHETYPES: Record<ArchetypeId, Omit<ArchetypeResult, 'strengths' | 'growt
     description:
       'You see where the market is heading before others do. Your strategic intuition is strong, and you inspire others with a compelling future state. Your growth edge is translating that vision into disciplined execution frameworks.',
     coachingStyle:
-      'Help this user ground their vision in execution frameworks. Push for measurable metrics, kill criteria, and structured research to validate assumptions. Challenge them to operationalise their ideas.',
+      'Help this user ground their vision in execution frameworks. Push for measurable metrics, kill criteria, and structured research to validate assumptions. Challenge them to operationalise their ideas. Key coaching direction: GROUND IT — translate inspiration into evidence and measurable action.',
   },
   analyst: {
     archetype: 'analyst',
@@ -62,7 +62,7 @@ const ARCHETYPES: Record<ArchetypeId, Omit<ArchetypeResult, 'strengths' | 'growt
     description:
       'You make decisions based on evidence, not gut feeling. Your competitive intelligence is sharp, and you rarely commit resources without data. Your growth edge is building stakeholder buy-in and moving faster from analysis to action.',
     coachingStyle:
-      'Help this user move from analysis to action. Push for stakeholder communication, alignment activities, and time-bounded decisions. Challenge analysis paralysis by emphasising "good enough" decisions with kill criteria.',
+      'Help this user move from analysis to action. Push for stakeholder communication, alignment activities, and time-bounded decisions. Challenge analysis paralysis by emphasising "good enough" decisions with kill criteria. Key coaching direction: DECIDE — push past analysis paralysis toward committed action.',
   },
   diplomat: {
     archetype: 'diplomat',
@@ -70,7 +70,7 @@ const ARCHETYPES: Record<ArchetypeId, Omit<ArchetypeResult, 'strengths' | 'growt
     description:
       'You build consensus and align diverse stakeholders around strategic direction. Your communication skills ensure everyone understands the rationale. Your growth edge is deepening research rigour and being willing to make bold, unpopular strategic bets.',
     coachingStyle:
-      'Help this user strengthen their analytical foundation. Push for deeper customer research, competitive analysis, and willingness to challenge consensus with data. Encourage bold strategic bets even when alignment is incomplete.',
+      'Help this user strengthen their analytical foundation. Push for deeper customer research, competitive analysis, and willingness to challenge consensus with data. Encourage bold strategic bets even when alignment is incomplete. Key coaching direction: COMMIT — push past consensus-seeking toward bold, evidence-based conviction.',
   },
 };
 

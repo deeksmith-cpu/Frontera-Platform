@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { TerritoryCard } from './TerritoryCard';
+import { TerritorialInsightSummary } from './TerritorialInsightSummary';
 import { CompanyTerritoryDeepDive } from './CompanyTerritoryDeepDive';
 import { CustomerTerritoryDeepDive } from './CustomerTerritoryDeepDive';
 import { CompetitorTerritoryDeepDive } from './CompetitorTerritoryDeepDive';
 import type { Database } from '@/types/database';
 import type { ActiveResearchContext } from '@/types/research-context';
+import type { MicroSynthesisResult } from '@/lib/agents/strategy-coach/micro-synthesis-prompt';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type TerritoryInsight = Database['public']['Tables']['territory_insights']['Row'];
@@ -23,6 +25,8 @@ export function ResearchSection({ conversation, onResearchContextChange, onConve
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
+  const [microSyntheses, setMicroSyntheses] = useState<Partial<Record<'company' | 'customer' | 'competitor', MicroSynthesisResult>>>({});
+  const synthesisTriggeredRef = useRef<Set<string>>(new Set());
 
   // Fetch territory insights on mount
   useEffect(() => {
@@ -42,6 +46,66 @@ export function ResearchSection({ conversation, onResearchContextChange, onConve
 
     fetchInsights();
   }, [conversation.id]);
+
+  // Load existing micro-synthesis results from framework_state on mount
+  useEffect(() => {
+    const frameworkState = conversation.framework_state as Record<string, unknown> | null;
+    const existing = frameworkState?.microSynthesisResults as Partial<Record<string, MicroSynthesisResult>> | undefined;
+    if (existing) {
+      const loaded: Partial<Record<'company' | 'customer' | 'competitor', MicroSynthesisResult>> = {};
+      for (const t of ['company', 'customer', 'competitor'] as const) {
+        if (existing[t]) {
+          loaded[t] = existing[t];
+          synthesisTriggeredRef.current.add(t);
+        }
+      }
+      if (Object.keys(loaded).length > 0) {
+        setMicroSyntheses(loaded);
+      }
+    }
+  }, [conversation.framework_state]);
+
+  // Auto-trigger micro-synthesis when a territory reaches 3/3 mapped
+  const triggerMicroSynthesis = useCallback(async (territory: 'company' | 'customer' | 'competitor') => {
+    if (synthesisTriggeredRef.current.has(territory)) return;
+    synthesisTriggeredRef.current.add(territory);
+
+    try {
+      const response = await fetch('/api/product-strategy-agent/micro-synthesis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory,
+        }),
+      });
+
+      if (response.ok) {
+        const result: MicroSynthesisResult = await response.json();
+        setMicroSyntheses((prev) => ({ ...prev, [territory]: result }));
+      } else {
+        // Allow retry on failure
+        synthesisTriggeredRef.current.delete(territory);
+      }
+    } catch (err) {
+      console.error(`Micro-synthesis failed for ${territory}:`, err);
+      synthesisTriggeredRef.current.delete(territory);
+    }
+  }, [conversation.id]);
+
+  // Check territory completion and trigger micro-synthesis
+  useEffect(() => {
+    if (isLoading || territoryInsights.length === 0) return;
+
+    for (const territory of ['company', 'customer', 'competitor'] as const) {
+      const mappedCount = territoryInsights.filter(
+        (t) => t.territory === territory && t.status === 'mapped'
+      ).length;
+      if (mappedCount >= 3) {
+        triggerMicroSynthesis(territory);
+      }
+    }
+  }, [territoryInsights, isLoading, triggerMicroSynthesis]);
 
   // Clear context when returning to overview (no territory selected)
   useEffect(() => {
@@ -200,6 +264,22 @@ export function ResearchSection({ conversation, onResearchContextChange, onConve
           </div>
         </div>
       </div>
+
+      {/* Micro-Synthesis Results */}
+      {Object.keys(microSyntheses).length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(['company', 'customer', 'competitor'] as const).map((t) =>
+            microSyntheses[t] ? (
+              <TerritorialInsightSummary
+                key={t}
+                territory={t}
+                findings={microSyntheses[t]}
+                onViewDetails={() => handleTerritoryClick(t)}
+              />
+            ) : null
+          )}
+        </div>
+      )}
 
       {/* Territory Cards Grid */}
       {isLoading ? (

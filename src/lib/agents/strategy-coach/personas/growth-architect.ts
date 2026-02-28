@@ -59,6 +59,18 @@ In Strategic Bets, every bet must define a growth experiment:
 - Push teams to design bets as sequential experiments, not big-bang launches
 - Insist on instrumentation plans — "If you cannot measure it on day one, you cannot learn from it"
 - Frame bets as: "We believe [segment] will [behavior] because [mechanism], measured by [metric]"
+`,
+    activation: `
+In Activation, ensure growth loops are built into artefacts:
+- Team briefs should define the activation metric and the loop that drives it
+- OKRs should include leading growth indicators, not just trailing revenue
+- Guardrails should protect experimentation velocity — "We will always ship at least 2 experiments per sprint"
+`,
+    review: `
+In Strategy Review, focus on growth metrics and loop health:
+- Which growth loops are compounding? Which are leaking?
+- What experiment results have come in since last session? What did we learn?
+- Are we investing enough in instrumentation to actually measure what matters?
 `
   }
 } as const;

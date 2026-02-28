@@ -6,12 +6,13 @@ interface LevelThreshold {
 }
 
 const LEVEL_THRESHOLDS: LevelThreshold[] = [
-  { level: 1, xpRequired: 0, title: 'Strategist Apprentice' },
-  { level: 2, xpRequired: 100, title: 'Insight Seeker' },
-  { level: 3, xpRequired: 250, title: 'Territory Scout' },
-  { level: 4, xpRequired: 500, title: 'Pattern Finder' },
+  { level: 1, xpRequired: 0, title: 'Strategy Novice' },
+  { level: 2, xpRequired: 100, title: 'Terrain Scout' },
+  { level: 3, xpRequired: 300, title: 'Research Explorer' },
+  { level: 4, xpRequired: 600, title: 'Insight Hunter' },
   { level: 5, xpRequired: 1000, title: 'Strategy Architect' },
-  { level: 6, xpRequired: 2000, title: 'Master Strategist' },
+  { level: 6, xpRequired: 1500, title: 'Strategic Leader' },
+  { level: 7, xpRequired: 2500, title: 'Strategy Master' },
 ];
 
 export interface LevelInfo {

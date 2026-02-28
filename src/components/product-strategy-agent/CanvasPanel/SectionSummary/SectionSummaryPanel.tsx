@@ -40,7 +40,7 @@ function StatBadge({ icon, value, label }: StatBadgeProps) {
         {icon}
       </div>
       <div>
-        <p className="text-sm font-bold text-slate-800">{value}</p>
+        <p className="text-sm font-bold text-slate-800 font-[family-name:var(--font-code)]">{value}</p>
         <p className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</p>
       </div>
     </div>

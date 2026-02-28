@@ -89,7 +89,7 @@ export function useQuestionCardState({
       // Build responses object for the research area
       // We need to fetch existing responses first, then update the specific question
       const getResponse = await fetch(
-        `/api/product-strategy-agent-v2/territories?conversation_id=${conversationId}`
+        `/api/product-strategy-agent/territories?conversation_id=${conversationId}`
       );
 
       let existingResponses: Record<string, string> = {};
@@ -124,7 +124,7 @@ export function useQuestionCardState({
       const answeredCount = Object.keys(responses).filter(k => responses[k]?.trim()).length;
       const status = answeredCount >= 3 ? 'mapped' : 'in_progress';
 
-      const response = await fetch('/api/product-strategy-agent-v2/territories', {
+      const response = await fetch('/api/product-strategy-agent/territories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -163,7 +163,7 @@ export function useQuestionCardState({
     setError(null);
 
     try {
-      const response = await fetch('/api/product-strategy-agent-v2/coach-review', {
+      const response = await fetch('/api/product-strategy-agent/coach-review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ export function useQuestionCardState({
     setError(null);
 
     try {
-      const response = await fetch('/api/product-strategy-agent-v2/coach-suggestion', {
+      const response = await fetch('/api/product-strategy-agent/coach-suggestion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

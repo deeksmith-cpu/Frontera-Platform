@@ -53,6 +53,18 @@ In Strategic Bets, ensure market validation:
 - Every bet needs a measurable market hypothesis
 - Define competitive response scenarios
 - Establish clear success metrics with market benchmarks
+`,
+    activation: `
+In Activation, ensure artefacts are data-driven:
+- Team briefs should reference specific market evidence, not just strategy intent
+- OKRs need competitive benchmarks — what does "good" look like in this market?
+- Guardrails should be grounded in market reality, not internal preference
+`,
+    review: `
+In Strategy Review, focus on market signals:
+- What competitive moves have changed the landscape since last session?
+- Are market assumptions still holding? What new data has emerged?
+- Which bets need recalibrating based on market response?
 `
   }
 } as const;

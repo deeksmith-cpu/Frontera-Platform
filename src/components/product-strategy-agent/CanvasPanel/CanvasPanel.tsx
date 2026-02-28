@@ -5,10 +5,13 @@ import posthog from 'posthog-js';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useSectionSummary } from '@/hooks/useSectionSummary';
 import { HorizontalProgressStepper } from './HorizontalProgressStepper';
+import type { StepperPhase } from './HorizontalProgressStepper';
 import { DiscoverySection } from './DiscoverySection';
 import { ResearchSection } from './ResearchSection';
 import { SynthesisSection } from './SynthesisSection';
 import { BetsSection } from './BetsSection';
+import { ActivationSection } from './ActivationSection';
+import { ReviewSection } from './ReviewSection';
 import { CaseLibrary } from './CaseLibrary';
 import { SectionSummaryPanel } from './SectionSummary';
 import type { Database } from '@/types/database';
@@ -30,10 +33,11 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const phase = frameworkState?.currentPhase as string | undefined;
   const highest = frameworkState?.highestPhaseReached as string | undefined;
-  const currentPhase: 'discovery' | 'research' | 'synthesis' | 'bets' =
-    (phase === 'research' || phase === 'synthesis' || phase === 'bets') ? phase : 'discovery';
-  const highestPhaseReached: 'discovery' | 'research' | 'synthesis' | 'bets' =
-    (highest === 'research' || highest === 'synthesis' || highest === 'bets') ? highest : currentPhase;
+  const validPhases: StepperPhase[] = ['discovery', 'research', 'synthesis', 'bets', 'activation', 'review'];
+  const currentPhase: StepperPhase =
+    validPhases.includes(phase as StepperPhase) ? (phase as StepperPhase) : 'discovery';
+  const highestPhaseReached: StepperPhase =
+    validPhases.includes(highest as StepperPhase) ? (highest as StepperPhase) : currentPhase;
 
   // Canvas tab state: 'phase' shows the phase-specific content, 'cases' shows Case Library
   const [activeTab, setActiveTab] = useState<'phase' | 'cases'>('phase');
@@ -50,7 +54,7 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
   }, [activeResearchContext, onResearchContextChange]);
 
   // Handle phase navigation via stepper clicks (must be before any early returns)
-  const handlePhaseClick = useCallback(async (targetPhase: 'discovery' | 'research' | 'synthesis' | 'bets') => {
+  const handlePhaseClick = useCallback(async (targetPhase: StepperPhase) => {
     // Don't do anything if clicking the current phase or no conversation
     if (!conversation || targetPhase === currentPhase) return;
     posthog.capture('stepper_phase_clicked', { from_phase: currentPhase, to_phase: targetPhase });
@@ -88,8 +92,8 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
   }, [conversation, currentPhase, onConversationUpdate]);
 
   // Swipe gesture for phase navigation (touch devices only)
-  const phaseOrder: ('discovery' | 'research' | 'synthesis' | 'bets')[] = useMemo(
-    () => ['discovery', 'research', 'synthesis', 'bets'],
+  const phaseOrder: StepperPhase[] = useMemo(
+    () => ['discovery', 'research', 'synthesis', 'bets', 'activation', 'review'],
     []
   );
 
@@ -120,7 +124,7 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
   }
 
   return (
-    <main className="canvas-panel bg-slate-50 flex flex-col overflow-hidden h-full">
+    <main className="canvas-panel bg-slate-50/80 flex flex-col overflow-hidden h-full animate-entrance animate-delay-300">
       <HorizontalProgressStepper currentPhase={currentPhase} highestPhaseReached={highestPhaseReached} onPhaseClick={handlePhaseClick} />
 
       {/* Canvas tab bar */}
@@ -135,7 +139,9 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
         >
           {currentPhase === 'discovery' ? 'Discovery' :
            currentPhase === 'research' ? 'Research' :
-           currentPhase === 'synthesis' ? 'Synthesis' : 'Strategic Bets'}
+           currentPhase === 'synthesis' ? 'Synthesis' :
+           currentPhase === 'activation' ? 'Activation' :
+           currentPhase === 'review' ? 'Living Strategy' : 'Strategic Bets'}
         </button>
         <button
           onClick={() => { setActiveTab('cases'); posthog.capture('canvas_tab_switched', { tab: 'cases' }); }}
@@ -172,6 +178,12 @@ export function CanvasPanel({ conversation, clientContext, onClientContextUpdate
             )}
             {currentPhase === 'bets' && (
               <BetsSection conversation={conversation} />
+            )}
+            {currentPhase === 'activation' && (
+              <ActivationSection conversation={conversation} />
+            )}
+            {currentPhase === 'review' && (
+              <ReviewSection conversation={conversation} />
             )}
           </>
         )}

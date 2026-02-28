@@ -39,6 +39,8 @@ export interface Persona {
     research: string;
     synthesis: string;
     bets: string;
+    activation?: string;
+    review?: string;
   };
 }
 

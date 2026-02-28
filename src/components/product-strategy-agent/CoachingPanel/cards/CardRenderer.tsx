@@ -11,15 +11,17 @@ import type {
 import { ExplanationCard } from './ExplanationCard';
 import { RequestCard } from './RequestCard';
 import { DebateCard } from './DebateCard';
+import { QuestionCard } from './QuestionCard';
 
-// Note: QuestionCardData is included for type compatibility but not rendered in v1
 type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData;
 
 interface CardRendererProps {
   card: RenderableCard;
+  conversationId?: string;
   onAction?: (action: CardAction) => void;
   onDismiss?: (cardId: string) => void;
   onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
+  onQuestionSubmit?: (territory: string, researchArea: string, questionIndex: number, answer: string, confidence: import('@/types/coaching-cards').ConfidenceLevel | null) => Promise<boolean>;
 }
 
 /**
@@ -57,9 +59,11 @@ class CardErrorBoundary extends Component<
  */
 export function CardRenderer({
   card,
+  conversationId,
   onAction,
   onDismiss,
   onNavigateToCanvas,
+  onQuestionSubmit,
 }: CardRendererProps) {
   if (!card || typeof card !== 'object' || !card.type) {
     return null;
@@ -92,6 +96,28 @@ export function CardRenderer({
       content = (
         <DebateCard
           data={card}
+          onAction={onAction}
+        />
+      );
+      break;
+
+    case 'question':
+      content = (
+        <QuestionCard
+          data={card}
+          conversationId={conversationId || ''}
+          onSubmit={async (answer, confidence) => {
+            if (onQuestionSubmit) {
+              return onQuestionSubmit(
+                card.territory,
+                card.research_area,
+                card.question_index,
+                answer,
+                confidence
+              );
+            }
+            return false;
+          }}
           onAction={onAction}
         />
       );

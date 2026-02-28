@@ -12,7 +12,7 @@ import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 import type { ActiveResearchContext } from '@/types/research-context';
-import type { Phase, CardAction } from '@/types/coaching-cards';
+import type { Phase, CardAction, ConfidenceLevel } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -81,6 +81,73 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
     console.log('Navigate to canvas:', target);
     // This would be handled by a parent component or context
   }, []);
+
+  // Handle QuestionCard answer submission — saves to territory_insights via API
+  const handleQuestionSubmit = useCallback(async (
+    territory: string,
+    researchArea: string,
+    questionIndex: number,
+    answer: string,
+    confidence: ConfidenceLevel | null,
+  ): Promise<boolean> => {
+    if (!conversation) return false;
+
+    try {
+      // Fetch existing responses for this research area
+      const getResponse = await fetch(
+        `/api/product-strategy-agent/territories?conversation_id=${conversation.id}`
+      );
+
+      let existingResponses: Record<string, string> = {};
+      let existingConfidence: Record<string, string> = {};
+
+      if (getResponse.ok) {
+        const insights = await getResponse.json();
+        const existing = insights.find(
+          (i: { territory: string; research_area: string }) =>
+            i.territory === territory && i.research_area === researchArea
+        );
+        if (existing?.responses) {
+          existingResponses = existing.responses as Record<string, string>;
+        }
+        if (existing?.confidence) {
+          existingConfidence = existing.confidence as Record<string, string>;
+        }
+      }
+
+      // Merge new answer
+      const responses: Record<string, string> = {
+        ...existingResponses,
+        [questionIndex]: answer,
+      };
+
+      const confidenceMap: Record<string, string> = {
+        ...existingConfidence,
+        ...(confidence ? { [questionIndex]: confidence } : {}),
+      };
+
+      const answeredCount = Object.keys(responses).filter(k => responses[k]?.trim()).length;
+      const status = answeredCount >= 3 ? 'mapped' : 'in_progress';
+
+      const response = await fetch('/api/product-strategy-agent/territories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          territory,
+          research_area: researchArea,
+          responses,
+          confidence: confidenceMap,
+          status,
+        }),
+      });
+
+      return response.ok;
+    } catch (err) {
+      console.error('Error submitting question answer:', err);
+      return false;
+    }
+  }, [conversation]);
 
   // Proactive coach triggers
   const territoryProgress = smartPromptsContext?.territoryProgress ?? {
@@ -380,7 +447,7 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
   const isSidepanel = mode === 'sidepanel';
 
   return (
-    <aside className={`coaching-panel bg-white flex flex-col h-full overflow-hidden ${!isPopup ? 'border-r border-slate-200' : ''}`}>
+    <aside className={`coaching-panel bg-white flex flex-col h-full overflow-hidden animate-entrance animate-delay-150 ${!isPopup ? 'border-r border-slate-200' : ''}`}>
       <div className="flex-shrink-0">
         <SessionHeader
           conversation={conversation}
@@ -420,6 +487,8 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
             capturedInsights={capturedInsights}
             onCardAction={handleCardAction}
             onNavigateToCanvas={handleNavigateToCanvas}
+            conversationId={conversation.id}
+            onQuestionSubmit={handleQuestionSubmit}
           />
         </div>
 

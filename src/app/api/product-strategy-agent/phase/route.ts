@@ -100,9 +100,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate phase
-    if (!['discovery', 'research', 'synthesis', 'bets'].includes(phase)) {
+    if (!['discovery', 'research', 'synthesis', 'bets', 'activation', 'review'].includes(phase)) {
       return NextResponse.json(
-        { error: 'Invalid phase. Must be discovery, research, synthesis, or bets' },
+        { error: 'Invalid phase. Must be discovery, research, synthesis, bets, activation, or review' },
         { status: 400 }
       );
     }
@@ -112,6 +112,18 @@ export async function POST(req: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
+
+    // If transitioning to 'activation' phase, verify bets quality gate
+    if (phase === 'activation') {
+      const supabase = getSupabaseAdmin();
+      const qualityGate = await checkBetsQualityGate(supabase, conversation_id);
+      if (!qualityGate.passed) {
+        return NextResponse.json(
+          { error: qualityGate.message || 'Bets quality gate not met. Complete strategic bets before activating.' },
+          { status: 400 }
+        );
+      }
+    }
 
     // If transitioning to 'bets' phase, verify synthesis exists
     if (phase === 'bets') {
@@ -148,6 +160,8 @@ export async function POST(req: NextRequest) {
       research: 1,
       synthesis: 2,
       bets: 3,
+      activation: 4,
+      review: 5,
     };
 
     // Extract and update framework_state with new phase

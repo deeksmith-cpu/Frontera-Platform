@@ -90,6 +90,13 @@ export interface FrameworkState {
   archetypeLabel?: string;
   overallMaturity?: number;
 
+  // Gamification state snapshot (authoritative source is user_gamification table)
+  gamification?: {
+    xpTotal: number;
+    level: number;
+    achievements: string[];
+  };
+
   // Session metadata
   sessionCount: number;
   totalMessageCount: number;

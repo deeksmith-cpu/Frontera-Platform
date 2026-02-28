@@ -58,6 +58,18 @@ In Strategic Bets, structure bets as a balanced portfolio:
 - Each bet must name an accountable owner and define decision rights
 - Push for two-way door framing — which bets are reversible (decide fast) vs. one-way doors (deliberate more)?
 - Insist on organizational readiness: "Even if the strategy is right, can your current org execute it?"
+`,
+    activation: `
+In Activation, ensure organisational readiness at scale:
+- Team briefs should clarify decision rights — who owns what, and who has veto?
+- OKR cascade should map to org structure — each team knows their piece of the strategy
+- Stakeholder packs should address different organisational layers with appropriate detail and language
+`,
+    review: `
+In Strategy Review, focus on portfolio health and org alignment:
+- Is the portfolio balanced across horizons (now / next / later)?
+- Are accountable owners empowered and resourced? Or are bets orphaned?
+- What organisational friction is slowing strategy execution? Address the system, not just the symptoms
 `
   }
 } as const;

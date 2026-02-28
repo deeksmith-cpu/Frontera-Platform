@@ -7,7 +7,7 @@ import { StreamingMessage } from './StreamingMessage';
 import { CardRenderer } from './cards';
 import { parseCardMarkers, hasCardMarkers } from '@/lib/utils/card-parser';
 import type { Database } from '@/types/database';
-import type { CardAction, ExplanationCardData, RequestCardData, DebateIdeaCardData } from '@/types/coaching-cards';
+import type { CardAction, ExplanationCardData, RequestCardData, DebateIdeaCardData, QuestionCardData, ConfidenceLevel } from '@/types/coaching-cards';
 
 type MessageType = Database['public']['Tables']['conversation_messages']['Row'];
 
@@ -23,6 +23,8 @@ interface MessageStreamProps {
   capturedInsights?: Set<string>;
   onCardAction?: (action: CardAction) => void;
   onNavigateToCanvas?: (target: { phase: string; section?: string }) => void;
+  conversationId?: string;
+  onQuestionSubmit?: (territory: string, researchArea: string, questionIndex: number, answer: string, confidence: ConfidenceLevel | null) => Promise<boolean>;
 }
 
 export function MessageStream({
@@ -37,6 +39,8 @@ export function MessageStream({
   capturedInsights,
   onCardAction,
   onNavigateToCanvas,
+  conversationId,
+  onQuestionSubmit,
 }: MessageStreamProps) {
   const streamRef = useRef<HTMLDivElement>(null);
   const [dismissedCards, setDismissedCards] = useState<Set<string>>(new Set());
@@ -67,7 +71,7 @@ export function MessageStream({
       return {
         message,
         textContent: message.content,
-        cards: [] as Array<ExplanationCardData | RequestCardData | DebateIdeaCardData>,
+        cards: [] as Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData>,
       };
     });
   }, [messages]);
@@ -102,9 +106,11 @@ export function MessageStream({
                   <CardRenderer
                     key={card.id}
                     card={card}
+                    conversationId={conversationId}
                     onAction={handleCardAction}
                     onDismiss={handleCardDismiss}
                     onNavigateToCanvas={onNavigateToCanvas}
+                    onQuestionSubmit={onQuestionSubmit}
                   />
                 ))}
             </div>

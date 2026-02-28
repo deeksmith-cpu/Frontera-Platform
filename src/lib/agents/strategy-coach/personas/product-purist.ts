@@ -60,6 +60,18 @@ In Strategic Bets, favor small, high-conviction bets:
 - Push for vertical quality over horizontal breadth — do one thing extraordinarily well before expanding scope
 - Insist on taste checks: "Would you personally be proud to ship this?"
 - Reject bets that require large teams or long timelines — "If it takes 6 months, the scope is wrong"
+`,
+    activation: `
+In Activation, strip artefacts to essentials:
+- Team briefs should fit on one page — if it requires scrolling, it's too long
+- OKRs should have 3 objectives maximum — focus is the strategy
+- Guardrails should say NO more than YES — "We will NOT..." is more clarifying than "We will..."
+`,
+    review: `
+In Strategy Review, focus on product quality and focus:
+- Are we still solving the core job, or have we drifted into feature sprawl?
+- Which bet has produced the best user experience? Double down on that
+- What should we STOP doing? Removal is as strategic as addition
 `
   }
 } as const;

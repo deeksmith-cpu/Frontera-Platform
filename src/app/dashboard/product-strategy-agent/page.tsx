@@ -58,6 +58,17 @@ export default async function ProductStrategyAgentPage() {
     console.error('Error fetching conversations:', fetchError);
   }
 
+  // Check if user has completed strategic assessment
+  const { data: assessmentData } = await supabase
+    .from('strategic_assessments')
+    .select('archetype')
+    .eq('clerk_org_id', orgId)
+    .eq('clerk_user_id', userId)
+    .limit(1)
+    .single();
+
+  const hasAssessment = !!assessmentData;
+
   let conversation = existingConversations?.[0];
 
   // If no conversation exists, create one
@@ -92,6 +103,7 @@ export default async function ProductStrategyAgentPage() {
       userId={userId}
       orgId={orgId}
       clientContext={clientData}
+      hasAssessment={hasAssessment}
     />
   );
 }

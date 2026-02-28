@@ -45,7 +45,7 @@ export function useGamification(onXPAwarded?: XPNotificationCallback) {
 
     const fetchState = async () => {
       try {
-        const res = await fetch('/api/product-strategy-agent-v2/gamification');
+        const res = await fetch('/api/product-strategy-agent/gamification');
         if (res.ok) {
           const data = await res.json();
           if (!cancelled) {
@@ -78,7 +78,7 @@ export function useGamification(onXPAwarded?: XPNotificationCallback) {
     metadata?: Record<string, unknown>,
   ): Promise<XPAwardResult | null> => {
     try {
-      const res = await fetch('/api/product-strategy-agent-v2/gamification', {
+      const res = await fetch('/api/product-strategy-agent/gamification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventType, metadata }),

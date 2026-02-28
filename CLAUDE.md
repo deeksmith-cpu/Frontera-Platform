@@ -129,6 +129,13 @@ Key tables in Supabase:
 | `territory_insights` | 3Cs research responses (company, customer, competitor territories) |
 | `synthesis_outputs` | Generated opportunities, insights, and strategic bets |
 | `strategic_outputs` | Final strategy documents |
+| `strategic_artefacts` | Activation artefacts (team briefs, OKRs, guardrails, stakeholder packs) |
+| `strategy_assumptions` | Living Strategy assumption tracking (status: untested/validated/invalidated) |
+| `strategy_signals` | Market signal log with AI impact assessments |
+| `strategy_versions` | Strategy version snapshots with change narratives |
+| `user_gamification` | Per-user XP totals, levels, streaks (unique: clerk_user_id + clerk_org_id) |
+| `user_achievements` | Earned achievement badges (unique: user + org + achievement_id) |
+| `xp_events` | XP award audit log (event_type, xp_amount, metadata JSONB) |
 
 **Key Schema Details:**
 - `uploaded_materials.extracted_context`: JSONB field storing document content and metadata

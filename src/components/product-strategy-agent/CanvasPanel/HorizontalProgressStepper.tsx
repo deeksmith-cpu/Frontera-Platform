@@ -1,13 +1,15 @@
 'use client';
 
-import { DiscoveryIcon, LandscapeIcon, SynthesisIcon, StrategicBetsIcon, CheckIcon } from '@/components/icons/TerritoryIcons';
+import { DiscoveryIcon, LandscapeIcon, SynthesisIcon, StrategicBetsIcon, ActivationIcon, ReviewIcon, CheckIcon } from '@/components/icons/TerritoryIcons';
+
+export type StepperPhase = 'discovery' | 'research' | 'synthesis' | 'bets' | 'activation' | 'review';
 
 interface Step {
   id: string;
   label: string;
   sublabel: string;
-  phase: 'discovery' | 'research' | 'synthesis' | 'bets';
-  color: string; // Phase-specific color from design system
+  phase: StepperPhase;
+  color: string;
   icon: React.ComponentType<{ className?: string; size?: number }>;
 }
 
@@ -17,7 +19,7 @@ const STEPS: Step[] = [
     label: 'Discovery',
     sublabel: 'Context Setting',
     phase: 'discovery',
-    color: 'emerald', // Emerald for discovery phase
+    color: 'emerald',
     icon: DiscoveryIcon,
   },
   {
@@ -25,7 +27,7 @@ const STEPS: Step[] = [
     label: 'Landscape',
     sublabel: 'Terrain Mapping',
     phase: 'research',
-    color: 'amber', // Amber for research phase
+    color: 'amber',
     icon: LandscapeIcon,
   },
   {
@@ -33,7 +35,7 @@ const STEPS: Step[] = [
     label: 'Synthesis',
     sublabel: 'Strategy Formation',
     phase: 'synthesis',
-    color: 'purple', // Purple for synthesis phase
+    color: 'purple',
     icon: SynthesisIcon,
   },
   {
@@ -41,15 +43,31 @@ const STEPS: Step[] = [
     label: 'Strategic Bets',
     sublabel: 'Route Planning',
     phase: 'bets',
-    color: 'cyan', // Cyan for planning phase
+    color: 'cyan',
     icon: StrategicBetsIcon,
+  },
+  {
+    id: '5',
+    label: 'Activation',
+    sublabel: 'Execution Bridge',
+    phase: 'activation',
+    color: 'emerald',
+    icon: ActivationIcon,
+  },
+  {
+    id: '6',
+    label: 'Review',
+    sublabel: 'Living Strategy',
+    phase: 'review',
+    color: 'amber',
+    icon: ReviewIcon,
   },
 ];
 
 interface HorizontalProgressStepperProps {
-  currentPhase: 'discovery' | 'research' | 'synthesis' | 'bets';
-  highestPhaseReached?: 'discovery' | 'research' | 'synthesis' | 'bets';
-  onPhaseClick?: (phase: 'discovery' | 'research' | 'synthesis' | 'bets') => void;
+  currentPhase: StepperPhase;
+  highestPhaseReached?: StepperPhase;
+  onPhaseClick?: (phase: StepperPhase) => void;
 }
 
 export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, onPhaseClick }: HorizontalProgressStepperProps) {
@@ -125,7 +143,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
   };
 
   return (
-    <div className="horizontal-stepper py-2 px-4 md:py-2.5 md:px-8 bg-white border-b border-slate-100">
+    <div className="horizontal-stepper py-2 px-4 md:py-2.5 md:px-8 bg-white border-b border-slate-100 border-t-2 border-t-cyan-200/40">
       <div className="flex items-center justify-between max-w-5xl mx-auto overflow-x-auto">
         {STEPS.map((step, index) => {
           const isCurrent = index === currentIndex;
@@ -187,7 +205,7 @@ export function HorizontalProgressStepper({ currentPhase, highestPhaseReached, o
                   {/* Current indicator - just a dot */}
                   {isCurrent && (
                     <div className="flex mt-0.5 justify-center">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-ring-pulse" style={{ color: 'rgba(6, 182, 212, 0.4)' }} />
                     </div>
                   )}
                 </div>

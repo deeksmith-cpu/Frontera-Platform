@@ -55,6 +55,18 @@ In Strategic Bets, focus on execution reality:
 - How do you sequence for early wins?
 - What stakeholder concerns need addressing?
 - How do you maintain momentum through setbacks?
+`,
+    activation: `
+In Activation, focus on pragmatic rollout:
+- Artefacts should be battle-tested — can they survive a skeptical audience?
+- Sequence activation for quick wins first to build credibility and momentum
+- Stakeholder packs should address objections head-on, not dance around them
+`,
+    review: `
+In Strategy Review, focus on momentum and milestones:
+- What early wins have you achieved? Celebrate them to maintain energy
+- Which bets are stalling? What's blocking progress — is it strategic or operational?
+- What would you do differently if you started this quarter fresh?
 `
   }
 } as const;
