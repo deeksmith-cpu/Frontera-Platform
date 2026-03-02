@@ -9,11 +9,13 @@ import type {
   RequestCardData,
   DebateIdeaCardData,
   QuestionCardData,
+  ResearchAreaGroupData,
+  BetQuestionCardData,
   CardType,
 } from '@/types/coaching-cards';
 
 // Card marker pattern: [CARD:type]{ json }[/CARD]
-const CARD_PATTERN = /\[CARD:(explanation|request|debate|question)\]([\s\S]*?)\[\/CARD\]/g;
+const CARD_PATTERN = /\[CARD:(explanation|request|debate|question|research_area_group|bet_question)\]([\s\S]*?)\[\/CARD\]/g;
 
 /**
  * Generate a deterministic card ID based on type and index
@@ -38,7 +40,7 @@ function validateAndEnhanceCard(
   rawData: Record<string, unknown>,
   index: number,
   rawJson: string
-): ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | null {
+): ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | ResearchAreaGroupData | BetQuestionCardData | null {
   const baseCard = {
     id: generateCardId(type, index, rawJson),
     dismissible: true,
@@ -121,6 +123,44 @@ function validateAndEnhanceCard(
       } satisfies QuestionCardData;
     }
 
+    case 'research_area_group': {
+      if (!rawData.territory || !rawData.research_area || !rawData.questions || !Array.isArray(rawData.questions)) {
+        console.warn('Research area group card missing required fields');
+        return null;
+      }
+      return {
+        ...baseCard,
+        type: 'research_area_group',
+        territory: rawData.territory as ResearchAreaGroupData['territory'],
+        research_area: String(rawData.research_area),
+        research_area_title: String(rawData.research_area_title || rawData.research_area),
+        questions: (rawData.questions as Array<{ index: number; text: string }>).map(q => ({
+          index: Number(q.index),
+          text: String(q.text),
+        })),
+        total_questions: Number(rawData.total_questions) || (rawData.questions as Array<unknown>).length,
+      } satisfies ResearchAreaGroupData;
+    }
+
+    case 'bet_question': {
+      if (!rawData.question || !rawData.prepopulated_answer) {
+        console.warn('Bet question card missing required fields');
+        return null;
+      }
+      return {
+        ...baseCard,
+        type: 'bet_question',
+        territory: (rawData.territory as BetQuestionCardData['territory']) || 'company',
+        research_area: String(rawData.research_area || 'strategic_bets'),
+        question_index: Number(rawData.question_index) || 0,
+        question: String(rawData.question),
+        total_questions: Number(rawData.total_questions) || 4,
+        prepopulated_answer: String(rawData.prepopulated_answer),
+        prepopulated_source: rawData.prepopulated_source ? String(rawData.prepopulated_source) : undefined,
+        bet_field: (rawData.bet_field as BetQuestionCardData['bet_field']) || 'belief',
+      } satisfies BetQuestionCardData;
+    }
+
     default:
       return null;
   }
@@ -134,7 +174,7 @@ function validateAndEnhanceCard(
  * Output: { textContent: "Here's some guidance  More text", cards: [...] }
  */
 export function parseCardMarkers(content: string): ParsedMessageContent {
-  const cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData> = [];
+  const cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | ResearchAreaGroupData | BetQuestionCardData> = [];
   let textContent = content;
 
   // Reset regex lastIndex for fresh matching

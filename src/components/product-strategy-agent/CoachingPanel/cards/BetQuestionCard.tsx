@@ -1,45 +1,62 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Search, Loader2, Check, Database, Lightbulb, HelpCircle, Sparkles, MessageSquare } from 'lucide-react';
-import type { QuestionCardData, ConfidenceLevel, CardAction, Territory, CoachReview } from '@/types/coaching-cards';
+import { useState, useCallback, useRef } from 'react';
+import {
+  Loader2,
+  Check,
+  Database,
+  Lightbulb,
+  HelpCircle,
+  Sparkles,
+  MessageSquare,
+  RotateCcw,
+  Wand2,
+} from 'lucide-react';
+import type {
+  BetQuestionCardData,
+  BetFieldType,
+  ConfidenceLevel,
+  CardAction,
+  CoachReview,
+} from '@/types/coaching-cards';
 import { CoachReviewPanel } from './CoachReviewPanel';
 
-interface QuestionCardProps {
-  data: QuestionCardData;
+interface BetQuestionCardProps {
+  data: BetQuestionCardData;
   conversationId: string;
   onSubmit: (answer: string, confidence: ConfidenceLevel | null) => Promise<boolean>;
   onAction?: (action: CardAction) => void;
-  existingAnswer?: string;
-  existingConfidence?: ConfidenceLevel | null;
-  isEditMode?: boolean;
-  onCancel?: () => void;
-  onReviewReceived?: (review: CoachReview, questionContext: { territory: string; researchArea: string; questionIndex: number }) => void;
 }
 
-const TERRITORY_STYLES: Record<Territory, {
+const BET_FIELD_STYLES: Record<BetFieldType, {
   badgeBg: string;
   badgeText: string;
   border: string;
   label: string;
 }> = {
-  company: {
-    badgeBg: 'bg-indigo-50',
-    badgeText: 'text-indigo-600',
-    border: 'border-indigo-200',
-    label: 'Company',
+  belief: {
+    badgeBg: 'bg-purple-50',
+    badgeText: 'text-purple-600',
+    border: 'border-purple-200',
+    label: 'Belief',
   },
-  customer: {
+  implication: {
     badgeBg: 'bg-amber-50',
-    badgeText: 'text-amber-700',
+    badgeText: 'text-amber-600',
     border: 'border-amber-200',
-    label: 'Customer',
+    label: 'Implication',
   },
-  competitor: {
+  exploration: {
+    badgeBg: 'bg-emerald-50',
+    badgeText: 'text-emerald-600',
+    border: 'border-emerald-200',
+    label: 'Exploration',
+  },
+  successMetric: {
     badgeBg: 'bg-cyan-50',
     badgeText: 'text-cyan-600',
     border: 'border-cyan-200',
-    label: 'Market Context',
+    label: 'Success Metric',
   },
 };
 
@@ -70,36 +87,40 @@ const CONFIDENCE_OPTIONS: Array<{
 ];
 
 /**
- * QuestionCard — Interactive research question form
+ * BetQuestionCard -- Prepopulated strategic bet question form
  *
- * Renders in the coaching chat stream when the coach emits a [CARD:question] marker.
+ * Renders in the coaching chat stream during the Strategic Bets phase.
+ * Unlike the standard QuestionCard, the textarea comes PRE-FILLED with a
+ * coach suggestion derived from synthesis results. The user can edit the
+ * suggestion before submitting.
+ *
  * Features:
- * - Question display with territory-specific styling
- * - Textarea for user's answer
- * - Confidence rating selector (Data / Experience / Guess)
- * - "Ask Coach" button (sends follow-up message to get suggestion)
+ * - Synthesis territory badge (always cyan)
+ * - Bet field type badge (belief / implication / exploration / successMetric)
+ * - Pre-populated textarea with distinct visual treatment
+ * - "Reset to suggestion" button to restore original text
+ * - Source attribution for the suggestion
+ * - Confidence rating selector
+ * - Coach review integration
  * - Submit button with loading/success states
  */
-export function QuestionCard({
+export function BetQuestionCard({
   data,
   conversationId,
   onSubmit,
   onAction,
-  existingAnswer = '',
-  existingConfidence = null,
-  isEditMode = false,
-  onCancel,
-  onReviewReceived,
-}: QuestionCardProps) {
-  const [answer, setAnswer] = useState(existingAnswer);
-  const [confidence, setConfidence] = useState<ConfidenceLevel | null>(existingConfidence);
+}: BetQuestionCardProps) {
+  const originalAnswer = useRef(data.prepopulated_answer);
+  const [answer, setAnswer] = useState(data.prepopulated_answer);
+  const [confidence, setConfidence] = useState<ConfidenceLevel | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
   const [coachReview, setCoachReview] = useState<CoachReview | null>(null);
 
-  const styles = TERRITORY_STYLES[data.territory];
+  const betFieldStyles = BET_FIELD_STYLES[data.bet_field];
+  const isModified = answer !== originalAnswer.current;
 
   const handleSubmit = useCallback(async () => {
     if (!answer.trim()) {
@@ -116,27 +137,17 @@ export function QuestionCard({
         setSubmitSuccess(true);
       }
     } catch (err) {
-      console.error('Error submitting answer:', err);
+      console.error('Error submitting bet answer:', err);
       setError('Failed to save answer. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   }, [answer, confidence, onSubmit]);
 
-  // Ask coach for help via a card action (sends a message in the chat)
-  const handleAskCoach = useCallback(() => {
-    onAction?.({
-      cardId: data.id,
-      action: 'ask_coach_suggestion',
-      payload: {
-        territory: data.territory,
-        research_area: data.research_area,
-        question_index: data.question_index,
-        question: data.question,
-        conversationId,
-      },
-    });
-  }, [data, conversationId, onAction]);
+  const handleResetToSuggestion = useCallback(() => {
+    setAnswer(originalAnswer.current);
+    setError(null);
+  }, []);
 
   // Request coach review of current draft
   const handleRequestReview = useCallback(async () => {
@@ -167,19 +178,13 @@ export function QuestionCard({
 
       const review: CoachReview = await response.json();
       setCoachReview(review);
-      // Notify parent that a review was received
-      onReviewReceived?.(review, {
-        territory: data.territory,
-        researchArea: data.research_area,
-        questionIndex: data.question_index,
-      });
     } catch (err) {
       console.error('Error getting coach review:', err);
       setError('Failed to get coach review. Please try again.');
     } finally {
       setIsReviewing(false);
     }
-  }, [answer, conversationId, data.territory, data.research_area, data.question_index, onReviewReceived]);
+  }, [answer, conversationId, data.territory, data.research_area, data.question_index]);
 
   // Apply the coach's suggested revision to the textarea
   const handleApplyRevision = useCallback(() => {
@@ -194,7 +199,23 @@ export function QuestionCard({
     setCoachReview(null);
   }, []);
 
-  // If already submitted, show success state
+  // Ask coach for help via a card action
+  const handleAskCoach = useCallback(() => {
+    onAction?.({
+      cardId: data.id,
+      action: 'ask_coach_suggestion',
+      payload: {
+        territory: data.territory,
+        research_area: data.research_area,
+        question_index: data.question_index,
+        question: data.question,
+        bet_field: data.bet_field,
+        conversationId,
+      },
+    });
+  }, [data, conversationId, onAction]);
+
+  // Success state
   if (submitSuccess) {
     return (
       <div className="question-card-success rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-5 animate-entrance">
@@ -205,7 +226,7 @@ export function QuestionCard({
           <div>
             <p className="text-sm font-semibold text-emerald-800">Answer Submitted</p>
             <p className="text-xs text-emerald-600">
-              {data.research_area_title} — Q{data.question_index + 1} of {data.total_questions}
+              {betFieldStyles.label} -- Q{data.question_index + 1} of {data.total_questions}
             </p>
           </div>
         </div>
@@ -216,7 +237,7 @@ export function QuestionCard({
   return (
     <div
       className={`
-        question-card relative overflow-hidden
+        bet-question-card relative overflow-hidden
         rounded-2xl border-2 border-cyan-200 bg-white
         p-5 sm:p-6
         animate-entrance
@@ -224,16 +245,14 @@ export function QuestionCard({
         shadow-sm hover:shadow-md
       `}
     >
-      {/* Territory Badge */}
+      {/* Territory + Bet Field Badges */}
       <div className="flex items-center gap-2 mb-3">
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${styles.badgeBg} ${styles.badgeText} ${styles.border}`}>
-          {styles.label}
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-cyan-50 text-cyan-600 border-cyan-200">
+          Synthesis
         </span>
-        {data.research_area_title && (
-          <span className="text-xs text-slate-400">
-            {data.research_area_title}
-          </span>
-        )}
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${betFieldStyles.badgeBg} ${betFieldStyles.badgeText} ${betFieldStyles.border}`}>
+          {betFieldStyles.label}
+        </span>
       </div>
 
       {/* Question Header */}
@@ -258,28 +277,64 @@ export function QuestionCard({
         </div>
       </div>
 
-      {/* Answer Textarea */}
+      {/* Pre-populated Answer Textarea */}
       <div className="mb-4">
+        {/* Suggestion label */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <Wand2 className="w-3.5 h-3.5 text-cyan-600" />
+            <span className="text-xs text-cyan-600 italic">
+              Coach suggestion -- edit as needed
+            </span>
+          </div>
+          {isModified && (
+            <button
+              onClick={handleResetToSuggestion}
+              disabled={isSubmitting}
+              className="
+                flex items-center gap-1 px-2 py-1
+                rounded-md text-xs font-medium
+                text-slate-500 hover:text-slate-700
+                hover:bg-slate-100
+                transition-all duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed
+              "
+            >
+              <RotateCcw className="w-3 h-3" />
+              Reset to suggestion
+            </button>
+          )}
+        </div>
+
         <textarea
           value={answer}
           onChange={(e) => {
             setAnswer(e.target.value);
             setError(null);
           }}
-          placeholder="Share your insights here..."
+          placeholder="Edit the suggestion or write your own..."
           rows={5}
           disabled={isSubmitting}
           className={`
             w-full px-4 py-3
             border-2 border-slate-200 rounded-xl
+            border-l-4 border-l-cyan-300
+            bg-cyan-50
             text-sm text-slate-900
             resize-none leading-relaxed
             transition-all duration-200
             placeholder:text-slate-400
-            focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20
+            focus:outline-none focus:border-[#fbbf24] focus:border-l-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 focus:bg-white
             disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-50
           `}
         />
+
+        {/* Source attribution */}
+        {data.prepopulated_source && (
+          <p className="mt-1.5 text-xs text-slate-400">
+            Based on: {data.prepopulated_source}
+          </p>
+        )}
       </div>
 
       {/* Confidence Rating */}
@@ -381,16 +436,6 @@ export function QuestionCard({
 
       {/* Action Buttons */}
       <div className="mt-5 flex items-center justify-end gap-3">
-        {isEditMode && onCancel && (
-          <button
-            onClick={onCancel}
-            disabled={isSubmitting}
-            className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            Cancel
-          </button>
-        )}
-
         <button
           onClick={handleSubmit}
           disabled={isSubmitting || !answer.trim()}
@@ -411,7 +456,7 @@ export function QuestionCard({
               <span>Saving...</span>
             </>
           ) : (
-            <span>{isEditMode ? 'Update Answer' : 'Submit Answer'}</span>
+            <span>Submit Answer</span>
           )}
         </button>
       </div>

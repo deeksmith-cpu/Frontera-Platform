@@ -5,6 +5,8 @@ import type {
   RequestCardData,
   DebateIdeaCardData,
   QuestionCardData,
+  ResearchAreaGroupData,
+  BetQuestionCardData,
   ConfidenceLevel,
   CoachReview,
   CardAction,
@@ -14,7 +16,7 @@ import { RequestCard } from './RequestCard';
 import { DebateCard } from './DebateCard';
 import { QuestionCard } from './QuestionCard';
 
-type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData;
+type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | ResearchAreaGroupData | BetQuestionCardData;
 
 interface CardRendererProps {
   card: RenderableCard;
@@ -87,6 +89,18 @@ export function CardRenderer({
           existingConfidence={existingConfidence}
         />
       );
+
+    case 'research_area_group':
+      // research_area_group cards are handled by the v1 CardRenderer;
+      // v2 can safely ignore them until a v2-specific component is built.
+      console.warn('ResearchAreaGroup card received in v2 CardRenderer — not yet supported');
+      return null;
+
+    case 'bet_question':
+      // bet_question cards are handled by the v1 CardRenderer;
+      // v2 can safely ignore them until a v2-specific component is built.
+      console.warn('BetQuestionCard received in v2 CardRenderer — not yet supported');
+      return null;
 
     default:
       console.warn('Unknown card type:', (card as { type: string }).type);

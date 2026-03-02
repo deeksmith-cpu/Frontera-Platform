@@ -2,18 +2,18 @@
 
 import { Component, useCallback, useRef, useState, type ReactNode } from 'react';
 import posthog from 'posthog-js';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { CanvasPanel } from './CanvasPanel/CanvasPanel';
-import { ContextPanel } from './ContextPanel/ContextPanel';
+import { ContextPreviewPanel } from './ContextPreviewPanel/ContextPreviewPanel';
 import { ResizeDivider } from './ContextPanel/ResizeDivider';
 import { StrategyHeader } from './StrategyHeader';
 import { CoachTriggerButton } from './CoachTriggerButton';
 import { CoachingPopup } from './CoachingPopup';
-import { CoachingPanel } from './CoachingPanel/CoachingPanel';
+import { CoachLedPanel } from './CoachLedPanel/CoachLedPanel';
 import { LevelUpCelebration } from './Gamification/LevelUpCelebration';
+import { CoachJourneyProvider } from '@/contexts/CoachJourneyContext';
 import { useCoachPopup, useMediaQuery } from '@/hooks/useCoachPopup';
 import { useContextPanelState } from './ContextPanel/useContextPanelState';
-import { useContextPanel } from '@/hooks/useContextPanel';
 import { useGamification } from '@/hooks/useGamification';
 import { useXPNotification } from './Gamification/XPNotification';
 import type { Database } from '@/types/database';
@@ -99,33 +99,21 @@ export function ProductStrategyAgentInterface({
 
   // Layout state
   const layout = useContextPanelState();
-  const contextPanel = useContextPanel(
-    (conversation?.framework_state as { currentPhase?: string } | null)?.currentPhase || 'discovery'
-  );
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Update conversation when a phase transition occurs (avoids full page reload)
   const handleConversationUpdate = useCallback((updated: Conversation) => {
     setConversation(updated);
-    // Sync context panel with new phase
-    const newPhase = (updated.framework_state as { currentPhase?: string } | null)?.currentPhase;
-    if (newPhase) contextPanel.syncWithPhase(newPhase);
-  }, [contextPanel]);
+  }, []);
 
   // Mobile popup state
   const popup = useCoachPopup();
   const isMobile = useMediaQuery('(max-width: 767px)');
-  const isTabletOrDesktop = !isMobile;
 
   const handleCoachToggle = useCallback(() => {
     posthog.capture('coach_popup_toggled', { action: popup.isOpen ? 'close' : 'open', device: isMobile ? 'mobile' : 'desktop' });
     popup.toggle();
   }, [popup, isMobile]);
-
-  const handleToggleLayout = useCallback(() => {
-    posthog.capture('layout_mode_toggled', { from: layout.layoutMode, to: layout.layoutMode === 'modern' ? 'classic' : 'modern' });
-    layout.toggleLayoutMode();
-  }, [layout]);
 
   const handleContextCollapse = useCallback(() => {
     posthog.capture('context_panel_collapsed');
@@ -137,126 +125,60 @@ export function ProductStrategyAgentInterface({
     layout.expandContext();
   }, [layout]);
 
-  // ── Modern Layout (60/40) ──
-  const renderModernLayout = () => (
-    <div ref={contentRef} className="flex-1 flex overflow-hidden">
-      {/* Coaching Centre — primary, takes majority width */}
-      <main
-        className="hidden md:flex flex-col overflow-hidden bg-white"
-        style={{ width: `${layout.contextCollapsed ? 100 : layout.coachWidthPct}%` }}
-      >
-        {conversation ? (
-          <CoachingPanel
-            conversation={conversation}
-            userId={userId}
-            orgId={orgId}
-            mode="sidepanel"
-            activeResearchContext={activeResearchContext}
+  // ── Coach-Led Layout (67/33) — Option A ──
+  const renderCoachLedLayout = () => (
+    <CoachJourneyProvider
+      conversation={conversation}
+      onConversationUpdate={handleConversationUpdate}
+      activeResearchContext={activeResearchContext}
+      onResearchContextChange={setActiveResearchContext}
+      contextPreviewCollapsed={layout.contextCollapsed}
+      onContextCollapse={handleContextCollapse}
+      onContextExpand={handleContextExpand}
+    >
+      <div ref={contentRef} className="flex-1 flex overflow-hidden">
+        {/* Coaching Centre — primary (67%), drives the journey */}
+        <main
+          className="hidden md:flex flex-col overflow-hidden bg-white"
+          style={{ width: layout.contextCollapsed ? 'calc(100% - 48px)' : `${layout.coachWidthPct}%` }}
+        >
+          {conversation ? (
+            <CoachLedPanel
+              conversation={conversation}
+              userId={userId}
+              orgId={orgId}
+              activeResearchContext={activeResearchContext}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+              <p>Loading conversation...</p>
+            </div>
+          )}
+        </main>
+
+        {/* Resizable Divider (desktop only, visible when expanded) */}
+        {!layout.contextCollapsed && (
+          <ResizeDivider
+            onResize={layout.setCoachWidth}
+            containerRef={contentRef}
           />
-        ) : (
-          <div className="h-full flex items-center justify-center text-slate-500 text-sm">
-            <p>Loading conversation...</p>
-          </div>
         )}
-      </main>
 
-      {/* Resizable Divider (desktop only) */}
-      {!layout.contextCollapsed && (
-        <ResizeDivider
-          onResize={layout.setCoachWidth}
-          containerRef={contentRef}
-        />
-      )}
-
-      {/* Context Panel — supporting, shows canvas content */}
-      {!layout.contextCollapsed ? (
+        {/* Context Preview Panel — secondary (33%), collapsible to 48px rail */}
         <div
           className="hidden md:flex flex-col overflow-hidden"
-          style={{ width: `${layout.contextWidthPct}%` }}
+          style={{ width: layout.contextCollapsed ? '48px' : `${layout.contextWidthPct}%`, flexShrink: layout.contextCollapsed ? 0 : undefined }}
         >
-          <ContextPanel
+          <ContextPreviewPanel
             conversation={conversation}
-            clientContext={clientContext}
-            onClientContextUpdate={setClientContext}
-            onResearchContextChange={setActiveResearchContext}
-            onConversationUpdate={handleConversationUpdate}
-            isCollapsed={false}
-            isPinned={contextPanel.isPinned}
+            isCollapsed={layout.contextCollapsed}
             onCollapse={handleContextCollapse}
             onExpand={handleContextExpand}
-            onTogglePin={contextPanel.togglePin}
           />
         </div>
-      ) : (
-        <div className="hidden md:flex">
-          <ContextPanel
-            conversation={conversation}
-            clientContext={clientContext}
-            onClientContextUpdate={setClientContext}
-            onResearchContextChange={setActiveResearchContext}
-            onConversationUpdate={handleConversationUpdate}
-            isCollapsed={true}
-            isPinned={contextPanel.isPinned}
-            onCollapse={handleContextCollapse}
-            onExpand={handleContextExpand}
-            onTogglePin={contextPanel.togglePin}
-          />
-        </div>
-      )}
 
-      {/* Mobile: Full-width canvas with coach popup overlay */}
-      <div className="md:hidden flex-1 flex flex-col overflow-hidden">
-        <CanvasPanel
-          conversation={conversation}
-          clientContext={clientContext}
-          onClientContextUpdate={setClientContext}
-          onResearchContextChange={setActiveResearchContext}
-          onConversationUpdate={handleConversationUpdate}
-        />
-      </div>
-    </div>
-  );
-
-  // ── Classic Layout (25/75) ──
-  const renderClassicLayout = () => (
-    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-      {/* Coaching Panel — narrow sidebar */}
-      <aside
-        className={`
-          hidden md:flex flex-shrink-0 border-r border-slate-200 bg-white
-          transition-all duration-300 overflow-hidden
-          ${layout.contextCollapsed ? 'md:w-0' : 'md:w-[25%] md:min-w-[280px] lg:w-[25%] lg:min-w-[320px] lg:max-w-[420px]'}
-        `}
-      >
-        {conversation ? (
-          <CoachingPanel
-            conversation={conversation}
-            userId={userId}
-            orgId={orgId}
-            onCollapse={handleContextCollapse}
-            mode="sidepanel"
-            activeResearchContext={activeResearchContext}
-          />
-        ) : (
-          <div className="h-full flex items-center justify-center text-slate-500 text-sm">
-            <p>Loading conversation...</p>
-          </div>
-        )}
-      </aside>
-
-      {/* Canvas Panel — primary, fills remaining */}
-      <main className="flex-1 overflow-hidden relative">
-        {layout.contextCollapsed && (
-          <button
-            onClick={handleContextExpand}
-            className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-white border border-slate-200 rounded-xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            aria-label="Expand coach panel"
-          >
-            <ChevronRight className="w-5 h-5 text-slate-600" />
-          </button>
-        )}
-
-        <div className="h-full flex flex-col">
+        {/* Mobile: Full-width canvas with coach popup overlay */}
+        <div className="md:hidden flex-1 flex flex-col overflow-hidden">
           <CanvasPanel
             conversation={conversation}
             clientContext={clientContext}
@@ -265,20 +187,16 @@ export function ProductStrategyAgentInterface({
             onConversationUpdate={handleConversationUpdate}
           />
         </div>
-      </main>
-
-      {/* Mobile: Full-width canvas is already the main */}
-    </div>
+      </div>
+    </CoachJourneyProvider>
   );
 
   return (
     <AgentErrorBoundary>
       <div className="product-strategy-agent h-screen flex flex-col overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #ecfeff 100%)' }}>
-        {/* Strategy Header — replaces CanvasHeader, includes layout toggle */}
+        {/* Strategy Header */}
         <StrategyHeader
           conversation={conversation}
-          layoutMode={layout.layoutMode}
-          onToggleLayout={handleToggleLayout}
           gamification={gamification}
         />
 
@@ -310,8 +228,8 @@ export function ProductStrategyAgentInterface({
           </div>
         )}
 
-        {/* Content area: layout-mode aware */}
-        {layout.isModern ? renderModernLayout() : renderClassicLayout()}
+        {/* Content area: Coach-Led Layout (Option A) */}
+        {renderCoachLedLayout()}
 
         {/* Coach Trigger Button - mobile only */}
         <div className="md:hidden">

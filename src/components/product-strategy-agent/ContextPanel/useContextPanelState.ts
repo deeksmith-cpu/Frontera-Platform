@@ -14,16 +14,14 @@ const STORAGE_KEY = 'frontera:strategyLayout';
 
 const DEFAULT_STATE: ContextPanelLayoutState = {
   layoutMode: 'modern',
-  coachWidthPct: 60,
+  coachWidthPct: 67,
   contextCollapsed: false,
 };
 
-const CLASSIC_COACH_WIDTH = 25;
-
 const CONSTRAINTS = {
-  minCoachWidth: 35,
-  maxCoachWidth: 75,
-  minContextWidth: 25,
+  minCoachWidth: 55,
+  maxCoachWidth: 80,
+  minContextWidth: 20,
 };
 
 function loadSavedState(): ContextPanelLayoutState {
@@ -66,21 +64,18 @@ export function useContextPanelState() {
     setState((prev) => ({
       ...prev,
       layoutMode: mode,
-      coachWidthPct: mode === 'classic' ? CLASSIC_COACH_WIDTH : 60,
+      coachWidthPct: 67,
       contextCollapsed: false,
     }));
   }, []);
 
   const toggleLayoutMode = useCallback(() => {
-    setState((prev) => {
-      const newMode = prev.layoutMode === 'modern' ? 'classic' : 'modern';
-      return {
-        ...prev,
-        layoutMode: newMode,
-        coachWidthPct: newMode === 'classic' ? CLASSIC_COACH_WIDTH : 60,
-        contextCollapsed: false,
-      };
-    });
+    setState((prev) => ({
+      ...prev,
+      layoutMode: 'modern' as LayoutMode,
+      coachWidthPct: 67,
+      contextCollapsed: false,
+    }));
   }, []);
 
   const setCoachWidth = useCallback((pct: number) => {

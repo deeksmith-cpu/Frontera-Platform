@@ -9,6 +9,8 @@ export { RequestCard } from './RequestCard';
 export { DebateCard } from './DebateCard';
 export { WhatsNextCard } from './WhatsNextCard';
 export { QuestionCard } from './QuestionCard';
+export { ResearchAreaGroup } from './ResearchAreaGroup';
+export { BetQuestionCard } from './BetQuestionCard';
 export { AnsweredCard } from './AnsweredCard';
 export { CoachReviewPanel } from './CoachReviewPanel';
 export { ResourceCard } from './ResourceCard';

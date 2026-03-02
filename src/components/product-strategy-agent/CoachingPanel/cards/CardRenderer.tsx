@@ -6,14 +6,18 @@ import type {
   RequestCardData,
   DebateIdeaCardData,
   QuestionCardData,
+  ResearchAreaGroupData,
+  BetQuestionCardData,
   CardAction,
 } from '@/types/coaching-cards';
 import { ExplanationCard } from './ExplanationCard';
 import { RequestCard } from './RequestCard';
 import { DebateCard } from './DebateCard';
 import { QuestionCard } from './QuestionCard';
+import { ResearchAreaGroup } from './ResearchAreaGroup';
+import { BetQuestionCard } from './BetQuestionCard';
 
-type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData;
+type RenderableCard = ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | ResearchAreaGroupData | BetQuestionCardData;
 
 interface CardRendererProps {
   card: RenderableCard;
@@ -112,6 +116,39 @@ export function CardRenderer({
                 card.territory,
                 card.research_area,
                 card.question_index,
+                answer,
+                confidence
+              );
+            }
+            return false;
+          }}
+          onAction={onAction}
+        />
+      );
+      break;
+
+    case 'research_area_group':
+      content = (
+        <ResearchAreaGroup
+          data={card as ResearchAreaGroupData}
+          conversationId={conversationId || ''}
+          onQuestionSubmit={onQuestionSubmit!}
+          onAction={onAction}
+        />
+      );
+      break;
+
+    case 'bet_question':
+      content = (
+        <BetQuestionCard
+          data={card as BetQuestionCardData}
+          conversationId={conversationId || ''}
+          onSubmit={async (answer, confidence) => {
+            if (onQuestionSubmit) {
+              return onQuestionSubmit(
+                (card as BetQuestionCardData).territory,
+                (card as BetQuestionCardData).research_area,
+                (card as BetQuestionCardData).question_index,
                 answer,
                 confidence
               );

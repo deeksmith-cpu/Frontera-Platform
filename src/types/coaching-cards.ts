@@ -7,7 +7,7 @@
 // Card Base Types
 // =============================================================================
 
-export type CardType = 'explanation' | 'request' | 'debate' | 'whats_next' | 'question';
+export type CardType = 'explanation' | 'request' | 'debate' | 'whats_next' | 'question' | 'research_area_group' | 'bet_question';
 
 export type Territory = 'company' | 'customer' | 'competitor';
 
@@ -175,6 +175,50 @@ export interface QuestionCardData extends BaseCard {
   research_area_title?: string;
 }
 
+// =============================================================================
+// Research Area Group Card (bundles all questions in a research area)
+// =============================================================================
+
+export interface ResearchAreaGroupData extends BaseCard {
+  type: 'research_area_group';
+  /** Territory this group belongs to */
+  territory: Territory;
+  /** Research area ID (e.g., 'company_foundation') */
+  research_area: string;
+  /** Research area display title */
+  research_area_title: string;
+  /** All questions in this area */
+  questions: Array<{ index: number; text: string }>;
+  /** Total number of questions */
+  total_questions: number;
+}
+
+// =============================================================================
+// Bet Question Card (Prepopulated strategic bets questions)
+// =============================================================================
+
+export type BetFieldType = 'belief' | 'implication' | 'exploration' | 'successMetric';
+
+export interface BetQuestionCardData extends BaseCard {
+  type: 'bet_question';
+  /** Territory — always 'synthesis' context for bets, but uses Territory type */
+  territory: Territory;
+  /** Research area identifier */
+  research_area: string;
+  /** Question index within the bet */
+  question_index: number;
+  /** The question text */
+  question: string;
+  /** Total questions in this bet */
+  total_questions: number;
+  /** Coach's pre-populated answer suggestion */
+  prepopulated_answer: string;
+  /** Source attribution for the suggestion */
+  prepopulated_source?: string;
+  /** Type of bet field this covers */
+  bet_field: BetFieldType;
+}
+
 export interface AnsweredCardData {
   /** Territory this answer belongs to */
   territory: Territory;
@@ -302,7 +346,9 @@ export type CoachingCard =
   | RequestCardData
   | DebateIdeaCardData
   | WhatsNextCardData
-  | QuestionCardData;
+  | QuestionCardData
+  | ResearchAreaGroupData
+  | BetQuestionCardData;
 
 // =============================================================================
 // Parsing Types
@@ -310,7 +356,7 @@ export type CoachingCard =
 
 export interface ParsedMessageContent {
   textContent: string;
-  cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData>;
+  cards: Array<ExplanationCardData | RequestCardData | DebateIdeaCardData | QuestionCardData | ResearchAreaGroupData | BetQuestionCardData>;
 }
 
 // =============================================================================

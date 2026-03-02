@@ -194,6 +194,16 @@ export function getResearchAreaTitle(
   return area?.title ?? areaId;
 }
 
+/** Get all questions for a research area, formatted for card emission */
+export function getResearchAreaQuestions(
+  territory: 'company' | 'customer' | 'competitor',
+  areaId: string
+): Array<{ index: number; text: string }> | null {
+  const area = getResearchArea(territory, areaId);
+  if (!area) return null;
+  return area.questions.map((q) => ({ index: q.index, text: q.text }));
+}
+
 /** Format research context for system prompt injection */
 export function formatResearchContextForPrompt(
   territory: 'company' | 'customer' | 'competitor',

@@ -567,3 +567,60 @@ a:focus-visible {
 .animate-bounce-in {
   animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
 }
+
+/* ── Coach-Led Layout Animations (Option A) ── */
+
+/* Context highlight: gold border pulse when new data arrives in context preview */
+@keyframes contextHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.2); }
+  100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+}
+
+.animate-context-highlight {
+  animation: contextHighlight 1s ease-out;
+}
+
+/* Phase transition: slide + fade for context preview content swap */
+@keyframes phaseTransition {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-phase-transition {
+  animation: phaseTransition 0.4s ease-out both;
+}
+
+/* Card group entrance: stagger children for ResearchAreaGroup questions */
+@keyframes cardGroupEntrance {
+  0% { opacity: 0; transform: translateX(-8px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.animate-card-group-entrance {
+  animation: cardGroupEntrance 0.3s ease-out both;
+}
+
+.animate-card-group-entrance:nth-child(1) { animation-delay: 0ms; }
+.animate-card-group-entrance:nth-child(2) { animation-delay: 50ms; }
+.animate-card-group-entrance:nth-child(3) { animation-delay: 100ms; }
+.animate-card-group-entrance:nth-child(4) { animation-delay: 150ms; }
+
+/* Collapse/expand transition for context preview panel */
+@keyframes collapseSlide {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(16px); }
+}
+
+@keyframes expandSlide {
+  0% { opacity: 0; transform: translateX(16px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.animate-collapse-slide {
+  animation: collapseSlide 0.3s ease-in both;
+}
+
+.animate-expand-slide {
+  animation: expandSlide 0.3s ease-out both;
+}

@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Columns2, LayoutPanelLeft, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { XPBar } from './Gamification/XPBar';
 import { AchievementBadge } from './Gamification/AchievementBadge';
 import type { Database } from '@/types/database';
-import type { LayoutMode } from './ContextPanel/useContextPanelState';
 import type { GamificationState } from '@/hooks/useGamification';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
@@ -34,16 +33,12 @@ const PHASE_COLORS: Record<string, string> = {
 
 interface StrategyHeaderProps {
   conversation: Conversation | null;
-  layoutMode: LayoutMode;
-  onToggleLayout: () => void;
   onPhaseChange?: () => void;
   gamification?: GamificationState;
 }
 
 export function StrategyHeader({
   conversation,
-  layoutMode,
-  onToggleLayout,
   onPhaseChange,
   gamification,
 }: StrategyHeaderProps) {
@@ -130,23 +125,6 @@ export function StrategyHeader({
 
       {/* Right: Controls */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Layout Toggle */}
-        <button
-          onClick={onToggleLayout}
-          className="hidden md:inline-flex items-center gap-1.5 text-xs py-2 px-3 bg-white/10 border border-white/20 rounded-lg text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40 font-medium"
-          aria-label={`Switch to ${layoutMode === 'modern' ? 'classic' : 'modern'} layout`}
-          title={layoutMode === 'modern' ? 'Classic View (25/75)' : 'Modern View (60/40)'}
-        >
-          {layoutMode === 'modern' ? (
-            <LayoutPanelLeft className="w-3.5 h-3.5" />
-          ) : (
-            <Columns2 className="w-3.5 h-3.5" />
-          )}
-          <span className="hidden lg:inline">
-            {layoutMode === 'modern' ? 'Classic' : 'Modern'}
-          </span>
-        </button>
-
         <button
           onClick={handleExport}
           className="text-xs sm:text-sm py-2 px-3 sm:py-2 sm:px-4 bg-white/10 border border-white/20 rounded-lg text-white transition-all duration-300 hover:bg-white/20 hover:border-white/40 font-semibold"
