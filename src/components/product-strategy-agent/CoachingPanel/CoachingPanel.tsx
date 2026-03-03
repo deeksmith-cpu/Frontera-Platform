@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { SessionHeader } from './SessionHeader';
-import { CoachContextAwareness } from './CoachContextAwareness';
 import { MessageStream } from './MessageStream';
 import { CoachingInput } from './CoachingInput';
 import { ProactiveCoachMessage } from './ProactiveCoachMessage';
@@ -460,12 +459,6 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
           isPersonaLoading={isPersonaLoading}
         />
       </div>
-      {/* Context Awareness Panel - only show in sidepanel mode */}
-      {isSidepanel && (
-        <div className="flex-shrink-0">
-          <CoachContextAwareness conversation={conversation} />
-        </div>
-      )}
       {/* Proactive Coach Message - only show in sidepanel mode */}
       {isSidepanel && trigger && (
         <div className="flex-shrink-0">

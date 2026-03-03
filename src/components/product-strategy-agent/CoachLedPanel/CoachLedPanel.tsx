@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { SessionHeader } from '../CoachingPanel/SessionHeader';
-import { CoachContextAwareness } from '../CoachingPanel/CoachContextAwareness';
 import { MessageStream } from '../CoachingPanel/MessageStream';
 import { CoachingInput } from '../CoachingPanel/CoachingInput';
 import { ProactiveCoachMessage } from '../CoachingPanel/ProactiveCoachMessage';
 import { WhatsNextCard } from '../CoachingPanel/cards';
-import { ResearchTerritoryPicker } from './ResearchTerritoryPicker';
+import { TerritoryNav } from './TerritoryNav';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
 import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
@@ -52,6 +51,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
   const [currentPersona, setCurrentPersona] = useState<PersonaId | undefined>(undefined);
   const [isPersonaLoading, setIsPersonaLoading] = useState(false);
   const [capturedInsights, setCapturedInsights] = useState<Set<string>>(new Set());
+  const [currentResearchArea, setCurrentResearchArea] = useState<{ territory: string; areaId: string } | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const prevPhaseRef = useRef<string | null>(null);
 
@@ -95,7 +95,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
 
       // Auto-send a phase welcome message to the coach
       const welcomeMessages: Record<string, string> = {
-        research: "I'm ready to start mapping my strategic terrain. Guide me through the research territories.",
+        research: "[RESEARCH_CONTEXT:company:company_foundation:0] I'm ready to start mapping my strategic terrain, beginning with Company Foundation.",
         synthesis: "I've completed my territory research. Help me synthesize the patterns and identify strategic opportunities.",
         bets: "Let's formulate strategic bets based on the synthesis insights.",
         activation: "I'm ready to build the activation plan for my strategic bets.",
@@ -104,6 +104,10 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
 
       const welcomeMsg = welcomeMessages[currentPhase];
       if (welcomeMsg && !isLoading && !isStreaming) {
+        // Set the active research area for TerritoryNav highlighting
+        if (currentPhase === 'research') {
+          setCurrentResearchArea({ territory: 'company', areaId: 'company_foundation' });
+        }
         // Small delay to let the UI settle after phase transition
         setTimeout(() => {
           void handleSendMessage(welcomeMsg);
@@ -260,6 +264,9 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
   const handleResearchAreaSelect = useCallback((territory: string, areaId: string, areaTitle: string) => {
     if (isLoading || isStreaming) return;
 
+    // Update active area for TerritoryNav highlighting
+    setCurrentResearchArea({ territory, areaId });
+
     // Send a message with the RESEARCH_CONTEXT marker that triggers the AI
     // to emit a QuestionCard for the first question in this area.
     // The marker is stripped from display by the Message component.
@@ -397,21 +404,18 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
           isPersonaLoading={isPersonaLoading}
         />
       </div>
-      {/* Context Awareness Panel */}
-      <div className="flex-shrink-0">
-        <CoachContextAwareness conversation={conversation} />
-      </div>
-      {/* Research Territory Picker — visible in research phase */}
+      {/* Territory Nav — compact horizontal switcher, visible in research phase */}
       {currentPhase === 'research' && (
         <div className="flex-shrink-0">
-          <ResearchTerritoryPicker
+          <TerritoryNav
             conversationId={conversation.id}
             onSelectArea={handleResearchAreaSelect}
+            currentArea={currentResearchArea}
           />
         </div>
       )}
-      {/* Proactive Coach Message */}
-      {trigger && (
+      {/* Proactive Coach Message — hidden during research (question cards serve as guidance) */}
+      {currentPhase !== 'research' && trigger && (
         <div className="flex-shrink-0">
           <ProactiveCoachMessage trigger={trigger} onDismiss={dismissTrigger} />
         </div>
