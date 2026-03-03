@@ -7,6 +7,7 @@ import { MessageStream } from '../CoachingPanel/MessageStream';
 import { CoachingInput } from '../CoachingPanel/CoachingInput';
 import { ProactiveCoachMessage } from '../CoachingPanel/ProactiveCoachMessage';
 import { WhatsNextCard } from '../CoachingPanel/cards';
+import { ResearchTerritoryPicker } from './ResearchTerritoryPicker';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
 import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
@@ -52,6 +53,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
   const [isPersonaLoading, setIsPersonaLoading] = useState(false);
   const [capturedInsights, setCapturedInsights] = useState<Set<string>>(new Set());
   const abortControllerRef = useRef<AbortController | null>(null);
+  const prevPhaseRef = useRef<string | null>(null);
 
   // Extract current phase from conversation
   const frameworkState = conversation.framework_state as Record<string, unknown> | null;
@@ -78,6 +80,38 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
     onSendMessage: (msg) => handleSendMessage(msg),
     isEnabled: true, // Always enabled — CoachLedPanel is always sidepanel mode
   });
+
+  // ── Phase transition welcome message ──
+  useEffect(() => {
+    // On first mount, set the phase ref without sending a welcome
+    if (prevPhaseRef.current === null) {
+      prevPhaseRef.current = currentPhase;
+      return;
+    }
+
+    // Only fire when the phase actually changes
+    if (prevPhaseRef.current !== currentPhase) {
+      prevPhaseRef.current = currentPhase;
+
+      // Auto-send a phase welcome message to the coach
+      const welcomeMessages: Record<string, string> = {
+        research: "I'm ready to start mapping my strategic terrain. Guide me through the research territories.",
+        synthesis: "I've completed my territory research. Help me synthesize the patterns and identify strategic opportunities.",
+        bets: "Let's formulate strategic bets based on the synthesis insights.",
+        activation: "I'm ready to build the activation plan for my strategic bets.",
+        review: "Let's review the overall strategy and set up the living strategy system.",
+      };
+
+      const welcomeMsg = welcomeMessages[currentPhase];
+      if (welcomeMsg && !isLoading && !isStreaming) {
+        // Small delay to let the UI settle after phase transition
+        setTimeout(() => {
+          void handleSendMessage(welcomeMsg);
+        }, 500);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPhase]);
 
   // ── Fetch messages for active conversation ──
   useEffect(() => {
@@ -222,6 +256,17 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
     }
   }, [conversation]);
 
+  // ── Handle research area selection from territory picker ──
+  const handleResearchAreaSelect = useCallback((territory: string, areaId: string, areaTitle: string) => {
+    if (isLoading || isStreaming) return;
+
+    // Send a message with the RESEARCH_CONTEXT marker that triggers the AI
+    // to emit a QuestionCard for the first question in this area.
+    // The marker is stripped from display by the Message component.
+    const message = `[RESEARCH_CONTEXT:${territory}:${areaId}:0] I'd like to explore the ${areaTitle} area in the ${territory} territory.`;
+    void handleSendMessage(message);
+  }, [isLoading, isStreaming]);
+
   // ── Send message handler ──
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading || isStreaming) return;
@@ -356,6 +401,15 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
       <div className="flex-shrink-0">
         <CoachContextAwareness conversation={conversation} />
       </div>
+      {/* Research Territory Picker — visible in research phase */}
+      {currentPhase === 'research' && (
+        <div className="flex-shrink-0">
+          <ResearchTerritoryPicker
+            conversationId={conversation.id}
+            onSelectArea={handleResearchAreaSelect}
+          />
+        </div>
+      )}
       {/* Proactive Coach Message */}
       {trigger && (
         <div className="flex-shrink-0">
@@ -382,7 +436,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
           />
         </div>
 
-        {/* What's Next Card - sticky at bottom of message area */}
+        {/* What's Next Card - collapsible sticky at bottom */}
         {whatsNextData && (
           <div className="flex-shrink-0">
             <WhatsNextCard

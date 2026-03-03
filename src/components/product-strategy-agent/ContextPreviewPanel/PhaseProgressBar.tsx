@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Lock } from 'lucide-react';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 
 const PHASES = [
@@ -12,31 +12,47 @@ const PHASES = [
   { id: 'review', label: 'Review', color: 'slate' },
 ] as const;
 
-const PHASE_DOT_COLORS: Record<string, { active: string; completed: string; inactive: string }> = {
+const PHASE_COLORS: Record<string, {
+  dot: string;
+  ring: string;
+  label: string;
+  line: string;
+  bg: string;
+}> = {
   emerald: {
-    active: 'bg-emerald-500',
-    completed: 'text-emerald-500',
-    inactive: 'bg-slate-300',
+    dot: 'bg-emerald-500',
+    ring: 'ring-emerald-200',
+    label: 'text-emerald-700',
+    line: 'bg-emerald-300',
+    bg: 'bg-emerald-50',
   },
   amber: {
-    active: 'bg-amber-500',
-    completed: 'text-amber-500',
-    inactive: 'bg-slate-300',
+    dot: 'bg-amber-500',
+    ring: 'ring-amber-200',
+    label: 'text-amber-700',
+    line: 'bg-amber-300',
+    bg: 'bg-amber-50',
   },
   purple: {
-    active: 'bg-purple-500',
-    completed: 'text-purple-500',
-    inactive: 'bg-slate-300',
+    dot: 'bg-purple-500',
+    ring: 'ring-purple-200',
+    label: 'text-purple-700',
+    line: 'bg-purple-300',
+    bg: 'bg-purple-50',
   },
   cyan: {
-    active: 'bg-cyan-500',
-    completed: 'text-cyan-500',
-    inactive: 'bg-slate-300',
+    dot: 'bg-cyan-500',
+    ring: 'ring-cyan-200',
+    label: 'text-cyan-700',
+    line: 'bg-cyan-300',
+    bg: 'bg-cyan-50',
   },
   slate: {
-    active: 'bg-slate-500',
-    completed: 'text-slate-500',
-    inactive: 'bg-slate-300',
+    dot: 'bg-slate-500',
+    ring: 'ring-slate-200',
+    label: 'text-slate-700',
+    line: 'bg-slate-300',
+    bg: 'bg-slate-50',
   },
 };
 
@@ -54,63 +70,85 @@ export function PhaseProgressBar() {
   const highestIndex = getPhaseIndex(highestPhaseReached);
 
   return (
-    <div className="flex-shrink-0 px-4 py-3 border-b border-slate-100">
-      <div className="flex items-center justify-between">
-        {PHASES.map((phase, i) => {
-          const colors = PHASE_DOT_COLORS[phase.color];
-          const isActive = phase.id === currentPhase;
-          const isCompleted = i < currentIndex;
-          const isReachable = i <= highestIndex;
+    <div className="flex-shrink-0 px-3 py-3 border-b border-slate-100 bg-white">
+      {/* Progress line background */}
+      <div className="relative">
+        <div className="flex items-start justify-between">
+          {PHASES.map((phase, i) => {
+            const colors = PHASE_COLORS[phase.color];
+            const isActive = phase.id === currentPhase;
+            const isCompleted = i < currentIndex;
+            const isReachable = i <= highestIndex;
+            const isLocked = !isReachable;
 
-          return (
-            <div key={phase.id} className="flex items-center">
-              {/* Phase dot */}
-              <button
-                onClick={() => {
-                  if (isReachable && !isActive) {
-                    void handlePhaseTransition(phase.id);
-                  }
-                }}
-                disabled={!isReachable || isActive}
-                className={`relative flex items-center justify-center transition-all duration-300 ${
-                  isReachable && !isActive ? 'cursor-pointer hover:scale-125' : ''
-                } ${!isReachable ? 'cursor-not-allowed opacity-50' : ''}`}
-                aria-label={`${phase.label} phase${isActive ? ' (current)' : ''}${isCompleted ? ' (completed)' : ''}`}
-                title={phase.label}
+            return (
+              <div
+                key={phase.id}
+                className="flex flex-col items-center relative"
+                style={{ flex: '1 1 0%' }}
               >
-                {isCompleted ? (
-                  <CheckCircle2
-                    className={`w-4 h-4 ${colors.completed}`}
-                  />
-                ) : (
+                {/* Connecting line (drawn before each dot except first) */}
+                {i > 0 && (
                   <div
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      isActive
-                        ? `${colors.active} animate-ring-pulse`
-                        : colors.inactive
+                    className={`absolute top-3 right-1/2 h-0.5 transition-all duration-300 ${
+                      i <= currentIndex
+                        ? PHASE_COLORS[PHASES[i - 1].color].line
+                        : 'bg-slate-200'
                     }`}
+                    style={{ width: '100%' }}
                   />
                 )}
 
-                {/* Label below for active phase */}
-                {isActive && (
-                  <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap">
+                {/* Phase dot + label */}
+                <button
+                  onClick={() => {
+                    if (isReachable && !isActive) {
+                      void handlePhaseTransition(phase.id);
+                    }
+                  }}
+                  disabled={isLocked || isActive}
+                  className={`relative z-10 flex flex-col items-center gap-1.5 transition-all duration-300 ${
+                    isReachable && !isActive ? 'cursor-pointer group' : ''
+                  } ${isLocked ? 'cursor-not-allowed' : ''}`}
+                  aria-label={`${phase.label} phase${isActive ? ' (current)' : ''}${isCompleted ? ' (completed)' : ''}${isLocked ? ' (locked)' : ''}`}
+                  title={isLocked ? `${phase.label} — Complete previous phases to unlock` : phase.label}
+                >
+                  {/* Dot */}
+                  <div className={`flex items-center justify-center transition-all duration-300 ${
+                    isActive
+                      ? `w-6 h-6 rounded-full ${colors.dot} ring-4 ${colors.ring} shadow-sm`
+                      : isCompleted
+                        ? 'w-6 h-6'
+                        : isReachable
+                          ? `w-5 h-5 rounded-full ${colors.dot} opacity-60 group-hover:opacity-100 group-hover:scale-110`
+                          : 'w-5 h-5 rounded-full bg-slate-200'
+                  }`}>
+                    {isCompleted ? (
+                      <CheckCircle2 className={`w-6 h-6 ${colors.label}`} />
+                    ) : isActive ? (
+                      <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+                    ) : isLocked ? (
+                      <Lock className="w-2.5 h-2.5 text-slate-400" />
+                    ) : null}
+                  </div>
+
+                  {/* Label — always visible */}
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap transition-colors duration-300 ${
+                    isActive
+                      ? colors.label
+                      : isCompleted
+                        ? 'text-slate-500'
+                        : isReachable
+                          ? 'text-slate-400 group-hover:text-slate-600'
+                          : 'text-slate-300'
+                  }`}>
                     {phase.label}
                   </span>
-                )}
-              </button>
-
-              {/* Connecting line */}
-              {i < PHASES.length - 1 && (
-                <div
-                  className={`w-4 h-0.5 mx-0.5 rounded-full transition-all duration-300 ${
-                    i < currentIndex ? 'bg-slate-300' : 'bg-slate-200'
-                  }`}
-                />
-              )}
-            </div>
-          );
-        })}
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

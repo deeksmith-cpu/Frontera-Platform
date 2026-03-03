@@ -90,7 +90,13 @@ export function Message({
     return parseInsightMarkers(message.content);
   }, [isAgent, message.content]);
 
-  const displayContent = isAgent ? cleanContent : message.content;
+  // Strip internal markers from user messages (e.g. [RESEARCH_CONTEXT:company:...])
+  const userContent = useMemo(() => {
+    if (isAgent) return message.content;
+    return message.content.replace(/\[RESEARCH_CONTEXT:\w+:\w+:\d+\]\s*/g, '').trim();
+  }, [isAgent, message.content]);
+
+  const displayContent = isAgent ? cleanContent : userContent;
 
   // Show follow-ups for assistant messages that are the last message
   const showFollowups = isAgent && isLastMessage && onSendFollowup;

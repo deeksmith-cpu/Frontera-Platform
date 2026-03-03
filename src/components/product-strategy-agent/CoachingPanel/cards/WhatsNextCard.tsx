@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   CheckCircle2,
   Circle,
@@ -7,6 +8,8 @@ import {
   ArrowRight,
   Sparkles,
   Target,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import type { WhatsNextCardData, WhatsNextRequirement, ReadinessState } from '@/types/coaching-cards';
 
@@ -94,6 +97,7 @@ function RequirementItem({ req }: { req: WhatsNextRequirement }) {
  * - Color transitions (amber → emerald when ready)
  */
 export function WhatsNextCard({ data, onNavigateToPhase }: WhatsNextCardProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const styles = READINESS_STYLES[data.readiness];
   const isReady = data.readiness === 'ready';
 
@@ -108,93 +112,114 @@ export function WhatsNextCard({ data, onNavigateToPhase }: WhatsNextCardProps) {
       className={`
         whats-next-card relative
         border-t-2 ${styles.container}
-        p-4 sm:p-5
         transition-all duration-500
+        ${isCollapsed ? 'px-4 py-2' : 'p-4 sm:p-5'}
       `}
     >
       {/* Ready celebration glow effect */}
-      {isReady && (
+      {isReady && !isCollapsed && (
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-200/0 via-emerald-200/30 to-emerald-200/0 animate-pulse pointer-events-none" />
       )}
 
       <div className="relative">
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-3">
+        {/* Header row — always visible, acts as collapse toggle */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="w-full flex items-center justify-between"
+        >
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isReady ? 'bg-emerald-100' : 'bg-amber-100'}`}>
+            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isReady ? 'bg-emerald-100' : 'bg-amber-100'}`}>
               {isReady ? (
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <Sparkles className="w-3 h-3 text-emerald-600" />
               ) : (
-                <Target className={`w-4 h-4 ${styles.icon}`} />
+                <Target className={`w-3 h-3 ${styles.icon}`} />
               )}
             </div>
-            <div>
+            <div className="text-left">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 What&apos;s Next
               </p>
-              <h4 className="text-sm font-bold text-[#1a1f3a]">
-                {data.nextMilestone}
-              </h4>
+              {isCollapsed && (
+                <span className="text-xs font-semibold text-[#1a1f3a]">
+                  {data.nextMilestone} — {data.progressPercentage}%
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Readiness badge */}
-          <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${styles.badge}`}>
-            {data.readiness === 'ready' ? 'Ready!' : data.readiness === 'almost_ready' ? 'Almost There' : 'In Progress'}
+          <div className="flex items-center gap-2">
+            {/* Readiness badge */}
+            <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${styles.badge}`}>
+              {data.readiness === 'ready' ? 'Ready!' : data.readiness === 'almost_ready' ? 'Almost' : `${data.progressPercentage}%`}
+            </div>
+            {isCollapsed ? (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            )}
           </div>
-        </div>
-
-        {/* Requirements checklist */}
-        <div className="space-y-2 mb-4">
-          {data.requirements.map((req) => (
-            <RequirementItem key={req.id} req={req} />
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-medium text-slate-500">Progress</span>
-            <span className="text-xs font-bold text-slate-700">{data.progressPercentage}%</span>
-          </div>
-          <div className={`h-2 rounded-full ${styles.progress} overflow-hidden`}>
-            <div
-              className={`h-full rounded-full ${styles.progressFill} transition-all duration-700 ease-out`}
-              style={{ width: `${data.progressPercentage}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Teaser text */}
-        <p className="text-xs text-slate-500 italic mb-4">
-          {data.teaserText}
-        </p>
-
-        {/* CTA button */}
-        <button
-          onClick={handleNavigate}
-          disabled={!isReady}
-          className={`
-            w-full flex items-center justify-center gap-2
-            px-5 py-3 rounded-xl
-            text-sm font-bold
-            transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-            ${styles.button} ${!isReady ? styles.buttonDisabled : ''}
-            ${isReady ? 'focus:ring-[#fbbf24]' : ''}
-          `}
-        >
-          {isReady ? (
-            <>
-              Begin {data.nextMilestone}
-              <ArrowRight className="w-4 h-4" />
-            </>
-          ) : (
-            <>
-              Complete requirements to continue
-            </>
-          )}
         </button>
+
+        {/* Expandable content */}
+        {!isCollapsed && (
+          <>
+            <h4 className="text-sm font-bold text-[#1a1f3a] mt-3 mb-3">
+              {data.nextMilestone}
+            </h4>
+
+            {/* Requirements checklist */}
+            <div className="space-y-2 mb-4">
+              {data.requirements.map((req) => (
+                <RequirementItem key={req.id} req={req} />
+              ))}
+            </div>
+
+            {/* Progress bar */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-medium text-slate-500">Progress</span>
+                <span className="text-xs font-bold text-slate-700">{data.progressPercentage}%</span>
+              </div>
+              <div className={`h-2 rounded-full ${styles.progress} overflow-hidden`}>
+                <div
+                  className={`h-full rounded-full ${styles.progressFill} transition-all duration-700 ease-out`}
+                  style={{ width: `${data.progressPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Teaser text */}
+            <p className="text-xs text-slate-500 italic mb-4">
+              {data.teaserText}
+            </p>
+
+            {/* CTA button */}
+            <button
+              onClick={handleNavigate}
+              disabled={!isReady}
+              className={`
+                w-full flex items-center justify-center gap-2
+                px-5 py-3 rounded-xl
+                text-sm font-bold
+                transition-all duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2
+                ${styles.button} ${!isReady ? styles.buttonDisabled : ''}
+                ${isReady ? 'focus:ring-[#fbbf24]' : ''}
+              `}
+            >
+              {isReady ? (
+                <>
+                  Begin {data.nextMilestone}
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  Complete requirements to continue
+                </>
+              )}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
