@@ -5,13 +5,11 @@ import { SessionHeader } from './SessionHeader';
 import { MessageStream } from './MessageStream';
 import { CoachingInput } from './CoachingInput';
 import { ProactiveCoachMessage } from './ProactiveCoachMessage';
-import { WhatsNextCard } from './cards';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
-import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 import type { ActiveResearchContext } from '@/types/research-context';
-import type { Phase, CardAction, ConfidenceLevel } from '@/types/coaching-cards';
+import type { CardAction, ConfidenceLevel } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -53,20 +51,6 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
   // Extract current phase from conversation
   const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
   const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
-
-  // What's Next progress tracking (sidepanel mode only)
-  const whatsNextData = useWhatsNextProgress(
-    mode === 'sidepanel' ? conversation?.id ?? null : null,
-    currentPhase as Phase
-  );
-
-  // Handle phase navigation from What's Next card
-  const handleNavigateToPhase = useCallback((phase: string) => {
-    // This would typically update the conversation's current_phase
-    // For now, we'll just log it - the actual navigation should be handled
-    // by the parent component or a context
-    console.log('Navigate to phase:', phase);
-  }, []);
 
   // Handle card actions from the message stream
   const handleCardAction = useCallback((action: CardAction) => {
@@ -485,15 +469,6 @@ export function CoachingPanel({ conversation, orgId, onClose, onCollapse, mode =
           />
         </div>
 
-        {/* What's Next Card - sticky at bottom of message area (sidepanel only) */}
-        {isSidepanel && whatsNextData && (
-          <div className="flex-shrink-0">
-            <WhatsNextCard
-              data={whatsNextData}
-              onNavigateToPhase={handleNavigateToPhase}
-            />
-          </div>
-        )}
       </div>
       <div className="flex-shrink-0">
         <CoachingInput

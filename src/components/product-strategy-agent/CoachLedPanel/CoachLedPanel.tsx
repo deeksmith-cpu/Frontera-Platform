@@ -5,15 +5,12 @@ import { SessionHeader } from '../CoachingPanel/SessionHeader';
 import { MessageStream } from '../CoachingPanel/MessageStream';
 import { CoachingInput } from '../CoachingPanel/CoachingInput';
 import { ProactiveCoachMessage } from '../CoachingPanel/ProactiveCoachMessage';
-import { WhatsNextCard } from '../CoachingPanel/cards';
 import { TerritoryNav } from './TerritoryNav';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 import { useProactiveCoach } from '@/hooks/useProactiveCoach';
-import { useWhatsNextProgress } from '@/hooks/useWhatsNextProgress';
 import type { Database } from '@/types/database';
 import type { PersonaId } from '@/lib/agents/strategy-coach/personas';
 import type { ActiveResearchContext } from '@/types/research-context';
-import type { Phase } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 type Message = Database['public']['Tables']['conversation_messages']['Row'];
@@ -58,12 +55,6 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
   // Extract current phase from conversation
   const frameworkState = conversation.framework_state as Record<string, unknown> | null;
   const currentPhase = (frameworkState?.currentPhase as string) || 'discovery';
-
-  // What's Next progress tracking (always enabled — CoachLedPanel is always sidepanel)
-  const whatsNextData = useWhatsNextProgress(
-    conversation.id,
-    currentPhase as Phase
-  );
 
   // Proactive coach triggers
   const territoryProgress = smartPromptsContext?.territoryProgress ?? {
@@ -440,15 +431,6 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
           />
         </div>
 
-        {/* What's Next Card - collapsible sticky at bottom */}
-        {whatsNextData && (
-          <div className="flex-shrink-0">
-            <WhatsNextCard
-              data={whatsNextData}
-              onNavigateToPhase={context.handlePhaseTransition}
-            />
-          </div>
-        )}
       </div>
       <div className="flex-shrink-0">
         <CoachingInput
