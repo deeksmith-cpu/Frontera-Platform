@@ -97,11 +97,12 @@ export function MessageStream({
 
       {parsedMessages.map(({ message, textContent, cards }, index) => (
         <div key={message.id} className="message-with-cards">
-          {/* Render cards first (above the message text) */}
+          {/* Render cards first (above the message text) — filter out question cards in discovery phase */}
           {cards.length > 0 && (
             <div className="cards-container flex flex-col gap-4 mb-4">
               {cards
                 .filter((card) => !dismissedCards.has(card.id))
+                .filter((card) => !(currentPhase === 'discovery' && card.type === 'question'))
                 .map((card) => (
                   <CardRenderer
                     key={card.id}

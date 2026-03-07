@@ -78,7 +78,7 @@ export function ExplanationCard({ data, onDismiss, onAction }: ExplanationCardPr
 
   if (isDismissed) return null;
 
-  const Icon = data.icon ? ICON_MAP[data.icon] : Compass;
+  const Icon = (data.icon && ICON_MAP[data.icon]) || Compass;
   const phase = data.phase || 'discovery';
   const styles = PHASE_STYLES[phase] || PHASE_STYLES.discovery;
   const phaseSteps = data.phaseSteps || DEFAULT_PHASE_STEPS;

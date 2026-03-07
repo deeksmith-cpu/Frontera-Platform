@@ -80,6 +80,41 @@ export function SessionHeader({
   // Get phase configuration with fallback
   const phase = PHASE_CONFIG[currentPhase] || PHASE_CONFIG.discovery;
 
+  // Compact header for sidepanel mode (new Option C layout)
+  if (isSidepanel) {
+    return (
+      <header className="coaching-header flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-100 bg-white">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Phase badge */}
+          <div className={`inline-flex items-center gap-1.5 text-[11px] py-1 px-2.5 rounded-full tracking-wide font-semibold ${phase.bgClass}`}>
+            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${phase.dotClass}`} />
+            <span className={phase.textClass}>{phase.label}</span>
+          </div>
+
+          {/* Persona Selector */}
+          {onPersonaChange && (
+            <PersonaSelector
+              currentPersona={currentPersona}
+              onSelect={onPersonaChange}
+              isLoading={isPersonaLoading}
+            />
+          )}
+        </div>
+
+        {onCollapse && (
+          <button
+            onClick={onCollapse}
+            className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all"
+            aria-label="Collapse coach panel"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+      </header>
+    );
+  }
+
+  // Full header for popup mode
   return (
     <header
       className={`coaching-header p-4 md:p-5 lg:p-6 border-b border-slate-100 bg-white ${
@@ -95,47 +130,23 @@ export function SessionHeader({
             {conversation.title || 'Strategic Context Analysis'}
           </h1>
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Phase-aware badge with dynamic colors */}
             <div className={`phase-indicator inline-flex items-center gap-2 text-xs py-1.5 px-3 rounded-full tracking-wide font-semibold ${phase.bgClass}`}>
               <span className={`phase-dot w-1.5 h-1.5 rounded-full animate-pulse ${phase.dotClass}`} />
               <span className={phase.textClass}>{phase.label}</span>
               <span className={`${phase.textClass} opacity-70`}>· {phase.sublabel}</span>
             </div>
-
-            {/* Persona Selector - only show in sidepanel mode */}
-            {isSidepanel && onPersonaChange && (
-              <PersonaSelector
-                currentPersona={currentPersona}
-                onSelect={onPersonaChange}
-                isLoading={isPersonaLoading}
-              />
-            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Collapse button - only show when in sidepanel mode */}
-          {isSidepanel && onCollapse && (
-            <button
-              onClick={onCollapse}
-              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all"
-              aria-label="Collapse coach panel"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          )}
-
-          {/* Close button - only show when in popup mode */}
-          {isPopup && onClose && (
-            <button
-              onClick={onClose}
-              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all"
-              aria-label="Close coach panel"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
-        </div>
+        {isPopup && onClose && (
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all"
+            aria-label="Close coach panel"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
     </header>
   );

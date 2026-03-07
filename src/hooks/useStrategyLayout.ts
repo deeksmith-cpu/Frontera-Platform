@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
 
 export type LayoutPanel = 'sidebar' | 'coach' | 'canvas';
 
@@ -25,6 +25,20 @@ interface UseStrategyLayoutReturn {
   closeOverlays: () => void;
   /** Toggle canvas panel visibility on desktop */
   toggleCanvas: () => void;
+  /** Whether focus mode is active (hides sidebar + canvas) */
+  isFocusMode: boolean;
+  /** Toggle focus mode */
+  toggleFocusMode: () => void;
+  /** Whether the coach drawer is open */
+  isCoachDrawerOpen: boolean;
+  /** Toggle coach drawer */
+  toggleCoachDrawer: () => void;
+  /** Set coach drawer open state */
+  setCoachDrawerOpen: (open: boolean) => void;
+  /** Whether the sidebar is temporarily expanded from icon-only on tablet */
+  isSidebarExpanded: boolean;
+  /** Toggle sidebar expansion on tablet */
+  toggleSidebarExpand: () => void;
 }
 
 function getBreakpoint(): 'mobile' | 'tablet' | 'desktop' {
@@ -47,6 +61,28 @@ export function useStrategyLayout(): UseStrategyLayoutReturn {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMobileCanvasOpen, setIsMobileCanvasOpen] = useState(false);
   const [isCanvasHidden, setIsCanvasHidden] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isCoachDrawerOpen, setIsCoachDrawerOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+
+  // Keyboard shortcut: Ctrl+Shift+F for focus mode, Escape to close drawers
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault();
+        setIsFocusMode(prev => !prev);
+      }
+      if (e.key === 'Escape') {
+        if (isCoachDrawerOpen) {
+          setIsCoachDrawerOpen(false);
+        } else if (isFocusMode) {
+          setIsFocusMode(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCoachDrawerOpen, isFocusMode]);
 
   useEffect(() => {
     const update = () => {
@@ -82,13 +118,29 @@ export function useStrategyLayout(): UseStrategyLayoutReturn {
     setIsCanvasHidden(prev => !prev);
   }, []);
 
+  const toggleFocusMode = useCallback(() => {
+    setIsFocusMode(prev => !prev);
+  }, []);
+
+  const toggleCoachDrawer = useCallback(() => {
+    setIsCoachDrawerOpen(prev => !prev);
+  }, []);
+
+  const setCoachDrawerOpenCb = useCallback((open: boolean) => {
+    setIsCoachDrawerOpen(open);
+  }, []);
+
+  const toggleSidebarExpand = useCallback(() => {
+    setIsSidebarExpanded(prev => !prev);
+  }, []);
+
   // Before mount, return consistent desktop defaults to match SSR
   const isSidebarOpen = isMounted
-    ? breakpoint === 'desktop' || breakpoint === 'tablet'
+    ? !isFocusMode && (breakpoint === 'desktop' || breakpoint === 'tablet')
     : true;
-  const isSidebarIconOnly = isMounted ? breakpoint === 'tablet' : false;
+  const isSidebarIconOnly = isMounted ? (breakpoint === 'tablet' && !isSidebarExpanded) : false;
   const isCanvasVisible = isMounted
-    ? breakpoint === 'desktop' && !isCanvasHidden
+    ? !isFocusMode && breakpoint === 'desktop' && !isCanvasHidden
     : true;
 
   return {
@@ -102,5 +154,12 @@ export function useStrategyLayout(): UseStrategyLayoutReturn {
     toggleMobileCanvas,
     closeOverlays,
     toggleCanvas,
+    isFocusMode: isMounted ? isFocusMode : false,
+    toggleFocusMode,
+    isCoachDrawerOpen: isMounted ? isCoachDrawerOpen : false,
+    toggleCoachDrawer,
+    setCoachDrawerOpen: setCoachDrawerOpenCb,
+    isSidebarExpanded: isMounted ? isSidebarExpanded : false,
+    toggleSidebarExpand,
   };
 }

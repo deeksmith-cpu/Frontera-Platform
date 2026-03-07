@@ -28,6 +28,10 @@ interface CoachingInputProps {
   onSendMessage: (content: string) => void;
   isDisabled: boolean;
   smartPromptsContext?: SmartPromptsContext;
+  onUpload?: () => void;
+  onUrlAdd?: () => void;
+  onAiResearch?: () => void;
+  showActionPills?: boolean;
 }
 
 // Generate smart prompts based on context
@@ -91,7 +95,7 @@ function getSmartPrompts(context?: SmartPromptsContext): SmartPrompt[] {
   return prompts.slice(0, 3); // Max 3 prompts
 }
 
-export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }: CoachingInputProps) {
+export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext, onUpload, onUrlAdd, onAiResearch, showActionPills = false }: CoachingInputProps) {
   const [value, setValue] = useState('');
   const [promptsExpanded, setPromptsExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -162,6 +166,39 @@ export function CoachingInput({ onSendMessage, isDisabled, smartPromptsContext }
                 </button>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Action pills — shown in discovery phase */}
+      {showActionPills && (
+        <div className="flex gap-2 mb-2">
+          {onUpload && (
+            <button
+              onClick={onUpload}
+              disabled={isDisabled}
+              className="text-[10px] px-2.5 py-1 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-40"
+            >
+              <span className="mr-1">&#128206;</span> Upload
+            </button>
+          )}
+          {onUrlAdd && (
+            <button
+              onClick={onUrlAdd}
+              disabled={isDisabled}
+              className="text-[10px] px-2.5 py-1 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-40"
+            >
+              <span className="mr-1">&#128279;</span> URL
+            </button>
+          )}
+          {onAiResearch && (
+            <button
+              onClick={onAiResearch}
+              disabled={isDisabled}
+              className="text-[10px] px-2.5 py-1 rounded-full border border-cyan-200 text-cyan-600 hover:bg-cyan-50 transition-colors disabled:opacity-40"
+            >
+              <span className="mr-1">&#129302;</span> AI Research
+            </button>
           )}
         </div>
       )}

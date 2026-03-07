@@ -6,19 +6,19 @@ import type { Territory } from '@/types/coaching-cards';
 // Research area definitions for each territory
 export const RESEARCH_AREAS = {
   company: [
-    { id: 'company_foundation', title: 'Company Foundation', questions: 3 },
-    { id: 'strategic_position', title: 'Strategic Position', questions: 3 },
-    { id: 'competitive_advantages', title: 'Competitive Advantages', questions: 3 },
+    { id: 'company_foundation', title: 'Company Foundation', questions: 4 },
+    { id: 'strategic_position', title: 'Strategic Position', questions: 4 },
+    { id: 'competitive_advantages', title: 'Competitive Advantages', questions: 4 },
   ],
   customer: [
-    { id: 'customer_segmentation', title: 'Customer Segmentation & Behaviors', questions: 3 },
-    { id: 'unmet_needs', title: 'Unmet Needs & Pain Points', questions: 3 },
-    { id: 'market_dynamics', title: 'Market Dynamics & Customer Evolution', questions: 3 },
+    { id: 'customer_segmentation', title: 'Customer Segmentation & Behaviors', questions: 4 },
+    { id: 'unmet_needs', title: 'Unmet Needs & Pain Points', questions: 4 },
+    { id: 'market_dynamics', title: 'Market Dynamics & Customer Evolution', questions: 4 },
   ],
   competitor: [
-    { id: 'direct_competitors', title: 'Direct Competitor Landscape', questions: 3 },
-    { id: 'substitute_threats', title: 'Substitute & Adjacent Threats', questions: 3 },
-    { id: 'market_forces', title: 'Market Forces & Dynamics', questions: 3 },
+    { id: 'direct_competitors', title: 'Direct Competitor Landscape', questions: 4 },
+    { id: 'substitute_threats', title: 'Substitute & Adjacent Threats', questions: 4 },
+    { id: 'market_forces', title: 'Market Forces & Dynamics', questions: 4 },
   ],
 } as const;
 
@@ -79,13 +79,20 @@ export function useResearchProgress(conversationId: string | null): {
   const [progress, setProgress] = useState<ResearchProgressData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchProgress = useCallback(async () => {
     if (!conversationId) return;
 
+    // Abort any previous in-flight request
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const response = await fetch(
-        `/api/product-strategy-agent-v2/territories?conversation_id=${conversationId}`
+        `/api/product-strategy-agent-v2/territories?conversation_id=${conversationId}`,
+        { signal: controller.signal }
       );
 
       if (!response.ok) {
@@ -188,6 +195,9 @@ export function useResearchProgress(conversationId: string | null): {
         overallProgress,
       });
     } catch (error) {
+      // Silently ignore abort errors (component unmount, re-render, or navigation)
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      if (error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.includes('abort'))) return;
       console.error('Error fetching research progress:', error);
     }
   }, [conversationId]);
@@ -205,9 +215,11 @@ export function useResearchProgress(conversationId: string | null): {
   // Initial fetch - use refresh which handles loading state
   useEffect(() => {
     if (conversationId) {
-      // Use void to explicitly mark as intentionally not awaiting
       void refresh();
     }
+    return () => {
+      abortControllerRef.current?.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
@@ -221,6 +233,7 @@ export function useResearchProgress(conversationId: string | null): {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
+      abortControllerRef.current?.abort();
     };
   }, [conversationId, fetchProgress]);
 

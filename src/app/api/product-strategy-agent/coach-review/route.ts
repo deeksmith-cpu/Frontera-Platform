@@ -5,8 +5,10 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { loadClientContext, formatClientContextForPrompt } from '@/lib/agents/strategy-coach/client-context';
 import { getPersonaSection } from '@/lib/agents/strategy-coach/personas';
+import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
 import { trackEvent } from '@/lib/analytics/posthog-server';
 import type { CoachReview, CoachChallenge, CoachEnhancement, ResourceLink } from '@/types/coaching-cards';
+import type { Territory } from '@/types/coaching-cards';
 
 /**
  * Coach Review API Endpoint
@@ -41,54 +43,6 @@ interface CoachReviewRequest {
   draft_answer: string;
 }
 
-// Research area questions for context
-const RESEARCH_AREA_QUESTIONS: Record<string, string[]> = {
-  company_foundation: [
-    "What are your company's core products/services and what customer problems do they solve?",
-    "What key differentiators set you apart from competitors?",
-    "What are your strategic priorities for the next 1-2 years?",
-  ],
-  strategic_position: [
-    "What is your current market position (leader, challenger, niche player)?",
-    "What are your most significant growth opportunities?",
-    "What internal capabilities drive your competitive advantage?",
-  ],
-  competitive_advantages: [
-    "What unique resources or capabilities do you have that competitors lack?",
-    "How sustainable are your competitive advantages?",
-    "What would be most difficult for competitors to replicate?",
-  ],
-  customer_segmentation: [
-    "Who are your primary customer segments and what defines them?",
-    "How do your customers' needs and behaviors differ across segments?",
-    "Which segments offer the highest growth potential?",
-  ],
-  unmet_needs: [
-    "What pain points do your customers struggle with that aren't fully addressed?",
-    "What workarounds or compromises do customers currently make?",
-    "What would an ideal solution look like from the customer's perspective?",
-  ],
-  market_dynamics: [
-    "How are customer expectations evolving in your market?",
-    "What external factors are changing customer behavior?",
-    "What emerging trends could disrupt customer needs?",
-  ],
-  direct_competitors: [
-    "Who are your primary competitors and how do they position themselves?",
-    "What are each competitor's key strengths and weaknesses?",
-    "How do competitors' strategies differ from yours?",
-  ],
-  substitute_threats: [
-    "What alternative solutions could customers use instead of your product?",
-    "What non-traditional competitors are emerging in adjacent spaces?",
-    "How might technology changes create new competitive threats?",
-  ],
-  market_forces: [
-    "What macro trends are shaping competitive dynamics in your market?",
-    "How are industry boundaries shifting or blurring?",
-    "What regulatory or economic factors impact competition?",
-  ],
-};
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -161,9 +115,9 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Conversation not found or unauthorized' }, { status: 404 });
     }
 
-    // 4. Get question text
-    const questions = RESEARCH_AREA_QUESTIONS[research_area] || [];
-    const questionText = questions[question_index] || 'This strategic question';
+    // 4. Get question text from single source of truth
+    const area = getResearchArea(territory as Territory, research_area);
+    const questionText = area?.questions[question_index]?.text || 'This strategic question';
 
     // 5. Gather context for AI
     const [clientContext, discoveryMaterials, territoryInsights] = await Promise.all([

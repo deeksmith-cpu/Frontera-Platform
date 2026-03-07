@@ -385,7 +385,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
   };
 
   return (
-    <aside className="coaching-panel bg-white flex flex-col h-full overflow-hidden animate-entrance animate-delay-150 border-r border-slate-200">
+    <aside className="coaching-panel bg-white flex flex-col h-full overflow-hidden animate-entrance animate-delay-150">
       <div className="flex-shrink-0">
         <SessionHeader
           conversation={conversation}
@@ -437,6 +437,7 @@ export function CoachLedPanel({ conversation, userId, orgId, activeResearchConte
           onSendMessage={handleSendMessage}
           isDisabled={isLoading || isStreaming}
           smartPromptsContext={smartPromptsContext}
+          showActionPills={currentPhase === 'discovery'}
         />
       </div>
     </aside>

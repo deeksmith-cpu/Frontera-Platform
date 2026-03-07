@@ -624,3 +624,23 @@ a:focus-visible {
 .animate-expand-slide {
   animation: expandSlide 0.3s ease-out both;
 }
+
+/* Confetti particle fall animation for CelebrationOverlay */
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(200px) rotate(180deg) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(420px) rotate(360deg) scale(0.4);
+  }
+}
+
+.animate-confetti-fall {
+  animation: confettiFall 1.5s ease-out both;
+}

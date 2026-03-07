@@ -9,7 +9,8 @@ import {
 } from 'react';
 import type { Database } from '@/types/database';
 import type { ActiveResearchContext } from '@/types/research-context';
-import type { CardAction, ConfidenceLevel } from '@/types/coaching-cards';
+import type { CardAction, ConfidenceLevel, Territory } from '@/types/coaching-cards';
+import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
 
@@ -17,10 +18,27 @@ type Conversation = Database['public']['Tables']['conversations']['Row'];
 // Context Value Interface
 // =============================================================================
 
+export interface PinnedQuestionState {
+  territory: string;
+  researchArea: string;
+  researchAreaTitle: string;
+  questionIndex: number;
+  totalQuestions: number;
+}
+
+export interface CelebrationState {
+  type: 'area_complete' | 'territory_complete' | 'phase_complete';
+  territory?: string;
+  areaTitle?: string;
+  xpAwarded: number;
+  microSynthesisPreview?: string;
+}
+
 export interface CoachJourneyContextValue {
   // Conversation state
   conversation: Conversation | null;
   currentPhase: string;
+  highestPhaseReached: string;
 
   // Research state
   activeResearchContext: ActiveResearchContext | null;
@@ -49,6 +67,18 @@ export interface CoachJourneyContextValue {
 
   // Research progress (optimistic updates)
   lastQuestionSubmitAt: number;
+
+  // Option C v2: Pinned question (research phase)
+  pinnedQuestion: PinnedQuestionState | null;
+  setPinnedQuestion: (q: PinnedQuestionState | null) => void;
+
+  // Option C v2: Orientation dismissed per phase
+  orientationDismissed: Record<string, boolean>;
+  dismissOrientation: (phase: string) => void;
+
+  // Option C v2: Celebration overlay
+  celebrationState: CelebrationState | null;
+  setCelebrationState: (state: CelebrationState | null) => void;
 }
 
 // =============================================================================
@@ -91,11 +121,27 @@ export function CoachJourneyProvider({
   >(null);
   const [lastQuestionSubmitAt, setLastQuestionSubmitAt] = useState(0);
 
+  // Option C v2 state
+  const [pinnedQuestion, setPinnedQuestion] = useState<PinnedQuestionState | null>(null);
+  const [orientationDismissed, setOrientationDismissed] = useState<Record<string, boolean>>({});
+  const [celebrationState, setCelebrationState] = useState<CelebrationState | null>(null);
+
   // Extract current phase from conversation
   const currentPhase = useMemo(() => {
     const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
     return (frameworkState?.currentPhase as string) || 'discovery';
   }, [conversation?.framework_state]);
+
+  // Extract highest phase reached
+  const highestPhaseReached = useMemo(() => {
+    const frameworkState = conversation?.framework_state as Record<string, unknown> | null;
+    return (frameworkState?.highestPhaseReached as string) || currentPhase;
+  }, [conversation?.framework_state, currentPhase]);
+
+  // Dismiss orientation for a phase
+  const dismissOrientation = useCallback((phase: string) => {
+    setOrientationDismissed(prev => ({ ...prev, [phase]: true }));
+  }, []);
 
   // --------------------------------------------------------------------------
   // Card Action Handler (wired — replaces console.log stubs)
@@ -194,7 +240,9 @@ export function CoachJourneyProvider({
       };
 
       const answeredCount = Object.keys(responses).filter(k => responses[k]?.trim()).length;
-      const status = answeredCount >= 3 ? 'mapped' : 'in_progress';
+      const areaData = getResearchArea(territory as Territory, researchArea);
+      const totalQuestions = areaData?.questions.length || 4;
+      const status = answeredCount >= totalQuestions ? 'mapped' : 'in_progress';
 
       const response = await fetch('/api/product-strategy-agent/territories', {
         method: 'POST',
@@ -265,6 +313,7 @@ export function CoachJourneyProvider({
   const value = useMemo<CoachJourneyContextValue>(() => ({
     conversation,
     currentPhase,
+    highestPhaseReached,
     activeResearchContext,
     setActiveResearchContext: onResearchContextChange,
     handleCardAction,
@@ -277,9 +326,16 @@ export function CoachJourneyProvider({
     handlePhaseTransition,
     handleConversationUpdate: onConversationUpdate,
     lastQuestionSubmitAt,
+    pinnedQuestion,
+    setPinnedQuestion,
+    orientationDismissed,
+    dismissOrientation,
+    celebrationState,
+    setCelebrationState,
   }), [
     conversation,
     currentPhase,
+    highestPhaseReached,
     activeResearchContext,
     onResearchContextChange,
     handleCardAction,
@@ -291,6 +347,10 @@ export function CoachJourneyProvider({
     handlePhaseTransition,
     onConversationUpdate,
     lastQuestionSubmitAt,
+    pinnedQuestion,
+    orientationDismissed,
+    dismissOrientation,
+    celebrationState,
   ]);
 
   return (
