@@ -17,6 +17,7 @@ import { RESEARCH_AREAS } from '@/hooks/useResearchProgress';
 import type { Database } from '@/types/database';
 import type { ActiveResearchContext } from '@/types/research-context';
 import type { ResearchProgressData } from '@/hooks/useResearchProgress';
+import type { GamificationState } from '@/hooks/useGamification';
 import type { ConfidenceLevel, Territory } from '@/types/coaching-cards';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
@@ -34,6 +35,7 @@ interface MainContentProps {
   onPhaseClick: (phase: string) => void;
   coachName?: string;
   coachPersonaId?: string | null;
+  gamification?: GamificationState;
   /** When set, user is viewing a different phase than the active one (e.g. clicked Discovery from Research) */
   viewingPhase?: string | null;
 }
@@ -51,6 +53,7 @@ export function MainContent({
   onPhaseClick,
   coachName: coachNameProp,
   coachPersonaId,
+  gamification,
   viewingPhase,
 }: MainContentProps) {
   const {
@@ -332,6 +335,7 @@ export function MainContent({
         currentPhase={displayPhase}
         highestPhaseReached={highestPhaseReached}
         onPhaseClick={onPhaseClick}
+        gamification={gamification}
       />
 
       {/* Main content area */}

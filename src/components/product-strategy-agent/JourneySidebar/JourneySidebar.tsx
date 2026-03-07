@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   Menu,
 } from 'lucide-react';
-import { XPBar } from '../Gamification/XPBar';
 import { AchievementBadge } from '../Gamification/AchievementBadge';
 import { getCoachAvatarPath, PERSONA_OPTIONS } from '@/lib/agents/strategy-coach/personas';
 import type { GamificationState } from '@/hooks/useGamification';
@@ -154,19 +153,6 @@ export function JourneySidebar({
           </p>
         )}
       </div>
-
-      {/* XP Bar */}
-      {!gamification.isLoading && (
-        <div className="px-4 py-3 border-b border-white/10">
-          <XPBar
-            level={gamification.level}
-            levelTitle={gamification.levelTitle}
-            currentXP={gamification.xpTotal}
-            nextLevelXP={gamification.xpForNextLevel}
-            streakDays={gamification.streakDays}
-          />
-        </div>
-      )}
 
       {/* Coach Persona */}
       <div className="px-4 py-3 border-b border-white/10">

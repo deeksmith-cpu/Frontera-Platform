@@ -269,6 +269,7 @@ export function ProductStrategyAgentInterface({
                 onPhaseClick={handlePhaseClick}
                 coachName={coachName}
                 coachPersonaId={coachPersonaId}
+                gamification={gamification}
                 viewingPhase={canvasViewPhase}
               />
             ) : (
