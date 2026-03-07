@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Building2, Users, Swords, ChevronDown, ChevronUp, CheckCircle2, Circle, Sparkles, ArrowRight } from 'lucide-react';
+import { Building2, Users, Swords, ChevronDown, ChevronUp, CheckCircle2, Circle, Sparkles } from 'lucide-react';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 
 interface TerritoryInsight {
@@ -86,7 +86,7 @@ function computeProgress(grouped: Record<string, TerritoryInsight[]>) {
 }
 
 export function ResearchPreview({ conversationId }: ResearchPreviewProps) {
-  const { lastQuestionSubmitAt, handlePhaseTransition } = useCoachJourney();
+  const { lastQuestionSubmitAt } = useCoachJourney();
   const [insights, setInsights] = useState<TerritoryInsight[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTerritory, setExpandedTerritory] = useState<string | null>(null);
@@ -413,19 +413,17 @@ export function ResearchPreview({ conversationId }: ResearchPreviewProps) {
         })}
       </div>
 
-      {/* ── Phase Transition CTA ── */}
-      {progress.readiness === 'ready' ? (
-        <button
-          onClick={() => void handlePhaseTransition('synthesis')}
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#fbbf24] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-[#f59e0b] focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2"
-        >
-          Begin Pattern Recognition
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      ) : (
+      {/* ── Phase Readiness Hint ── */}
+      {progress.readiness !== 'ready' && (
         <p className="text-xs text-amber-600 text-center py-2">
           Continue mapping territories to unlock synthesis...
         </p>
+      )}
+      {progress.readiness === 'ready' && (
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2">
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+          <span className="text-xs text-emerald-700 font-medium">Ready for synthesis</span>
+        </div>
       )}
     </div>
   );

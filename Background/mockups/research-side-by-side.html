@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research Phase — Side-by-Side Layout Mockup</title>
+<title>Research Phase — Responsive Layout Mockup</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -47,257 +47,302 @@
 
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #ecfeff 100%);
-    height: 100vh;
-    overflow: hidden;
+    background: #e2e8f0;
     color: var(--slate-900);
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   .font-code { font-family: 'JetBrains Mono', monospace; }
 
-  /* ── LAYOUT SHELL ──────────────────────────────────── */
-  .shell { display: flex; flex-direction: column; height: 100vh; }
+  /* ── VIEWPORT SWITCHER ─────────────────────────────── */
+  .viewport-switcher {
+    position: sticky; top: 0; z-index: 1000;
+    background: var(--navy);
+    border-bottom: 2px solid rgba(251, 191, 36, 0.3);
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px 24px; gap: 8px;
+  }
+  .viewport-switcher-label {
+    font-size: 11px; font-weight: 600; color: var(--slate-400);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-right: 12px;
+  }
+  .viewport-tab {
+    padding: 8px 20px; border-radius: 8px; border: none;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    color: var(--slate-400); background: rgba(255,255,255,0.05);
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  .viewport-tab:hover { background: rgba(255,255,255,0.1); color: var(--slate-300); }
+  .viewport-tab.active {
+    background: var(--gold); color: var(--navy);
+  }
+  .viewport-tab .size-hint {
+    font-size: 9px; opacity: 0.7; font-family: 'JetBrains Mono', monospace;
+  }
 
-  /* ── HEADER ────────────────────────────────────────── */
+  /* ── VIEWPORT FRAME ────────────────────────────────── */
+  .viewport-frame {
+    display: none;
+    margin: 24px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+    background: white;
+  }
+  .viewport-frame.active { display: block; }
+  .viewport-frame.desktop { width: 1440px; max-width: 100%; }
+  .viewport-frame.tablet { width: 1024px; max-width: 100%; }
+  .viewport-frame.mobile { width: 390px; max-width: 100%; margin-left: auto; margin-right: auto; }
+
+  .viewport-label {
+    background: var(--slate-50); border-bottom: 1px solid var(--slate-200);
+    padding: 8px 16px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--slate-500);
+  }
+  .viewport-label strong { color: var(--slate-700); }
+  .viewport-label .dims { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--slate-400); }
+
+  /* ── SHARED APP STYLES ─────────────────────────────── */
+  .shell { display: flex; flex-direction: column; height: 800px; }
+  .shell.mobile-shell { height: auto; min-height: 900px; }
+
+  /* Header */
   .header {
-    height: 56px;
+    height: 52px; flex-shrink: 0;
     background: linear-gradient(180deg, #1e2440, #151930);
     border-bottom: 2px solid rgba(251, 191, 36, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
   }
-  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
   .header-logo {
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 28px; height: 28px; border-radius: 7px;
     background: var(--gold); display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 16px; color: var(--navy);
+    font-weight: 700; font-size: 14px; color: var(--navy);
   }
-  .header-title { color: white; font-size: 14px; font-weight: 600; }
-  .header-breadcrumb { color: var(--slate-400); font-size: 11px; }
-  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-title { color: white; font-size: 13px; font-weight: 600; }
+  .header-breadcrumb { color: var(--slate-400); font-size: 10px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .xp-badge {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 5px;
     background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3);
-    border-radius: 20px; padding: 4px 12px;
-    font-size: 11px; font-weight: 600; color: var(--gold);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 10px; font-weight: 600; color: var(--gold);
   }
-  .xp-badge .font-code { font-size: 10px; }
   .focus-btn {
     background: var(--navy-light); color: var(--slate-400); border: none;
-    border-radius: 8px; padding: 6px 12px; font-size: 11px; cursor: pointer;
-    font-weight: 500;
+    border-radius: 7px; padding: 5px 10px; font-size: 10px; cursor: pointer; font-weight: 500;
   }
 
-  /* ── BODY ──────────────────────────────────────────── */
+  /* Body */
   .body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
 
-  /* ── SIDEBAR ───────────────────────────────────────── */
+  /* Sidebar */
   .sidebar {
-    width: 220px; flex-shrink: 0;
+    width: 200px; flex-shrink: 0;
     background: linear-gradient(180deg, #1e2440 0%, #151930 100%);
-    display: flex; flex-direction: column;
-    overflow-y: auto;
-    position: relative;
+    display: flex; flex-direction: column; overflow-y: auto; position: relative;
   }
   .sidebar::after {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q50 30 100 50 T200 50' fill='none' stroke='white' stroke-width='0.5' opacity='0.03'/%3E%3Cpath d='M0 100 Q50 80 100 100 T200 100' fill='none' stroke='white' stroke-width='0.5' opacity='0.03'/%3E%3Cpath d='M0 150 Q50 130 100 150 T200 150' fill='none' stroke='white' stroke-width='0.5' opacity='0.03'/%3E%3C/svg%3E") repeat;
   }
-  .sidebar-section { padding: 16px 14px; position: relative; z-index: 1; }
+  .sidebar-section { padding: 14px 12px; position: relative; z-index: 1; }
   .sidebar-section + .sidebar-section { border-top: 1px solid rgba(255,255,255,0.06); }
 
   .coach-card {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px; border-radius: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 8px; border-radius: 10px;
     background: rgba(251, 191, 36, 0.08);
     border: 1px solid rgba(251, 191, 36, 0.15);
     margin-bottom: 4px;
   }
-  .coach-avatar {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: var(--navy-light); display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
+  .coach-title-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; color: rgba(255,255,255,0.3);
   }
-  .coach-name { font-size: 12px; font-weight: 600; color: white; }
-  .coach-role { font-size: 10px; color: var(--slate-400); }
+  .coach-info-row { display: flex; align-items: center; gap: 8px; }
+  .coach-avatar {
+    width: 44px; height: 44px; border-radius: 10px;
+    overflow: hidden; flex-shrink: 0;
+    background: var(--navy-light);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transition: transform 0.3s;
+  }
+  .coach-avatar:hover { transform: scale(1.1); }
+  .coach-avatar img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .coach-name { font-size: 11px; font-weight: 600; color: white; }
+  .coach-role { font-size: 9px; color: var(--slate-400); }
 
   .phase-label {
     font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
-    font-weight: 600; color: var(--slate-400); margin-bottom: 8px;
+    font-weight: 600; color: var(--slate-400); margin-bottom: 6px;
   }
   .phase-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 8px; cursor: pointer;
     margin-bottom: 2px; transition: background 0.2s;
   }
   .phase-item:hover { background: rgba(255,255,255,0.04); }
   .phase-item.active { background: rgba(251, 191, 36, 0.1); }
   .phase-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
     border: 2px solid var(--slate-500);
   }
   .phase-dot.complete { background: var(--emerald-500); border-color: var(--emerald-500); }
   .phase-dot.active { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251,191,36,0.2); }
   .phase-dot.locked { border-color: var(--slate-600); }
-  .phase-text { font-size: 12px; color: var(--slate-300); font-weight: 500; }
+  .phase-text { font-size: 11px; color: var(--slate-300); font-weight: 500; }
   .phase-item.active .phase-text { color: white; font-weight: 600; }
 
-  .territory-group { margin-top: 8px; padding-left: 18px; }
+  .territory-group { margin-top: 6px; padding-left: 16px; }
   .territory-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 6px 10px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 8px; border-radius: 7px; cursor: pointer;
     margin-bottom: 1px; transition: background 0.2s;
   }
   .territory-item:hover { background: rgba(255,255,255,0.04); }
   .territory-item.active { background: rgba(99, 102, 241, 0.15); }
-  .territory-icon { font-size: 12px; width: 20px; text-align: center; }
-  .territory-text { font-size: 11px; color: var(--slate-400); font-weight: 500; }
+  .territory-icon { font-size: 11px; width: 18px; text-align: center; }
+  .territory-text { font-size: 10px; color: var(--slate-400); font-weight: 500; }
   .territory-item.active .territory-text { color: white; }
-  .territory-dots { margin-left: auto; display: flex; gap: 3px; }
-  .territory-dots span {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--slate-600);
-  }
-  .territory-dots span.filled { background: var(--emerald-500); }
-  .territory-dots span.partial { background: var(--gold); }
 
-  .gamification-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; padding: 12px;
-  }
-  .level-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .level-badge {
-    font-size: 10px; font-weight: 700; color: var(--gold);
-    background: rgba(251,191,36,0.12); border-radius: 6px; padding: 2px 8px;
-  }
-  .level-xp { font-size: 10px; color: var(--slate-500); }
-  .xp-bar { height: 4px; background: var(--slate-700); border-radius: 4px; overflow: hidden; }
-  .xp-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--gold), #f59e0b); border-radius: 4px; }
-
-  /* ── MAIN CONTENT ──────────────────────────────────── */
+  /* Main Content */
   .main {
     flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #ecfeff 100%);
   }
 
-  /* Phase Tab Bar */
+  /* Tab Bar */
   .tab-bar {
-    height: 44px; flex-shrink: 0; display: flex; align-items: center;
-    padding: 0 24px; gap: 4px;
+    height: 40px; flex-shrink: 0; display: flex; align-items: center;
+    padding: 0 16px; gap: 3px;
     background: white; border-bottom: 1px solid var(--slate-200);
   }
   .tab {
-    padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 7px; font-size: 11px; font-weight: 600;
     color: var(--slate-500); cursor: pointer; transition: all 0.2s;
     border: none; background: none;
   }
   .tab:hover { background: var(--slate-50); color: var(--slate-700); }
-  .tab.active {
-    background: var(--navy); color: white;
-  }
+  .tab.active { background: var(--navy); color: white; }
   .tab.complete { color: var(--emerald-600); }
 
-  /* ── SIDE-BY-SIDE CONTENT ──────────────────────────── */
+  /* Side-by-Side Content */
   .content-area {
     flex: 1; display: flex; overflow: hidden; min-height: 0;
-    padding: 16px 20px;
-    gap: 16px;
+    padding: 12px 16px; gap: 12px;
   }
 
-  /* LEFT: Question Card (60%) */
+  /* Stacked Content (mobile) */
+  .content-area.stacked {
+    flex-direction: column; overflow-y: auto;
+    padding: 12px;
+  }
+
+  /* Question Panel */
   .question-panel {
     flex: 1; min-width: 0;
     display: flex; flex-direction: column;
     background: white;
     border: 1px solid var(--slate-200);
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
+  .content-area.stacked .question-panel {
+    flex: none; min-height: auto;
+  }
 
   .question-title-bar {
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: linear-gradient(180deg, #0e7490, #0891b2);
     display: flex; align-items: center; justify-content: space-between;
   }
-  .question-title-bar-left { display: flex; align-items: center; gap: 8px; }
+  .question-title-bar-left { display: flex; align-items: center; gap: 7px; }
   .question-title-bar-icon {
-    width: 28px; height: 28px; border-radius: 8px;
+    width: 26px; height: 26px; border-radius: 7px;
     background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
+    font-size: 12px;
   }
-  .question-title-bar-text { font-size: 12px; font-weight: 600; color: white; }
+  .question-title-bar-text { font-size: 11px; font-weight: 600; color: white; }
   .question-title-bar-context { font-size: 9px; color: rgba(255,255,255,0.6); margin-left: 4px; }
   .question-title-bar-right { display: flex; align-items: center; gap: 8px; }
-  .question-title-bar-counter {
-    font-size: 10px; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;
+  .title-bar-level { display: flex; align-items: center; gap: 5px; }
+  .title-bar-level-badge {
+    font-size: 9px; font-weight: 700; color: var(--gold);
+    background: rgba(251,191,36,0.15); border-radius: 5px; padding: 2px 6px;
+    letter-spacing: 0.04em;
   }
-  .question-title-bar-progress {
-    display: flex; gap: 3px;
-  }
-  .question-title-bar-counter {
-    font-size: 10px; color: rgba(255,255,255,0.6); font-family: 'JetBrains Mono', monospace;
-  }
+  .title-bar-level-xp { font-size: 9px; color: rgba(255,255,255,0.5); }
+  .title-bar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+  .question-title-bar-progress { display: flex; gap: 3px; }
   .question-title-bar-progress span {
-    width: 16px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.25);
+    width: 14px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25);
   }
   .question-title-bar-progress span.filled { background: var(--emerald-500); }
   .question-title-bar-progress span.current { background: var(--gold); }
+  .question-title-bar-counter {
+    font-size: 10px; color: rgba(255,255,255,0.6); font-family: 'JetBrains Mono', monospace;
+  }
 
   .question-header {
-    padding: 16px 20px 12px;
+    padding: 12px 16px 10px;
     border-bottom: 1px solid var(--slate-100);
   }
   .question-breadcrumb {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--slate-400); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; color: var(--slate-400); margin-bottom: 8px;
   }
   .question-breadcrumb .territory { color: var(--indigo-700); font-weight: 500; }
   .question-breadcrumb .area { color: var(--slate-900); font-weight: 600; }
 
   .question-meta {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .area-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em;
     font-weight: 600; color: var(--indigo-700);
     background: var(--indigo-50); border: 1px solid var(--indigo-200);
-    border-radius: 20px; padding: 4px 10px;
+    border-radius: 20px; padding: 3px 9px;
   }
-  .area-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo-500); }
+  .area-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--indigo-500); }
   .question-counter { font-size: 10px; color: var(--slate-400); }
 
   .question-text {
-    font-size: 17px; font-weight: 600; color: var(--slate-900);
-    line-height: 1.4; margin-bottom: 0;
+    font-size: 15px; font-weight: 600; color: var(--slate-900);
+    line-height: 1.4;
   }
 
   .think-about {
-    margin: 12px 20px 0;
+    margin: 10px 16px 0;
     background: var(--slate-50); border: 1px dashed var(--slate-300);
-    border-radius: 8px; padding: 10px 12px;
-    font-size: 11px; color: var(--slate-500); line-height: 1.5;
+    border-radius: 7px; padding: 8px 10px;
+    font-size: 10px; color: var(--slate-500); line-height: 1.5;
   }
   .think-about strong { color: var(--slate-600); }
 
   .question-body {
-    flex: 1; padding: 12px 20px; overflow-y: auto; display: flex; flex-direction: column;
+    flex: 1; padding: 10px 16px; overflow-y: auto; display: flex; flex-direction: column;
   }
+  .content-area.stacked .question-body { flex: none; }
 
   .answer-textarea {
-    flex: 1; width: 100%; min-height: 140px; resize: none;
-    border: 1px solid var(--slate-200); border-radius: 10px;
-    padding: 14px; font-size: 13px; line-height: 1.7;
+    flex: 1; width: 100%; min-height: 120px; resize: none;
+    border: 1px solid var(--slate-200); border-radius: 9px;
+    padding: 12px; font-size: 12px; line-height: 1.7;
     color: var(--slate-900); background: white;
     font-family: system-ui, -apple-system, sans-serif;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
+  .content-area.stacked .answer-textarea { min-height: 100px; flex: none; }
   .answer-textarea:focus {
     outline: none; border-color: var(--gold);
     box-shadow: 0 0 0 3px rgba(251,191,36,0.15);
@@ -305,19 +350,18 @@
   .answer-textarea::placeholder { color: var(--slate-400); }
 
   .word-count {
-    text-align: right; font-size: 10px; color: var(--slate-400);
-    margin-top: 4px;
+    text-align: right; font-size: 9px; color: var(--slate-400); margin-top: 3px;
   }
 
-  .confidence-section { margin-top: 12px; }
+  .confidence-section { margin-top: 10px; }
   .confidence-label {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
-    font-weight: 600; color: var(--slate-500); margin-bottom: 6px;
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em;
+    font-weight: 600; color: var(--slate-500); margin-bottom: 5px;
   }
-  .confidence-row { display: flex; gap: 8px; }
+  .confidence-row { display: flex; gap: 6px; }
   .confidence-btn {
-    flex: 1; padding: 8px; border-radius: 8px;
-    font-size: 11px; font-weight: 600; border: 1px solid var(--slate-200);
+    flex: 1; padding: 6px; border-radius: 7px;
+    font-size: 10px; font-weight: 600; border: 1px solid var(--slate-200);
     background: var(--slate-50); color: var(--slate-600); cursor: pointer;
     transition: all 0.2s; text-align: center;
   }
@@ -326,68 +370,72 @@
   }
 
   .question-footer {
-    padding: 12px 20px;
+    padding: 10px 16px;
     border-top: 1px solid var(--slate-100);
     display: flex; align-items: center; justify-content: space-between;
   }
-  .nav-group { display: flex; align-items: center; gap: 6px; }
+  .nav-group { display: flex; align-items: center; gap: 5px; }
   .nav-btn {
-    width: 32px; height: 32px; border-radius: 8px; border: none;
+    width: 28px; height: 28px; border-radius: 7px; border: none;
     background: none; color: var(--slate-400); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; font-size: 16px;
+    transition: all 0.2s; font-size: 14px;
   }
   .nav-btn:hover { background: var(--slate-50); color: var(--slate-600); }
   .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .nav-counter { font-size: 10px; color: var(--slate-400); }
+  .nav-counter { font-size: 9px; color: var(--slate-400); }
 
-  .action-group { display: flex; align-items: center; gap: 8px; }
+  .action-group { display: flex; align-items: center; gap: 6px; }
   .saved-indicator {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 11px; color: var(--emerald-600); font-weight: 500;
+    display: flex; align-items: center; gap: 3px;
+    font-size: 10px; color: var(--emerald-600); font-weight: 500;
   }
   .submit-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 18px; border-radius: 8px; border: none;
+    display: flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: 7px; border: none;
     background: var(--navy); color: white;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s;
+    font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;
   }
-  .submit-btn:hover { background: var(--navy-light); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .submit-btn:hover { background: var(--navy-light); }
 
-  /* RIGHT: Coach Panel (40%) */
+  /* Coach Panel */
   .coach-panel {
     flex: 1; min-width: 0;
     display: flex; flex-direction: column;
     background: white;
     border: 1px solid var(--slate-200);
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
+  .content-area.stacked .coach-panel {
+    flex: none; min-height: 400px;
+  }
 
   .coach-panel-header {
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: linear-gradient(180deg, #1e2440, #151930);
     display: flex; align-items: center; justify-content: space-between;
   }
-  .coach-panel-header-left { display: flex; align-items: center; gap: 8px; }
+  .coach-panel-header-left { display: flex; align-items: center; gap: 7px; }
   .coach-panel-avatar {
-    width: 28px; height: 28px; border-radius: 8px;
-    background: var(--navy-light); display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--navy-light); overflow: hidden; flex-shrink: 0;
   }
-  .coach-panel-name { font-size: 12px; font-weight: 600; color: white; }
+  .coach-panel-avatar img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .coach-panel-name { font-size: 11px; font-weight: 600; color: white; }
   .coach-panel-context { font-size: 9px; color: var(--slate-400); margin-left: 4px; }
 
   .coach-mode-tabs {
-    display: flex; padding: 8px 12px; gap: 4px;
+    display: flex; padding: 6px 10px; gap: 3px;
     background: var(--slate-50); border-bottom: 1px solid var(--slate-100);
   }
   .mode-tab {
-    flex: 1; padding: 7px 8px; border-radius: 8px; border: none;
-    font-size: 11px; font-weight: 600; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
+    flex: 1; padding: 6px 6px; border-radius: 7px; border: none;
+    font-size: 10px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
     background: none; color: var(--slate-500); transition: all 0.2s;
   }
   .mode-tab:hover { background: white; color: var(--slate-700); }
@@ -395,72 +443,59 @@
     background: white; color: var(--navy);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-  .mode-tab .icon { font-size: 13px; }
+  .mode-tab .icon { font-size: 12px; }
 
-  .coach-content {
-    flex: 1; overflow-y: auto; padding: 0;
-  }
+  .coach-content { flex: 1; overflow-y: auto; padding: 0; }
 
   /* Suggestion card */
   .suggestion-card {
     border-left: 4px solid var(--gold);
     background: rgba(251, 191, 36, 0.04);
-    padding: 14px 16px;
+    padding: 12px 14px;
   }
   .suggestion-badge {
     display: inline-flex; font-size: 9px; text-transform: uppercase;
     letter-spacing: 0.06em; font-weight: 600;
     color: #b8860b; background: rgba(251,191,36,0.12);
-    border-radius: 20px; padding: 3px 8px; margin-bottom: 8px;
+    border-radius: 20px; padding: 2px 7px; margin-bottom: 6px;
   }
   .suggestion-text {
-    font-size: 13px; color: var(--slate-700); line-height: 1.65;
-    margin-bottom: 10px;
+    font-size: 12px; color: var(--slate-700); line-height: 1.65; margin-bottom: 8px;
   }
-
   .key-points-card {
     background: rgba(255,255,255,0.8); border: 1px solid rgba(251,191,36,0.15);
-    border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+    border-radius: 9px; padding: 8px 10px; margin-bottom: 6px;
   }
   .key-points-card ul { list-style: none; padding: 0; }
   .key-points-card li {
-    display: flex; gap: 6px; font-size: 12px; color: var(--slate-700);
-    line-height: 1.5; margin-bottom: 6px;
+    display: flex; gap: 5px; font-size: 11px; color: var(--slate-700);
+    line-height: 1.5; margin-bottom: 5px;
   }
   .key-points-card li:last-child { margin-bottom: 0; }
-  .key-points-card .check { color: var(--gold); flex-shrink: 0; font-size: 13px; }
-
-  .sources-hint {
-    font-size: 10px; color: var(--slate-500); margin-top: 6px;
-  }
+  .key-points-card .check { color: var(--gold); flex-shrink: 0; font-size: 12px; }
+  .sources-hint { font-size: 9px; color: var(--slate-500); margin-top: 4px; }
   .sources-hint strong { font-weight: 600; }
 
   .insert-actions {
-    display: flex; gap: 6px; padding: 8px 16px;
+    display: flex; gap: 5px; padding: 6px 14px;
     border-bottom: 1px solid var(--slate-100);
   }
   .insert-btn {
-    display: flex; align-items: center; gap: 5px;
-    padding: 6px 12px; border-radius: 8px; border: none;
-    font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+    padding: 5px 10px; border-radius: 7px; border: none;
+    font-size: 9px; font-weight: 600; cursor: pointer; transition: all 0.2s;
   }
-  .insert-btn.primary {
-    background: var(--gold); color: var(--navy);
-  }
+  .insert-btn.primary { background: var(--gold); color: var(--navy); }
   .insert-btn.primary:hover { background: var(--gold-hover); }
   .insert-btn.secondary {
-    background: white; color: var(--slate-600);
-    border: 1px solid var(--slate-200);
+    background: white; color: var(--slate-600); border: 1px solid var(--slate-200);
   }
   .insert-btn.secondary:hover { background: var(--slate-50); }
 
   /* Quick replies */
-  .quick-replies {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 10px 16px;
-  }
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 14px; }
   .quick-pill {
-    font-size: 10px; font-weight: 500; padding: 5px 10px;
+    font-size: 9px; font-weight: 500; padding: 4px 9px;
     border-radius: 20px; border: 1px solid var(--indigo-200);
     background: var(--indigo-50); color: var(--indigo-600);
     cursor: pointer; transition: all 0.2s;
@@ -468,503 +503,713 @@
   .quick-pill:hover { background: var(--indigo-100); }
 
   /* Chat area */
-  .chat-area { padding: 10px 16px; }
+  .chat-area { padding: 8px 14px; }
   .chat-bubble {
-    max-width: 88%; border-radius: 12px; padding: 10px 14px;
-    font-size: 12px; line-height: 1.6; margin-bottom: 8px;
+    max-width: 88%; border-radius: 10px; padding: 8px 12px;
+    font-size: 11px; line-height: 1.6; margin-bottom: 6px;
   }
   .chat-bubble.user {
     margin-left: auto; background: var(--navy); color: white;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 3px;
   }
   .chat-bubble.assistant {
     background: var(--slate-50); color: var(--slate-700);
-    border: 1px solid var(--slate-100); border-bottom-left-radius: 4px;
+    border: 1px solid var(--slate-100); border-bottom-left-radius: 3px;
   }
 
-  .coach-input-bar {
-    flex-shrink: 0; padding: 10px 12px;
-    border-top: 1px solid var(--slate-100); background: var(--slate-50);
-    display: flex; align-items: center; gap: 8px;
+  /* Coach chat input */
+  .coach-chat-input-area {
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--slate-100);
   }
-  .coach-input {
-    flex: 1; padding: 8px 12px; border: 1px solid var(--slate-200);
-    border-radius: 8px; background: white; font-size: 12px;
-    color: var(--slate-900); font-family: inherit;
-    transition: border-color 0.2s;
+  .coach-chat-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em;
+    font-weight: 600; color: var(--slate-400); margin-bottom: 6px;
   }
-  .coach-input:focus {
-    outline: none; border-color: var(--gold);
-    box-shadow: 0 0 0 2px rgba(251,191,36,0.12);
+  .coach-chat-input-wrap { position: relative; }
+  .coach-chat-textarea {
+    width: 100%; min-height: 70px; resize: vertical;
+    border: 1px solid var(--slate-200); border-radius: 9px;
+    padding: 10px 40px 10px 12px; font-size: 11px; line-height: 1.6;
+    color: var(--slate-900); background: var(--slate-50);
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   }
-  .coach-input::placeholder { color: var(--slate-400); }
-  .send-btn {
-    width: 32px; height: 32px; border-radius: 8px;
+  .coach-chat-textarea:focus {
+    outline: none; border-color: var(--gold); background: white;
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.12);
+  }
+  .coach-chat-textarea::placeholder { color: var(--slate-400); }
+  .send-btn-float {
+    position: absolute; right: 7px; bottom: 7px;
+    width: 28px; height: 28px; border-radius: 7px;
     background: var(--gold); border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    color: var(--navy); font-size: 14px; transition: background 0.2s;
+    color: var(--navy); font-size: 12px; transition: background 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   }
-  .send-btn:hover { background: var(--gold-hover); }
+  .send-btn-float:hover { background: var(--gold-hover); }
 
-  /* ── RIGHT CANVAS ──────────────────────────────────── */
+  /* Canvas */
   .canvas {
-    width: 260px; flex-shrink: 0;
+    width: 240px; flex-shrink: 0;
     background: white;
     border-left: 1px solid var(--slate-200);
     border-top: 2px solid rgba(34, 211, 238, 0.25);
-    display: flex; flex-direction: column;
-    overflow-y: auto;
+    display: flex; flex-direction: column; overflow-y: auto;
   }
   .canvas-header {
-    padding: 12px 14px;
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(8px);
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--slate-100);
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 1;
   }
   .canvas-title {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
     font-weight: 600; color: var(--slate-500);
   }
   .canvas-phase-badge {
-    font-size: 9px; font-weight: 600; text-transform: uppercase;
+    font-size: 8px; font-weight: 600; text-transform: uppercase;
     color: var(--gold); background: rgba(251,191,36,0.1);
-    border-radius: 6px; padding: 2px 8px;
+    border-radius: 5px; padding: 2px 7px;
   }
-
-  .canvas-body { padding: 12px 14px; }
+  .canvas-body { padding: 10px 12px; }
 
   .progress-ring {
     width: 100%; display: flex; flex-direction: column; align-items: center;
-    padding: 16px 0; margin-bottom: 16px;
+    padding: 12px 0; margin-bottom: 12px;
   }
-  .ring-svg { width: 100px; height: 100px; margin-bottom: 8px; }
+  .ring-svg { width: 90px; height: 90px; margin-bottom: 6px; }
   .ring-track { fill: none; stroke: var(--slate-100); stroke-width: 8; }
   .ring-fill { fill: none; stroke: var(--gold); stroke-width: 8; stroke-linecap: round; }
   .ring-text { font-size: 20px; font-weight: 700; fill: var(--navy); }
   .ring-label { font-size: 10px; fill: var(--slate-500); }
-  .progress-label { font-size: 11px; font-weight: 600; color: var(--slate-700); }
+  .progress-label { font-size: 10px; font-weight: 600; color: var(--slate-700); }
 
   .territory-progress-card {
     background: var(--slate-50); border: 1px solid var(--slate-100);
-    border-radius: 12px; padding: 12px; margin-bottom: 10px;
+    border-radius: 10px; padding: 10px; margin-bottom: 8px;
   }
-  .tp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .tp-title { font-size: 11px; font-weight: 600; color: var(--slate-700); }
-  .tp-count { font-size: 10px; color: var(--slate-400); }
-  .tp-bar { height: 4px; background: var(--slate-200); border-radius: 4px; overflow: hidden; }
-  .tp-fill { height: 100%; border-radius: 4px; }
-  .tp-areas { margin-top: 8px; }
+  .tp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .tp-title { font-size: 10px; font-weight: 600; color: var(--slate-700); }
+  .tp-count { font-size: 9px; color: var(--slate-400); }
+  .tp-bar { height: 3px; background: var(--slate-200); border-radius: 3px; overflow: hidden; }
+  .tp-fill { height: 100%; border-radius: 3px; }
+  .tp-areas { margin-top: 6px; }
   .tp-area {
-    display: flex; align-items: center; gap: 6px;
-    padding: 4px 0; font-size: 10px; color: var(--slate-600);
+    display: flex; align-items: center; gap: 5px;
+    padding: 3px 0; font-size: 9px; color: var(--slate-600);
   }
   .tp-area-dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 5px; height: 5px; border-radius: 50%;
     border: 1.5px solid var(--slate-300);
   }
   .tp-area-dot.complete { background: var(--emerald-500); border-color: var(--emerald-500); }
   .tp-area-dot.in-progress { background: var(--gold); border-color: var(--gold); }
   .tp-area-dot.current { border-color: var(--indigo-500); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
   .tp-area-name { flex: 1; }
-  .tp-area-status { font-size: 9px; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; }
+  .tp-area-status { font-size: 8px; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.04em; }
 
-  /* ── ANNOTATION OVERLAY ────────────────────────────── */
-  .annotation {
-    position: fixed; z-index: 100;
-    background: var(--navy); color: white;
-    font-size: 11px; font-weight: 500; line-height: 1.5;
-    padding: 8px 14px; border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    max-width: 220px;
-    pointer-events: none;
+  /* ── MOBILE OVERRIDES ──────────────────────────────── */
+  .mobile-shell .header-breadcrumb { display: none; }
+  .mobile-shell .sidebar { display: none; }
+  .mobile-shell .canvas { display: none; }
+  .mobile-shell .tab-bar { padding: 0 8px; overflow-x: auto; }
+  .mobile-shell .tab { font-size: 10px; padding: 5px 8px; white-space: nowrap; }
+  .mobile-shell .question-title-bar { flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+  .mobile-shell .question-title-bar-right { width: 100%; justify-content: flex-end; }
+  .mobile-shell .title-bar-level { display: none; }
+  .mobile-shell .title-bar-divider { display: none; }
+  .mobile-shell .question-header { padding: 10px 12px 8px; }
+  .mobile-shell .question-text { font-size: 14px; }
+  .mobile-shell .think-about { margin: 8px 12px 0; }
+  .mobile-shell .question-body { padding: 8px 12px; }
+  .mobile-shell .question-footer { padding: 8px 12px; }
+  .mobile-shell .submit-btn { font-size: 10px; padding: 6px 10px; }
+
+  /* Bottom tab for mobile — shows canvas summary */
+  .mobile-progress-bar {
+    display: none; flex-shrink: 0;
+    background: white; border-top: 1px solid var(--slate-200);
+    padding: 8px 12px;
   }
-  .annotation::after {
-    content: ''; position: absolute;
-    width: 8px; height: 8px; background: var(--navy);
-    transform: rotate(45deg);
+  .mobile-shell .mobile-progress-bar { display: flex; align-items: center; gap: 10px; }
+  .mobile-progress-label { font-size: 10px; font-weight: 600; color: var(--slate-700); }
+  .mobile-progress-track {
+    flex: 1; height: 4px; background: var(--slate-200); border-radius: 4px; overflow: hidden;
   }
-  .annotation.arrow-left::after { left: -4px; top: 50%; margin-top: -4px; }
-  .annotation.arrow-right::after { right: -4px; top: 50%; margin-top: -4px; }
-  .annotation.arrow-top::after { top: -4px; left: 50%; margin-left: -4px; }
-  .annotation .highlight { color: var(--gold); font-weight: 700; }
+  .mobile-progress-fill {
+    height: 100%; width: 24%; background: var(--gold); border-radius: 4px;
+  }
+  .mobile-progress-pct { font-size: 10px; font-weight: 600; color: var(--navy); }
+
+  /* ── TABLET OVERRIDES ──────────────────────────────── */
+  .tablet-shell .sidebar { width: 180px; }
+  .tablet-shell .canvas { display: none; }
 
   /* Design label */
   .design-label {
     position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
     z-index: 200;
     background: var(--navy); color: white;
-    font-size: 12px; font-weight: 600; padding: 10px 24px;
-    border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600; padding: 8px 20px;
+    border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    display: flex; align-items: center; gap: 8px;
   }
   .design-label .badge {
     background: var(--gold); color: var(--navy);
-    font-size: 9px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.06em; padding: 2px 8px; border-radius: 6px;
+    font-size: 8px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 7px; border-radius: 5px;
   }
 </style>
 </head>
 <body>
 
-<div class="shell">
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-left">
-      <div class="header-logo">F</div>
-      <span class="header-title">Frontera</span>
-      <span class="header-breadcrumb">Strategy Coach &rsaquo; Research &rsaquo; Company Territory</span>
-    </div>
-    <div class="header-right">
-      <div class="xp-badge">
-        <span>&#9733;</span>
-        <span class="font-code">Level 3</span>
-        <span>&middot;</span>
-        <span class="font-code">1,240 XP</span>
+<!-- VIEWPORT SWITCHER -->
+<div class="viewport-switcher">
+  <span class="viewport-switcher-label">Preview</span>
+  <button class="viewport-tab active" onclick="switchViewport('desktop', this)">
+    &#128187; Desktop <span class="size-hint">1440px</span>
+  </button>
+  <button class="viewport-tab" onclick="switchViewport('tablet', this)">
+    &#128241; Tablet <span class="size-hint">1024px</span>
+  </button>
+  <button class="viewport-tab" onclick="switchViewport('mobile', this)">
+    &#128242; Mobile <span class="size-hint">390px</span>
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- DESKTOP VIEWPORT                                    -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="viewport-frame desktop active" id="vp-desktop">
+  <div class="viewport-label">
+    <span><strong>Desktop / Laptop</strong> &mdash; Side-by-side layout with full sidebar + canvas</span>
+    <span class="dims">1440 &times; 800</span>
+  </div>
+  <div class="shell">
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo">F</div>
+        <span class="header-title">Frontera</span>
+        <span class="header-breadcrumb">Strategy Coach &rsaquo; Research &rsaquo; Company Territory</span>
       </div>
-      <button class="focus-btn">Focus Mode</button>
-    </div>
-  </header>
-
-  <div class="body">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-section">
-        <div class="coach-card">
-          <div class="coach-avatar">&#10024;</div>
-          <div>
-            <div class="coach-name">Coach Richard</div>
-            <div class="coach-role">Transformation Pragmatist</div>
-          </div>
+      <div class="header-right">
+        <div class="xp-badge">
+          <span>&#9733;</span>
+          <span class="font-code">Level 3</span>
+          <span>&middot;</span>
+          <span class="font-code">1,240 XP</span>
         </div>
+        <button class="focus-btn">Focus Mode</button>
       </div>
-
-      <div class="sidebar-section">
-        <div class="phase-label">Journey Phases</div>
-        <div class="phase-item">
-          <div class="phase-dot complete"></div>
-          <span class="phase-text">Discovery</span>
-        </div>
-        <div class="phase-item active">
-          <div class="phase-dot active"></div>
-          <span class="phase-text">Research</span>
-        </div>
-
-        <div class="territory-group">
-          <div class="territory-item active">
-            <span class="territory-icon">&#127970;</span>
-            <span class="territory-text">Company</span>
-            <div class="territory-dots">
-              <span class="filled"></span>
-              <span class="partial"></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="territory-item">
-            <span class="territory-icon">&#128101;</span>
-            <span class="territory-text">Customer</span>
-            <div class="territory-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="territory-item">
-            <span class="territory-icon">&#9876;</span>
-            <span class="territory-text">Market</span>
-            <div class="territory-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="phase-item" style="margin-top: 4px;">
-          <div class="phase-dot locked"></div>
-          <span class="phase-text">Synthesis</span>
-        </div>
-        <div class="phase-item">
-          <div class="phase-dot locked"></div>
-          <span class="phase-text">Strategic Bets</span>
-        </div>
-      </div>
-
-      <div class="sidebar-section" style="margin-top: auto;">
-        <div class="gamification-card">
-          <div class="level-row">
-            <span class="level-badge">LVL 3</span>
-            <span class="level-xp font-code">1,240 / 2,000 XP</span>
-          </div>
-          <div class="xp-bar"><div class="xp-fill" style="width: 62%;"></div></div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <div class="main">
-      <!-- Tab Bar -->
-      <div class="tab-bar">
-        <button class="tab complete">Discovery</button>
-        <button class="tab active">Research</button>
-        <button class="tab">Synthesis</button>
-        <button class="tab">Strategic Bets</button>
-      </div>
-
-      <!-- Side-by-Side Content -->
-      <div class="content-area">
-
-        <!-- LEFT: Question Card -->
-        <div class="question-panel">
-          <!-- Title Bar (matches Coach panel) -->
-          <div class="question-title-bar">
-            <div class="question-title-bar-left">
-              <div class="question-title-bar-icon">&#127970;</div>
-              <span class="question-title-bar-text">Strategic Research</span>
-              <span class="question-title-bar-context">&middot; Company &gt; Strategic Position</span>
-            </div>
-            <div class="question-title-bar-right">
-              <div class="question-title-bar-progress">
-                <span class="filled"></span>
-                <span class="current"></span>
-                <span></span>
-                <span></span>
+    </header>
+    <div class="body">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="coach-card">
+            <div class="coach-title-label">The Transformation Pragmatist</div>
+            <div class="coach-info-row">
+              <div class="coach-avatar"><img src="../Avatars/Fin.png" alt="Coach Fin"></div>
+              <div>
+                <div class="coach-name">Coach Fin</div>
               </div>
-              <span class="question-title-bar-counter">Q1 of 4</span>
             </div>
           </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="phase-label">Journey Phases</div>
+          <div class="phase-item"><div class="phase-dot complete"></div><span class="phase-text">Discovery</span></div>
+          <div class="phase-item active"><div class="phase-dot active"></div><span class="phase-text">Research</span></div>
+          <div class="territory-group">
+            <div class="territory-item active"><span class="territory-icon">&#127970;</span><span class="territory-text">Company</span></div>
+            <div class="territory-item"><span class="territory-icon">&#128101;</span><span class="territory-text">Customer</span></div>
+            <div class="territory-item"><span class="territory-icon">&#9876;</span><span class="territory-text">Market</span></div>
+          </div>
+          <div class="phase-item" style="margin-top: 4px;"><div class="phase-dot locked"></div><span class="phase-text">Synthesis</span></div>
+          <div class="phase-item"><div class="phase-dot locked"></div><span class="phase-text">Strategic Bets</span></div>
+        </div>
+      </aside>
 
-          <div class="question-header">
-            <div class="question-breadcrumb">
-              <span>Research</span>
-              <span>&rsaquo;</span>
-              <span class="territory">Company</span>
-              <span>&rsaquo;</span>
-              <span class="area">Strategic Position</span>
-            </div>
-            <div class="question-meta">
-              <div class="area-badge">
-                <span class="dot"></span>
-                Strategic Position
+      <!-- MAIN -->
+      <div class="main">
+        <div class="tab-bar">
+          <button class="tab complete">Discovery</button>
+          <button class="tab active">Research</button>
+          <button class="tab">Synthesis</button>
+          <button class="tab">Strategic Bets</button>
+        </div>
+        <div class="content-area">
+          <!-- Question Panel -->
+          <div class="question-panel">
+            <div class="question-title-bar">
+              <div class="question-title-bar-left">
+                <div class="question-title-bar-icon">&#127970;</div>
+                <span class="question-title-bar-text">Strategic Research</span>
+                <span class="question-title-bar-context">&middot; Company &gt; Strategic Position</span>
               </div>
-              <span class="question-counter font-code">Q1 of 4</span>
+              <div class="question-title-bar-right">
+                <div class="title-bar-level">
+                  <span class="title-bar-level-badge">LVL 3</span>
+                  <span class="title-bar-level-xp font-code">1,240 XP</span>
+                </div>
+                <div class="title-bar-divider"></div>
+                <div class="question-title-bar-progress">
+                  <span class="filled"></span><span class="current"></span><span></span><span></span>
+                </div>
+                <span class="question-title-bar-counter">Q1 of 4</span>
+              </div>
             </div>
-            <h2 class="question-text">What is the current composition and skill distribution of your team?</h2>
-          </div>
-
-          <div class="think-about">
-            <strong>Think about:</strong> What team, technology, and funding realities will enable or constrain your strategy execution?
-          </div>
-
-          <div class="question-body">
-            <textarea class="answer-textarea" placeholder="Share your thinking here... Be as specific as possible with examples, data, and context.">We have hired a new CTO, Head of Product, Head of Engineering, Head of Data and Head of Design within the last 18 months. Our engineering team consists of approximately 120 developers across platform, front-end, and back-office systems.
+            <div class="question-header">
+              <div class="question-breadcrumb">
+                <span>Research</span><span>&rsaquo;</span>
+                <span class="territory">Company</span><span>&rsaquo;</span>
+                <span class="area">Strategic Position</span>
+              </div>
+              <div class="question-meta">
+                <div class="area-badge"><span class="dot"></span>Strategic Position</div>
+                <span class="question-counter font-code">Q1 of 4</span>
+              </div>
+              <h2 class="question-text">What is the current composition and skill distribution of your team?</h2>
+            </div>
+            <div class="think-about">
+              <strong>Think about:</strong> What team, technology, and funding realities will enable or constrain your strategy execution?
+            </div>
+            <div class="question-body">
+              <textarea class="answer-textarea" placeholder="Share your thinking here...">We have hired a new CTO, Head of Product, Head of Engineering, Head of Data and Head of Design within the last 18 months. Our engineering team consists of approximately 120 developers across platform, front-end, and back-office systems.
 
 Current skill distribution is weighted toward legacy Java/Oracle systems (~60%) with growing investment in modern cloud-native capabilities (Azure, React, APIs). Key gap: we lack dedicated product strategists and have limited data science capacity relative to our AI ambitions.</textarea>
-            <div class="word-count font-code">87 words</div>
-
-            <div class="confidence-section">
-              <div class="confidence-label">Confidence Level</div>
-              <div class="confidence-row">
-                <button class="confidence-btn">Data</button>
-                <button class="confidence-btn selected">Experience</button>
-                <button class="confidence-btn">Guess</button>
+              <div class="word-count font-code">87 words</div>
+              <div class="confidence-section">
+                <div class="confidence-label">Confidence Level</div>
+                <div class="confidence-row">
+                  <button class="confidence-btn">Data</button>
+                  <button class="confidence-btn selected">Experience</button>
+                  <button class="confidence-btn">Guess</button>
+                </div>
+              </div>
+            </div>
+            <div class="question-footer">
+              <div class="nav-group">
+                <button class="nav-btn" disabled>&lsaquo;</button>
+                <span class="nav-counter font-code">1 of 4</span>
+                <button class="nav-btn">&rsaquo;</button>
+              </div>
+              <div class="action-group">
+                <span class="saved-indicator">&#10003; Saved</span>
+                <button class="submit-btn"><span>&#128190;</span> Update Answer</button>
               </div>
             </div>
           </div>
 
-          <div class="question-footer">
-            <div class="nav-group">
-              <button class="nav-btn" disabled>&lsaquo;</button>
-              <span class="nav-counter font-code">1 of 4</span>
-              <button class="nav-btn">&rsaquo;</button>
+          <!-- Coach Panel -->
+          <div class="coach-panel">
+            <div class="coach-panel-header">
+              <div class="coach-panel-header-left">
+                <div class="coach-panel-avatar"><img src="../Avatars/Fin.png" alt="Coach Fin"></div>
+                <span class="coach-panel-name">Coach Fin</span>
+                <span class="coach-panel-context">&middot; Company &gt; Strategic Position</span>
+              </div>
             </div>
-            <div class="action-group">
-              <span class="saved-indicator">&#10003; Saved</span>
-              <button class="submit-btn">
-                <span>&#128190;</span>
-                Update Answer
-              </button>
+            <div class="coach-mode-tabs">
+              <button class="mode-tab active"><span class="icon">&#10024;</span> Suggest</button>
+              <button class="mode-tab"><span class="icon">&#9889;</span> Challenge</button>
+              <button class="mode-tab"><span class="icon">&#128172;</span> Chat</button>
+            </div>
+            <div class="coach-content">
+              <div class="suggestion-card">
+                <div class="suggestion-badge">Coach Suggestion</div>
+                <p class="suggestion-text">Your leadership refresh is a strong signal of transformation commitment. With 5 C-suite hires in 18 months, Amplifi has the executive firepower to drive change &mdash; but the 60/40 legacy-to-modern skill split reveals the execution risk.</p>
+                <div class="key-points-card">
+                  <ul>
+                    <li><span class="check">&#10003;</span><span>Quantify the <strong>legacy-to-modern ratio</strong> by team: what % of the 120 engineers are actively building on Azure/React vs. maintaining Java/Oracle?</span></li>
+                    <li><span class="check">&#10003;</span><span>Map the <strong>data science gap</strong> against your AI-powered wealth platform ambitions &mdash; how many ML engineers do you need by H2 2026?</span></li>
+                    <li><span class="check">&#10003;</span><span>Consider a <strong>skill migration programme</strong> to retrain Java developers on cloud-native, reducing hiring dependency while retaining domain expertise.</span></li>
+                  </ul>
+                </div>
+                <div class="sources-hint"><strong>Sources:</strong> Aberdeen Amplifi product brief, WealthTech industry benchmarks</div>
+              </div>
+              <div class="insert-actions">
+                <button class="insert-btn primary">&#128203; Use This</button>
+                <button class="insert-btn secondary">&#43; Append</button>
+              </div>
+              <div class="quick-replies">
+                <button class="quick-pill">Challenge me on this</button>
+                <button class="quick-pill">Give me an example</button>
+                <button class="quick-pill">How do I find data?</button>
+              </div>
+              <div class="coach-chat-input-area">
+                <div class="coach-chat-label">Chat with Coach</div>
+                <div class="coach-chat-input-wrap">
+                  <textarea class="coach-chat-textarea" placeholder="Ask Coach Fin about this question, request examples, or explore your thinking..."></textarea>
+                  <button class="send-btn-float">&#9654;</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- RIGHT: Coach Panel -->
-        <div class="coach-panel">
-          <div class="coach-panel-header">
-            <div class="coach-panel-header-left">
-              <div class="coach-panel-avatar">&#10024;</div>
-              <span class="coach-panel-name">Coach Richard</span>
-              <span class="coach-panel-context">&middot; Company &gt; Strategic Position</span>
+      <!-- CANVAS -->
+      <aside class="canvas">
+        <div class="canvas-header">
+          <span class="canvas-title">Strategy Canvas</span>
+          <span class="canvas-phase-badge">Research</span>
+        </div>
+        <div class="canvas-body">
+          <div class="progress-ring">
+            <svg class="ring-svg" viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="50" />
+              <circle class="ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="240" transform="rotate(-90 60 60)" />
+              <text class="ring-text" x="60" y="58" text-anchor="middle">24%</text>
+              <text class="ring-label" x="60" y="74" text-anchor="middle">complete</text>
+            </svg>
+            <span class="progress-label">Terrain Mapping Progress</span>
+          </div>
+          <div class="territory-progress-card">
+            <div class="tp-header"><span class="tp-title">&#127970; Company</span><span class="tp-count font-code">1/3 areas</span></div>
+            <div class="tp-bar"><div class="tp-fill" style="width: 44%; background: var(--indigo-500);"></div></div>
+            <div class="tp-areas">
+              <div class="tp-area"><span class="tp-area-dot complete"></span><span class="tp-area-name">Company Foundation</span><span class="tp-area-status">mapped</span></div>
+              <div class="tp-area"><span class="tp-area-dot current"></span><span class="tp-area-name" style="font-weight:600; color: var(--slate-900);">Strategic Position</span><span class="tp-area-status" style="color: var(--indigo-600);">1/4</span></div>
+              <div class="tp-area"><span class="tp-area-dot"></span><span class="tp-area-name">Competitive Advantages</span><span class="tp-area-status">unexplored</span></div>
             </div>
           </div>
-
-          <!-- Mode Tabs -->
-          <div class="coach-mode-tabs">
-            <button class="mode-tab active">
-              <span class="icon">&#10024;</span> Suggest
-            </button>
-            <button class="mode-tab">
-              <span class="icon">&#9889;</span> Challenge
-            </button>
-            <button class="mode-tab">
-              <span class="icon">&#128172;</span> Chat
-            </button>
+          <div class="territory-progress-card">
+            <div class="tp-header"><span class="tp-title">&#128101; Customer</span><span class="tp-count font-code">0/3 areas</span></div>
+            <div class="tp-bar"><div class="tp-fill" style="width: 0%; background: var(--cyan-600);"></div></div>
           </div>
-
-          <!-- Coach Content -->
-          <div class="coach-content">
-            <!-- Suggestion Card -->
-            <div class="suggestion-card">
-              <div class="suggestion-badge">Coach Suggestion</div>
-              <p class="suggestion-text">
-                Your leadership refresh is a strong signal of transformation commitment. With 5 C-suite hires in 18 months, Amplifi has the executive firepower to drive change &mdash; but the 60/40 legacy-to-modern skill split reveals the execution risk.
-              </p>
-              <div class="key-points-card">
-                <ul>
-                  <li>
-                    <span class="check">&#10003;</span>
-                    <span>Quantify the <strong>legacy-to-modern ratio</strong> by team: what % of the 120 engineers are actively building on Azure/React vs. maintaining Java/Oracle?</span>
-                  </li>
-                  <li>
-                    <span class="check">&#10003;</span>
-                    <span>Map the <strong>data science gap</strong> against your AI-powered wealth platform ambitions &mdash; how many ML engineers do you need by H2 2026?</span>
-                  </li>
-                  <li>
-                    <span class="check">&#10003;</span>
-                    <span>Consider a <strong>skill migration programme</strong> to retrain Java developers on cloud-native, reducing hiring dependency while retaining domain expertise.</span>
-                  </li>
-                </ul>
-              </div>
-              <div class="sources-hint">
-                <strong>Sources:</strong> Aberdeen Amplifi product brief, WealthTech industry benchmarks
-              </div>
-            </div>
-
-            <!-- Insert actions -->
-            <div class="insert-actions">
-              <button class="insert-btn primary">
-                &#128203; Use This
-              </button>
-              <button class="insert-btn secondary">
-                &#43; Append
-              </button>
-            </div>
-
-            <!-- Quick replies -->
-            <div class="quick-replies">
-              <button class="quick-pill">Challenge me on this</button>
-              <button class="quick-pill">Give me an example</button>
-              <button class="quick-pill">How do I find data?</button>
-            </div>
-
-            <!-- Follow-up chat messages -->
-            <div class="chat-area">
-              <!-- empty for now — messages appear here after quick replies -->
-            </div>
-          </div>
-
-          <!-- Chat Input -->
-          <div class="coach-input-bar">
-            <input class="coach-input" type="text" placeholder="Ask coach about this question..." />
-            <button class="send-btn">&#9654;</button>
+          <div class="territory-progress-card">
+            <div class="tp-header"><span class="tp-title">&#9876; Market Context</span><span class="tp-count font-code">0/3 areas</span></div>
+            <div class="tp-bar"><div class="tp-fill" style="width: 0%; background: #7c3aed;"></div></div>
           </div>
         </div>
+      </aside>
+    </div>
+  </div>
+</div>
 
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TABLET VIEWPORT                                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="viewport-frame tablet" id="vp-tablet">
+  <div class="viewport-label">
+    <span><strong>Tablet</strong> &mdash; Side-by-side layout, no canvas panel, compact sidebar</span>
+    <span class="dims">1024 &times; 768</span>
+  </div>
+  <div class="shell tablet-shell">
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo">F</div>
+        <span class="header-title">Frontera</span>
+        <span class="header-breadcrumb">Strategy Coach &rsaquo; Research</span>
+      </div>
+      <div class="header-right">
+        <div class="xp-badge">
+          <span>&#9733;</span>
+          <span class="font-code">LVL 3</span>
+          <span>&middot;</span>
+          <span class="font-code">1,240 XP</span>
+        </div>
+      </div>
+    </header>
+    <div class="body">
+      <!-- SIDEBAR (narrower) -->
+      <aside class="sidebar" style="width: 180px;">
+        <div class="sidebar-section">
+          <div class="coach-card">
+            <div class="coach-title-label">The Transformation Pragmatist</div>
+            <div class="coach-info-row">
+              <div class="coach-avatar" style="width: 36px; height: 36px;"><img src="../Avatars/Fin.png" alt="Coach Fin"></div>
+              <div>
+                <div class="coach-name">Coach Fin</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="phase-label">Phases</div>
+          <div class="phase-item"><div class="phase-dot complete"></div><span class="phase-text">Discovery</span></div>
+          <div class="phase-item active"><div class="phase-dot active"></div><span class="phase-text">Research</span></div>
+          <div class="territory-group">
+            <div class="territory-item active"><span class="territory-icon">&#127970;</span><span class="territory-text">Company</span></div>
+            <div class="territory-item"><span class="territory-icon">&#128101;</span><span class="territory-text">Customer</span></div>
+            <div class="territory-item"><span class="territory-icon">&#9876;</span><span class="territory-text">Market</span></div>
+          </div>
+          <div class="phase-item" style="margin-top: 4px;"><div class="phase-dot locked"></div><span class="phase-text">Synthesis</span></div>
+          <div class="phase-item"><div class="phase-dot locked"></div><span class="phase-text">Strategic Bets</span></div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main">
+        <div class="tab-bar">
+          <button class="tab complete">Discovery</button>
+          <button class="tab active">Research</button>
+          <button class="tab">Synthesis</button>
+          <button class="tab">Strategic Bets</button>
+        </div>
+        <div class="content-area">
+          <!-- Question Panel -->
+          <div class="question-panel">
+            <div class="question-title-bar">
+              <div class="question-title-bar-left">
+                <div class="question-title-bar-icon">&#127970;</div>
+                <span class="question-title-bar-text">Strategic Research</span>
+              </div>
+              <div class="question-title-bar-right">
+                <div class="title-bar-level">
+                  <span class="title-bar-level-badge">LVL 3</span>
+                </div>
+                <div class="title-bar-divider"></div>
+                <div class="question-title-bar-progress">
+                  <span class="filled"></span><span class="current"></span><span></span><span></span>
+                </div>
+                <span class="question-title-bar-counter">Q1/4</span>
+              </div>
+            </div>
+            <div class="question-header">
+              <div class="question-breadcrumb">
+                <span>Research</span><span>&rsaquo;</span>
+                <span class="territory">Company</span><span>&rsaquo;</span>
+                <span class="area">Strategic Position</span>
+              </div>
+              <h2 class="question-text">What is the current composition and skill distribution of your team?</h2>
+            </div>
+            <div class="think-about">
+              <strong>Think about:</strong> What team, technology, and funding realities will enable or constrain your strategy execution?
+            </div>
+            <div class="question-body">
+              <textarea class="answer-textarea" placeholder="Share your thinking here...">We have hired a new CTO, Head of Product, Head of Engineering, Head of Data and Head of Design within the last 18 months. Our engineering team consists of approximately 120 developers across platform, front-end, and back-office systems.</textarea>
+              <div class="word-count font-code">87 words</div>
+              <div class="confidence-section">
+                <div class="confidence-label">Confidence Level</div>
+                <div class="confidence-row">
+                  <button class="confidence-btn">Data</button>
+                  <button class="confidence-btn selected">Experience</button>
+                  <button class="confidence-btn">Guess</button>
+                </div>
+              </div>
+            </div>
+            <div class="question-footer">
+              <div class="nav-group">
+                <button class="nav-btn" disabled>&lsaquo;</button>
+                <span class="nav-counter font-code">1 of 4</span>
+                <button class="nav-btn">&rsaquo;</button>
+              </div>
+              <div class="action-group">
+                <span class="saved-indicator">&#10003; Saved</span>
+                <button class="submit-btn"><span>&#128190;</span> Update</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coach Panel -->
+          <div class="coach-panel">
+            <div class="coach-panel-header">
+              <div class="coach-panel-header-left">
+                <div class="coach-panel-avatar"><img src="../Avatars/Fin.png" alt="Coach Fin"></div>
+                <span class="coach-panel-name">Coach Fin</span>
+              </div>
+            </div>
+            <div class="coach-mode-tabs">
+              <button class="mode-tab active"><span class="icon">&#10024;</span> Suggest</button>
+              <button class="mode-tab"><span class="icon">&#9889;</span> Challenge</button>
+              <button class="mode-tab"><span class="icon">&#128172;</span> Chat</button>
+            </div>
+            <div class="coach-content">
+              <div class="suggestion-card">
+                <div class="suggestion-badge">Coach Suggestion</div>
+                <p class="suggestion-text">Your leadership refresh is a strong signal of transformation commitment. The 60/40 legacy-to-modern skill split reveals the execution risk.</p>
+                <div class="key-points-card">
+                  <ul>
+                    <li><span class="check">&#10003;</span><span>Quantify the <strong>legacy-to-modern ratio</strong> by team</span></li>
+                    <li><span class="check">&#10003;</span><span>Map the <strong>data science gap</strong> against AI ambitions</span></li>
+                    <li><span class="check">&#10003;</span><span>Consider a <strong>skill migration programme</strong> to retrain Java developers</span></li>
+                  </ul>
+                </div>
+                <div class="sources-hint"><strong>Sources:</strong> Product brief, WealthTech benchmarks</div>
+              </div>
+              <div class="insert-actions">
+                <button class="insert-btn primary">&#128203; Use This</button>
+                <button class="insert-btn secondary">&#43; Append</button>
+              </div>
+              <div class="quick-replies">
+                <button class="quick-pill">Challenge me</button>
+                <button class="quick-pill">Example</button>
+                <button class="quick-pill">Find data?</button>
+              </div>
+              <div class="coach-chat-input-area">
+                <div class="coach-chat-label">Chat with Coach</div>
+                <div class="coach-chat-input-wrap">
+                  <textarea class="coach-chat-textarea" placeholder="Ask Coach Fin..."></textarea>
+                  <button class="send-btn-float">&#9654;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- RIGHT CANVAS -->
-    <aside class="canvas">
-      <div class="canvas-header">
-        <span class="canvas-title">Strategy Canvas</span>
-        <span class="canvas-phase-badge">Research</span>
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MOBILE VIEWPORT                                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="viewport-frame mobile" id="vp-mobile">
+  <div class="viewport-label">
+    <span><strong>Mobile</strong> &mdash; Stacked layout, question above coach</span>
+    <span class="dims">390 &times; 844</span>
+  </div>
+  <div class="shell mobile-shell">
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo" style="width: 26px; height: 26px; font-size: 13px;">F</div>
+        <span class="header-title" style="font-size: 12px;">Frontera</span>
       </div>
-      <div class="canvas-body">
-        <!-- Progress Ring -->
-        <div class="progress-ring">
-          <svg class="ring-svg" viewBox="0 0 120 120">
-            <circle class="ring-track" cx="60" cy="60" r="50" />
-            <circle class="ring-fill" cx="60" cy="60" r="50"
-              stroke-dasharray="314"
-              stroke-dashoffset="240"
-              transform="rotate(-90 60 60)" />
-            <text class="ring-text" x="60" y="58" text-anchor="middle">24%</text>
-            <text class="ring-label" x="60" y="74" text-anchor="middle">complete</text>
-          </svg>
-          <span class="progress-label">Terrain Mapping Progress</span>
+      <div class="header-right">
+        <div class="xp-badge" style="font-size: 9px; padding: 2px 8px;">
+          <span>&#9733;</span>
+          <span class="font-code">LVL 3</span>
         </div>
-
-        <!-- Company Territory -->
-        <div class="territory-progress-card">
-          <div class="tp-header">
-            <span class="tp-title">&#127970; Company</span>
-            <span class="tp-count font-code">1/3 areas</span>
-          </div>
-          <div class="tp-bar"><div class="tp-fill" style="width: 44%; background: var(--indigo-500);"></div></div>
-          <div class="tp-areas">
-            <div class="tp-area">
-              <span class="tp-area-dot complete"></span>
-              <span class="tp-area-name">Company Foundation</span>
-              <span class="tp-area-status">mapped</span>
-            </div>
-            <div class="tp-area">
-              <span class="tp-area-dot current"></span>
-              <span class="tp-area-name" style="font-weight:600; color: var(--slate-900);">Strategic Position</span>
-              <span class="tp-area-status" style="color: var(--indigo-600);">1/4</span>
-            </div>
-            <div class="tp-area">
-              <span class="tp-area-dot"></span>
-              <span class="tp-area-name">Competitive Advantages</span>
-              <span class="tp-area-status">unexplored</span>
-            </div>
-          </div>
+        <button style="background: var(--navy-light); color: white; border: none; border-radius: 6px; padding: 5px 8px; font-size: 9px; cursor: pointer;">&#9776;</button>
+      </div>
+    </header>
+    <div class="body" style="flex-direction: column;">
+      <!-- MAIN -->
+      <div class="main" style="flex: 1; overflow-y: auto;">
+        <div class="tab-bar" style="padding: 0 8px; overflow-x: auto;">
+          <button class="tab complete" style="font-size: 10px; padding: 5px 8px;">Discovery</button>
+          <button class="tab active" style="font-size: 10px; padding: 5px 8px;">Research</button>
+          <button class="tab" style="font-size: 10px; padding: 5px 8px;">Synthesis</button>
+          <button class="tab" style="font-size: 10px; padding: 5px 8px;">Bets</button>
         </div>
+        <div class="content-area stacked">
+          <!-- Question Panel (stacked, full width) -->
+          <div class="question-panel">
+            <div class="question-title-bar" style="padding: 7px 10px;">
+              <div class="question-title-bar-left">
+                <div class="question-title-bar-icon" style="width: 22px; height: 22px; font-size: 10px;">&#127970;</div>
+                <span class="question-title-bar-text" style="font-size: 10px;">Research</span>
+              </div>
+              <div class="question-title-bar-right">
+                <div class="question-title-bar-progress">
+                  <span class="filled"></span><span class="current"></span><span></span><span></span>
+                </div>
+                <span class="question-title-bar-counter" style="font-size: 9px;">Q1/4</span>
+              </div>
+            </div>
+            <div class="question-header" style="padding: 10px 12px 8px;">
+              <div class="question-breadcrumb">
+                <span class="territory">Company</span><span>&rsaquo;</span>
+                <span class="area">Strategic Position</span>
+              </div>
+              <h2 class="question-text" style="font-size: 14px;">What is the current composition and skill distribution of your team?</h2>
+            </div>
+            <div class="think-about" style="margin: 6px 12px 0; padding: 6px 8px; font-size: 9px;">
+              <strong>Think about:</strong> Team, technology, and funding realities.
+            </div>
+            <div class="question-body" style="padding: 8px 12px;">
+              <textarea class="answer-textarea" style="min-height: 100px; font-size: 12px; padding: 10px;" placeholder="Share your thinking here...">We have hired a new CTO, Head of Product, Head of Engineering, Head of Data and Head of Design within the last 18 months. Our engineering team consists of approximately 120 developers.</textarea>
+              <div class="word-count font-code">30 words</div>
+              <div class="confidence-section">
+                <div class="confidence-label">Confidence</div>
+                <div class="confidence-row">
+                  <button class="confidence-btn" style="padding: 5px; font-size: 9px;">Data</button>
+                  <button class="confidence-btn selected" style="padding: 5px; font-size: 9px;">Experience</button>
+                  <button class="confidence-btn" style="padding: 5px; font-size: 9px;">Guess</button>
+                </div>
+              </div>
+            </div>
+            <div class="question-footer" style="padding: 8px 12px;">
+              <div class="nav-group">
+                <button class="nav-btn" disabled style="width: 26px; height: 26px; font-size: 12px;">&lsaquo;</button>
+                <span class="nav-counter font-code" style="font-size: 8px;">1/4</span>
+                <button class="nav-btn" style="width: 26px; height: 26px; font-size: 12px;">&rsaquo;</button>
+              </div>
+              <div class="action-group">
+                <button class="submit-btn" style="font-size: 10px; padding: 6px 10px;">&#128190; Save</button>
+              </div>
+            </div>
+          </div>
 
-        <!-- Customer Territory -->
-        <div class="territory-progress-card">
-          <div class="tp-header">
-            <span class="tp-title">&#128101; Customer</span>
-            <span class="tp-count font-code">0/3 areas</span>
-          </div>
-          <div class="tp-bar"><div class="tp-fill" style="width: 0%; background: var(--cyan-600);"></div></div>
-          <div class="tp-areas">
-            <div class="tp-area">
-              <span class="tp-area-dot"></span>
-              <span class="tp-area-name">Customer Segmentation</span>
-              <span class="tp-area-status">unexplored</span>
+          <!-- Coach Panel (stacked below, full width) -->
+          <div class="coach-panel">
+            <div class="coach-panel-header" style="padding: 7px 10px;">
+              <div class="coach-panel-header-left">
+                <div class="coach-panel-avatar" style="width: 22px; height: 22px;"><img src="../Avatars/Fin.png" alt="Coach Fin"></div>
+                <span class="coach-panel-name" style="font-size: 10px;">Coach Fin</span>
+              </div>
             </div>
-            <div class="tp-area">
-              <span class="tp-area-dot"></span>
-              <span class="tp-area-name">Unmet Needs</span>
-              <span class="tp-area-status">unexplored</span>
+            <div class="coach-mode-tabs" style="padding: 5px 8px;">
+              <button class="mode-tab active" style="font-size: 9px; padding: 5px 4px;"><span class="icon" style="font-size: 10px;">&#10024;</span> Suggest</button>
+              <button class="mode-tab" style="font-size: 9px; padding: 5px 4px;"><span class="icon" style="font-size: 10px;">&#9889;</span> Challenge</button>
+              <button class="mode-tab" style="font-size: 9px; padding: 5px 4px;"><span class="icon" style="font-size: 10px;">&#128172;</span> Chat</button>
             </div>
-            <div class="tp-area">
-              <span class="tp-area-dot"></span>
-              <span class="tp-area-name">Market Dynamics</span>
-              <span class="tp-area-status">unexplored</span>
+            <div class="coach-content">
+              <div class="suggestion-card" style="padding: 10px 12px;">
+                <div class="suggestion-badge">Coach Suggestion</div>
+                <p class="suggestion-text" style="font-size: 11px;">Your leadership refresh is a strong signal. The 60/40 legacy-to-modern skill split reveals execution risk.</p>
+                <div class="key-points-card" style="padding: 7px 9px;">
+                  <ul>
+                    <li style="font-size: 10px;"><span class="check">&#10003;</span><span>Quantify <strong>legacy-to-modern ratio</strong> by team</span></li>
+                    <li style="font-size: 10px;"><span class="check">&#10003;</span><span>Map the <strong>data science gap</strong> against AI ambitions</span></li>
+                    <li style="font-size: 10px;"><span class="check">&#10003;</span><span>Consider a <strong>skill migration programme</strong></span></li>
+                  </ul>
+                </div>
+                <div class="sources-hint"><strong>Sources:</strong> Product brief, benchmarks</div>
+              </div>
+              <div class="insert-actions" style="padding: 5px 12px;">
+                <button class="insert-btn primary" style="font-size: 9px; padding: 4px 8px;">&#128203; Use This</button>
+                <button class="insert-btn secondary" style="font-size: 9px; padding: 4px 8px;">&#43; Append</button>
+              </div>
+              <div class="quick-replies" style="padding: 6px 12px;">
+                <button class="quick-pill" style="font-size: 8px; padding: 3px 7px;">Challenge me</button>
+                <button class="quick-pill" style="font-size: 8px; padding: 3px 7px;">Example</button>
+                <button class="quick-pill" style="font-size: 8px; padding: 3px 7px;">Find data?</button>
+              </div>
+              <div class="coach-chat-input-area" style="padding: 8px 12px 12px;">
+                <div class="coach-chat-label">Chat with Coach</div>
+                <div class="coach-chat-input-wrap">
+                  <textarea class="coach-chat-textarea" style="min-height: 60px; font-size: 11px;" placeholder="Ask Coach Fin..."></textarea>
+                  <button class="send-btn-float" style="width: 26px; height: 26px; font-size: 11px;">&#9654;</button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <!-- Market Territory -->
-        <div class="territory-progress-card">
-          <div class="tp-header">
-            <span class="tp-title">&#9876; Market Context</span>
-            <span class="tp-count font-code">0/3 areas</span>
-          </div>
-          <div class="tp-bar"><div class="tp-fill" style="width: 0%; background: var(--purple, #7c3aed);"></div></div>
         </div>
       </div>
-    </aside>
+
+      <!-- Mobile progress bar -->
+      <div class="mobile-progress-bar">
+        <span class="mobile-progress-label">Terrain Progress</span>
+        <div class="mobile-progress-track"><div class="mobile-progress-fill"></div></div>
+        <span class="mobile-progress-pct font-code">24%</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Design Label -->
 <div class="design-label">
   <span class="badge">Mockup</span>
-  Research Phase &mdash; Side-by-Side Layout (Question + Coach)
+  Research Phase &mdash; Responsive Layouts
 </div>
+
+<script>
+function switchViewport(viewport, btn) {
+  // Hide all frames
+  document.querySelectorAll('.viewport-frame').forEach(f => f.classList.remove('active'));
+  // Deactivate all tabs
+  document.querySelectorAll('.viewport-tab').forEach(t => t.classList.remove('active'));
+  // Show selected
+  document.getElementById('vp-' + viewport).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
 
 </body>
 </html>

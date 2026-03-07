@@ -27,6 +27,9 @@ interface OrientationViewProps {
   onDismiss: () => void;
   onBeginTerrainMapping: () => void;
   onTerritoryClick: (territory: string) => void;
+  researchReady?: boolean;
+  onBeginSynthesis?: () => Promise<void>;
+  isTransitioning?: boolean;
 }
 
 const TERRITORY_CARDS = [
@@ -140,6 +143,9 @@ export function OrientationView({
   onDismiss,
   onBeginTerrainMapping,
   onTerritoryClick,
+  researchReady = false,
+  onBeginSynthesis,
+  isTransitioning = false,
 }: OrientationViewProps) {
   const [materialsCount, setMaterialsCount] = useState(0);
 
@@ -196,6 +202,9 @@ export function OrientationView({
             researchProgress={researchProgress}
             onTerritoryClick={onTerritoryClick}
             onDismiss={onDismiss}
+            researchReady={researchReady}
+            onBeginSynthesis={onBeginSynthesis}
+            isTransitioning={isTransitioning}
           />
         )}
 
@@ -493,13 +502,44 @@ function ResearchOrientation({
   researchProgress,
   onTerritoryClick,
   onDismiss,
+  researchReady = false,
+  onBeginSynthesis,
+  isTransitioning = false,
 }: {
   researchProgress: ResearchProgressData | null;
   onTerritoryClick: (territory: string) => void;
   onDismiss: () => void;
+  researchReady?: boolean;
+  onBeginSynthesis?: () => Promise<void>;
+  isTransitioning?: boolean;
 }) {
   return (
     <div className="space-y-3">
+      {/* Research Complete — Synthesis CTA */}
+      {researchReady && onBeginSynthesis && (
+        <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 border border-emerald-200 rounded-2xl p-5 animate-entrance">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-slate-900">All Territories Mapped</h3>
+              <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                Your strategic terrain is complete. Move to synthesis to discover cross-territory patterns and opportunities.
+              </p>
+              <button
+                onClick={() => void onBeginSynthesis()}
+                disabled={isTransitioning}
+                className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#fbbf24] text-sm font-semibold text-slate-900 transition-all duration-300 hover:bg-[#f59e0b] hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isTransitioning ? 'Transitioning...' : 'Begin Pattern Recognition'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Territory cards */}
       {TERRITORY_CARDS.map((card) => {
         const status = getTerritoryStatus(researchProgress, card.id);

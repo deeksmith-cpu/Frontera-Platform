@@ -93,6 +93,26 @@ export function getPersonaPhaseGuidance(
 }
 
 /**
+ * Avatar image path for each persona ID
+ */
+const PERSONA_AVATARS: Record<PersonaId, string> = {
+  marcus: '/avatars/coaches/marcus.png',
+  elena: '/avatars/coaches/elena.png',
+  richard: '/avatars/coaches/fin.png',
+  'growth-architect': '/avatars/coaches/priya.png',
+  'product-purist': '/avatars/coaches/hana.png',
+  'scale-navigator': '/avatars/coaches/kofi.png',
+};
+
+/**
+ * Get the avatar image path for a persona
+ */
+export function getCoachAvatarPath(personaId: PersonaId | string | undefined): string | null {
+  if (!personaId) return null;
+  return PERSONA_AVATARS[personaId as PersonaId] ?? null;
+}
+
+/**
  * Persona options for UI selection
  */
 export interface PersonaOption {

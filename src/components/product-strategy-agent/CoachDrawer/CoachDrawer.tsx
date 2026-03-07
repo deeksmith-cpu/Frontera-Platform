@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import {
   Sparkles,
   Send,
@@ -12,6 +13,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
+import { getCoachAvatarPath } from '@/lib/agents/strategy-coach/personas';
 import type { Territory } from '@/types/coaching-cards';
 
 interface ReviewData {
@@ -39,6 +41,7 @@ interface CoachDrawerProps {
   questionContext: QuestionContext | null;
   conversationId: string | null;
   coachName?: string;
+  coachPersonaId?: string | null;
   onInsertToAnswer?: (text: string, mode: 'replace' | 'append') => void;
 }
 
@@ -71,6 +74,7 @@ export function CoachDrawer({
   questionContext,
   conversationId,
   coachName = 'Strategy Coach',
+  coachPersonaId,
   onInsertToAnswer,
 }: CoachDrawerProps) {
   const [content, setContent] = useState('');
@@ -239,20 +243,31 @@ export function CoachDrawer({
     return () => abortController.abort();
   }, [isOpen, mode, questionContext?.territory, questionContext?.researchArea, questionContext?.questionIndex, questionContext?.currentDraft, conversationId, area]);
 
-  // Send chat message (works in all modes as follow-up)
+  // Send chat message via dedicated coach-chat API (works in all modes as follow-up)
   const handleSendChat = useCallback(async (messageOverride?: string) => {
     const messageText = (messageOverride || chatInput).trim();
-    if (!messageText || !conversationId || isLoading) return;
+    if (!messageText || !conversationId || !questionContext || isLoading) return;
 
     setChatInput('');
-    setChatMessages(prev => [...prev, { role: 'user', content: messageText }]);
+    const updatedHistory: ChatMessage[] = [...chatMessages, { role: 'user', content: messageText }];
+    setChatMessages(updatedHistory);
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+      const res = await fetch('/api/product-strategy-agent/coach-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: messageText }),
+        body: JSON.stringify({
+          conversation_id: conversationId,
+          territory: questionContext.territory,
+          research_area: questionContext.researchArea,
+          question_index: questionContext.questionIndex,
+          user_draft: questionContext.currentDraft || '',
+          coach_initial_content: content || '',
+          mode,
+          chat_history: chatMessages,
+          message: messageText,
+        }),
       });
 
       if (res.ok && res.body) {
@@ -272,13 +287,17 @@ export function CoachDrawer({
             return updated;
           });
         }
+      } else {
+        const errText = await res.text().catch(() => '');
+        console.error('Coach chat API error:', res.status, errText);
+        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }]);
       }
     } catch {
-      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong.' }]);
+      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Network error. Please check your connection.' }]);
     } finally {
       setIsLoading(false);
     }
-  }, [chatInput, conversationId, isLoading]);
+  }, [chatInput, conversationId, questionContext, isLoading, chatMessages, content, mode]);
 
   // Quick reply click
   const handleQuickReply = useCallback((text: string) => {
@@ -320,26 +339,22 @@ export function CoachDrawer({
   // Insert action buttons shown below suggestion/debate content
   const renderInsertActions = () => {
     if (!onInsertToAnswer || !content) return null;
-    const hasExistingDraft = !!questionContext?.currentDraft?.trim();
-
     return (
       <div className="flex items-center gap-1.5 px-4 pb-3 mt-1">
         <button
           onClick={() => onInsertToAnswer(getPlainTextContent(), 'replace')}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-semibold rounded-lg bg-[#fbbf24] text-[#1a1f3a] hover:bg-[#f59e0b] transition-all shadow-sm"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-semibold rounded-lg bg-[#fbbf24] text-[#1a1f3a] hover:bg-[#f59e0b] active:scale-95 transition-all shadow-sm"
         >
           <ClipboardPaste className="w-3 h-3" />
           Use This
         </button>
-        {hasExistingDraft && (
-          <button
-            onClick={() => onInsertToAnswer(getPlainTextContent(), 'append')}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
-          >
-            <Plus className="w-3 h-3" />
-            Append
-          </button>
-        )}
+        <button
+          onClick={() => onInsertToAnswer(getPlainTextContent(), 'append')}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-semibold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all"
+        >
+          <Plus className="w-3 h-3" />
+          Append
+        </button>
       </div>
     );
   };
@@ -497,9 +512,18 @@ export function CoachDrawer({
           style={{ background: 'linear-gradient(180deg, #1e2440, #151930)' }}
         >
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-3 h-3 text-[#fbbf24]" />
-            </div>
+            {(() => {
+              const avatarPath = getCoachAvatarPath(coachPersonaId ?? undefined);
+              return avatarPath ? (
+                <div className="w-6 h-6 rounded-lg overflow-hidden flex-shrink-0">
+                  <Image src={avatarPath} alt={coachName} width={24} height={24} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-3 h-3 text-[#fbbf24]" />
+                </div>
+              );
+            })()}
             <span className="text-xs font-semibold text-white">{coachName}</span>
             {contextLabel && (
               <span className="text-[9px] text-slate-400">&middot; {contextLabel}</span>
@@ -546,9 +570,18 @@ export function CoachDrawer({
             {chatMessages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'gap-2'}`}>
                 {msg.role === 'assistant' && (
-                  <div className="w-5 h-5 rounded-md bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Sparkles className="w-2.5 h-2.5 text-[#fbbf24]" />
-                  </div>
+                  (() => {
+                    const avatarPath = getCoachAvatarPath(coachPersonaId ?? undefined);
+                    return avatarPath ? (
+                      <div className="w-5 h-5 rounded-md overflow-hidden flex-shrink-0 mt-0.5">
+                        <Image src={avatarPath} alt={coachName} width={20} height={20} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-5 h-5 rounded-md bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Sparkles className="w-2.5 h-2.5 text-[#fbbf24]" />
+                      </div>
+                    );
+                  })()
                 )}
                 <div
                   className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useImperativeHandle, type Ref } from 'react';
+import { useState, useCallback, useEffect, useImperativeHandle, useRef, type Ref } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -37,6 +37,9 @@ interface PinnedQuestionCardProps {
   onPrevQuestion: () => void;
   onSaveDraft: () => void;
   answerRef?: Ref<PinnedQuestionCardHandle>;
+  researchReady?: boolean;
+  onBeginSynthesis?: () => void;
+  isTransitioning?: boolean;
 }
 
 const TERRITORY_ICONS: Record<string, typeof Building2> = {
@@ -57,6 +60,54 @@ const CONFIDENCE_OPTIONS: { value: ConfidenceLevel; label: string; description: 
   { value: 'guess', label: 'Guess', description: 'Hypothesis or assumption' },
 ];
 
+function CoachActionButtons({ onCoachSuggestion, onCoachDebate }: { onCoachSuggestion: () => void; onCoachDebate: () => void }) {
+  const [suggestionPressed, setSuggestionPressed] = useState(false);
+  const [debatePressed, setDebatePressed] = useState(false);
+  const suggestionTimer = useRef<ReturnType<typeof setTimeout>>();
+  const debateTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleSuggestion = useCallback(() => {
+    setSuggestionPressed(true);
+    clearTimeout(suggestionTimer.current);
+    suggestionTimer.current = setTimeout(() => setSuggestionPressed(false), 600);
+    onCoachSuggestion();
+  }, [onCoachSuggestion]);
+
+  const handleDebate = useCallback(() => {
+    setDebatePressed(true);
+    clearTimeout(debateTimer.current);
+    debateTimer.current = setTimeout(() => setDebatePressed(false), 600);
+    onCoachDebate();
+  }, [onCoachDebate]);
+
+  return (
+    <div className="mt-5 flex gap-2">
+      <button
+        onClick={handleSuggestion}
+        className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 shadow-sm hover:shadow-md ${
+          suggestionPressed
+            ? 'bg-[#f59e0b] text-[#1a1f3a] scale-95 ring-2 ring-[#fbbf24]/50 ring-offset-1'
+            : 'bg-[#fbbf24] text-[#1a1f3a] hover:bg-[#f59e0b] active:scale-95'
+        }`}
+      >
+        <Sparkles className={`w-3.5 h-3.5 transition-transform duration-300 ${suggestionPressed ? 'animate-spin' : ''}`} style={suggestionPressed ? { animationDuration: '0.6s' } : undefined} />
+        {suggestionPressed ? 'Loading...' : 'Coach Suggestion'}
+      </button>
+      <button
+        onClick={handleDebate}
+        className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
+          debatePressed
+            ? 'border border-cyan-500 bg-cyan-50 text-cyan-800 scale-95 ring-2 ring-cyan-400/50 ring-offset-1'
+            : 'border border-cyan-300 bg-white text-cyan-700 hover:bg-cyan-50 hover:border-cyan-400 active:scale-95'
+        }`}
+      >
+        <MessageSquare className={`w-3.5 h-3.5 transition-transform duration-300 ${debatePressed ? 'rotate-12' : 'text-cyan-600'}`} />
+        {debatePressed ? 'Loading...' : 'Challenge Me'}
+      </button>
+    </div>
+  );
+}
+
 export function PinnedQuestionCard({
   territory,
   researchArea,
@@ -70,6 +121,9 @@ export function PinnedQuestionCard({
   onNextQuestion,
   onPrevQuestion,
   answerRef,
+  researchReady = false,
+  onBeginSynthesis,
+  isTransitioning = false,
 }: PinnedQuestionCardProps) {
   const [answer, setAnswer] = useState(existingAnswer);
   const [confidence, setConfidence] = useState<ConfidenceLevel | null>(existingConfidence);
@@ -204,22 +258,10 @@ export function PinnedQuestionCard({
         </div>
 
         {/* Coach assistance buttons */}
-        <div className="mt-5 flex gap-2">
-          <button
-            onClick={onCoachSuggestion}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] transition-all hover:bg-[#f59e0b] shadow-sm hover:shadow-md"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Coach Suggestion
-          </button>
-          <button
-            onClick={onCoachDebate}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-cyan-300 bg-white text-xs font-semibold text-cyan-700 transition-all hover:bg-cyan-50 hover:border-cyan-400"
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-cyan-600" />
-            Challenge Me
-          </button>
-        </div>
+        <CoachActionButtons
+          onCoachSuggestion={onCoachSuggestion}
+          onCoachDebate={onCoachDebate}
+        />
 
       {/* Bottom action bar — inside card */}
       <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
@@ -283,23 +325,41 @@ export function PinnedQuestionCard({
 
       {/* Area complete CTA — shown when on last question and it's been answered */}
       {isLastQuestion && isAnswered && !hasChanges && (
-        <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl animate-entrance">
+        <div className={`mt-4 p-4 border rounded-xl animate-entrance ${
+          researchReady
+            ? 'bg-gradient-to-r from-emerald-50 to-cyan-50 border-emerald-200'
+            : 'bg-emerald-50 border-emerald-200'
+        }`}>
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span className="text-xs font-semibold text-emerald-700">
-              {area?.title || 'Area'} Complete!
+              {researchReady ? 'Research Complete!' : `${area?.title || 'Area'} Complete!`}
             </span>
           </div>
           <p className="text-[11px] text-emerald-600 mb-3">
-            All {totalQuestions} questions answered. Great work mapping this area.
+            {researchReady
+              ? 'All territories mapped. Your strategic terrain is ready for pattern recognition.'
+              : `All ${totalQuestions} questions answered. Great work mapping this area.`
+            }
           </p>
-          <button
-            onClick={onNextQuestion}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] transition-all hover:bg-[#f59e0b] shadow-sm hover:shadow-md"
-          >
-            Continue to Next Area
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          {researchReady && onBeginSynthesis ? (
+            <button
+              onClick={onBeginSynthesis}
+              disabled={isTransitioning}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#fbbf24] text-sm font-semibold text-[#1a1f3a] transition-all duration-300 hover:bg-[#f59e0b] hover:scale-105 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isTransitioning ? 'Transitioning...' : 'Begin Pattern Recognition'}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              onClick={onNextQuestion}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] transition-all hover:bg-[#f59e0b] shadow-sm hover:shadow-md"
+            >
+              Continue to Next Area
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       )}
       </div>

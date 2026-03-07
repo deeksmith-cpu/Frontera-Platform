@@ -84,6 +84,7 @@ export function ProductStrategyAgentInterface({
   const [levelUpLevel, setLevelUpLevel] = useState<number | null>(null);
   const [canvasViewPhase, setCanvasViewPhase] = useState<string | null>(null);
   const [coachName, setCoachName] = useState('Strategy Coach');
+  const [coachPersonaId, setCoachPersonaId] = useState<string | null>(null);
 
   // Fetch allocated coach persona name
   useEffect(() => {
@@ -91,6 +92,7 @@ export function ProductStrategyAgentInterface({
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data?.persona) {
+          setCoachPersonaId(data.persona);
           const option = PERSONA_OPTIONS.find(p => p.id === (data.persona as PersonaId));
           if (option) setCoachName(`Coach ${option.name}`);
         }
@@ -240,6 +242,7 @@ export function ProductStrategyAgentInterface({
                 onPhaseClick={handlePhaseClick}
                 onMenuClick={layout.isSidebarIconOnly ? layout.toggleSidebarExpand : undefined}
                 coachName={coachName}
+                coachPersonaId={coachPersonaId}
               />
             )}
 
@@ -275,6 +278,7 @@ export function ProductStrategyAgentInterface({
                     onPhaseClick={handlePhaseClick}
                     className="h-full"
                     coachName={coachName}
+                    coachPersonaId={coachPersonaId}
                   />
                 </div>
               </>
@@ -294,6 +298,7 @@ export function ProductStrategyAgentInterface({
                 highestPhaseReached={highestPhaseReached}
                 onPhaseClick={handlePhaseClick}
                 coachName={coachName}
+                coachPersonaId={coachPersonaId}
                 viewingPhase={canvasViewPhase}
               />
             ) : (
