@@ -8,6 +8,9 @@ import { ResearchSideBySide } from '../ResearchSideBySide/ResearchSideBySide';
 import { CelebrationOverlay } from '../CelebrationOverlay/CelebrationOverlay';
 import { CoachLedPanel } from '../CoachLedPanel/CoachLedPanel';
 import { SynthesisView } from '../SynthesisView/SynthesisView';
+import { BetsView } from '../BetsView/BetsView';
+import { ActivationView } from '../ActivationView/ActivationView';
+import { ReviewView } from '../ReviewView/ReviewView';
 import { PhaseTabBar } from '../PhaseTabBar/PhaseTabBar';
 import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
 import { RESEARCH_AREAS } from '@/hooks/useResearchProgress';
@@ -71,13 +74,19 @@ export function MainContent({
   const isViewingOtherPhase = !!viewingPhase && viewingPhase !== currentPhase;
 
   // Determine what to show in the main area
+  // Bets phase skips orientation — BetsSection handles its own loading/empty/results states
+  const showBets = !isViewingOtherPhase && displayPhase === 'bets';
+  // Only phases with OrientationView content get orientation; bets/activation/review skip it
+  const hasOrientation = ['discovery', 'research', 'synthesis'].includes(displayPhase);
   // When viewing another phase, show orientation unless user dismissed it (e.g. clicked Upload/AI Research)
-  const showOrientation = isViewingOtherPhase
+  const showOrientation = hasOrientation && !showBets && (isViewingOtherPhase
     ? !orientationDismissed[displayPhase]
-    : !orientationDismissed[currentPhase] && !pinnedQuestion;
+    : !orientationDismissed[currentPhase] && !pinnedQuestion);
   const showPinnedQuestion = !isViewingOtherPhase && currentPhase === 'research' && pinnedQuestion !== null;
   const showSynthesis = !showOrientation && !isViewingOtherPhase && displayPhase === 'synthesis';
-  const showChat = !showOrientation && !showPinnedQuestion && !showSynthesis;
+  const showActivation = !isViewingOtherPhase && displayPhase === 'activation';
+  const showReview = !isViewingOtherPhase && displayPhase === 'review';
+  const showChat = !showOrientation && !showPinnedQuestion && !showSynthesis && !showBets && !showActivation && !showReview;
 
   // Discovery orientation is now shown to users (not auto-dismissed)
   // Users dismiss it by clicking Upload Materials, AI Research, or Start Chat
@@ -369,6 +378,24 @@ export function MainContent({
           conversationId={conversation.id}
           onPhaseTransition={handlePhaseTransition}
         />
+      )}
+
+      {showBets && (
+        <BetsView
+          conversation={conversation}
+          onPhaseTransition={handlePhaseTransition}
+        />
+      )}
+
+      {showActivation && (
+        <ActivationView
+          conversation={conversation}
+          onPhaseTransition={handlePhaseTransition}
+        />
+      )}
+
+      {showReview && (
+        <ReviewView conversation={conversation} />
       )}
 
       {showChat && (
