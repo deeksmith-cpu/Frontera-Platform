@@ -209,6 +209,8 @@ export function MainContent({
   const handleBeginSynthesis = useCallback(async () => {
     setIsTransitioning(true);
     try {
+      // Clear research-specific state so synthesis shows its orientation view
+      setPinnedQuestion(null);
       await handlePhaseTransition('synthesis');
       setCelebrationState({
         type: 'phase_complete',
@@ -219,7 +221,7 @@ export function MainContent({
     } finally {
       setIsTransitioning(false);
     }
-  }, [handlePhaseTransition, setCelebrationState]);
+  }, [handlePhaseTransition, setCelebrationState, setPinnedQuestion]);
 
   // Handle question submit with celebration detection
   const handleQuestionSubmitWrapped = useCallback(async (
