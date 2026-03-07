@@ -103,7 +103,6 @@ export default async function ProductStrategyAgentPage() {
       userId={userId}
       orgId={orgId}
       clientContext={clientData}
-      hasAssessment={hasAssessment}
     />
   );
 }

@@ -74,19 +74,20 @@ export function MainContent({
   const isViewingOtherPhase = !!viewingPhase && viewingPhase !== currentPhase;
 
   // Determine what to show in the main area
-  // Bets phase skips orientation — BetsSection handles its own loading/empty/results states
-  const showBets = !isViewingOtherPhase && displayPhase === 'bets';
-  // Only phases with OrientationView content get orientation; bets/activation/review skip it
-  const hasOrientation = ['discovery', 'research', 'synthesis'].includes(displayPhase);
-  // When viewing another phase, show orientation unless user dismissed it (e.g. clicked Upload/AI Research)
-  const showOrientation = hasOrientation && !showBets && (isViewingOtherPhase
+  // Phases with dedicated views render directly (no orientation gate needed)
+  const showBets = displayPhase === 'bets';
+  const showActivation = displayPhase === 'activation';
+  const showReview = displayPhase === 'review';
+  const showSynthesis = displayPhase === 'synthesis';
+  const hasDedicatedView = showBets || showActivation || showReview || showSynthesis;
+  // Only phases without dedicated views get orientation (discovery, research)
+  const hasOrientation = ['discovery', 'research'].includes(displayPhase);
+  // When viewing another phase, show orientation unless user dismissed it
+  const showOrientation = hasOrientation && (isViewingOtherPhase
     ? !orientationDismissed[displayPhase]
     : !orientationDismissed[currentPhase] && !pinnedQuestion);
-  const showPinnedQuestion = !isViewingOtherPhase && currentPhase === 'research' && pinnedQuestion !== null;
-  const showSynthesis = !showOrientation && !isViewingOtherPhase && displayPhase === 'synthesis';
-  const showActivation = !isViewingOtherPhase && displayPhase === 'activation';
-  const showReview = !isViewingOtherPhase && displayPhase === 'review';
-  const showChat = !showOrientation && !showPinnedQuestion && !showSynthesis && !showBets && !showActivation && !showReview;
+  const showPinnedQuestion = displayPhase === 'research' && pinnedQuestion !== null;
+  const showChat = !hasDedicatedView && !showOrientation && !showPinnedQuestion;
 
   // Discovery orientation is now shown to users (not auto-dismissed)
   // Users dismiss it by clicking Upload Materials, AI Research, or Start Chat

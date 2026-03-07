@@ -294,24 +294,26 @@ export function ResearchQuestionPanel({
 
       {/* Footer — nav + submit */}
       <div className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={onPrevQuestion}
             disabled={questionIndex === 0}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 hover:shadow disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             aria-label="Previous question"
           >
             <ChevronLeft className="w-4 h-4" />
+            Prev
           </button>
-          <span className="text-[10px] text-slate-400 font-[family-name:var(--font-code)]">
-            {questionIndex + 1} of {totalQuestions}
+          <span className="text-xs text-slate-500 font-semibold font-[family-name:var(--font-code)]">
+            {questionIndex + 1} / {totalQuestions}
           </span>
           <button
             onClick={onNextQuestion}
             disabled={isLastQuestion}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-cyan-300 bg-cyan-50 text-sm font-semibold text-cyan-800 shadow-sm hover:bg-cyan-100 hover:border-cyan-400 hover:shadow disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             aria-label="Next question"
           >
+            Next
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { createClient } from "@supabase/supabase-js";
 import { ProfileCard } from "@/components/product-strategy-agent/PersonalProfile/ProfileCard";
+import { AssessmentBanner } from "@/components/AssessmentBanner";
 import type { PersonalProfileData, ProfilingFrameworkState } from "@/types/database";
 
 // Check if user is a Frontera super admin
@@ -75,6 +76,27 @@ export default async function DashboardPage() {
     }
   }
 
+  // Check if user has completed strategic assessment
+  let hasAssessment = false;
+  if (orgId) {
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      const { data: assessmentData } = await supabase
+        .from('strategic_assessments')
+        .select('archetype')
+        .eq('clerk_org_id', orgId)
+        .eq('clerk_user_id', userId)
+        .limit(1)
+        .single();
+      hasAssessment = !!assessmentData;
+    } catch {
+      // No assessment found
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       <Header />
@@ -102,6 +124,9 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Assessment promotion banner */}
+      {!hasAssessment && <AssessmentBanner />}
 
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">

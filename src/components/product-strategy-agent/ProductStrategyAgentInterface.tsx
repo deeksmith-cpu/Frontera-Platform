@@ -2,7 +2,7 @@
 
 import { Component, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import posthog from 'posthog-js';
-import { ChevronRight, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { SlimHeader } from './SlimHeader';
 import { JourneySidebar } from './JourneySidebar/JourneySidebar';
 import { StrategyCanvas } from './StrategyCanvas/StrategyCanvas';
@@ -69,18 +69,16 @@ interface ProductStrategyAgentInterfaceProps {
   userId: string;
   orgId: string;
   clientContext?: Client | null;
-  hasAssessment?: boolean;
 }
 
 export function ProductStrategyAgentInterface({
   conversation: initialConversation,
   userId,
   orgId,
-  hasAssessment = false,
 }: ProductStrategyAgentInterfaceProps) {
   const [conversation, setConversation] = useState(initialConversation);
   const [activeResearchContext, setActiveResearchContext] = useState<ActiveResearchContext | null>(null);
-  const [assessmentDismissed, setAssessmentDismissed] = useState(false);
+
   const [levelUpLevel, setLevelUpLevel] = useState<number | null>(null);
   const [canvasViewPhase, setCanvasViewPhase] = useState<string | null>(null);
   const [coachName, setCoachName] = useState('Strategy Coach');
@@ -189,34 +187,6 @@ export function ProductStrategyAgentInterface({
           compactXP={layout.isFocusMode ? { level: gamification.level, xpTotal: gamification.xpTotal } : undefined}
           breadcrumb={layout.isFocusMode ? breadcrumb : undefined}
         />
-
-        {/* Assessment CTA - shown when user hasn't taken the assessment */}
-        {!hasAssessment && !assessmentDismissed && (
-          <div className="flex-shrink-0 bg-gradient-to-r from-[#1a1f3a] to-[#2d3561] px-6 py-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-[#fbbf24] text-xs font-bold uppercase tracking-wider">New</span>
-              <span className="text-white text-sm">
-                Discover your Strategic Archetype — personalise your coaching experience
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <a
-                href="/dashboard/product-strategy-agent/assessment"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#fbbf24] text-[#1a1f3a] text-xs font-semibold transition-all hover:bg-[#f59e0b] hover:scale-105"
-              >
-                Take Assessment
-                <ChevronRight className="w-3 h-3" />
-              </a>
-              <button
-                onClick={() => setAssessmentDismissed(true)}
-                className="text-slate-400 hover:text-white text-xs transition-colors"
-                aria-label="Dismiss assessment prompt"
-              >
-                Later
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Three-column layout */}
         <CoachJourneyProvider
