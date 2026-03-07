@@ -9,6 +9,7 @@ import { PinnedQuestionCard, type PinnedQuestionCardHandle } from '../PinnedQues
 import { CoachDrawer } from '../CoachDrawer/CoachDrawer';
 import { CelebrationOverlay } from '../CelebrationOverlay/CelebrationOverlay';
 import { CoachLedPanel } from '../CoachLedPanel/CoachLedPanel';
+import { SynthesisView } from '../SynthesisView/SynthesisView';
 import { PhaseTabBar } from '../PhaseTabBar/PhaseTabBar';
 import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
 import { getCoachAvatarPath } from '@/lib/agents/strategy-coach/personas';
@@ -91,7 +92,8 @@ export function MainContent({
     ? !orientationDismissed[displayPhase]
     : !orientationDismissed[currentPhase] && !pinnedQuestion;
   const showPinnedQuestion = !isViewingOtherPhase && currentPhase === 'research' && pinnedQuestion !== null;
-  const showChat = !showOrientation && !showPinnedQuestion;
+  const showSynthesis = !showOrientation && !isViewingOtherPhase && displayPhase === 'synthesis';
+  const showChat = !showOrientation && !showPinnedQuestion && !showSynthesis;
 
   // Discovery orientation is now shown to users (not auto-dismissed)
   // Users dismiss it by clicking Upload Materials, AI Research, or Start Chat
@@ -458,6 +460,13 @@ export function MainContent({
             )}
           </div>
         </div>
+      )}
+
+      {showSynthesis && (
+        <SynthesisView
+          conversationId={conversation.id}
+          onPhaseTransition={handlePhaseTransition}
+        />
       )}
 
       {showChat && (
