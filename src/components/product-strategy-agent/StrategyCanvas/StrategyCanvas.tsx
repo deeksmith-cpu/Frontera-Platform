@@ -9,7 +9,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { DiscoveryPreview } from '../ContextPreviewPanel/previews/DiscoveryPreview';
-import { ResearchPreview } from '../ContextPreviewPanel/previews/ResearchPreview';
+import { ResearchCanvasView } from '../ContextPreviewPanel/previews/ResearchCanvasView';
 import { SynthesisPreview } from '../ContextPreviewPanel/previews/SynthesisPreview';
 import { BetsPreview } from '../ContextPreviewPanel/previews/BetsPreview';
 import { ActivationPreview } from '../ContextPreviewPanel/previews/ActivationPreview';
@@ -64,7 +64,7 @@ export function StrategyCanvas({
           <DiscoveryPreview conversationId={conversationId} />
         )}
         {currentPhase === 'research' && (
-          <ResearchPreview conversationId={conversationId} />
+          <ResearchCanvasView conversationId={conversationId} />
         )}
         {currentPhase === 'synthesis' && (
           <SynthesisPreview conversationId={conversationId} />

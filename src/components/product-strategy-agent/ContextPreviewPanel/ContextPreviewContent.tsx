@@ -3,7 +3,7 @@
 import { forwardRef } from 'react';
 import { useCoachJourney } from '@/hooks/useCoachJourney';
 import { DiscoveryPreview } from './previews/DiscoveryPreview';
-import { ResearchPreview } from './previews/ResearchPreview';
+import { ResearchCanvasView } from './previews/ResearchCanvasView';
 import { SynthesisPreview } from './previews/SynthesisPreview';
 import { BetsPreview } from './previews/BetsPreview';
 import { ActivationPreview } from './previews/ActivationPreview';
@@ -23,7 +23,7 @@ export const ContextPreviewContent = forwardRef<HTMLDivElement, ContextPreviewCo
           <DiscoveryPreview conversationId={conversationId} />
         )}
         {currentPhase === 'research' && (
-          <ResearchPreview conversationId={conversationId} />
+          <ResearchCanvasView conversationId={conversationId} />
         )}
         {currentPhase === 'synthesis' && (
           <SynthesisPreview conversationId={conversationId} />
