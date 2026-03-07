@@ -78,13 +78,14 @@ export function CelebrationOverlay({
   const confettiParticles = useMemo(() => {
     if (!showConfetti) return [];
     const colors = ['#fbbf24', '#22d3ee', '#a78bfa', '#34d399', '#fb923c', '#f472b6'];
+    // Use deterministic values based on index to avoid impure Math.random() during render
     return Array.from({ length: 24 }, (_, i) => ({
       id: i,
       color: colors[i % colors.length],
-      left: `${Math.random() * 100}%`,
-      delay: `${Math.random() * 0.6}s`,
-      duration: `${1.2 + Math.random() * 0.8}s`,
-      size: Math.random() > 0.5 ? 6 : 4,
+      left: `${((i * 37 + 13) % 100)}%`,
+      delay: `${(i * 0.025) % 0.6}s`,
+      duration: `${1.2 + (i % 5) * 0.16}s`,
+      size: i % 2 === 0 ? 6 : 4,
     }));
   }, [showConfetti]);
 
