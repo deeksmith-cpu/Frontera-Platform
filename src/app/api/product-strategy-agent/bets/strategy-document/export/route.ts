@@ -143,7 +143,11 @@ export async function POST(req: NextRequest) {
       .eq('id', strategyDoc.id);
 
     const uint8Array = new Uint8Array(pdfBuffer);
-    const filename = `product-strategy-${companyName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yy = String(now.getFullYear()).slice(-2);
+    const filename = `${companyName} - Product Strategy - ${dd}-${mm}-${yy}.pdf`;
 
     return new NextResponse(uint8Array, {
       status: 200,
