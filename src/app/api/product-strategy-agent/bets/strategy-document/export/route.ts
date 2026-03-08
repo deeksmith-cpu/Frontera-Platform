@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import PDFDocument from 'pdfkit';
+import { classifyNarrative } from '@/lib/utils/narrative-parser';
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -286,56 +287,88 @@ function renderNarrativePage(
 }
 
 function renderProse(pdf: PDFKit.PDFDocument, text: string, startY: number): number {
-  const paragraphs = text.split('\n\n').filter(p => p.trim());
+  const classified = classifyNarrative(text);
 
   let currentY = startY;
-  paragraphs.forEach((para, idx) => {
-    const trimmed = para.trim();
-    const isPullQuote = trimmed.startsWith('"');
 
-    if (isPullQuote) {
-      // Pull quote: gold left rule, italic, indented both sides
-      const quoteX = M + 20;
-      const quoteW = CONTENT_W - 40;
-      pdf.moveTo(M + 10, currentY).lineTo(M + 10, currentY + 40).strokeColor(C.gold).lineWidth(3).stroke();
-      pdf.fontSize(11.5).fillColor(C.slate600).font('Helvetica-Oblique');
-      pdf.text(trimmed, quoteX, currentY, {
-        width: quoteW,
-        lineGap: 5,
-        align: 'left',
-      });
-      currentY = pdf.y + 14;
-    } else if (idx === 0) {
-      // Drop cap: first character rendered large
-      const firstChar = trimmed.charAt(0);
-      const restOfText = trimmed.substring(1);
+  for (const para of classified) {
+    switch (para.type) {
+      case 'pull_quote': {
+        const quoteX = M + 20;
+        const quoteW = CONTENT_W - 40;
+        pdf.moveTo(M + 10, currentY).lineTo(M + 10, currentY + 40).strokeColor(C.gold).lineWidth(3).stroke();
+        pdf.fontSize(11.5).fillColor(C.slate600).font('Helvetica-Oblique');
+        pdf.text(para.text, quoteX, currentY, { width: quoteW, lineGap: 5, align: 'left' });
+        currentY = pdf.y + 14;
+        break;
+      }
 
-      // Render drop cap character
-      pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
-      pdf.text(firstChar, M, currentY - 2, { width: 22, continued: false });
-      const dropCapBottom = pdf.y;
+      case 'subsection_heading': {
+        // H3-level heading: bold, larger font, with subtle underline
+        currentY += 6; // extra space before heading
+        pdf.fontSize(15).fillColor(C.navy).font('Helvetica-Bold');
+        pdf.text(para.text, M, currentY, { width: CONTENT_W });
+        currentY = pdf.y + 4;
+        pdf.moveTo(M, currentY).lineTo(M + 80, currentY).strokeColor(C.slate200).lineWidth(1).stroke();
+        currentY += 10;
+        break;
+      }
 
-      // Render rest of first paragraph alongside and below drop cap
-      pdf.fontSize(11.5).fillColor(C.slate700).font('Helvetica');
-      pdf.text(restOfText, M + 24, currentY + 4, {
-        width: CONTENT_W - 24,
-        lineGap: 5,
-        align: 'left',
-        indent: 0,
-      });
-      currentY = Math.max(pdf.y, dropCapBottom) + 14;
-    } else {
-      // Standard paragraph with text indent
-      pdf.fontSize(11.5).fillColor(C.slate700).font('Helvetica');
-      pdf.text(trimmed, M, currentY, {
-        width: CONTENT_W,
-        lineGap: 5,
-        align: 'left',
-        indent: 20,
-      });
-      currentY = pdf.y + 14;
+      case 'numbered_item': {
+        // Navy circle badge with gold number
+        pdf.circle(M + 10, currentY + 7, 8).fill(C.navy);
+        pdf.fontSize(9).fillColor(C.gold).font('Helvetica-Bold');
+        pdf.text(String(para.number), M + 3, currentY + 3, { width: 14, align: 'center' });
+
+        // Bold title
+        const titleText = para.body ? `${para.title}:` : para.title;
+        pdf.fontSize(11.5).fillColor(C.navy).font('Helvetica-Bold');
+        pdf.text(titleText, M + 26, currentY, { width: CONTENT_W - 26 });
+        currentY = pdf.y + 2;
+
+        // Body text (if present)
+        if (para.body) {
+          pdf.fontSize(11.5).fillColor(C.slate700).font('Helvetica');
+          pdf.text(para.body, M + 26, currentY, { width: CONTENT_W - 26, lineGap: 5 });
+          currentY = pdf.y + 10;
+        } else {
+          currentY = pdf.y + 10;
+        }
+        break;
+      }
+
+      case 'body': {
+        if (para.isFirst) {
+          // Drop cap: first character rendered large
+          const firstChar = para.text.charAt(0);
+          const restOfText = para.text.substring(1);
+
+          pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
+          pdf.text(firstChar, M, currentY - 2, { width: 22, continued: false });
+          const dropCapBottom = pdf.y;
+
+          pdf.fontSize(11.5).fillColor(C.slate700).font('Helvetica');
+          pdf.text(restOfText, M + 24, currentY + 4, {
+            width: CONTENT_W - 24,
+            lineGap: 5,
+            align: 'left',
+            indent: 0,
+          });
+          currentY = Math.max(pdf.y, dropCapBottom) + 14;
+        } else {
+          pdf.fontSize(11.5).fillColor(C.slate700).font('Helvetica');
+          pdf.text(para.text, M, currentY, {
+            width: CONTENT_W,
+            lineGap: 5,
+            align: 'left',
+            indent: 20,
+          });
+          currentY = pdf.y + 14;
+        }
+        break;
+      }
     }
-  });
+  }
 
   return currentY;
 }

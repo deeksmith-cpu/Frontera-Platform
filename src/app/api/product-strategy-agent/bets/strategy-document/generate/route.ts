@@ -323,6 +323,13 @@ CRITICAL STYLE RULES:
 - Reference specific findings from the research journey (e.g., "Our customer territory research revealed that...", "Analysis of competitive dynamics shows...").
 - Structure each narrative into 4-6 distinct paragraphs separated by double newlines (\\n\\n) in the JSON string. Each paragraph should cover one idea.
 
+STRUCTURAL FORMATTING WITHIN NARRATIVES:
+- When a page naturally contains named subsections (e.g., "North Star", "Strategic Tenets", "What We Won't Do", "Governance Cadence", "Strategic Priorities"), write the subsection title as its own standalone paragraph separated by \\n\\n before and after. Keep it short (2-8 words), no trailing period.
+- When listing numbered strategic tenets, priorities, or key principles, write each as a numbered paragraph: "1. Tenet Name: explanation text..." with each item as its own paragraph separated by \\n\\n.
+- These structural elements should flow naturally within the narrative — they are titled subsections and numbered prose items that give the document professional structure.
+- Each page should have 1-3 subsection headings maximum. Not every page needs them — only use them where the content naturally has distinct segments.
+- Subsection headings should NOT be used for the first paragraph of a page (that should be flowing prose).
+
 WRITING PRINCIPLES:
 - Every paragraph starts with a clear topic sentence stating its controlling idea.
 - Vary sentence length: alternate short declarative sentences (8-12 words) with longer complex ones (20-30 words). This creates rhythm.
@@ -388,12 +395,14 @@ PAGE-BY-PAGE INSTRUCTIONS:
 
 **Page 4 — Product Strategy & Roadmap Themes** (key: "roadmap")
 - "narrative": Define the North Star (derived from winning aspiration), OKRs (from success metrics), strategic tenets/principles, sequencing logic (from bet dependencies and time horizons), and explicitly state what the company won't do.
+- USE SUBSECTION HEADINGS for segments like "North Star", "Strategic Tenets", and "What We Won't Do". Number the tenets (e.g., "1. Customer-First: We prioritize..." as separate paragraphs).
 
 **Page 5 — Operating Model & Capability Build** (key: "operatingModel")
 - "narrative": Cover team structure implications, critical capability gaps, governance cadence, and measurement approach. Draw from company territory research (capabilities/constraints) and DHM fields.
 
 **Page 6 — Strategic Priorities & Execution** (key: "executionPlan")
 - "narrative": Provide a concrete execution plan covering each bet, timelines (from kill dates), responsibilities, and validation milestones. This is the action-oriented conclusion.
+- USE SUBSECTION HEADINGS for segments like "Strategic Priorities" and "Validation Milestones". Number the priorities (e.g., "1. Launch MVP: Deploy the first..." as separate paragraphs).
 
 Return ONLY valid JSON in this exact format:
 
