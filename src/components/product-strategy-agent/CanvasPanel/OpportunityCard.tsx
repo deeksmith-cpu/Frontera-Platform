@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Pencil, Trash2 } from 'lucide-react';
 import type { OpportunityCardProps } from '@/types/synthesis';
 import {
   getQuadrantDisplay,
@@ -52,6 +53,9 @@ export function OpportunityCard({
   isExpanded = false,
   onToggleExpand,
   onEvidenceClick,
+  onEdit,
+  onDelete,
+  isEdited,
 }: OpportunityCardProps) {
   const [showPTW, setShowPTW] = useState(false);
   const [showAssumptions, setShowAssumptions] = useState(false);
@@ -107,6 +111,13 @@ export function OpportunityCard({
               >
                 {confidenceDisplay.label}
               </span>
+
+              {/* Edited Badge */}
+              {isEdited && (
+                <span className="inline-flex items-center text-xs font-semibold py-1 px-2.5 rounded-full bg-purple-100 text-purple-700">
+                  Edited
+                </span>
+              )}
             </div>
           </div>
 
@@ -353,6 +364,36 @@ export function OpportunityCard({
                     </div>
                   ))}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Edit / Delete Actions */}
+          {(onEdit || onDelete) && (
+            <div className="border-t border-slate-100 pt-4 mt-4 flex items-center gap-2">
+              {onEdit && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(opportunity);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all"
+                >
+                  <Pencil className="w-3 h-3" />
+                  Edit
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(opportunity.id);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Delete
+                </button>
               )}
             </div>
           )}

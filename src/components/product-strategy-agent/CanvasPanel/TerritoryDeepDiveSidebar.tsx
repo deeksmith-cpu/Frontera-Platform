@@ -111,7 +111,13 @@ export function TerritoryDeepDiveSidebar({
                   : 'bg-slate-100 text-slate-600'
               }`}
             >
-              {isMapped && '✓ '}{area.title}
+              {isMapped && (
+                <svg width="12" height="12" viewBox="0 0 12 12" className="flex-shrink-0">
+                  <circle cx="6" cy="6" r="5" fill="#059669"/>
+                  <path d="M4 6l1.5 1.5 3-3" fill="none" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+              {area.title}
             </button>
           );
         })}
@@ -231,32 +237,64 @@ export function TerritoryDeepDiveSidebar({
               >
                 {/* Area Number and Title */}
                 <div className="flex items-start gap-3">
-                  {/* Number Badge */}
-                  <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
-                      isMapped
-                        ? 'bg-green-500 text-white'
-                        : isInProgress
-                        ? 'bg-amber-500 text-white'
-                        : 'bg-slate-200 text-slate-600'
-                    }`}
-                  >
-                    {isMapped ? <CheckIcon size={16} /> : index + 1}
+                  {/* Number Badge with Status Ring */}
+                  <div className="flex-shrink-0 relative">
+                    {isMapped ? (
+                      <div className="w-9 h-9 relative">
+                        <svg width="36" height="36" viewBox="0 0 36 36">
+                          <circle cx="18" cy="18" r="16" fill="#d1fae5" stroke="#6ee7b7" strokeWidth="1.5" />
+                          <circle cx="18" cy="18" r="11" fill="#059669" />
+                          <path d="M13 18l3 3 6-6.5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    ) : isInProgress ? (
+                      <div className="w-9 h-9 relative">
+                        <svg width="36" height="36" viewBox="0 0 36 36">
+                          <circle cx="18" cy="18" r="16" fill="#fffbeb" stroke="#fde68a" strokeWidth="1.5" />
+                          <path
+                            d="M18 2a16 16 0 0 1 16 16"
+                            fill="none"
+                            stroke="#d97706"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            className="animate-spin origin-center"
+                            style={{ animationDuration: '3s' }}
+                          />
+                          <circle cx="18" cy="18" r="11" fill="white" stroke="#fcd34d" strokeWidth="1" />
+                          <text x="18" y="22" textAnchor="middle" fontSize="13" fontWeight="700" fill="#b45309">{index + 1}</text>
+                        </svg>
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 relative">
+                        <svg width="36" height="36" viewBox="0 0 36 36">
+                          <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" strokeWidth="1.5" strokeDasharray="4 3" />
+                          <circle cx="18" cy="18" r="11" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1" />
+                          <text x="18" y="22" textAnchor="middle" fontSize="13" fontWeight="700" fill="#94a3b8">{index + 1}</text>
+                        </svg>
+                      </div>
+                    )}
                   </div>
 
                   {/* Title and Status */}
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm text-slate-900 mb-1">{area.title}</div>
-                    <div
-                      className={`text-xs font-semibold uppercase tracking-wide ${
-                        isMapped
-                          ? 'text-green-700'
-                          : isInProgress
-                          ? 'text-amber-700'
-                          : 'text-slate-500'
-                      }`}
-                    >
-                      {isMapped ? 'Mapped' : isInProgress ? 'In Progress' : 'Unexplored'}
+                    <div className="flex items-center gap-1.5">
+                      {isMapped ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                          <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#059669"/></svg>
+                          Mapped
+                        </span>
+                      ) : isInProgress ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                          <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="#d97706" strokeWidth="1.5" strokeDasharray="2 2" className="animate-spin origin-center" style={{ animationDuration: '4s' }}/></svg>
+                          In Progress
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-full px-2 py-0.5 uppercase tracking-wide">
+                          <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2"/></svg>
+                          Unexplored
+                        </span>
+                      )}
                     </div>
                   </div>
 

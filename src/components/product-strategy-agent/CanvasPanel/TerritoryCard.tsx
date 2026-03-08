@@ -57,25 +57,58 @@ export function TerritoryCard({ title, description, status, onClick, territory }
   const statusConfig = {
     unexplored: {
       label: 'Unexplored',
-      icon: '○',
-      bgColor: 'bg-slate-100',
-      textColor: 'text-slate-600',
+      bgColor: 'bg-slate-50 border border-slate-200',
+      textColor: 'text-slate-500',
     },
     in_progress: {
       label: 'In Progress',
-      icon: '◐',
-      bgColor: 'bg-amber-100',
+      bgColor: 'bg-amber-50 border border-amber-200',
       textColor: 'text-amber-700',
     },
     mapped: {
       label: 'Mapped',
-      icon: '●',
-      bgColor: colors.badge,
-      textColor: colors.text,
+      bgColor: `bg-emerald-50 border border-emerald-200`,
+      textColor: 'text-emerald-700',
     },
   };
 
   const statusDisplay = statusConfig[status];
+
+  // SVG status indicator
+  const StatusCircle = () => {
+    if (status === 'unexplored') {
+      return (
+        <svg width="18" height="18" viewBox="0 0 18 18" className="flex-shrink-0">
+          <circle cx="9" cy="9" r="7" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+        </svg>
+      );
+    }
+    if (status === 'in_progress') {
+      return (
+        <svg width="18" height="18" viewBox="0 0 18 18" className="flex-shrink-0">
+          <circle cx="9" cy="9" r="7" fill="none" stroke="#fde68a" strokeWidth="1.5" />
+          <path
+            d="M9 2a7 7 0 0 1 7 7"
+            fill="none"
+            stroke="#d97706"
+            strokeWidth="2"
+            strokeLinecap="round"
+            className="animate-spin origin-center"
+            style={{ animationDuration: '3s' }}
+          />
+          <circle cx="9" cy="9" r="2.5" fill="#d97706" />
+        </svg>
+      );
+    }
+    // mapped
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" className="flex-shrink-0">
+        <circle cx="9" cy="9" r="8" fill="#d1fae5" stroke="#6ee7b7" strokeWidth="1" />
+        <circle cx="9" cy="9" r="5.5" fill="#059669" />
+        <path d="M6.5 9l1.8 1.8 3.2-3.6" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  };
 
   return (
     <button
@@ -98,20 +131,19 @@ export function TerritoryCard({ title, description, status, onClick, territory }
       {/* Status Badge - Positioned at bottom */}
       <div className="flex items-center justify-between mt-auto">
         <span className={`inline-flex items-center gap-2 px-3 py-1.5 ${statusDisplay.bgColor} ${statusDisplay.textColor} rounded-full text-xs font-bold uppercase tracking-wide`}>
-          {status === 'unexplored' && '○'}
-          {status === 'in_progress' && <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />}
-          {status === 'mapped' && <CheckIcon className={colors.text} size={14} />}
+          <StatusCircle />
           {statusDisplay.label}
         </span>
 
         {status === 'mapped' && (
-          <svg className={`w-6 h-6 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" style={{ animationDuration: '2s' }} />
+            <svg width="28" height="28" viewBox="0 0 28 28" className="relative">
+              <circle cx="14" cy="14" r="12" fill="none" stroke="#6ee7b7" strokeWidth="1.5" />
+              <circle cx="14" cy="14" r="9" fill="#059669" />
+              <path d="M10 14l2.5 2.5 5-5.5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         )}
       </div>
 

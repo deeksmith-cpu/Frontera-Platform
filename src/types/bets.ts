@@ -138,6 +138,62 @@ export interface GenerateBetsResponse {
 }
 
 export interface StrategyDocumentContent {
+  // Page 1: Product Vision & Strategic Context
+  productVision: {
+    narrative: string;
+    stateOfBusiness: string;
+  };
+  // Page 2: Market Trends, Customer Problems & Opportunities
+  marketInsights: {
+    narrative: string;
+  };
+  // Page 3: Where We Play & How We Win
+  strategicChoices: {
+    narrative: string;
+  };
+  // Page 4: Product Strategy & Roadmap Themes
+  roadmap: {
+    narrative: string;
+  };
+  // Page 5: Operating Model & Capability Build
+  operatingModel: {
+    narrative: string;
+  };
+  // Page 6: Strategic Priorities & Execution
+  executionPlan: {
+    narrative: string;
+  };
+  // Appendix: Supporting Data (structured, not narrative)
+  appendix: {
+    selectedBets: Array<{
+      id: string;
+      thesisTitle: string;
+      thesisType: string;
+      hypothesis: {
+        job: string;
+        belief: string;
+        bet: string;
+        success: string;
+        kill: { criteria: string; date: string };
+      };
+      scoring: StrategicScoring;
+      risks: StrategicRisks;
+      evidence: EvidenceLink[];
+    }>;
+    portfolioBalance: { offensive: number; defensive: number; capability: number };
+    dhmCoverage: { delight: number; hardToCopy: number; marginEnhancing: number };
+    ptwCascade: {
+      winningAspiration: string;
+      whereToPlay: string[];
+      howToWin: string[];
+      capabilities: string[];
+      managementSystems: string[];
+    };
+  };
+}
+
+// Legacy format detection — old documents use this shape
+export interface LegacyStrategyDocumentContent {
   executiveSummary: {
     companyOverview: string;
     strategicIntent: string;
@@ -161,10 +217,7 @@ export interface StrategyDocumentContent {
       belief: string;
       bet: string;
       success: string;
-      kill: {
-        criteria: string;
-        date: string;
-      };
+      kill: { criteria: string; date: string };
     };
     scoring: StrategicScoring;
     risks: StrategicRisks;
@@ -172,24 +225,10 @@ export interface StrategyDocumentContent {
   }>;
   portfolioView: {
     coherenceAnalysis: string;
-    balance: {
-      offensive: number;
-      defensive: number;
-      capability: number;
-    };
-    sequencing: Array<{
-      betId: string;
-      dependsOn: string[];
-    }>;
-    resourceAllocation: Array<{
-      allocation: string;
-      betCount: number;
-    }>;
-    dhmCoverage: {
-      delight: number;
-      hardToCopy: number;
-      marginEnhancing: number;
-    };
+    balance: { offensive: number; defensive: number; capability: number };
+    sequencing: Array<{ betId: string; dependsOn: string[] }>;
+    resourceAllocation: Array<{ allocation: string; betCount: number }>;
+    dhmCoverage: { delight: number; hardToCopy: number; marginEnhancing: number };
   };
   nextSteps: {
     validationTimeline: string;
@@ -198,4 +237,8 @@ export interface StrategyDocumentContent {
     killCriteriaReview: string;
     nextTopics: string[];
   };
+}
+
+export function isLegacyDocument(doc: unknown): doc is LegacyStrategyDocumentContent {
+  return typeof doc === 'object' && doc !== null && 'executiveSummary' in doc && !('productVision' in doc);
 }

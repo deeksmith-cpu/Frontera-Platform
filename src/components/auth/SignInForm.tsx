@@ -255,7 +255,7 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[400px]">
+    <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[400px]" suppressHydrationWarning>
       {/* Loading overlay - fades out when ready */}
       {!isReady && (
         <div className="p-6 sm:p-10 flex items-center justify-center min-h-[400px]">

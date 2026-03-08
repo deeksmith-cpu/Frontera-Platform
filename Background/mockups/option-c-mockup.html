@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontera Strategy Coach — Option C v2: Enhanced with Design Expert Recommendations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{jakarta:["Plus Jakarta Sans","system-ui","sans-serif"],code:["JetBrains Mono","monospace"]}}}};</script>
+<style>
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;margin:0}
+.font-code{font-family:"JetBrains Mono",monospace}
+.scr{display:none}.scr.on{display:block}
+.tb.act{background:#fbbf24;color:#1a1f3a;font-weight:700}
+.tb:not(.act):hover{background:rgba(255,255,255,.12)}
+.topo{background-image:url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 80Q60 40 100 80T180 80' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3Cpath d='M10 120Q50 80 100 120T190 120' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3Cpath d='M30 50Q70 20 110 50T190 50' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3C/svg%3E")}
+@keyframes ringP{0%{box-shadow:0 0 0 0 rgba(251,191,36,.4)}70%{box-shadow:0 0 0 6px rgba(251,191,36,0)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}.ring-p{animation:ringP 2s infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.fade-up{animation:fadeUp .5s ease-out both}
+.bg-header-gradient{background:linear-gradient(180deg,#1e2440 0%,#151930 100%)}
+.bg-main-gradient{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
+</style>
+</head>
+<body class="bg-slate-100">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 shadow-lg" style="height:44px">
+<div class="h-full px-3 flex items-center gap-1.5 overflow-x-auto">
+<span class="text-[10px] font-bold text-[#fbbf24] uppercase tracking-wider mr-2 flex-shrink-0">Option C v2:</span>
+<button onclick="S('s1')" data-t="s1" class="tb act text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">1 Discovery Intro</button>
+<button onclick="S('s2')" data-t="s2" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">2 Discovery Chat</button>
+<button onclick="S('s3')" data-t="s3" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">3 Research Overview</button>
+<button onclick="S('s4')" data-t="s4" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">4 Question (Coach Closed)</button>
+<button onclick="S('s5')" data-t="s5" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">5 Coach Drawer Open</button>
+<button onclick="S('s6')" data-t="s6" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">6 Debate Mode</button>
+<button onclick="S('s7')" data-t="s7" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">7 Synthesis</button>
+<button onclick="S('s8')" data-t="s8" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">8 Strategic Bets</button>
+<button onclick="S('s9')" data-t="s9" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">9 Focus Mode</button>
+<button onclick="S('s10')" data-t="s10" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">10 Celebration</button>
+<button onclick="S('s11')" data-t="s11" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">11 Tablet Overview</button>
+<button onclick="S('s12')" data-t="s12" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">12 Tablet Question</button>
+<button onclick="S('s13')" data-t="s13" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">13 Mobile Question</button>
+<button onclick="S('s14')" data-t="s14" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">14 Mobile Coach</button>
+</div></nav>
+<div style="padding-top:44px">
+<!-- ============================================================ -->
+<!-- SCREEN: 1 Discovery Intro -->
+<!-- ============================================================ -->
+<div id="s1" class="scr on">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 1</span><span class="text-[10px] font-code text-[#fbbf24]">0 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:0%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-emerald-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Discovery</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Research</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-p"></span><span class="text-[11px] font-semibold text-emerald-700">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-8"><div class="max-w-2xl mx-auto fade-up">
+<div class="inline-flex items-center gap-2 text-[10px] text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 font-semibold uppercase tracking-wider mb-6"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-p"></span>Phase 1: Discovery</div>
+<h1 class="text-3xl font-bold text-[#1a1f3a] mb-3 leading-tight">Start Your Strategic Journey</h1>
+<p class="text-slate-600 leading-relaxed mb-8 text-base">Before we begin mapping your strategic terrain, let's gather the context that will fuel your coaching experience. Upload strategic documents, explore AI research, and have an initial conversation with your coach.</p>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-white border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-[#fbbf24] hover:shadow-lg transition-all duration-300 cursor-pointer group"><div class="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-[#fbbf24]/10 flex items-center justify-center mx-auto mb-3"><span class="text-xl">📄</span></div><p class="text-sm font-semibold text-[#1a1f3a] mb-1">Upload Materials</p><p class="text-[11px] text-slate-500">Annual reports, strategy docs, market research</p></div>
+<div class="bg-white border-2 border-dashed border-cyan-300 rounded-2xl p-6 text-center hover:border-cyan-400 hover:shadow-lg transition-all duration-300 cursor-pointer group"><div class="w-12 h-12 rounded-xl bg-cyan-50 group-hover:bg-cyan-100 flex items-center justify-center mx-auto mb-3"><span class="text-xl">🤖</span></div><p class="text-sm font-semibold text-[#1a1f3a] mb-1">AI Research Assistant</p><p class="text-[11px] text-slate-500">Auto-discover documents from the web</p></div>
+</div>
+<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><div class="flex items-center gap-2.5 mb-3"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><p class="text-sm font-semibold text-[#1a1f3a]">Coach Marcus</p></div><p class="text-sm text-slate-600 leading-relaxed mb-3">Welcome to your strategic transformation journey! I'm here to guide you through building a comprehensive product strategy.</p>
+<div class="flex gap-2"><button class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">Tell me about my company</button><button class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">What should I upload?</button></div></div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3"><div class="space-y-2.5"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Discovery Checklist</p>
+<div class="flex items-start gap-2 p-2.5 bg-emerald-50 rounded-xl border border-emerald-200"><span class="text-emerald-500 text-sm mt-0.5">✓</span><div><p class="text-xs font-semibold text-slate-700">Company Context</p><p class="text-[10px] text-slate-500">Auto-completed from onboarding</p></div></div>
+<div class="flex items-start gap-2 p-2.5 bg-amber-50 rounded-xl border border-amber-300"><span class="text-amber-500 text-sm mt-0.5 font-bold">!</span><div><p class="text-xs font-semibold text-slate-700">Strategic Materials</p><p class="text-[10px] text-amber-600 font-medium">Required — upload at least 1 document</p></div></div>
+<div class="flex items-start gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200"><span class="text-slate-400 text-sm mt-0.5">💬</span><div><p class="text-xs font-semibold text-slate-700">Coaching Conversations</p><p class="text-[10px] text-slate-500">Recommended for richer insights</p></div></div>
+</div><div class="mt-4 p-3 bg-cyan-50 rounded-xl border border-cyan-200"><p class="text-[10px] text-cyan-700 leading-relaxed">💡 The more strategic context you provide, the better your coaching insights will be.</p></div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 2 Discovery Chat -->
+<!-- ============================================================ -->
+<div id="s2" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 1</span><span class="text-[10px] font-code text-[#fbbf24]">25 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:25%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-emerald-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Discovery</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Research</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-p"></span><span class="text-[11px] font-semibold text-emerald-700">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 flex flex-col min-h-0"><div class="flex-1 flex flex-col min-h-0" style="margin:-24px;padding:0">
+<div class="flex-1 overflow-y-auto p-6 space-y-4">
+<div class="flex gap-3 max-w-xl"><div class="w-7 h-7 rounded-lg bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div class="bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border border-slate-100"><p class="text-sm text-slate-700 leading-relaxed">Great start! I've extracted key strategic context from your FY2025 Annual Report including revenue growth, market positioning, and organizational capabilities.</p><p class="text-[10px] text-slate-400 mt-2">2 min ago</p></div></div>
+<div class="flex gap-3 max-w-xl ml-auto flex-row-reverse"><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-1 text-white text-[10px] font-semibold">DK</div><div class="bg-[#1a1f3a] rounded-2xl rounded-tr-md p-4 shadow-sm"><p class="text-sm text-white leading-relaxed">I've also used the AI Research Assistant. Can you review what we have?</p><p class="text-[10px] text-slate-400 mt-2">1 min ago</p></div></div>
+<div class="flex gap-3 max-w-xl"><div class="w-7 h-7 rounded-lg bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div class="bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border border-slate-100"><p class="text-sm text-slate-700 leading-relaxed">You've met the minimum requirements with 2 documents. <strong class="text-[#1a1f3a]">You're ready to begin terrain mapping!</strong></p><p class="text-[10px] text-slate-400 mt-2">Just now</p></div></div>
+</div>
+<div class="px-6 pb-4 flex-shrink-0"><div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+<div class="flex gap-2 mb-2"><button class="text-[10px] px-2.5 py-1 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50">📎 Upload</button><button class="text-[10px] px-2.5 py-1 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50">🔗 URL</button><button class="text-[10px] px-2.5 py-1 rounded-full border border-cyan-200 text-cyan-600 hover:bg-cyan-50">🤖 AI Research</button></div>
+<div class="flex items-center gap-2"><input type="text" placeholder="Share insights or ask your coach..." class="flex-1 text-sm py-2 px-3 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:border-[#fbbf24] placeholder:text-slate-400"><button class="w-9 h-9 rounded-lg bg-[#fbbf24] flex items-center justify-center hover:bg-[#f59e0b]"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button></div>
+</div></div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2">Uploaded Materials</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg border border-emerald-200"><span class="text-emerald-500 text-sm">📄</span><div class="flex-1 min-w-0"><p class="text-[11px] font-medium text-slate-700 truncate">FY2025 Annual Report.pdf</p><p class="text-[9px] text-slate-400">2.4 MB · Uploaded just now</p></div><span class="text-emerald-500 text-xs">✓</span></div>
+<div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg border border-emerald-200"><span class="text-emerald-500 text-sm">🤖</span><div class="flex-1 min-w-0"><p class="text-[11px] font-medium text-slate-700 truncate">Meridian Market Overview 2025</p><p class="text-[9px] text-slate-400">AI Research · 3 min ago</p></div><span class="text-emerald-500 text-xs">✓</span></div>
+</div>
+<div class="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-200"><p class="text-[10px] text-emerald-700 font-semibold mb-1">✓ Requirements Met</p><p class="text-[10px] text-emerald-600">2 documents uploaded. Ready to proceed.</p></div>
+<button class="mt-3 w-full py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] shadow-sm">Begin Terrain Mapping →</button></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 3 Research Overview -->
+<!-- ============================================================ -->
+<div id="s3" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 1</span><span class="text-[10px] font-code text-[#fbbf24]">50 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:50%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-amber-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Research</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span><span class="text-[11px] font-semibold text-amber-700">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-8"><div class="max-w-2xl mx-auto fade-up">
+<div class="inline-flex items-center gap-2 text-[10px] text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 font-semibold uppercase tracking-wider mb-6"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span>Phase 2: Research</div>
+<h1 class="text-3xl font-bold text-[#1a1f3a] mb-3">Map Your Strategic Terrain</h1>
+<p class="text-slate-600 leading-relaxed mb-8">Explore three critical territories to build a comprehensive strategic picture. Each territory has three research areas with guided questions and coaching support.</p>
+<div class="grid grid-cols-1 gap-4 mb-8"><div class="bg-white border-2 border-indigo-200 rounded-2xl p-5 hover:shadow-lg hover:border-indigo-400 transition-all duration-300 cursor-pointer group">
+<div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2.5"><span class="text-xl">🏢</span><h3 class="text-base font-semibold text-[#1a1f3a]">Company</h3></div><span class="text-[9px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full border border-indigo-200">Unmapped</span></div>
+<p class="text-sm text-slate-600 leading-relaxed mb-3">Understand your organizational foundation, strategic position, and competitive advantages.</p>
+<div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="text-[10px] text-slate-400 font-code ml-1">0/3 areas</span></div></div>
+<div class="bg-white border-2 border-cyan-200 rounded-2xl p-5 hover:shadow-lg hover:border-cyan-400 transition-all duration-300 cursor-pointer group">
+<div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2.5"><span class="text-xl">👥</span><h3 class="text-base font-semibold text-[#1a1f3a]">Customer</h3></div><span class="text-[9px] uppercase tracking-wider font-semibold text-cyan-600 bg-cyan-50 px-2 py-1 rounded-full border border-cyan-200">Unmapped</span></div>
+<p class="text-sm text-slate-600 leading-relaxed mb-3">Map customer segments, uncover needs and pain points, and track behavioral dynamics.</p>
+<div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[10px] text-slate-400 font-code ml-1">0/3 areas</span></div></div>
+<div class="bg-white border-2 border-purple-200 rounded-2xl p-5 hover:shadow-lg hover:border-purple-400 transition-all duration-300 cursor-pointer group">
+<div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2.5"><span class="text-xl">📊</span><h3 class="text-base font-semibold text-[#1a1f3a]">Market</h3></div><span class="text-[9px] uppercase tracking-wider font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-200">Unmapped</span></div>
+<p class="text-sm text-slate-600 leading-relaxed mb-3">Analyze your competitive landscape, identify threats, and understand market forces.</p>
+<div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[10px] text-slate-400 font-code ml-1">0/3 areas</span></div></div></div>
+<button class="w-full py-3.5 rounded-xl bg-[#fbbf24] text-sm font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] shadow-md hover:shadow-lg">Enter Terrain Mapping →</button></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-3">Strategic Terrain</p><div class="mb-3"><p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-1.5">Company</p><div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="text-[11px] text-slate-600">Company Foundation</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="text-[11px] text-slate-600">Company Position</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="text-[11px] text-slate-600">Competitive Advantages</span></div></div>
+<div class="mb-3"><p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-1.5">Customer</p><div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-600">Customer Segments</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-600">Customer Needs</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-600">Customer Dynamics</span></div></div>
+<div class="mb-3"><p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-1.5">Market</p><div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-600">Market Landscape</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-600">Market Threats</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-600">Market Forces</span></div></div><div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200"><div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">0%</span></div><div class="w-full h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:0%"></div></div><p class="text-[9px] text-slate-400 mt-1">Complete all 9 areas to unlock Synthesis</p></div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 4 Question (Coach Closed) -->
+<!-- ============================================================ -->
+<div id="s4" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 1</span><span class="text-[10px] font-code text-[#fbbf24]">75 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:75%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-amber-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Research</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">1/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span><span class="text-[11px] font-semibold text-amber-700">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-6"><div class="flex items-center gap-1.5 text-[11px] text-slate-400 mb-5"><span class="hover:text-indigo-600 cursor-pointer">Research</span><span>›</span><span class="text-indigo-600 font-medium">Company</span><span>›</span><span class="text-[#1a1f3a] font-semibold">Company Foundation</span></div><div class="max-w-2xl"><div class="bg-white border-2 border-indigo-200 rounded-2xl p-6 shadow-md mb-4">
+<div class="flex items-center justify-between mb-4">
+<span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Company Foundation</span>
+<span class="text-[10px] font-code text-slate-400">Q1 of 4</span>
+</div>
+<h2 class="text-lg font-semibold text-[#1a1f3a] leading-snug mb-2">What are your organization's core competencies and differentiating capabilities?</h2>
+<div class="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-3 mb-4"><p class="text-[11px] text-slate-500"><strong class="text-slate-600">💡 Think about:</strong> resource audit, capability mapping, core vs. peripheral analysis, VRIN framework</p></div>
+<textarea rows="6" placeholder="Describe your organization's core competencies..." class="w-full text-sm p-4 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 placeholder:text-slate-400 mb-4"></textarea>
+<div class="mb-4"><label class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Confidence Level</label>
+<div class="flex gap-2">
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">📊 Data-Backed</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 text-center">💡 Experience</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">❓ Best Guess</button>
+</div></div>
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] transition-colors shadow-sm"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14l-2 16H7L5 4z"/></svg>Coach Suggestion</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-cyan-300 bg-white text-xs font-semibold text-cyan-700 hover:bg-cyan-50 transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Coach Debate</button>
+<button class="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">Save Draft</button>
+</div>
+<button class="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#1a1f3a] text-xs font-semibold text-white hover:bg-[#2d3561] transition-colors shadow-sm">Submit Answer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+</div></div>
+<!-- Minimized Coach Bar -->
+<div class="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between hover:shadow-sm transition-all cursor-pointer">
+<div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-lg bg-[#2d3561] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div><span class="text-xs font-semibold text-[#1a1f3a]">Coach Marcus</span><span class="text-[10px] text-slate-400 ml-2">ready to help</span></div></div>
+<div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">⌘K</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
+</div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-3">Company Territory</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg border border-indigo-300"><span class="w-2 h-2 rounded-full bg-indigo-500 ring-p"></span><span class="text-[11px] font-semibold text-indigo-700">Company Foundation</span><span class="text-[9px] text-indigo-500 ml-auto font-code">1/4</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Company Position</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Competitive Advantages</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+</div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Customer Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Segments</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Needs</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Dynamics</span></div>
+</div></div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-2">Market Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Landscape</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Threats</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Forces</span></div>
+</div></div>
+<div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">11%</span></div>
+<div class="w-full h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:11%"></div></div>
+</div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 5 Coach Drawer Open -->
+<!-- ============================================================ -->
+<div id="s5" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 1</span><span class="text-[10px] font-code text-[#fbbf24]">75 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:75%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-amber-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Research</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">1/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span><span class="text-[11px] font-semibold text-amber-700">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-6"><div class="flex items-center gap-1.5 text-[11px] text-slate-400 mb-5"><span class="hover:text-indigo-600 cursor-pointer">Research</span><span>›</span><span class="text-indigo-600 font-medium">Company</span><span>›</span><span class="text-[#1a1f3a] font-semibold">Company Foundation</span></div><div class="max-w-2xl"><div class="bg-white border-2 border-indigo-200 rounded-2xl p-6 shadow-md mb-4">
+<div class="flex items-center justify-between mb-4">
+<span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Company Foundation</span>
+<span class="text-[10px] font-code text-slate-400">Q1 of 4</span>
+</div>
+<h2 class="text-lg font-semibold text-[#1a1f3a] leading-snug mb-2">What are your organization's core competencies and differentiating capabilities?</h2>
+<div class="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-3 mb-4"><p class="text-[11px] text-slate-500"><strong class="text-slate-600">💡 Think about:</strong> resource audit, capability mapping, core vs. peripheral analysis, VRIN framework</p></div>
+<textarea rows="5"  class="w-full text-sm p-4 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 placeholder:text-slate-400 mb-4">Meridian's core competencies center on real-time payment processing infrastructure and our proprietary risk assessment algorithms. We've built deep expertise in regulatory compliance across 12 markets, which creates significant barriers to entry for competitors...</textarea>
+<div class="mb-4"><label class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Confidence Level</label>
+<div class="flex gap-2">
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">📊 Data-Backed</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 text-center">💡 Experience</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">❓ Best Guess</button>
+</div></div>
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] transition-colors shadow-sm"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14l-2 16H7L5 4z"/></svg>Coach Suggestion</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-cyan-300 bg-white text-xs font-semibold text-cyan-700 hover:bg-cyan-50 transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Coach Debate</button>
+<button class="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">Save Draft</button>
+</div>
+<button class="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#1a1f3a] text-xs font-semibold text-white hover:bg-[#2d3561] transition-colors shadow-sm">Submit Answer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+</div></div><!-- COACH SLIDE-UP DRAWER (Enhancement #1: replaces collapsed chat) -->
+<div class="max-w-2xl relative">
+<div class="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden" style="max-height:380px">
+<div class="bg-[#1a1f3a] px-4 py-2.5 flex items-center justify-between" style="background:linear-gradient(180deg,#1e2440,#151930)">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<span class="text-xs font-semibold text-white">Coach Marcus</span>
+<span class="text-[9px] text-slate-400">· Company Foundation</span>
+</div>
+<button class="text-xs text-slate-400 hover:text-white flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Minimize</button>
+</div>
+<!-- Coach suggestion with gold accent -->
+<div class="border-l-4 border-[#fbbf24] bg-[#fbbf24]/5 px-4 py-3">
+<div class="flex items-center gap-1.5 mb-2"><span class="text-[9px] text-[#fbbf24] bg-[#fbbf24]/10 px-2 py-0.5 rounded-full font-medium">Coach Suggestion</span></div>
+<p class="text-sm text-slate-700 leading-relaxed mb-2">Great start with payment processing and risk algorithms! I'd recommend strengthening this by applying the <strong>VRIN framework</strong>:</p>
+<div class="bg-white/80 rounded-xl p-3 mb-2 border border-[#fbbf24]/20">
+<ul class="text-xs text-slate-700 space-y-1.5 leading-relaxed">
+<li>✓ <strong>Valuable:</strong> Real-time processing serves growing demand for instant payments</li>
+<li>✓ <strong>Rare:</strong> 12-market compliance is hard to replicate — quantify this advantage</li>
+<li>? <strong>Inimitable:</strong> Are your algorithms truly proprietary, or could competitors build similar?</li>
+<li>? <strong>Non-substitutable:</strong> Could blockchain or DeFi solutions bypass your infrastructure?</li>
+</ul></div>
+<p class="text-xs text-slate-600 leading-relaxed">Consider distinguishing <em>threshold competencies</em> (necessary to compete) vs. <em>distinctive competencies</em> (what sets you apart).</p>
+</div>
+<!-- Chat messages -->
+<div class="px-4 py-3 space-y-3 overflow-y-auto" style="max-height:140px">
+<div class="flex gap-2"><div class="w-5 h-5 rounded-md bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div class="bg-slate-50 rounded-lg rounded-tl-sm p-2.5"><p class="text-xs text-slate-700 leading-relaxed">From your annual report, Meridian processed $4.2B across 12 markets. That scale is a competency in itself. But what <em>capabilities</em> enable it?</p></div></div>
+<div class="flex flex-wrap gap-1.5 ml-7">
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Challenge me</button>
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Give example</button>
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Apply VRIN</button>
+</div></div>
+<!-- Input -->
+<div class="px-4 py-3 border-t border-slate-100 bg-slate-50">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Ask coach about this question..." class="flex-1 text-xs py-2 px-3 border border-slate-200 rounded-lg bg-white focus:outline-none focus:border-[#fbbf24] placeholder:text-slate-400">
+<button class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+</div></div>
+</div></div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-3">Company Territory</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg border border-indigo-300"><span class="w-2 h-2 rounded-full bg-indigo-500 ring-p"></span><span class="text-[11px] font-semibold text-indigo-700">Company Foundation</span><span class="text-[9px] text-indigo-500 ml-auto font-code">1/4</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Company Position</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Competitive Advantages</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+</div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Customer Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Segments</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Needs</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Dynamics</span></div>
+</div></div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-2">Market Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Landscape</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Threats</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Forces</span></div>
+</div></div>
+<div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">11%</span></div>
+<div class="w-full h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:11%"></div></div>
+</div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 6 Debate Mode -->
+<!-- ============================================================ -->
+<div id="s6" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 2</span><span class="text-[10px] font-code text-[#fbbf24]">100 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:50%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-amber-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Research</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">1/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span><span class="text-[11px] font-semibold text-amber-700">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-6"><div class="flex items-center gap-1.5 text-[11px] text-slate-400 mb-5"><span class="hover:text-indigo-600 cursor-pointer">Research</span><span>›</span><span class="text-indigo-600 font-medium">Company</span><span>›</span><span class="text-[#1a1f3a] font-semibold">Company Foundation</span></div>
+<div class="max-w-3xl bg-white border-2 border-cyan-300 rounded-2xl shadow-md overflow-hidden">
+<div class="bg-cyan-50 border-b border-cyan-200 px-6 py-3 flex items-center justify-between"><div class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="text-sm font-semibold text-[#1a1f3a]">Coach Debate</span><span class="text-[9px] text-cyan-600 bg-cyan-100 px-2 py-0.5 rounded-full font-medium">Active Challenge</span></div><button class="text-xs text-slate-400">Exit Debate</button></div>
+<div class="grid grid-cols-2 divide-x divide-slate-200">
+<div class="p-5"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2">Your Draft</p><div class="bg-slate-50 rounded-xl p-4"><p class="text-sm text-slate-700 leading-relaxed">Meridian's core competencies center on real-time payment processing infrastructure and our proprietary risk assessment algorithms. We've built deep expertise in regulatory compliance across 12 markets.</p></div></div>
+<div class="p-5"><p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Coach's Challenge</p><div class="bg-cyan-50 rounded-xl p-4 border border-cyan-200"><p class="text-sm text-slate-700 leading-relaxed mb-3">Your answer identifies <strong>capabilities</strong> but doesn't distinguish <em>core</em> from <em>peripheral</em>:</p>
+<ul class="text-sm text-slate-700 space-y-2"><li>🔴 <strong>Real-time processing</strong> — is this truly rare, or are Stripe/Adyen doing this at scale?</li><li>🟡 <strong>12-market compliance</strong> — strong moat, but competency or <em>license to operate</em>?</li><li>🟢 <strong>Risk algorithms</strong> — if proprietary, this could be genuine. What's the evidence?</li></ul></div></div>
+</div>
+<div class="px-6 py-4 bg-slate-50 border-t border-slate-200"><p class="text-xs text-slate-600 mb-3 font-medium">Respond to the challenge:</p>
+<textarea rows="3" placeholder="Counter-argue or refine your position..." class="w-full text-sm p-3 border border-slate-200 rounded-xl bg-white resize-none focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 placeholder:text-slate-400 mb-3"></textarea>
+<div class="flex justify-between"><button class="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-600">Keep Original</button><div class="flex gap-2"><button class="px-4 py-2 rounded-lg border border-cyan-300 text-xs font-semibold text-cyan-700">Refine Draft</button><button class="px-4 py-2 rounded-lg bg-[#1a1f3a] text-xs font-semibold text-white">Accept Changes</button></div></div></div>
+</div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-3">Company Territory</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg border border-indigo-300"><span class="w-2 h-2 rounded-full bg-indigo-500 ring-p"></span><span class="text-[11px] font-semibold text-indigo-700">Company Foundation</span><span class="text-[9px] text-indigo-500 ml-auto font-code">1/4</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Company Position</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Competitive Advantages</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+</div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Customer Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Segments</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Needs</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Dynamics</span></div>
+</div></div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-2">Market Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Landscape</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Threats</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Forces</span></div>
+</div></div>
+<div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">11%</span></div>
+<div class="w-full h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:11%"></div></div>
+</div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 7 Synthesis -->
+<!-- ============================================================ -->
+<div id="s7" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 4</span><span class="text-[10px] font-code text-[#fbbf24]">450 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:100%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Research</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-purple-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Synthesis</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-100 border border-purple-300"><span class="w-1.5 h-1.5 rounded-full bg-purple-500 ring-p"></span><span class="text-[11px] font-semibold text-purple-700">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-8"><div class="max-w-2xl mx-auto fade-up">
+<div class="inline-flex items-center gap-2 text-[10px] text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200 font-semibold uppercase tracking-wider mb-6"><span class="w-1.5 h-1.5 rounded-full bg-purple-500 ring-p"></span>Phase 3: Synthesis</div>
+<h1 class="text-2xl font-bold text-[#1a1f3a] mb-2">Strategic Synthesis</h1>
+<p class="text-slate-600 mb-6">Cross-territory analysis has revealed strategic opportunities, tensions, and blind spots.</p>
+<div class="bg-white border border-purple-200 rounded-2xl p-5 shadow-sm mb-4 hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Opportunity</span></div><span class="text-[10px] font-code text-slate-400">High Priority</span></div>
+<h3 class="text-base font-semibold text-[#1a1f3a] mb-2">Embedded Finance for SMB Segment</h3>
+<p class="text-sm text-slate-600 leading-relaxed mb-3">Your payment processing capabilities combined with underserved SMB needs in a market trending toward embedded finance creates a strong BaaS opportunity.</p>
+<div class="flex gap-1.5 mb-3"><span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">Company</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-600 border border-cyan-200">Customer</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-200">Market</span></div>
+<div class="flex gap-2"><button class="text-[10px] px-3 py-1.5 rounded-lg bg-[#fbbf24] text-[#1a1f3a] font-semibold">Explore with Coach</button><button class="text-[10px] px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 font-medium">View Evidence</button></div></div>
+<div class="bg-white border border-amber-300 rounded-2xl p-5 shadow-sm mb-4">
+<div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-[10px] uppercase font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Tension</span></div><span class="text-[10px] font-code text-slate-400">Needs Resolution</span></div>
+<h3 class="text-base font-semibold text-[#1a1f3a] mb-2">Innovation Speed vs. Compliance Rigor</h3>
+<p class="text-sm text-slate-600 leading-relaxed mb-3">Your compliance advantage may conflict with customer demands for rapid feature deployment.</p>
+<button class="text-[10px] px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 font-semibold border border-amber-300">Discuss with Coach</button></div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3"><p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-3">Synthesis Overview</p>
+<div class="p-2.5 bg-purple-50 rounded-xl border border-purple-200 mb-3"><p class="text-[10px] font-semibold text-purple-700 mb-1">Cross-Territory Analysis</p>
+<div class="flex items-center justify-between text-[10px] text-purple-600"><span>Opportunities</span><span class="font-code font-bold">3</span></div>
+<div class="flex items-center justify-between text-[10px] text-purple-600"><span>Tensions</span><span class="font-code font-bold">2</span></div>
+<div class="flex items-center justify-between text-[10px] text-purple-600"><span>Blind Spots</span><span class="font-code font-bold">1</span></div></div>
+<p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2">Territory Completion</p>
+<div class="space-y-1.5"><div class="flex items-center gap-2"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] text-slate-600">Company (3/3)</span></div><div class="flex items-center gap-2"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] text-slate-600">Customer (3/3)</span></div><div class="flex items-center gap-2"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] text-slate-600">Market (3/3)</span></div></div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 8 Strategic Bets -->
+<!-- ============================================================ -->
+<div id="s8" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header><div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 5</span><span class="text-[10px] font-code text-[#fbbf24]">600 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:100%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Research</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Synthesis</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-cyan-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Bets</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[9px] text-slate-500 font-code ml-1">3/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside><div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-100 border border-cyan-300"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500 ring-p"></span><span class="text-[11px] font-semibold text-cyan-700">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div><main class="flex-1 overflow-y-auto p-8"><div class="max-w-2xl mx-auto fade-up">
+<div class="flex items-center justify-between mb-6"><div><div class="inline-flex items-center gap-2 text-[10px] text-cyan-600 bg-cyan-50 px-3 py-1.5 rounded-full border border-cyan-200 font-semibold uppercase tracking-wider mb-3"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500 ring-p"></span>Phase 4: Strategic Bets</div><h1 class="text-2xl font-bold text-[#1a1f3a]">Your Strategic Bets</h1></div>
+<button class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] shadow-sm"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Create New Bet</button></div>
+<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-4 hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3"><span class="text-[10px] uppercase font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">High Confidence</span><span class="text-[10px] font-code text-slate-400">Bet #1</span></div>
+<h3 class="text-base font-semibold text-[#1a1f3a] mb-2">Launch SMB Banking-as-a-Service Platform</h3>
+<div class="bg-slate-50 rounded-xl p-3 mb-3"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Hypothesis</p><p class="text-sm text-slate-700 leading-relaxed">If we package our payment processing as an embeddable API platform for SMBs, we can capture 15% of the mid-market embedded finance segment within 18 months.</p></div>
+<div class="flex gap-1.5 mb-3"><span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">Company</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-600 border border-cyan-200">Customer</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-200">Market</span></div>
+<div class="flex items-center justify-between"><div class="flex gap-2"><button class="text-[10px] px-3 py-1.5 rounded-lg bg-[#fbbf24] text-[#1a1f3a] font-semibold">Refine with Coach</button><button class="text-[10px] px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600">View Evidence</button></div>
+<div class="flex items-center gap-1"><span class="text-[10px] text-slate-400">Confidence:</span><div class="flex gap-0.5"><span class="w-3 h-1.5 rounded-full bg-emerald-500"></span><span class="w-3 h-1.5 rounded-full bg-emerald-500"></span><span class="w-3 h-1.5 rounded-full bg-emerald-500"></span><span class="w-3 h-1.5 rounded-full bg-emerald-500"></span><span class="w-3 h-1.5 rounded-full bg-slate-200"></span></div></div></div></div>
+<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-3"><span class="text-[10px] uppercase font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Medium Confidence</span><span class="text-[10px] font-code text-slate-400">Bet #2</span></div>
+<h3 class="text-base font-semibold text-[#1a1f3a] mb-2">Compliance-as-a-Service for Enterprise</h3>
+<div class="bg-slate-50 rounded-xl p-3"><p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Hypothesis</p><p class="text-sm text-slate-700 leading-relaxed">If we productize our 12-market regulatory expertise as a standalone service, enterprise clients will pay a premium for simplified cross-border expansion.</p></div></div></div></main></div><aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3"><p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-3">Bet Portfolio</p>
+<div class="space-y-2.5">
+<div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200"><p class="text-[11px] font-semibold text-slate-700">SMB BaaS Platform</p><div class="flex items-center justify-between mt-1"><span class="text-[9px] text-emerald-600 font-medium">High Confidence</span><span class="text-[9px] font-code text-slate-400">████░</span></div></div>
+<div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200"><p class="text-[11px] font-semibold text-slate-700">Compliance-as-a-Service</p><div class="flex items-center justify-between mt-1"><span class="text-[9px] text-amber-600 font-medium">Medium</span><span class="text-[9px] font-code text-slate-400">███░░</span></div></div>
+<div class="p-2.5 bg-cyan-50 rounded-xl border border-cyan-200"><p class="text-[11px] font-semibold text-slate-700">AI Risk Engine Licensing</p><div class="flex items-center justify-between mt-1"><span class="text-[9px] text-cyan-600 font-medium">Exploratory</span><span class="text-[9px] font-code text-slate-400">██░░░</span></div></div>
+</div>
+<div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200"><p class="text-[10px] font-semibold text-slate-600 mb-1">Portfolio Balance</p><p class="text-[9px] text-slate-500">1 high · 1 medium · 1 exploratory</p></div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 9 Focus Mode -->
+<!-- ============================================================ -->
+<div id="s9" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)">
+<header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Focus Mode</span>
+<span class="text-[9px] text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30 ml-2">Research · Company Foundation · Q1/4</span></div>
+<div class="flex items-center gap-2"><span class="text-[10px] font-code text-[#fbbf24]">75 XP</span><button class="text-[10px] text-[#fbbf24] border border-[#fbbf24]/40 px-2 py-1 rounded-md hover:bg-[#fbbf24]/10 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>Exit Focus</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header>
+<main class="flex-1 overflow-y-auto p-8">
+<div class="max-w-3xl mx-auto">
+<div class="flex items-center gap-1.5 text-[11px] text-slate-400 mb-5"><span class="hover:text-indigo-600 cursor-pointer">Research</span><span>›</span><span class="text-indigo-600 font-medium">Company</span><span>›</span><span class="text-[#1a1f3a] font-semibold">Company Foundation</span></div>
+<div class="bg-white border-2 border-indigo-200 rounded-2xl p-6 shadow-md mb-4">
+<div class="flex items-center justify-between mb-4">
+<span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Company Foundation</span>
+<span class="text-[10px] font-code text-slate-400">Q1 of 4</span>
+</div>
+<h2 class="text-lg font-semibold text-[#1a1f3a] leading-snug mb-2">What are your organization's core competencies and differentiating capabilities?</h2>
+<div class="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-3 mb-4"><p class="text-[11px] text-slate-500"><strong class="text-slate-600">💡 Think about:</strong> resource audit, capability mapping, core vs. peripheral analysis, VRIN framework</p></div>
+<textarea rows="5"  class="w-full text-sm p-4 border border-slate-200 rounded-xl bg-white text-slate-900 resize-none leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 placeholder:text-slate-400 mb-4">Meridian's core competencies center on real-time payment processing infrastructure and our proprietary risk assessment algorithms. We've built deep expertise in regulatory compliance across 12 markets, which creates significant barriers to entry for competitors...</textarea>
+<div class="mb-4"><label class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Confidence Level</label>
+<div class="flex gap-2">
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">📊 Data-Backed</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 text-center">💡 Experience</button>
+<button class="flex-1 text-xs font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center hover:bg-slate-50">❓ Best Guess</button>
+</div></div>
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] transition-colors shadow-sm"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14l-2 16H7L5 4z"/></svg>Coach Suggestion</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-cyan-300 bg-white text-xs font-semibold text-cyan-700 hover:bg-cyan-50 transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Coach Debate</button>
+<button class="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">Save Draft</button>
+</div>
+<button class="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#1a1f3a] text-xs font-semibold text-white hover:bg-[#2d3561] transition-colors shadow-sm">Submit Answer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+</div></div>
+<!-- COACH SLIDE-UP DRAWER (Enhancement #1: replaces collapsed chat) -->
+<div class="max-w-2xl relative">
+<div class="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden" style="max-height:380px">
+<div class="bg-[#1a1f3a] px-4 py-2.5 flex items-center justify-between" style="background:linear-gradient(180deg,#1e2440,#151930)">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<span class="text-xs font-semibold text-white">Coach Marcus</span>
+<span class="text-[9px] text-slate-400">· Company Foundation</span>
+</div>
+<button class="text-xs text-slate-400 hover:text-white flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Minimize</button>
+</div>
+<!-- Coach suggestion with gold accent -->
+<div class="border-l-4 border-[#fbbf24] bg-[#fbbf24]/5 px-4 py-3">
+<div class="flex items-center gap-1.5 mb-2"><span class="text-[9px] text-[#fbbf24] bg-[#fbbf24]/10 px-2 py-0.5 rounded-full font-medium">Coach Suggestion</span></div>
+<p class="text-sm text-slate-700 leading-relaxed mb-2">Great start with payment processing and risk algorithms! I'd recommend strengthening this by applying the <strong>VRIN framework</strong>:</p>
+<div class="bg-white/80 rounded-xl p-3 mb-2 border border-[#fbbf24]/20">
+<ul class="text-xs text-slate-700 space-y-1.5 leading-relaxed">
+<li>✓ <strong>Valuable:</strong> Real-time processing serves growing demand for instant payments</li>
+<li>✓ <strong>Rare:</strong> 12-market compliance is hard to replicate — quantify this advantage</li>
+<li>? <strong>Inimitable:</strong> Are your algorithms truly proprietary, or could competitors build similar?</li>
+<li>? <strong>Non-substitutable:</strong> Could blockchain or DeFi solutions bypass your infrastructure?</li>
+</ul></div>
+<p class="text-xs text-slate-600 leading-relaxed">Consider distinguishing <em>threshold competencies</em> (necessary to compete) vs. <em>distinctive competencies</em> (what sets you apart).</p>
+</div>
+<!-- Chat messages -->
+<div class="px-4 py-3 space-y-3 overflow-y-auto" style="max-height:140px">
+<div class="flex gap-2"><div class="w-5 h-5 rounded-md bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div class="bg-slate-50 rounded-lg rounded-tl-sm p-2.5"><p class="text-xs text-slate-700 leading-relaxed">From your annual report, Meridian processed $4.2B across 12 markets. That scale is a competency in itself. But what <em>capabilities</em> enable it?</p></div></div>
+<div class="flex flex-wrap gap-1.5 ml-7">
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Challenge me</button>
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Give example</button>
+<button class="text-[10px] font-medium px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">Apply VRIN</button>
+</div></div>
+<!-- Input -->
+<div class="px-4 py-3 border-t border-slate-100 bg-slate-50">
+<div class="flex items-center gap-2">
+<input type="text" placeholder="Ask coach about this question..." class="flex-1 text-xs py-2 px-3 border border-slate-200 rounded-lg bg-white focus:outline-none focus:border-[#fbbf24] placeholder:text-slate-400">
+<button class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+</div></div>
+</div></div>
+</div></main></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 10 Celebration -->
+<!-- ============================================================ -->
+<div id="s10" class="scr">
+<div class="flex flex-col h-screen" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)"><header class="flex items-center justify-between px-5 py-2.5 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-3"><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span><span class="text-slate-400 text-[10px]">|</span><span class="text-slate-400 text-xs">Meridian Financial Technologies</span></div>
+<div class="flex items-center gap-2"><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white flex items-center gap-1" title="Focus Mode"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>Focus</button><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md hover:text-white">Export</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-xs font-semibold">DK</div></div>
+</header>
+<div class="flex flex-1 min-h-0"><aside class="w-[220px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="px-4 pt-4 pb-3 border-b border-white/10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-xs font-bold">F</span></div><span class="text-white text-sm font-semibold">Frontera</span></div><p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Meridian Financial Technologies</p></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center justify-between mb-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 2</span><span class="text-[10px] font-code text-[#fbbf24]">125 XP</span></div><div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full" style="width:62.5%"></div></div></div>
+<div class="px-4 py-3 border-b border-white/10"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-xl bg-[#2d3561] flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><div><p class="text-xs text-white font-semibold">Coach Marcus</p><p class="text-[10px] text-slate-400">Strategy Advisor</p></div></div></div>
+<div class="px-3 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2 px-2">Journey</p><div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></span><span class="text-slate-400 text-xs">Discovery</span><span class="text-emerald-400 text-[10px]">✓</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg bg-white/8"><span class="w-2 h-2 rounded-full bg-amber-400 ring-p flex-shrink-0"></span><span class="text-white font-semibold text-xs">Research</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Synthesis</span><span class="text-slate-600 text-[10px]">🔒</span></div>
+<div class="flex items-center gap-2.5 py-1.5 px-2 rounded-lg "><span class="w-2 h-2 rounded-full bg-slate-600 flex-shrink-0"></span><span class="text-slate-500 text-xs">Bets</span><span class="text-slate-600 text-[10px]">🔒</span></div></div>
+<div class="px-4 py-3 border-b border-white/10"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Territories</p><div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="text-[11px] text-slate-300">Company</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">1/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span><span class="text-[11px] text-slate-300">Customer</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div>
+<div class="flex items-center justify-between py-1.5"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span class="text-[11px] text-slate-300">Market</span></div><div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span><span class="text-[9px] text-slate-500 font-code ml-1">0/3</span></div></div></div>
+<div class="px-4 py-3 mt-auto"><p class="text-[9px] uppercase tracking-widest text-slate-500 font-semibold mb-2">Achievements</p><div class="flex gap-1.5"><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">📄</span><span class="w-7 h-7 rounded-lg bg-slate-700/60 flex items-center justify-center text-[11px]">🔬</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">🏆</span><span class="w-7 h-7 rounded-lg bg-slate-700/30 flex items-center justify-center text-[11px] opacity-40">⭐</span></div></div>
+</aside>
+<div class="flex flex-col flex-1 min-w-0"><div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-1 overflow-x-auto flex-shrink-0"><div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-500"><span class="text-emerald-500 text-xs">✓</span><span class="text-[11px] font-medium">Discovery</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span><span class="text-[11px] font-semibold text-amber-700">Research</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Synthesis</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Strategic Bets</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Activate</span></div>
+<span class="text-slate-300 text-[10px]">→</span>
+<div class="flex items-center gap-1.5 px-3 py-1.5 text-slate-400"><span class="text-[10px]">🔒</span><span class="text-[11px]">Review</span></div></div>
+<main class="flex-1 overflow-y-auto relative">
+<!-- Dimmed background -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+<!-- Celebration Modal -->
+<div class="absolute inset-0 flex items-center justify-center p-8">
+<div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden fade-up">
+<!-- Gradient header -->
+<div class="bg-gradient-to-r from-[#1a1f3a] via-[#2d3561] to-indigo-800 px-8 py-8 text-center relative overflow-hidden">
+<!-- Confetti particles -->
+<div class="absolute inset-0 overflow-hidden">
+<div class="absolute top-4 left-8 w-2 h-2 bg-[#fbbf24] rounded-full opacity-80" style="animation:fadeUp 1.5s ease-out infinite"></div>
+<div class="absolute top-6 left-[30%] w-1.5 h-1.5 bg-emerald-400 rounded-full opacity-70" style="animation:fadeUp 2s ease-out infinite 0.3s"></div>
+<div class="absolute top-3 right-[25%] w-2.5 h-1 bg-cyan-400 rounded-full opacity-60 rotate-45" style="animation:fadeUp 1.8s ease-out infinite 0.5s"></div>
+<div class="absolute top-8 right-12 w-1.5 h-1.5 bg-[#fbbf24] rounded-full opacity-70" style="animation:fadeUp 2.2s ease-out infinite 0.2s"></div>
+<div class="absolute top-5 left-[60%] w-2 h-1 bg-purple-400 rounded-full opacity-60 -rotate-12" style="animation:fadeUp 1.6s ease-out infinite 0.7s"></div>
+</div>
+<div class="relative">
+<div class="w-16 h-16 rounded-2xl bg-[#fbbf24] mx-auto mb-4 flex items-center justify-center shadow-lg"><span class="text-3xl">🏔️</span></div>
+<h2 class="text-xl font-bold text-white mb-1">Company Foundation Mapped!</h2>
+<p class="text-sm text-slate-300">Territory area complete</p>
+</div></div>
+<!-- XP Award -->
+<div class="px-8 py-6">
+<div class="bg-[#fbbf24]/10 border border-[#fbbf24]/30 rounded-2xl p-4 mb-5 text-center">
+<div class="flex items-center justify-center gap-3 mb-2">
+<span class="text-2xl font-bold font-code text-[#1a1f3a]">+50 XP</span>
+<span class="text-lg">🎯</span>
+</div>
+<div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-[#fbbf24] rounded-full transition-all duration-1000" style="width:62%"></div></div>
+<p class="text-[10px] text-slate-500 mt-1.5">Level 2 · 125/200 XP to next level</p>
+</div>
+<!-- Micro-synthesis preview -->
+<div class="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-5">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-2">Micro-Synthesis Preview</p>
+<p class="text-sm text-slate-700 leading-relaxed">Meridian's core competencies center on <strong>payment processing infrastructure</strong> and <strong>proprietary risk algorithms</strong>, with regulatory compliance across 12 markets as a significant barrier to entry. Key tension identified: compliance depth vs. innovation speed.</p>
+</div>
+<!-- Up Next -->
+<div class="bg-indigo-50 rounded-xl p-4 border border-indigo-200 mb-5">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-2">Up Next</p>
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full border-2 border-indigo-400"></span>
+<div><p class="text-sm font-semibold text-[#1a1f3a]">Company Position</p><p class="text-[10px] text-slate-500">3 questions · ~15 min</p></div>
+</div></div>
+<div class="flex gap-3">
+<button class="flex-1 py-3 rounded-xl bg-[#fbbf24] text-sm font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] shadow-sm">Continue to Company Position →</button>
+<button class="py-3 px-4 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50">Back to Overview</button>
+</div></div></div></div>
+</main></div>
+<aside class="w-[260px] flex-shrink-0 bg-white border-l border-slate-200 overflow-y-auto flex flex-col">
+<div class="px-4 pt-4 pb-2 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400 hover:text-slate-600">Collapse ›</button></div></div>
+<div class="flex-1 px-4 py-3 space-y-3">
+<p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-3">Company Territory</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg border border-indigo-300"><span class="w-2 h-2 rounded-full bg-indigo-500 ring-p"></span><span class="text-[11px] font-semibold text-indigo-700">Company Foundation</span><span class="text-[9px] text-indigo-500 ml-auto font-code">1/4</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Company Position</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[11px] text-slate-600">Competitive Advantages</span><span class="text-[9px] text-slate-400 ml-auto font-code">0/3</span></div>
+</div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Customer Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Segments</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Needs</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[11px] text-slate-500">Customer Dynamics</span></div>
+</div></div>
+<div class="mt-3 border-t border-slate-100 pt-3">
+<p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-2">Market Territory</p>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Landscape</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Threats</span></div>
+<div class="flex items-center gap-2 py-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[11px] text-slate-500">Market Forces</span></div>
+</div></div>
+<div class="mt-4 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">11%</span></div>
+<div class="w-full h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-purple-400 rounded-full" style="width:11%"></div></div>
+</div></div>
+</aside></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 11 Tablet Overview -->
+<!-- ============================================================ -->
+<div id="s11" class="scr">
+<div class="flex flex-col h-screen max-w-[1024px] mx-auto border-x border-slate-200 shadow-xl" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)">
+<header class="flex items-center justify-between px-4 py-2 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-2"><button class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-sm font-semibold">Strategy Coach</span></div>
+<div class="flex items-center gap-2"><span class="text-[9px] font-code text-[#fbbf24]">Lv.1 · 50 XP</span><button class="text-[10px] text-slate-400 border border-slate-600 px-2 py-1 rounded-md">Canvas</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-[10px] font-semibold">DK</div></div>
+</header>
+<div class="bg-white border-b border-slate-200 px-3 py-1.5 flex items-center gap-1 overflow-x-auto flex-shrink-0">
+<div class="flex items-center gap-1 px-2 py-1 text-slate-400"><span class="text-emerald-500 text-[10px]">✓</span><span class="text-[10px]">Discovery</span></div><span class="text-slate-300 text-[8px]">→</span>
+<div class="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 border border-amber-300"><span class="w-1 h-1 rounded-full bg-amber-500"></span><span class="text-[10px] font-semibold text-amber-700">Research</span></div><span class="text-slate-300 text-[8px]">→</span>
+<div class="flex items-center gap-1 px-2 py-1 text-slate-400"><span class="text-[9px]">🔒</span><span class="text-[10px]">Synthesis</span></div><span class="text-slate-300 text-[8px]">→</span>
+<div class="flex items-center gap-1 px-2 py-1 text-slate-400"><span class="text-[9px]">🔒</span><span class="text-[10px]">Bets</span></div>
+</div>
+<div class="flex flex-1 min-h-0">
+<aside class="w-[56px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col items-center py-3 gap-1 border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="w-8 h-8 rounded-lg bg-[#fbbf24] flex items-center justify-center mb-2"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div>
+<div class="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center mb-3"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div class="border-t border-white/10 pt-2 flex flex-col gap-1"><div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="discovery"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span></div>
+<div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center" title="research"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 ring-p"></span></div>
+<div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="synthesis"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span></div>
+<div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="bets"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span></div></div>
+<div class="border-t border-white/10 pt-2 mt-2 flex flex-col gap-1"><div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-indigo-400"></span></div>
+<div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-cyan-400"></span></div>
+<div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-purple-400"></span></div></div>
+<div class="mt-auto"><div class="w-8 h-8 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-[9px] font-semibold">DK</div></div>
+</aside>
+<main class="flex-1 overflow-y-auto p-6">
+<div class="max-w-2xl mx-auto">
+<div class="inline-flex items-center gap-2 text-[10px] text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 font-semibold uppercase tracking-wider mb-5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 ring-p"></span>Phase 2: Research</div>
+<h1 class="text-2xl font-bold text-[#1a1f3a] mb-2">Map Your Strategic Terrain</h1>
+<p class="text-slate-600 leading-relaxed mb-6 text-sm">Explore three critical territories to build a comprehensive strategic picture.</p>
+<div class="grid grid-cols-3 gap-3 mb-6">
+<div class="bg-white border-2 border-indigo-200 rounded-xl p-4 hover:shadow-lg hover:border-indigo-400 transition-all cursor-pointer">
+<div class="flex items-center gap-2 mb-2"><span class="text-lg">🏢</span><h3 class="text-sm font-semibold text-[#1a1f3a]">Company</h3></div>
+<p class="text-[10px] text-slate-500 mb-2 leading-relaxed">Foundation, position, and advantages</p>
+<div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="w-1.5 h-1.5 rounded-full border border-indigo-300"></span><span class="text-[9px] text-slate-400 font-code ml-1">0/3</span></div>
+<span class="inline-block mt-2 text-[8px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full border border-indigo-200">Unmapped</span></div>
+<div class="bg-white border-2 border-cyan-200 rounded-xl p-4 hover:shadow-lg hover:border-cyan-400 transition-all cursor-pointer">
+<div class="flex items-center gap-2 mb-2"><span class="text-lg">👥</span><h3 class="text-sm font-semibold text-[#1a1f3a]">Customer</h3></div>
+<p class="text-[10px] text-slate-500 mb-2 leading-relaxed">Segments, needs, and dynamics</p>
+<div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="w-1.5 h-1.5 rounded-full border border-cyan-300"></span><span class="text-[9px] text-slate-400 font-code ml-1">0/3</span></div>
+<span class="inline-block mt-2 text-[8px] uppercase tracking-wider font-semibold text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded-full border border-cyan-200">Unmapped</span></div>
+<div class="bg-white border-2 border-purple-200 rounded-xl p-4 hover:shadow-lg hover:border-purple-400 transition-all cursor-pointer">
+<div class="flex items-center gap-2 mb-2"><span class="text-lg">📊</span><h3 class="text-sm font-semibold text-[#1a1f3a]">Market</h3></div>
+<p class="text-[10px] text-slate-500 mb-2 leading-relaxed">Landscape, threats, and forces</p>
+<div class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="w-1.5 h-1.5 rounded-full border border-purple-300"></span><span class="text-[9px] text-slate-400 font-code ml-1">0/3</span></div>
+<span class="inline-block mt-2 text-[8px] uppercase tracking-wider font-semibold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full border border-purple-200">Unmapped</span></div>
+</div>
+<button class="w-full py-3 rounded-xl bg-[#fbbf24] text-sm font-semibold text-[#1a1f3a] hover:bg-[#f59e0b] shadow-md">Enter Terrain Mapping →</button>
+</div></main></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 12 Tablet Question -->
+<!-- ============================================================ -->
+<div id="s12" class="scr">
+<div class="flex flex-col h-screen max-w-[1024px] mx-auto border-x border-slate-200 shadow-xl relative" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)">
+<header class="flex items-center justify-between px-4 py-2 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-2"><button class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><div class="w-6 h-6 rounded-lg bg-[#fbbf24] flex items-center justify-center"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div><span class="text-white text-xs font-semibold">Strategy Coach</span></div>
+<div class="flex items-center gap-2"><span class="text-[9px] font-code text-[#fbbf24]">Lv.1 · 75 XP</span><button class="text-[10px] text-[#fbbf24] border border-[#fbbf24]/40 px-2 py-1 rounded-md bg-[#fbbf24]/10">Canvas ▴</button><div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-[10px] font-semibold">DK</div></div>
+</header>
+<div class="bg-white border-b border-slate-200 px-3 py-1.5 flex items-center gap-1 overflow-x-auto flex-shrink-0">
+<div class="flex items-center gap-1 px-2 py-1 text-slate-400"><span class="text-emerald-500 text-[10px]">✓</span><span class="text-[10px]">Discovery</span></div><span class="text-slate-300 text-[8px]">→</span>
+<div class="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 border border-amber-300"><span class="w-1 h-1 rounded-full bg-amber-500"></span><span class="text-[10px] font-semibold text-amber-700">Research</span></div><span class="text-slate-300 text-[8px]">→</span>
+<div class="flex items-center gap-1 px-2 py-1 text-slate-400"><span class="text-[9px]">🔒</span><span class="text-[10px]">Synthesis</span></div>
+</div>
+<div class="flex flex-1 min-h-0">
+<aside class="w-[56px] flex-shrink-0 bg-[#1a1f3a] topo flex flex-col items-center py-3 gap-1 border-r border-white/5 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="w-8 h-8 rounded-lg bg-[#fbbf24] flex items-center justify-center mb-2"><span class="text-[#1a1f3a] text-[10px] font-bold">F</span></div>
+<div class="w-6 h-6 rounded-lg bg-[#2d3561] flex items-center justify-center mb-3"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div class="border-t border-white/10 pt-2 flex flex-col gap-1"><div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="discovery"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span></div>
+<div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center" title="research"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 ring-p"></span></div>
+<div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="synthesis"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span></div>
+<div class="w-8 h-8 rounded-lg  flex items-center justify-center" title="bets"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span></div></div>
+<div class="border-t border-white/10 pt-2 mt-2 flex flex-col gap-1"><div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-indigo-400"></span></div>
+<div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-cyan-400"></span></div>
+<div class="w-8 h-8 rounded-lg flex items-center justify-center"><span class="w-2 h-2 rounded-full border border-purple-400"></span></div></div>
+<div class="mt-auto"><div class="w-8 h-8 rounded-full bg-[#2d3561] flex items-center justify-center text-white text-[9px] font-semibold">DK</div></div>
+</aside>
+<main class="flex-1 overflow-y-auto p-5">
+<div class="flex items-center gap-1.5 text-[11px] text-slate-400 mb-4"><span>Research</span><span>›</span><span class="text-indigo-600 font-medium">Company</span><span>›</span><span class="text-[#1a1f3a] font-semibold">Company Foundation</span></div>
+<div class="bg-white border-2 border-indigo-200 rounded-2xl p-5 shadow-md mb-4">
+<div class="flex items-center justify-between mb-3"><span class="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200"><span class="w-1 h-1 rounded-full bg-indigo-500"></span>Company Foundation</span><span class="text-[9px] font-code text-slate-400">Q1 of 4</span></div>
+<h2 class="text-base font-semibold text-[#1a1f3a] leading-snug mb-2">What are your organization's core competencies and differentiating capabilities?</h2>
+<textarea rows="5" placeholder="Describe your competencies..." class="w-full text-sm p-3 border border-slate-200 rounded-xl bg-white resize-none focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 placeholder:text-slate-400 mb-3"></textarea>
+<div class="flex items-center justify-between"><div class="flex gap-2"><button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#fbbf24] text-[10px] font-semibold text-[#1a1f3a]">Coach Suggestion</button><button class="px-3 py-1.5 rounded-lg border border-cyan-300 text-[10px] font-semibold text-cyan-700">Debate</button><button class="px-3 py-1.5 rounded-lg border border-slate-200 text-[10px] font-medium text-slate-600">Draft</button></div>
+<button class="px-4 py-1.5 rounded-lg bg-[#1a1f3a] text-[10px] font-semibold text-white">Submit</button></div></div>
+<!-- Minimized Coach -->
+<div class="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+<div class="flex items-center gap-2"><div class="w-5 h-5 rounded-lg bg-[#2d3561] flex items-center justify-center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><span class="text-[11px] font-semibold text-[#1a1f3a]">Coach</span></div>
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
+</main></div>
+<!-- Canvas Bottom Drawer -->
+<div class="absolute bottom-0 left-0 right-0 bg-white border-t-2 border-indigo-200 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)]" style="height:45%">
+<div class="flex justify-center pt-2 pb-1"><div class="w-10 h-1 bg-slate-300 rounded-full"></div></div>
+<div class="flex items-center justify-between px-5 py-2 border-b border-slate-100"><h3 class="text-xs font-semibold text-[#1a1f3a] uppercase tracking-wider">Strategy Canvas</h3><button class="text-[10px] text-slate-400">Close ▾</button></div>
+<div class="px-5 py-3 overflow-y-auto" style="height:calc(100% - 60px)">
+<div class="grid grid-cols-3 gap-3">
+<div><p class="text-[10px] uppercase tracking-wider text-indigo-600 font-semibold mb-2">Company</p>
+<div class="space-y-1.5"><div class="flex items-center gap-2 p-2 bg-indigo-50 rounded-lg border border-indigo-300"><span class="w-2 h-2 rounded-full bg-indigo-500 ring-p"></span><span class="text-[10px] font-semibold text-indigo-700">Foundation</span><span class="text-[8px] text-indigo-500 ml-auto font-code">1/4</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[10px] text-slate-600">Position</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-slate-300"></span><span class="text-[10px] text-slate-600">Advantages</span></div></div></div>
+<div><p class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold mb-2">Customer</p>
+<div class="space-y-1.5"><div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-cyan-300"></span><span class="text-[10px] text-slate-600">Segments</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-cyan-300"></span><span class="text-[10px] text-slate-600">Needs</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-cyan-300"></span><span class="text-[10px] text-slate-600">Dynamics</span></div></div></div>
+<div><p class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold mb-2">Market</p>
+<div class="space-y-1.5"><div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-purple-300"></span><span class="text-[10px] text-slate-600">Landscape</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-purple-300"></span><span class="text-[10px] text-slate-600">Threats</span></div>
+<div class="flex items-center gap-2 p-2 rounded-lg"><span class="w-2 h-2 rounded-full border border-purple-300"></span><span class="text-[10px] text-slate-600">Forces</span></div></div></div>
+</div>
+<div class="mt-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200"><div class="flex items-center justify-between"><span class="text-[10px] font-semibold text-slate-600">Synthesis Readiness</span><span class="text-[10px] font-code text-slate-400">11%</span></div><div class="w-full h-1.5 bg-slate-200 rounded-full mt-1"><div class="h-full bg-purple-400 rounded-full" style="width:11%"></div></div></div>
+</div></div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 13 Mobile Question -->
+<!-- ============================================================ -->
+<div id="s13" class="scr">
+<div class="max-w-[375px] mx-auto border-x border-slate-200 min-h-screen flex flex-col bg-white shadow-xl relative">
+<header class="bg-[#1a1f3a] px-3 py-2 flex items-center justify-between flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-2"><button class="text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><span class="text-white text-xs font-semibold">Company Foundation</span></div>
+<div class="flex items-center gap-1.5"><span class="text-[8px] font-code text-[#fbbf24]">75 XP</span><span class="text-[9px] uppercase tracking-widest font-semibold text-slate-400 bg-white/10 px-1.5 py-0.5 rounded-full">Q1/4</span></div>
+</header>
+<!-- Territory progress bar -->
+<div class="bg-white border-b border-slate-200 px-3 py-2 flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[9px] text-indigo-600 font-semibold">Company</span></div>
+<div class="flex-1 h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-indigo-500 rounded-full" style="width:33%"></div></div>
+<span class="text-[9px] font-code text-slate-400">1/3</span>
+<div class="w-px h-3 bg-slate-200"></div>
+<div class="flex gap-1"><span class="w-2 h-2 rounded-full border border-cyan-300"></span><span class="w-2 h-2 rounded-full border border-purple-300"></span></div>
+</div>
+<!-- Question content -->
+<div class="flex-1 overflow-y-auto px-4 py-5" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)">
+<h3 class="text-base font-semibold text-[#1a1f3a] leading-snug mb-3">What are your organization's core competencies and differentiating capabilities?</h3>
+<div class="bg-white border border-dashed border-slate-300 rounded-lg p-2.5 mb-4"><p class="text-[10px] text-slate-500"><strong class="text-slate-600">💡</strong> resource audit, capability mapping, VRIN framework</p></div>
+<textarea rows="7" placeholder="Describe your competencies..." class="w-full text-sm p-3 border border-slate-200 rounded-xl bg-white resize-none leading-relaxed focus:outline-none focus:border-[#fbbf24] focus:ring-2 focus:ring-[#fbbf24]/20 placeholder:text-slate-400"></textarea>
+<div class="mt-3"><label class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Confidence</label>
+<div class="flex gap-2"><button class="flex-1 text-[10px] font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center">Data</button><button class="flex-1 text-[10px] font-medium py-2 rounded-lg border border-indigo-300 bg-indigo-50 text-indigo-700 text-center">Exp</button><button class="flex-1 text-[10px] font-medium py-2 rounded-lg border border-slate-200 text-slate-600 text-center">Guess</button></div></div>
+</div>
+<!-- Sticky bottom actions -->
+<div class="flex-shrink-0 bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-2">
+<button class="flex-1 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600">Save Draft</button>
+<button class="flex-1 py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-[#1a1f3a] shadow-sm">Submit Answer</button>
+</div>
+<!-- Bottom Nav -->
+<nav class="flex-shrink-0 bg-white border-t border-slate-200 px-2 py-1.5 flex items-center justify-around">
+<button class="flex flex-col items-center gap-0.5 py-1 px-3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="text-[9px] text-slate-400">Home</span></button>
+<button class="flex flex-col items-center gap-0.5 py-1 px-3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="text-[9px] text-indigo-600 font-semibold">Terrain</span></button>
+<button class="flex flex-col items-center gap-0.5 py-1 px-3 relative"><div class="w-9 h-9 rounded-xl bg-[#1a1f3a] flex items-center justify-center -mt-3 shadow-md"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><span class="text-[9px] text-[#1a1f3a] font-semibold">Coach</span></button>
+<button class="flex flex-col items-center gap-0.5 py-1 px-3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span class="text-[9px] text-slate-400">Canvas</span></button>
+</nav></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: 14 Mobile Coach -->
+<!-- ============================================================ -->
+<div id="s14" class="scr">
+<div class="max-w-[375px] mx-auto border-x border-slate-200 min-h-screen flex flex-col bg-white shadow-xl relative">
+<header class="bg-[#1a1f3a] px-3 py-2 flex items-center justify-between flex-shrink-0" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+<div class="flex items-center gap-2"><button class="text-white"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><span class="text-white text-xs font-semibold">Company Foundation</span></div>
+<div class="flex items-center gap-1.5"><span class="text-[8px] font-code text-[#fbbf24]">75 XP</span><span class="text-[9px] uppercase tracking-widest font-semibold text-slate-400 bg-white/10 px-1.5 py-0.5 rounded-full">Q1/4</span></div>
+</header>
+<!-- Territory progress -->
+<div class="bg-white border-b border-slate-200 px-3 py-2 flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[9px] text-indigo-600 font-semibold">Company</span></div>
+<div class="flex-1 h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-indigo-500 rounded-full" style="width:33%"></div></div>
+<span class="text-[9px] font-code text-slate-400">1/3</span>
+</div>
+<!-- Question (dimmed behind coach sheet) -->
+<div class="flex-1 overflow-y-auto px-4 py-5 opacity-40" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)">
+<h3 class="text-base font-semibold text-[#1a1f3a] leading-snug mb-3">What are your organization's core competencies?</h3>
+<textarea rows="4" class="w-full text-sm p-3 border border-slate-200 rounded-xl bg-white resize-none">Meridian's core competencies center on real-time payment processing...</textarea>
+</div>
+<!-- Coach Bottom Sheet (80% height) -->
+<div class="absolute bottom-0 left-0 right-0 bg-white border-t-2 border-[#fbbf24] rounded-t-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.15)]" style="height:75%">
+<div class="flex justify-center pt-2 pb-1"><div class="w-10 h-1 bg-slate-300 rounded-full"></div></div>
+<div class="flex items-center justify-between px-4 py-2 border-b border-slate-100">
+<div class="flex items-center gap-2"><div class="w-6 h-6 rounded-lg bg-[#1a1f3a] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div><span class="text-sm font-semibold text-[#1a1f3a]">Coach Marcus</span></div>
+<button class="text-xs text-slate-400 font-medium">Close</button></div>
+<!-- Coach suggestion with gold accent -->
+<div class="border-l-4 border-[#fbbf24] bg-[#fbbf24]/5 mx-3 mt-3 px-3 py-2.5 rounded-r-lg">
+<span class="text-[9px] text-[#fbbf24] bg-[#fbbf24]/10 px-2 py-0.5 rounded-full font-medium mb-1.5 inline-block">Coach Suggestion</span>
+<p class="text-xs text-slate-700 leading-relaxed">Apply the <strong>VRIN framework</strong> to each capability:</p>
+<ul class="text-[11px] text-slate-600 space-y-1 mt-1.5 leading-relaxed">
+<li>✓ <strong>Valuable:</strong> Real-time processing serves instant payment demand</li>
+<li>? <strong>Rare:</strong> Quantify your 12-market compliance advantage</li>
+<li>? <strong>Inimitable:</strong> Are algorithms truly proprietary?</li>
+</ul></div>
+<!-- Chat -->
+<div class="flex-1 overflow-y-auto p-4 space-y-3" style="height:calc(100% - 240px)">
+<div class="flex gap-2"><div class="w-5 h-5 rounded-md bg-[#1a1f3a] flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24"/></svg></div>
+<div class="bg-slate-50 rounded-lg rounded-tl-sm p-2.5"><p class="text-xs text-slate-700 leading-relaxed">From your annual report, Meridian processed $4.2B across 12 markets. That scale is itself a competency.</p></div></div>
+<div class="flex flex-wrap gap-1.5 ml-7"><button class="text-[10px] font-medium px-2 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50">Challenge me</button><button class="text-[10px] font-medium px-2 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50">Example</button><button class="text-[10px] font-medium px-2 py-1 rounded-full border border-indigo-200 text-indigo-600 bg-indigo-50">Framework</button></div>
+</div>
+<!-- Input -->
+<div class="absolute bottom-0 left-0 right-0 px-4 py-3 bg-white border-t border-slate-100">
+<div class="flex gap-2"><input type="text" placeholder="Ask coach..." class="flex-1 text-xs py-2 px-3 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:border-[#fbbf24] placeholder:text-slate-400"><button class="w-7 h-7 rounded-lg bg-[#fbbf24] flex items-center justify-center"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button></div></div>
+</div></div>
+</div>
+</div>
+<script>
+function S(id){document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on')});document.getElementById(id).classList.add('on');document.querySelectorAll('.tb').forEach(function(b){b.classList.toggle('act',b.dataset.t===id)})}
+</script>
+</body>
+</html>

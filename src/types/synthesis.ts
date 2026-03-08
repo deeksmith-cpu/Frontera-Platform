@@ -253,6 +253,7 @@ export interface SynthesisResult {
   metadata: SynthesisMetadata;
   userEdited: boolean;
   editedAt?: string;
+  originalOpportunities?: StrategicOpportunity[];
   createdAt: string;
 }
 
@@ -363,6 +364,9 @@ export interface OpportunityCardProps {
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   onEvidenceClick?: (evidence: EvidenceLink) => void;
+  onEdit?: (opportunity: StrategicOpportunity) => void;
+  onDelete?: (opportunityId: string) => void;
+  isEdited?: boolean;
 }
 
 /**

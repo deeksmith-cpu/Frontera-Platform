@@ -134,6 +134,7 @@ export async function GET(req: NextRequest) {
       },
       userEdited: synthesisData.user_edited || false,
       editedAt: synthesisData.edited_at || undefined,
+      originalOpportunities: (synthesisData.original_opportunities || undefined) as StrategicOpportunity[] | undefined,
       createdAt: synthesisData.created_at,
     };
 
@@ -148,6 +149,128 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching synthesis:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// =============================================================================
+// PATCH /api/product-strategy-agent/synthesis
+// Update opportunities (edit/add/delete) with revert support
+// =============================================================================
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { userId, orgId } = await auth();
+
+    if (!userId || !orgId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { conversation_id, opportunities } = body;
+
+    if (!conversation_id) {
+      return NextResponse.json(
+        { error: 'conversation_id is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!Array.isArray(opportunities) || opportunities.length < 1 || opportunities.length > 5) {
+      return NextResponse.json(
+        { error: 'opportunities must be an array with 1-5 items' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = getSupabaseAdmin();
+
+    // Verify conversation belongs to user's org
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('id', conversation_id)
+      .eq('clerk_org_id', orgId)
+      .single();
+
+    if (convError || !conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    const rawSupabase = getRawSupabase();
+
+    // Fetch current synthesis
+    const { data: synthesisData, error: fetchError } = await rawSupabase
+      .from('synthesis_outputs')
+      .select('*')
+      .eq('conversation_id', conversation_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (fetchError || !synthesisData) {
+      return NextResponse.json({ error: 'Synthesis not found' }, { status: 404 });
+    }
+
+    // On first edit: copy current opportunities to original_opportunities
+    const updatePayload: Record<string, unknown> = {
+      opportunities,
+      user_edited: true,
+      edited_at: new Date().toISOString(),
+    };
+
+    if (!synthesisData.original_opportunities) {
+      updatePayload.original_opportunities = synthesisData.opportunities;
+    }
+
+    const { data: updated, error: updateError } = await rawSupabase
+      .from('synthesis_outputs')
+      .update(updatePayload)
+      .eq('id', synthesisData.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Error updating synthesis:', updateError);
+      return NextResponse.json(
+        { error: 'Failed to update synthesis', details: updateError.message },
+        { status: 500 }
+      );
+    }
+
+    // Build response
+    const synthesis: SynthesisResult = {
+      id: updated.id,
+      conversationId: updated.conversation_id,
+      executiveSummary: updated.executive_summary || '',
+      opportunities: (updated.opportunities || []) as StrategicOpportunity[],
+      tensions: (updated.tensions || []) as StrategicTension[],
+      recommendations: updated.recommendations || [],
+      metadata: {
+        modelUsed: updated.metadata?.model_used || 'unknown',
+        territoriesIncluded: (updated.metadata?.territories_included || []) as ('company' | 'customer' | 'competitor')[],
+        researchAreasCount: updated.metadata?.research_areas_count || 0,
+        generatedAt: updated.metadata?.generated_at || updated.created_at,
+        confidenceLevel: updated.metadata?.confidence_level || 'medium',
+      },
+      userEdited: true,
+      editedAt: updated.edited_at || undefined,
+      originalOpportunities: (updated.original_opportunities || undefined) as StrategicOpportunity[] | undefined,
+      createdAt: updated.created_at,
+    };
+
+    trackEvent('psa_synthesis_edited', userId, {
+      org_id: orgId,
+      conversation_id,
+      opportunities_count: opportunities.length,
+    });
+
+    return NextResponse.json({ success: true, synthesis });
+  } catch (error) {
+    console.error('Synthesis PATCH error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

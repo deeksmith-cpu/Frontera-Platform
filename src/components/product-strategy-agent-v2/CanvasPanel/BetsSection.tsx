@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Database } from '@/types/database';
-import type { BetsResponse, StrategicBet, StrategyDocumentContent } from '@/types/bets';
+import type { BetsResponse, StrategicBet, LegacyStrategyDocumentContent } from '@/types/bets';
 import type { SynthesisResult } from '@/types/synthesis';
 import { ThesisGroup } from './ThesisGroup';
 import { BetCard } from './BetCard';
@@ -39,7 +39,7 @@ export function BetsSection({ conversation }: BetsSectionProps) {
 
   // Strategy document state
   const [isCreatingStrategy, setIsCreatingStrategy] = useState(false);
-  const [strategyDocument, setStrategyDocument] = useState<{ id: string; content: StrategyDocumentContent } | null>(null);
+  const [strategyDocument, setStrategyDocument] = useState<{ id: string; content: LegacyStrategyDocumentContent } | null>(null);
   const [showStrategyPreview, setShowStrategyPreview] = useState(false);
   const [isExportingStrategy, setIsExportingStrategy] = useState(false);
   // Fetch bets data

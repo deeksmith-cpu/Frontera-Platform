@@ -52,7 +52,31 @@
       "Bash(robocopy:*)",
       "Bash(powershell:*)",
       "Bash(del \"c:\\\\Users\\\\deeks\\\\frontera-platform\\\\update-v2-paths.ps1\")",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(tail:*)",
+      "Bash(grep error:*)",
+      "Bash(grep  error :2)",
+      "Bash(grep:2)",
+      "Bash(npx next:*)",
+      "WebFetch(domain:www.smashingmagazine.com)",
+      "WebFetch(domain:aiuxpatterns.com)",
+      "WebFetch(domain:sdtimes.com)",
+      "WebFetch(domain:uxdesign.cc)",
+      "WebFetch(domain:aipositive.substack.com)",
+      "WebFetch(domain:departmentofproduct.substack.com)",
+      "WebFetch(domain:www.shapeof.ai)",
+      "WebFetch(domain:www.nngroup.com)",
+      "WebFetch(domain:www.honra.io)",
+      "WebFetch(domain:www.inc.com)",
+      "WebFetch(domain:uxmag.com)",
+      "WebFetch(domain:intuitionlabs.ai)",
+      "WebFetch(domain:www.copilotkit.ai)",
+      "WebFetch(domain:www.cleveritgroup.com)",
+      "WebFetch(domain:skywork.ai)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:www.letsgroto.com)",
+      "WebFetch(domain:www.orbix.studio)",
+      "Bash(npx:*)"
     ]
   }
 }

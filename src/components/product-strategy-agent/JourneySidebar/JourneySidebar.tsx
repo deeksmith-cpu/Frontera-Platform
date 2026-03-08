@@ -156,28 +156,24 @@ export function JourneySidebar({
 
       {/* Coach Persona */}
       <div className="px-4 py-3 border-b border-white/10">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/30 mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/30 mb-1">
           {PERSONA_OPTIONS.find(p => p.id === coachPersonaId)?.title || 'Strategy Advisor'}
         </p>
-        <div className="flex items-center gap-2.5">
-          {(() => {
-            const avatarPath = getCoachAvatarPath(coachPersonaId ?? undefined);
-            return avatarPath ? (
-              <div className="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-110 shadow-md">
-                <Image src={avatarPath} alt={coachName} width={44} height={44} className="w-full h-full object-cover" />
-              </div>
-            ) : (
-              <div className="w-11 h-11 rounded-xl bg-[#2d3561] flex items-center justify-center flex-shrink-0">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24" />
-                </svg>
-              </div>
-            );
-          })()}
-          <div className="min-w-0">
-            <p className="text-xs text-white font-semibold">{coachName}</p>
-          </div>
-        </div>
+        <p className="text-xs text-white font-semibold mb-2">{coachName}</p>
+        {(() => {
+          const avatarPath = getCoachAvatarPath(coachPersonaId ?? undefined);
+          return avatarPath ? (
+            <div className="w-[120px] h-[120px] rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105 shadow-md">
+              <Image src={avatarPath} alt={coachName} width={120} height={120} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-[120px] h-[120px] rounded-xl bg-[#2d3561] flex items-center justify-center">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <path d="M5 4h14l-2 16H7L5 4z" fill="#fbbf24" />
+              </svg>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Phase Journey */}
