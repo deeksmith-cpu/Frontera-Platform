@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Centre — Frontera</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;overflow:hidden;height:100vh}
+.font-code{font-family:'JetBrains Mono',monospace}
+.scr{display:none}.scr.on{display:block}
+.tb{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;color:rgba(255,255,255,.7);border:none;background:transparent}
+.tb.act{background:#fbbf24;color:#1a1f3a}
+.tb:not(.act):hover{background:rgba(255,255,255,.12);color:#fff}
+.topo{position:absolute;inset:0;opacity:.03;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 200q100-80 200 0t200 0' fill='none' stroke='%23fff' stroke-width='1'/%3E%3Cpath d='M0 220q100-80 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.8'/%3E%3Cpath d='M0 180q100-80 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.6'/%3E%3Cpath d='M0 240q100-60 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.5'/%3E%3Cpath d='M0 160q100-60 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.5'/%3E%3Cpath d='M0 260q100-40 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.4'/%3E%3Cpath d='M0 140q100-40 200 0t200 0' fill='none' stroke='%23fff' stroke-width='.4'/%3E%3C/svg%3E");background-size:400px 400px}
+.bg-header-gradient{background:linear-gradient(180deg,#1e2440 0%,#151930 100%)}
+.bg-main-gradient{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)}
+.sidebar-section .section-items{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.sidebar-section.expanded .section-items{max-height:500px}
+.sidebar-section .chev{transition:transform .3s}.sidebar-section.expanded .chev{transform:rotate(90deg)}
+@keyframes ringP{0%{box-shadow:0 0 0 0 rgba(251,191,36,.4)}70%{box-shadow:0 0 0 8px rgba(251,191,36,0)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseGlow{0%,100%{opacity:.6}50%{opacity:1}}
+.anim-fade{animation:fadeUp .5s ease-out both}
+.anim-d1{animation-delay:.05s}.anim-d2{animation-delay:.1s}.anim-d3{animation-delay:.15s}.anim-d4{animation-delay:.2s}.anim-d5{animation-delay:.25s}
+.ring-pulse{animation:ringP 2s infinite}
+.pulse-glow{animation:pulseGlow 2s infinite}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
+</style>
+</head>
+<body class="flex flex-col h-screen">
+
+<!-- TOP NAV -->
+<header class="bg-header-gradient h-[44px] flex items-center px-4 gap-3 flex-shrink-0 border-b border-white/10 relative z-50">
+  <div class="topo"></div>
+  <span class="text-white/50 text-xs font-semibold uppercase tracking-wider mr-1">Command Centre:</span>
+  <button class="tb act" onclick="S('s1',this)">1 Strategy Overview</button>
+  <button class="tb" onclick="S('s2',this)">2 Insights Feed</button>
+  <button class="tb" onclick="S('s3',this)">3 Coaching Hub</button>
+  <button class="tb" onclick="S('s4',this)">4 Team Workspace</button>
+  <button class="tb" onclick="S('s5',this)">5 Operating Model</button>
+</header>
+
+<div class="flex flex-1 min-h-0">
+
+<!-- SIDEBAR -->
+<aside class="w-[220px] flex-shrink-0 bg-header-gradient relative flex flex-col border-r border-white/10 overflow-y-auto" style="background:linear-gradient(180deg,#1e2440 0%,#151930 100%)">
+  <div class="topo"></div>
+  <div class="relative z-10 flex flex-col h-full">
+
+    <!-- Logo -->
+    <div class="p-4 pb-3 border-b border-white/10">
+      <div class="flex items-center gap-2.5 mb-1">
+        <div class="w-8 h-8 rounded-lg bg-[#fbbf24] flex items-center justify-center font-bold text-[#1a1f3a] text-sm shadow">F</div>
+        <span class="text-white font-bold text-sm">Frontera</span>
+      </div>
+      <p class="text-[10px] text-slate-400 mt-1 leading-tight">Meridian Financial Technologies</p>
+    </div>
+
+    <!-- Level / XP -->
+    <div class="px-4 py-3 border-b border-white/10">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level 4</span>
+        <span class="font-code text-[#fbbf24] text-xs font-bold">1,240 XP</span>
+      </div>
+      <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div class="h-full bg-[#fbbf24] rounded-full" style="width:62%"></div>
+      </div>
+    </div>
+
+    <!-- Coach -->
+    <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">M</div>
+      <div>
+        <p class="text-white text-xs font-semibold">Coach Marcus</p>
+        <p class="text-slate-400 text-[10px]">Strategy Advisor</p>
+      </div>
+    </div>
+
+    <!-- Nav Sections -->
+    <nav class="flex-1 py-2 space-y-0.5 text-[13px]">
+
+      <!-- Strategy -->
+      <div class="sidebar-section expanded" id="nav-strategy">
+        <button onclick="toggleSection(this.parentElement)" class="w-full flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white transition-colors">
+          <svg class="chev w-3 h-3 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v10l7 4"/></svg>
+          <span class="font-semibold text-xs uppercase tracking-wider">Strategy</span>
+        </button>
+        <div class="section-items">
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-white bg-white/10 text-xs rounded-r-lg mx-2 my-0.5" data-screen="s1">Overview</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors">Product Strategy</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Op Model Design <span class="text-[9px] ml-auto">&#128274; Coming Soon</span></a>
+        </div>
+      </div>
+
+      <!-- Insights -->
+      <div class="sidebar-section" id="nav-insights">
+        <button onclick="toggleSection(this.parentElement)" class="w-full flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white transition-colors">
+          <svg class="chev w-3 h-3 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <span class="font-semibold text-xs uppercase tracking-wider">Insights</span>
+        </button>
+        <div class="section-items">
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors" data-screen="s2">Daily Briefing</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Learning Path <span class="text-[9px] ml-auto">&#128274; Coming Soon</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors">Market Signals</a>
+        </div>
+      </div>
+
+      <!-- Coaching -->
+      <div class="sidebar-section" id="nav-coaching">
+        <button onclick="toggleSection(this.parentElement)" class="w-full flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white transition-colors">
+          <svg class="chev w-3 h-3 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <span class="font-semibold text-xs uppercase tracking-wider">Coaching</span>
+        </button>
+        <div class="section-items">
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors" data-screen="s3">Sessions</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Coaching Profile <span class="text-[9px] ml-auto">&#128274;</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Strategy Archetype <span class="text-[9px] ml-auto">&#128274;</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Learning Plan <span class="text-[9px] ml-auto">&#128274;</span></a>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="sidebar-section" id="nav-team">
+        <button onclick="toggleSection(this.parentElement)" class="w-full flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white transition-colors">
+          <svg class="chev w-3 h-3 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="font-semibold text-xs uppercase tracking-wider">Team</span>
+        </button>
+        <div class="section-items">
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors" data-screen="s4">Workspace</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Product Team Strategy <span class="text-[9px] ml-auto">&#128274;</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Team Discovery <span class="text-[9px] ml-auto">&#128274;</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Feedback Loops <span class="text-[9px] ml-auto">&#128274;</span></a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-500 text-xs rounded-r-lg mx-2 my-0.5 cursor-not-allowed">Team Model Design <span class="text-[9px] ml-auto">&#128274;</span></a>
+        </div>
+      </div>
+
+      <!-- Admin -->
+      <div class="sidebar-section" id="nav-admin">
+        <button onclick="toggleSection(this.parentElement)" class="w-full flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white transition-colors">
+          <svg class="chev w-3 h-3 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="font-semibold text-xs uppercase tracking-wider">Admin</span>
+        </button>
+        <div class="section-items">
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors">Settings</a>
+          <a href="#" class="nav-link flex items-center gap-2 px-4 pl-9 py-1.5 text-slate-400 hover:text-white hover:bg-white/5 text-xs rounded-r-lg mx-2 my-0.5 transition-colors">Billing</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Streak -->
+    <div class="px-4 py-3 border-t border-white/10 flex items-center gap-2">
+      <span class="text-base">&#128293;</span>
+      <span class="text-white text-xs font-semibold">12 day streak</span>
+      <span class="text-slate-500 text-[10px] ml-auto">Best: 18</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="flex-1 min-h-0 overflow-y-auto bg-main-gradient">
+
+<!-- ============ SCREEN 1: Strategy Overview ============ -->
+<div id="s1" class="scr on">
+<div class="p-6 space-y-6">
+
+  <!-- Welcome -->
+  <div class="flex items-center justify-between anim-fade">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Good morning, David</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Meridian Financial Technologies &middot; CPO &middot; Strategy v2.1</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-slate-400">Last active: 2 hours ago</span>
+      <div class="w-8 h-8 rounded-full bg-[#1a1f3a] flex items-center justify-center text-white text-xs font-bold">D</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Metric Cards -->
+  <div class="grid grid-cols-12 gap-4 anim-fade anim-d1">
+    <!-- Strategy Health -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Strategy Health</span>
+        <div class="w-10 h-10 relative">
+          <svg viewBox="0 0 36 36" class="w-10 h-10 -rotate-90">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+            <circle cx="18" cy="18" r="15" fill="none" stroke="#0891b2" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="26.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="font-code text-3xl font-bold text-[#0891b2]">72</div>
+      <p class="text-[11px] text-slate-500 mt-1">&#9650; 4 pts this week</p>
+    </div>
+    <!-- Active Bets -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Active Bets</span>
+      <div class="font-code text-3xl font-bold text-[#1a1f3a] mt-3">3</div>
+      <div class="flex gap-1.5 mt-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-1">1 high confidence</p>
+    </div>
+    <!-- Research Coverage -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Research Coverage</span>
+      <div class="font-code text-3xl font-bold text-[#1a1f3a] mt-3">67%</div>
+      <p class="text-[11px] text-slate-500 mt-1">12/18 areas mapped</p>
+      <div class="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
+        <div class="h-full bg-amber-400 rounded-full" style="width:67%"></div>
+      </div>
+    </div>
+    <!-- Team Alignment -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Team Alignment</span>
+      <div class="font-code text-3xl font-bold text-emerald-600 mt-3">4/4</div>
+      <div class="flex gap-1.5 mt-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-1">All members active</p>
+    </div>
+  </div>
+
+  <!-- Row 2: Phase + Activity -->
+  <div class="grid grid-cols-12 gap-6 anim-fade anim-d2">
+    <!-- Phase Stepper -->
+    <div class="col-span-8 space-y-4">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+        <h3 class="text-sm font-bold text-slate-900 mb-4">Strategy Journey</h3>
+        <!-- Stepper -->
+        <div class="flex items-center gap-0 mb-5">
+          <!-- Discovery - Complete -->
+          <div class="flex items-center">
+            <div class="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 ml-1.5">Discovery</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-emerald-300 mx-2"></div>
+          <!-- Research - Current -->
+          <div class="flex items-center">
+            <div class="w-7 h-7 rounded-full bg-amber-400 flex items-center justify-center ring-pulse">
+              <span class="font-code text-[10px] font-bold text-white">45%</span>
+            </div>
+            <span class="text-[11px] font-bold text-amber-600 ml-1.5">Research</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+          <!-- Synthesis - Locked -->
+          <div class="flex items-center opacity-40">
+            <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
+              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <span class="text-[11px] text-slate-400 ml-1.5">Synthesis</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+          <!-- Bets -->
+          <div class="flex items-center opacity-40">
+            <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
+              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <span class="text-[11px] text-slate-400 ml-1.5">Bets</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+          <!-- Activate -->
+          <div class="flex items-center opacity-40">
+            <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
+              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <span class="text-[11px] text-slate-400 ml-1.5">Activate</span>
+          </div>
+          <div class="flex-1 h-0.5 bg-slate-200 mx-2"></div>
+          <!-- Review -->
+          <div class="flex items-center opacity-40">
+            <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
+              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <span class="text-[11px] text-slate-400 ml-1.5">Review</span>
+          </div>
+        </div>
+
+        <!-- Current Phase Card -->
+        <div class="border-l-4 border-amber-400 bg-amber-50/50 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <span class="text-[10px] uppercase tracking-wider text-amber-600 font-semibold">Current Phase</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Map Your Strategic Terrain</h4>
+            </div>
+            <span class="font-code text-lg font-bold text-amber-600">45%</span>
+          </div>
+          <div class="w-full h-2 bg-amber-100 rounded-full overflow-hidden mb-3">
+            <div class="h-full bg-amber-400 rounded-full transition-all" style="width:45%"></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-xs text-slate-600">6 of 18 research areas remaining</p>
+            <button class="inline-flex items-center gap-1.5 bg-[#fbbf24] text-slate-900 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#f59e0b] transition-colors">
+              Continue Research
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-span-4">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 h-full">
+        <h3 class="text-sm font-bold text-slate-900 mb-3">Recent Activity</h3>
+        <div class="space-y-3">
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">Completed <span class="font-semibold">Customer Segments</span> research</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">2 hours ago</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">New signal: <span class="font-semibold">EU AI Act Phase 2</span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">5 hours ago</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">Coaching session with <span class="font-semibold">Marcus</span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Yesterday</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">Validated assumption: <span class="font-semibold">API demand</span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Yesterday</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">Strategy updated to <span class="font-semibold">v2.1</span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">2 days ago</p>
+            </div>
+          </div>
+          <div class="flex gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-[#fbbf24]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-slate-700">Added <span class="font-semibold">3 competitor profiles</span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">3 days ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Quick Actions -->
+  <div class="grid grid-cols-12 gap-4 anim-fade anim-d3">
+    <div class="col-span-3">
+      <button class="w-full bg-[#fbbf24] rounded-2xl p-5 text-left hover:bg-[#f59e0b] transition-all duration-300 hover:shadow-lg hover:scale-105 group">
+        <svg class="w-5 h-5 text-slate-900 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <h4 class="text-sm font-bold text-slate-900">Resume Coaching</h4>
+        <p class="text-[11px] text-slate-700 mt-0.5">Pick up where you left off</p>
+      </button>
+    </div>
+    <div class="col-span-3">
+      <button class="w-full bg-white border border-cyan-200 rounded-2xl p-5 text-left hover:border-cyan-300 hover:shadow-lg transition-all duration-300 hover:scale-105 group">
+        <svg class="w-5 h-5 text-cyan-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <h4 class="text-sm font-bold text-slate-900">Log Signal</h4>
+        <p class="text-[11px] text-slate-500 mt-0.5">Record a market observation</p>
+      </button>
+    </div>
+    <div class="col-span-3">
+      <button class="w-full bg-white border border-amber-200 rounded-2xl p-5 text-left hover:border-amber-300 hover:shadow-lg transition-all duration-300 hover:scale-105 group">
+        <svg class="w-5 h-5 text-amber-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h4 class="text-sm font-bold text-slate-900">Review Assumptions</h4>
+        <p class="text-[11px] text-slate-500 mt-0.5">3 untested assumptions</p>
+      </button>
+    </div>
+    <div class="col-span-3">
+      <button class="w-full bg-[#1a1f3a] rounded-2xl p-5 text-left hover:bg-[#2d3561] hover:shadow-lg transition-all duration-300 hover:scale-105 group relative overflow-hidden">
+        <div class="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-[#fbbf24]/10 blur-xl"></div>
+        <svg class="w-5 h-5 text-white mb-2 relative" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <h4 class="text-sm font-bold text-white relative">Export Strategy</h4>
+        <p class="text-[11px] text-slate-400 mt-0.5 relative">PDF or Word format</p>
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SCREEN 2: Insights Feed ============ -->
+<div id="s2" class="scr">
+<div class="max-w-4xl mx-auto p-6 space-y-5">
+
+  <div class="flex items-center justify-between anim-fade">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Insights Feed</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Curated intelligence for your strategy</p>
+    </div>
+    <span class="text-xs text-slate-400">Updated 15 min ago</span>
+  </div>
+
+  <!-- Filter pills -->
+  <div class="flex gap-2 anim-fade anim-d1">
+    <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#fbbf24] text-slate-900">All</button>
+    <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:border-slate-300 transition-colors">Market</button>
+    <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:border-slate-300 transition-colors">Competitor</button>
+    <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:border-slate-300 transition-colors">Customer</button>
+    <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:border-slate-300 transition-colors">Micro-Learning</button>
+  </div>
+
+  <!-- Feed Cards -->
+  <div class="space-y-4 anim-fade anim-d2">
+
+    <!-- Daily Provocation -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-[#fbbf24] border border-slate-100">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-base">&#10024;</span>
+            <span class="text-[10px] uppercase tracking-wider text-[#fbbf24] font-semibold">Daily Provocation</span>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 mb-1">Your Strategic Blind Spot Today</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">You've mapped 12 research areas, but your competitor territory has the least depth. What would change if your biggest competitor pivoted to your core segment tomorrow?</p>
+          <button class="mt-3 inline-flex items-center gap-1.5 bg-[#fbbf24] text-slate-900 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#f59e0b] transition-colors">
+            Reflect with Coach
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Signal -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-cyan-400 border border-slate-100">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold">Market Signal</span>
+            <span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full uppercase">High Impact</span>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 mb-1">EU AI Act Phase 2 — Compliance Deadline Moved to Q3 2026</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">The European Commission announced accelerated timelines for AI governance compliance. This directly impacts your AI-powered advisory features.</p>
+          <p class="text-[11px] text-slate-400 mt-2">Source: European Commission &middot; 6 hours ago</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Micro-Learning -->
+    <div class="rounded-2xl p-5 shadow-sm bg-[#1a1f3a] text-white relative overflow-hidden">
+      <div class="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-[#fbbf24]/15 blur-2xl"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-4 h-4 text-[#fbbf24]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span class="text-[10px] uppercase tracking-wider text-[#fbbf24] font-semibold">Micro-Learning</span>
+          <span class="text-[10px] text-slate-400 ml-auto">2-min read</span>
+        </div>
+        <h3 class="text-base font-bold mb-2">Strategic Pricing Models for B2B Platforms</h3>
+        <p class="text-sm text-slate-300 leading-relaxed">Learn how successful fintech platforms price their enterprise offerings using value-based frameworks.</p>
+        <div class="w-full h-1.5 bg-white/10 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-[#fbbf24] rounded-full" style="width:30%"></div>
+        </div>
+        <div class="flex items-center justify-between mt-3">
+          <span class="text-[10px] text-slate-400">30% complete</span>
+          <button class="inline-flex items-center gap-1.5 bg-[#fbbf24] text-slate-900 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#f59e0b] transition-colors">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blind Spot Alert -->
+    <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200">
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">M</div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Blind Spot Alert</span>
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed"><span class="font-semibold">Coach Marcus:</span> You haven't explored customer churn drivers in 14 days. Given the competitive signals we're tracking, this could be a critical gap in your retention strategy.</p>
+          <button class="mt-2 text-xs font-semibold text-amber-700 hover:text-amber-900 transition-colors">Explore this topic &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competitor Intel -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-purple-400 border border-slate-100">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold">Competitor Intel</span>
+      </div>
+      <h3 class="text-base font-bold text-slate-900 mb-1">FinanceAI Raises $50M Series C</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">Key competitor FinanceAI closed a major round led by Sequoia. Focus areas: enterprise compliance automation and real-time risk analytics.</p>
+      <p class="text-[11px] text-slate-400 mt-2">TechCrunch &middot; Yesterday</p>
+    </div>
+
+    <!-- Curated Article -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Curated Article</span>
+      </div>
+      <h3 class="text-base font-bold text-slate-900 mb-1">HBR: The New Rules of Platform Strategy</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">How incumbents are rethinking platform economics in regulated industries. Directly relevant to your multi-sided marketplace hypothesis.</p>
+      <p class="text-[11px] text-slate-400 mt-2">Harvard Business Review &middot; 3 days ago</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SCREEN 3: Coaching Hub ============ -->
+<div id="s3" class="scr">
+<div class="p-6">
+  <div class="grid grid-cols-12 gap-6">
+
+    <!-- Left Column -->
+    <div class="col-span-5 space-y-5">
+      <!-- Coach Profile Card -->
+      <div class="bg-[#1a1f3a] rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-[#fbbf24]/15 blur-2xl"></div>
+        <div class="relative flex items-center gap-4 mb-4">
+          <div class="w-16 h-16 rounded-2xl bg-indigo-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">M</div>
+          <div>
+            <h3 class="text-lg font-bold">Coach Marcus</h3>
+            <p class="text-slate-400 text-sm">Strategy Advisor</p>
+          </div>
+        </div>
+        <div class="relative flex flex-wrap gap-1.5 mt-2">
+          <span class="text-[10px] bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Product Strategy</span>
+          <span class="text-[10px] bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Market Analysis</span>
+          <span class="text-[10px] bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Competitive Intel</span>
+          <span class="text-[10px] bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">B2B SaaS</span>
+        </div>
+      </div>
+
+      <!-- Streak Calendar -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+        <h3 class="text-sm font-bold text-slate-900 mb-3">Coaching Streak</h3>
+        <div class="grid grid-cols-7 gap-1.5 mb-2">
+          <span class="text-[9px] text-slate-400 text-center">M</span><span class="text-[9px] text-slate-400 text-center">T</span><span class="text-[9px] text-slate-400 text-center">W</span><span class="text-[9px] text-slate-400 text-center">T</span><span class="text-[9px] text-slate-400 text-center">F</span><span class="text-[9px] text-slate-400 text-center">S</span><span class="text-[9px] text-slate-400 text-center">S</span>
+        </div>
+        <!-- Week 1 -->
+        <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]/20"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-100"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-100"></div>
+        </div>
+        <!-- Week 2 -->
+        <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-100"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+        </div>
+        <!-- Week 3 -->
+        <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-100"></div>
+        </div>
+        <!-- Week 4 (current) -->
+        <div class="grid grid-cols-7 gap-1.5">
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24]"></div>
+          <div class="w-full aspect-square rounded-md bg-[#fbbf24] ring-2 ring-[#fbbf24] ring-pulse"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-50 border border-dashed border-slate-200"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-50 border border-dashed border-slate-200"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-50 border border-dashed border-slate-200"></div>
+          <div class="w-full aspect-square rounded-md bg-slate-50 border border-dashed border-slate-200"></div>
+        </div>
+        <p class="text-center text-xs text-slate-500 mt-3">&#128293; 12 day streak &middot; Best: 18 days</p>
+      </div>
+
+      <!-- Quick Coaching Prompts -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+        <h3 class="text-sm font-bold text-slate-900 mb-3">Quick Prompts</h3>
+        <div class="flex flex-wrap gap-2">
+          <button class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-3 py-1.5 rounded-full hover:bg-cyan-100 transition-colors">"Challenge my assumptions"</button>
+          <button class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-3 py-1.5 rounded-full hover:bg-cyan-100 transition-colors">"What am I missing?"</button>
+          <button class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-3 py-1.5 rounded-full hover:bg-cyan-100 transition-colors">"Summarize my progress"</button>
+          <button class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-3 py-1.5 rounded-full hover:bg-cyan-100 transition-colors">"Next priority?"</button>
+          <button class="text-xs bg-cyan-50 text-cyan-700 border border-cyan-200 px-3 py-1.5 rounded-full hover:bg-cyan-100 transition-colors">"Competitor deep dive"</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-span-7 space-y-5">
+      <!-- Session Buttons -->
+      <div class="grid grid-cols-2 gap-3">
+        <button class="bg-[#fbbf24] text-slate-900 rounded-xl p-4 text-sm font-bold hover:bg-[#f59e0b] transition-all hover:shadow-lg flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Continue Session
+        </button>
+        <button class="bg-[#1a1f3a] text-white rounded-xl p-4 text-sm font-bold hover:bg-[#2d3561] transition-all hover:shadow-lg flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          New Session
+        </button>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+        <h3 class="text-sm font-bold text-slate-900 mb-3">Recent Sessions</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full uppercase">Research</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-slate-900 truncate">Customer segment analysis deep dive</p>
+              <p class="text-[11px] text-slate-400">Today &middot; 42 min</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full uppercase">Research</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-slate-900 truncate">Competitor pricing strategy review</p>
+              <p class="text-[11px] text-slate-400">Yesterday &middot; 35 min</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase">Discovery</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-slate-900 truncate">Strategic baseline & vision alignment</p>
+              <p class="text-[11px] text-slate-400">3 days ago &middot; 55 min</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase">Discovery</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-slate-900 truncate">Market opportunity mapping</p>
+              <p class="text-[11px] text-slate-400">5 days ago &middot; 28 min</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full uppercase">Discovery</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-slate-900 truncate">Initial strategic context setup</p>
+              <p class="text-[11px] text-slate-400">1 week ago &middot; 18 min</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coach Insight Banner -->
+      <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">M</div>
+          <div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Marcus noticed a gap</p>
+            <p class="text-sm text-slate-600 leading-relaxed">Your research covers company and customer territories well, but competitor analysis is at only 33%. Consider a focused session on competitive positioning before moving to Synthesis.</p>
+            <button class="mt-2 text-xs font-semibold text-cyan-700 hover:text-cyan-900 transition-colors">Start competitor deep dive &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SCREEN 4: Team Workspace ============ -->
+<div id="s4" class="scr">
+<div class="p-6 space-y-6">
+
+  <div class="flex items-center justify-between anim-fade">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Team Workspace</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Collaborate on strategy artefacts</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex -space-x-2">
+        <div class="w-7 h-7 rounded-full bg-[#1a1f3a] border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">D</div>
+        <div class="w-7 h-7 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">S</div>
+        <div class="w-7 h-7 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">A</div>
+        <div class="w-7 h-7 rounded-full bg-cyan-500 border-2 border-white flex items-center justify-center text-white text-[9px] font-bold">R</div>
+      </div>
+      <span class="text-xs text-slate-500">4 members</span>
+    </div>
+  </div>
+
+  <!-- Row 1: Artefact Cards -->
+  <div class="grid grid-cols-12 gap-4 anim-fade anim-d1">
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 border-l-4 border-l-emerald-400 hover:shadow-md transition-all">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] uppercase tracking-wider text-emerald-600 font-semibold">Team Brief</span>
+        <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Ready</span>
+      </div>
+      <h4 class="text-sm font-bold text-slate-900 mb-1">Strategic Direction Brief</h4>
+      <p class="text-[11px] text-slate-500 mb-3">Last updated 2 days ago</p>
+      <div class="flex gap-2">
+        <button class="text-[10px] font-semibold text-emerald-700 hover:text-emerald-900">View</button>
+        <span class="text-slate-300">|</span>
+        <button class="text-[10px] font-semibold text-slate-500 hover:text-slate-700">Share</button>
+      </div>
+    </div>
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 border-l-4 border-l-amber-400 hover:shadow-md transition-all">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] uppercase tracking-wider text-amber-600 font-semibold">OKRs</span>
+        <span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">Draft</span>
+      </div>
+      <h4 class="text-sm font-bold text-slate-900 mb-1">Q2 2026 Objectives</h4>
+      <p class="text-[11px] text-slate-500 mb-3">3 objectives, 9 key results</p>
+      <div class="flex gap-2">
+        <button class="text-[10px] font-semibold text-amber-700 hover:text-amber-900">Edit</button>
+        <span class="text-slate-300">|</span>
+        <button class="text-[10px] font-semibold text-slate-500 hover:text-slate-700">Review</button>
+      </div>
+    </div>
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 border-l-4 border-l-cyan-400 hover:shadow-md transition-all">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] uppercase tracking-wider text-cyan-600 font-semibold">Guardrails</span>
+        <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Active</span>
+      </div>
+      <h4 class="text-sm font-bold text-slate-900 mb-1">Strategic Guardrails</h4>
+      <p class="text-[11px] text-slate-500 mb-3">5 guardrails defined</p>
+      <div class="flex gap-2">
+        <button class="text-[10px] font-semibold text-cyan-700 hover:text-cyan-900">View</button>
+        <span class="text-slate-300">|</span>
+        <button class="text-[10px] font-semibold text-slate-500 hover:text-slate-700">Update</button>
+      </div>
+    </div>
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 border-l-4 border-l-purple-400 hover:shadow-md transition-all">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] uppercase tracking-wider text-purple-600 font-semibold">Stakeholder Pack</span>
+        <span class="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">Pending</span>
+      </div>
+      <h4 class="text-sm font-bold text-slate-900 mb-1">Board Presentation</h4>
+      <p class="text-[11px] text-slate-500 mb-3">Awaiting synthesis completion</p>
+      <div class="flex gap-2">
+        <button class="text-[10px] font-semibold text-purple-700 hover:text-purple-900">Preview</button>
+        <span class="text-slate-300">|</span>
+        <button class="text-[10px] font-semibold text-slate-500 hover:text-slate-700">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Decisions + Activity -->
+  <div class="grid grid-cols-12 gap-6 anim-fade anim-d2">
+    <div class="col-span-6 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <h3 class="text-sm font-bold text-slate-900 mb-3">Decision Frameworks</h3>
+      <div class="space-y-3">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="flex items-center justify-between mb-1">
+            <h4 class="text-sm font-semibold text-slate-900">Build vs Buy: AI Engine</h4>
+            <span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">In Progress</span>
+          </div>
+          <p class="text-[11px] text-slate-500">3 criteria evaluated, 2 remaining</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="flex items-center justify-between mb-1">
+            <h4 class="text-sm font-semibold text-slate-900">Market Entry: APAC Region</h4>
+            <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Decided</span>
+          </div>
+          <p class="text-[11px] text-slate-500">Decision: Defer to H2 2026 &middot; Decided 5 days ago</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-span-6 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <h3 class="text-sm font-bold text-slate-900 mb-3">Team Activity</h3>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0">S</div>
+          <p class="text-xs text-slate-700"><span class="font-semibold">Sarah</span> commented on OKR draft</p>
+          <span class="text-[10px] text-slate-400 ml-auto">2h ago</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0">A</div>
+          <p class="text-xs text-slate-700"><span class="font-semibold">Alex</span> updated guardrails document</p>
+          <span class="text-[10px] text-slate-400 ml-auto">5h ago</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0">R</div>
+          <p class="text-xs text-slate-700"><span class="font-semibold">Riya</span> added competitor analysis notes</p>
+          <span class="text-[10px] text-slate-400 ml-auto">Yesterday</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-[#1a1f3a] flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0">D</div>
+          <p class="text-xs text-slate-700"><span class="font-semibold">David</span> completed research session</p>
+          <span class="text-[10px] text-slate-400 ml-auto">Yesterday</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Shared Documents Table -->
+  <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 anim-fade anim-d3">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-bold text-slate-900">Shared Strategy Documents</h3>
+      <button class="text-xs font-semibold text-cyan-700 hover:text-cyan-900">View all &rarr;</button>
+    </div>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-100">
+          <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Document</th>
+          <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Owner</th>
+          <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Updated</th>
+          <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Status</th>
+        </tr>
+      </thead>
+      <tbody class="text-xs">
+        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+          <td class="py-2.5 font-semibold text-slate-900">Product Strategy v2.1</td>
+          <td class="py-2.5 text-slate-600">David</td>
+          <td class="py-2.5 text-slate-500">2 days ago</td>
+          <td class="py-2.5"><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Current</span></td>
+        </tr>
+        <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+          <td class="py-2.5 font-semibold text-slate-900">Market Analysis Report</td>
+          <td class="py-2.5 text-slate-600">Sarah</td>
+          <td class="py-2.5 text-slate-500">5 days ago</td>
+          <td class="py-2.5"><span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">Review</span></td>
+        </tr>
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-2.5 font-semibold text-slate-900">Competitive Landscape</td>
+          <td class="py-2.5 text-slate-600">Riya</td>
+          <td class="py-2.5 text-slate-500">1 week ago</td>
+          <td class="py-2.5"><span class="text-[9px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">Draft</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Row 4: Coming Soon -->
+  <div class="grid grid-cols-12 gap-4 anim-fade anim-d4">
+    <div class="col-span-3 border-2 border-dashed border-slate-200 rounded-2xl p-5 opacity-50">
+      <div class="flex items-center gap-1 mb-2">
+        <span class="text-sm">&#128274;</span>
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Coming Soon</span>
+      </div>
+      <h4 class="text-sm font-semibold text-slate-500">Product Team Strategy</h4>
+      <p class="text-[11px] text-slate-400 mt-1">Align team around product vision</p>
+    </div>
+    <div class="col-span-3 border-2 border-dashed border-slate-200 rounded-2xl p-5 opacity-50">
+      <div class="flex items-center gap-1 mb-2">
+        <span class="text-sm">&#128274;</span>
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Coming Soon</span>
+      </div>
+      <h4 class="text-sm font-semibold text-slate-500">Team Discovery</h4>
+      <p class="text-[11px] text-slate-400 mt-1">Collaborative research sessions</p>
+    </div>
+    <div class="col-span-3 border-2 border-dashed border-slate-200 rounded-2xl p-5 opacity-50">
+      <div class="flex items-center gap-1 mb-2">
+        <span class="text-sm">&#128274;</span>
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Coming Soon</span>
+      </div>
+      <h4 class="text-sm font-semibold text-slate-500">Feedback Loops</h4>
+      <p class="text-[11px] text-slate-400 mt-1">Continuous strategy refinement</p>
+    </div>
+    <div class="col-span-3 border-2 border-dashed border-slate-200 rounded-2xl p-5 opacity-50">
+      <div class="flex items-center gap-1 mb-2">
+        <span class="text-sm">&#128274;</span>
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Coming Soon</span>
+      </div>
+      <h4 class="text-sm font-semibold text-slate-500">Team Model Design</h4>
+      <p class="text-[11px] text-slate-400 mt-1">Operating model collaboration</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SCREEN 5: Operating Model ============ -->
+<div id="s5" class="scr">
+<div class="p-6 space-y-6">
+
+  <!-- Row 1: Executive Summary Banner -->
+  <div class="bg-[#1a1f3a] rounded-2xl p-6 text-white relative overflow-hidden anim-fade">
+    <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#fbbf24]/15 blur-2xl"></div>
+    <div class="relative flex items-center gap-6">
+      <!-- Ring -->
+      <div class="w-20 h-20 flex-shrink-0 relative">
+        <svg viewBox="0 0 36 36" class="w-20 h-20 -rotate-90">
+          <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3"/>
+          <circle cx="18" cy="18" r="15" fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="26.4" stroke-linecap="round"/>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="font-code text-xl font-bold text-[#fbbf24]">72</span>
+        </div>
+      </div>
+      <div class="flex-1">
+        <span class="text-[10px] uppercase tracking-wider text-[#fbbf24] font-semibold">Operating Model Readiness</span>
+        <h2 class="text-xl font-bold mt-0.5">Strategy Health Score</h2>
+        <p class="text-sm text-slate-400 mt-1">Your strategy is progressing well. Focus on completing competitor research and validating remaining assumptions.</p>
+      </div>
+      <div class="flex gap-8">
+        <div class="text-center">
+          <div class="font-code text-lg font-bold text-white">8</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Assumptions</div>
+        </div>
+        <div class="text-center">
+          <div class="font-code text-lg font-bold text-white">14</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Signals</div>
+        </div>
+        <div class="text-center">
+          <div class="font-code text-lg font-bold text-white">v2.1</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Version</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: KPI Cards -->
+  <div class="grid grid-cols-12 gap-4 anim-fade anim-d1">
+    <!-- Assumption Validation -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Assumption Validation</span>
+      <div class="font-code text-3xl font-bold text-[#1a1f3a] mt-3">37.5%</div>
+      <p class="text-[11px] text-slate-500 mt-1">3 of 8 validated</p>
+      <div class="flex gap-1 mt-2">
+        <div class="flex-1 h-2 bg-emerald-400 rounded-l-full"></div>
+        <div class="flex-1 h-2 bg-emerald-400"></div>
+        <div class="flex-1 h-2 bg-emerald-400"></div>
+        <div class="flex-1 h-2 bg-red-400"></div>
+        <div class="flex-1 h-2 bg-red-400"></div>
+        <div class="flex-1 h-2 bg-slate-200"></div>
+        <div class="flex-1 h-2 bg-slate-200"></div>
+        <div class="flex-1 h-2 bg-slate-200 rounded-r-full"></div>
+      </div>
+      <div class="flex items-center gap-3 mt-2 text-[10px] text-slate-400">
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>3 valid</span>
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400"></span>2 invalid</span>
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-200"></span>3 untested</span>
+      </div>
+    </div>
+    <!-- Bet Confidence -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Bet Confidence</span>
+      <div class="space-y-2 mt-3">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] text-slate-600">API Platform</span>
+            <span class="font-code text-[11px] font-bold text-emerald-600">High</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-400 rounded-full" style="width:85%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] text-slate-600">Compliance Suite</span>
+            <span class="font-code text-[11px] font-bold text-amber-600">Med</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-400 rounded-full" style="width:55%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] text-slate-600">Self-Serve Portal</span>
+            <span class="font-code text-[11px] font-bold text-cyan-600">Med</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-cyan-400 rounded-full" style="width:50%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Research Depth -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Research Depth</span>
+      <div class="font-code text-3xl font-bold text-[#1a1f3a] mt-3">67%</div>
+      <p class="text-[11px] text-slate-500 mt-1">12 of 18 areas mapped</p>
+      <div class="space-y-1.5 mt-2">
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] text-slate-500 w-16">Company</span>
+          <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-indigo-400 rounded-full" style="width:83%"></div></div>
+          <span class="font-code text-[10px] text-slate-500">5/6</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] text-slate-500 w-16">Customer</span>
+          <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-cyan-400 rounded-full" style="width:83%"></div></div>
+          <span class="font-code text-[10px] text-slate-500">5/6</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] text-slate-500 w-16">Competitor</span>
+          <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-purple-400 rounded-full" style="width:33%"></div></div>
+          <span class="font-code text-[10px] text-slate-500">2/6</span>
+        </div>
+      </div>
+    </div>
+    <!-- Strategy Freshness -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Strategy Freshness</span>
+      <div class="font-code text-3xl font-bold text-emerald-600 mt-3">3 days</div>
+      <p class="text-[11px] text-slate-500 mt-1">Since last update</p>
+      <div class="mt-3 flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+        <span class="text-[11px] text-emerald-600 font-semibold">Fresh</span>
+        <span class="text-[10px] text-slate-400 ml-auto">Stale after 14 days</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Assumption Tracker + Signal Log -->
+  <div class="grid grid-cols-12 gap-6 anim-fade anim-d2">
+    <!-- Assumption Tracker -->
+    <div class="col-span-8 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold text-slate-900">Assumption Tracker</h3>
+        <button class="text-xs font-semibold text-cyan-700 hover:text-cyan-900">Add assumption &rarr;</button>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-100">
+            <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Assumption</th>
+            <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Bet</th>
+            <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Status</th>
+            <th class="text-left text-[10px] uppercase tracking-wider text-slate-400 font-semibold pb-2">Evidence</th>
+          </tr>
+        </thead>
+        <tbody class="text-xs">
+          <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 font-semibold text-slate-900">Enterprise API demand is growing 40% YoY</td>
+            <td class="py-2.5 text-slate-600">API Platform</td>
+            <td class="py-2.5"><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Validated</span></td>
+            <td class="py-2.5 text-slate-500">3 sources</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 font-semibold text-slate-900">SMBs will pay premium for compliance</td>
+            <td class="py-2.5 text-slate-600">Compliance</td>
+            <td class="py-2.5"><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Validated</span></td>
+            <td class="py-2.5 text-slate-500">5 interviews</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 font-semibold text-slate-900">Self-serve reduces onboarding by 60%</td>
+            <td class="py-2.5 text-slate-600">Self-Serve</td>
+            <td class="py-2.5"><span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Validated</span></td>
+            <td class="py-2.5 text-slate-500">Pilot data</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 font-semibold text-slate-900">Competitors won't match pricing for 12mo</td>
+            <td class="py-2.5 text-slate-600">API Platform</td>
+            <td class="py-2.5"><span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">Invalidated</span></td>
+            <td class="py-2.5 text-slate-500">FinanceAI raise</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 font-semibold text-slate-900">EU compliance creates moat for 2+ years</td>
+            <td class="py-2.5 text-slate-600">Compliance</td>
+            <td class="py-2.5"><span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">Invalidated</span></td>
+            <td class="py-2.5 text-slate-500">Timeline shift</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="text-[11px] text-slate-400 mt-3">+ 3 untested assumptions remaining</p>
+    </div>
+
+    <!-- Signal Log -->
+    <div class="col-span-4 bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold text-slate-900">Signal Log</h3>
+        <span class="font-code text-xs text-slate-400">14 signals</span>
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-start gap-2.5">
+          <div class="w-2 h-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-xs text-slate-700 font-semibold">EU AI Act timeline accelerated</p>
+            <p class="text-[10px] text-slate-400">High impact &middot; 6h ago</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-2 h-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-xs text-slate-700 font-semibold">FinanceAI $50M Series C</p>
+            <p class="text-[10px] text-slate-400">High impact &middot; Yesterday</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-2 h-2 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-xs text-slate-700 font-semibold">Open banking API adoption +28%</p>
+            <p class="text-[10px] text-slate-400">Medium impact &middot; 3 days ago</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-2 h-2 rounded-full bg-amber-400 mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-xs text-slate-700 font-semibold">Enterprise AI spend forecast revised up</p>
+            <p class="text-[10px] text-slate-400">Medium impact &middot; 5 days ago</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-2 h-2 rounded-full bg-slate-300 mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-xs text-slate-700 font-semibold">New ISO 42001 AI certification</p>
+            <p class="text-[10px] text-slate-400">Low impact &middot; 1 week ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Board-Ready Summary -->
+  <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 anim-fade anim-d3">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-bold text-slate-900">Board-Ready Summary</h3>
+        <p class="text-[11px] text-slate-500 mt-0.5">Export your current strategy for stakeholder review</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">Version history &rarr;</button>
+        <button class="inline-flex items-center gap-1.5 bg-[#1a1f3a] text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#2d3561] transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export Word
+        </button>
+        <button class="inline-flex items-center gap-1.5 bg-[#fbbf24] text-slate-900 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#f59e0b] transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+function S(id,btn){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.tb').forEach(t=>t.classList.remove('act'));
+  btn.classList.add('act');
+
+  // Update sidebar active states
+  document.querySelectorAll('.nav-link').forEach(l=>{
+    l.classList.remove('bg-white/10','text-white');
+    if(!l.classList.contains('cursor-not-allowed')){
+      l.classList.add('text-slate-400');
+    }
+  });
+
+  const screenMap = {s1:'nav-strategy',s2:'nav-insights',s3:'nav-coaching',s4:'nav-team'};
+  const sectionId = screenMap[id];
+  if(sectionId){
+    const section = document.getElementById(sectionId);
+    if(section){
+      section.classList.add('expanded');
+      const links = section.querySelectorAll('.nav-link[data-screen]');
+      links.forEach(l=>{
+        if(l.dataset.screen===id){
+          l.classList.remove('text-slate-400');
+          l.classList.add('bg-white/10','text-white');
+        }
+      });
+    }
+  }
+}
+
+function toggleSection(el){
+  el.classList.toggle('expanded');
+}
+
+// Sidebar nav link clicks
+document.querySelectorAll('.nav-link[data-screen]').forEach(link=>{
+  link.addEventListener('click',function(e){
+    e.preventDefault();
+    const screen = this.dataset.screen;
+    const tabs = document.querySelectorAll('.tb');
+    const tabMap = {s1:0,s2:1,s3:2,s4:3,s5:4};
+    if(tabMap[screen]!==undefined){
+      S(screen, tabs[tabMap[screen]]);
+    }
+  });
+});
+</script>
+</body>
+</html>

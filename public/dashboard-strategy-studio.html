@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontera Dashboard — The Strategy Studio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{jakarta:["Plus Jakarta Sans","system-ui","sans-serif"],code:["JetBrains Mono","monospace"]}}}};</script>
+<style>
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;margin:0}
+.font-code{font-family:"JetBrains Mono",monospace}
+.scr{display:none}.scr.on{display:block}
+.tb.act{background:#fbbf24;color:#1a1f3a;font-weight:700}
+.tb:not(.act):hover{background:rgba(255,255,255,.12)}
+.topo{background-image:url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 80Q60 40 100 80T180 80' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3Cpath d='M10 120Q50 80 100 120T190 120' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3Cpath d='M30 50Q70 20 110 50T190 50' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='1'/%3E%3C/svg%3E")}
+@keyframes ringP{0%{box-shadow:0 0 0 0 rgba(251,191,36,.4)}70%{box-shadow:0 0 0 6px rgba(251,191,36,0)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}.ring-p{animation:ringP 2s infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.fade-up{animation:fadeUp .5s ease-out both}
+@keyframes pulseGlow{0%,100%{opacity:.4}50%{opacity:.8}}.pulse-glow{animation:pulseGlow 3s ease-in-out infinite}
+.bg-header-gradient{background:linear-gradient(180deg,#1e2440 0%,#151930 100%)}
+.bg-main-gradient{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#ecfeff 100%)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
+/* Nav rail flyout */
+.flyout{position:fixed;left:56px;top:44px;width:220px;background:white;border-radius:0 16px 16px 0;box-shadow:8px 0 30px rgba(0,0,0,.12);border:1px solid #e2e8f0;border-left:none;padding:12px;z-index:40;display:none;max-height:calc(100vh - 44px);overflow-y:auto}
+.flyout.show{display:block}
+.flyout a{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:13px;color:#334155;text-decoration:none;transition:background .15s}
+.flyout a:hover{background:#f1f5f9}
+.flyout a.active{background:#ecfeff;color:#0891b2;font-weight:600}
+.flyout a.locked{opacity:.5;cursor:default}
+.flyout a.locked:hover{background:transparent}
+.flyout .flyout-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;padding:4px 12px 8px;margin-top:4px}
+.rail-btn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.5)}
+.rail-btn:hover,.rail-btn.active{background:rgba(255,255,255,.1);color:#fbbf24}
+.delay-75{animation-delay:75ms}.delay-150{animation-delay:150ms}.delay-200{animation-delay:200ms}.delay-300{animation-delay:300ms}
+/* Masonry */
+.masonry{columns:3;column-gap:16px}.masonry>*{break-inside:avoid;margin-bottom:16px}
+/* Ring animation */
+@keyframes drawRing{from{stroke-dashoffset:var(--full)}to{stroke-dashoffset:var(--target)}}.draw-ring{animation:drawRing 1.2s ease-out both}
+/* Timeline */
+.timeline-dot{width:8px;height:8px;border-radius:50%;background:#fbbf24;position:absolute;left:-4px;top:6px}
+.timeline-line{position:absolute;left:0;top:0;bottom:0;width:1px;background:#e2e8f0}
+</style>
+</head>
+<body class="bg-slate-100">
+
+<!-- ===== TOP NAV BAR ===== -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#1a1f3a] border-b-2 border-[#fbbf24]/30 shadow-lg" style="height:44px">
+<div class="h-full px-3 flex items-center gap-1.5 overflow-x-auto">
+<span class="text-[10px] font-bold text-[#fbbf24] uppercase tracking-wider mr-2 flex-shrink-0">Strategy Studio:</span>
+<button onclick="S('s1')" data-t="s1" class="tb act text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">1 Strategy Home</button>
+<button onclick="S('s2')" data-t="s2" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">2 Insight Canvas</button>
+<button onclick="S('s3')" data-t="s3" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">3 Coach Corner</button>
+<button onclick="S('s4')" data-t="s4" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">4 Team Hub</button>
+<button onclick="S('s5')" data-t="s5" class="tb text-[11px] font-medium px-2.5 py-1 rounded-md text-white/60 flex-shrink-0 whitespace-nowrap">5 Strategy Cockpit</button>
+</div></nav>
+<div style="padding-top:44px">
+
+<!-- ===== NAV RAIL ===== -->
+<aside class="fixed left-0 top-[44px] bottom-0 w-[56px] bg-header-gradient topo z-40 flex flex-col items-center py-3 gap-1">
+  <!-- Logo -->
+  <div class="w-8 h-8 rounded-xl bg-[#fbbf24] flex items-center justify-center mb-3 shadow-md">
+    <span class="text-[#1a1f3a] font-bold text-sm">F</span>
+  </div>
+
+  <!-- Home -->
+  <button class="rail-btn active" onclick="toggleFlyout('fly-home')">
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+  </button>
+
+  <!-- Insights -->
+  <button class="rail-btn" onclick="toggleFlyout('fly-insights')">
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.3L10 14.5 5.1 17l.9-5.3-4-3.9 5.5-.8L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- Coaching -->
+  <button class="rail-btn" onclick="toggleFlyout('fly-coaching')">
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M4 4h12a2 2 0 012 2v7a2 2 0 01-2 2H8l-4 3v-3a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- Team -->
+  <button class="rail-btn" onclick="toggleFlyout('fly-team')">
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M1 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5"/><path d="M13 12c2.5 0 5 1.5 5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+  </button>
+
+  <!-- Strategy -->
+  <button class="rail-btn" onclick="toggleFlyout('fly-strategy')">
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="2" y="11" width="3" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="7" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="4" width="3" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="17" y="2" width="1.5" height="16" rx=".75" stroke="currentColor" stroke-width="1"/></svg>
+  </button>
+
+  <!-- Spacer -->
+  <div class="flex-1"></div>
+
+  <!-- XP -->
+  <div class="flex flex-col items-center gap-0.5 mb-1">
+    <span class="font-code text-[10px] text-[#fbbf24] font-semibold">1.2K</span>
+    <span class="text-[8px] text-white/40 uppercase tracking-wider">XP</span>
+  </div>
+
+  <!-- Streak -->
+  <div class="flex flex-col items-center gap-0.5 mb-2">
+    <span class="text-[13px]">&#x1F525;</span>
+    <span class="font-code text-[10px] text-white/60">12</span>
+  </div>
+
+  <!-- Avatar -->
+  <div class="w-7 h-7 rounded-full bg-[#2d3561] border-2 border-[#fbbf24]/40 flex items-center justify-center">
+    <span class="text-[10px] font-bold text-white">DK</span>
+  </div>
+</aside>
+
+<!-- ===== FLYOUT PANELS ===== -->
+<div id="fly-home" class="flyout">
+  <div class="flyout-title">Home</div>
+  <a href="#" class="active" onclick="S('s1');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+    Overview
+  </a>
+  <a href="#" class="locked">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Daily Briefing
+  </a>
+</div>
+
+<div id="fly-insights" class="flyout">
+  <div class="flyout-title">Insights</div>
+  <a href="#" onclick="S('s2');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.3L10 14.5 5.1 17l.9-5.3-4-3.9 5.5-.8L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    Insight Canvas
+  </a>
+  <a href="#" class="locked">&#x1F512; Learning Path</a>
+  <a href="#" onclick="S('s5');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M3 17V8l7-5 7 5v9" stroke="currentColor" stroke-width="1.5"/></svg>
+    Market Signals
+  </a>
+</div>
+
+<div id="fly-coaching" class="flyout">
+  <div class="flyout-title">Coaching</div>
+  <a href="#" onclick="S('s3');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M4 4h12a2 2 0 012 2v7a2 2 0 01-2 2H8l-4 3v-3a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.5"/></svg>
+    Sessions
+  </a>
+  <a href="#" class="locked">&#x1F512; Coaching Profile</a>
+  <a href="#" class="locked">&#x1F512; Strategy Archetype</a>
+  <a href="#" class="locked">&#x1F512; Learning Plan</a>
+</div>
+
+<div id="fly-team" class="flyout">
+  <div class="flyout-title">Team</div>
+  <a href="#" onclick="S('s4');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M1 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5"/></svg>
+    Hub
+  </a>
+  <a href="#" class="locked">&#x1F512; Product Team Strategy</a>
+  <a href="#" class="locked">&#x1F512; Team Discovery</a>
+  <a href="#" class="locked">&#x1F512; Feedback Loops</a>
+  <a href="#" class="locked">&#x1F512; Team Model</a>
+</div>
+
+<div id="fly-strategy" class="flyout">
+  <div class="flyout-title">Strategy</div>
+  <a href="#" onclick="S('s5');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><rect x="2" y="11" width="3" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="7" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="4" width="3" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+    Product Strategy
+  </a>
+  <a href="#" class="locked">&#x1F512; Op Model Design</a>
+  <a href="#" onclick="S('s5');return false">
+    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Strategy Cockpit
+  </a>
+</div>
+
+<!-- ===== MAIN CONTENT WRAPPER ===== -->
+<div style="margin-left:56px" class="bg-main-gradient min-h-screen">
+
+<!-- ========================================================= -->
+<!-- SCREEN 1: STRATEGY HOME — BENTO GRID                     -->
+<!-- ========================================================= -->
+<div id="s1" class="scr on">
+<div class="p-6">
+  <!-- Header -->
+  <div class="mb-6 fade-up">
+    <h1 class="text-2xl font-bold text-slate-900">Good morning, David</h1>
+    <p class="text-sm text-slate-500 mt-1">Meridian Financial Technologies &middot; CPO &middot; Level 4</p>
+  </div>
+
+  <!-- Bento Grid -->
+  <div class="grid grid-cols-12 gap-4">
+
+    <!-- HERO CARD: Phase Ring Chart (col-span-8, row-span-2) -->
+    <div class="col-span-8 row-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 fade-up delay-150">
+      <div class="flex items-start gap-8">
+        <!-- Phase Ring SVG -->
+        <div class="flex-shrink-0">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <!-- Background tracks -->
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".5"/>
+            <circle cx="100" cy="100" r="76" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".5"/>
+            <circle cx="100" cy="100" r="62" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".4"/>
+            <circle cx="100" cy="100" r="48" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".3"/>
+            <circle cx="100" cy="100" r="34" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".25"/>
+            <circle cx="100" cy="100" r="20" fill="none" stroke="#e2e8f0" stroke-width="10" opacity=".2"/>
+            <!-- Active arcs -->
+            <!-- Discovery 100%: r=90, C=565.5 -->
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#10b981" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="565.5" stroke-dashoffset="0" transform="rotate(-90 100 100)" opacity=".85"/>
+            <!-- Research 45%: r=76, C=477.5, offset=477.5*(1-0.45)=262.6 -->
+            <circle cx="100" cy="100" r="76" fill="none" stroke="#f59e0b" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="477.5" stroke-dashoffset="262.6" transform="rotate(-90 100 100)"/>
+            <!-- Synthesis 0%: r=62 — not drawn -->
+            <!-- Bets 0%: r=48 — not drawn -->
+            <!-- Activate 0%: r=34 — not drawn -->
+            <!-- Review 0%: r=20 — not drawn -->
+            <!-- Center text -->
+            <text x="100" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="28" font-weight="700" fill="#1a1f3a">45%</text>
+            <text x="100" y="115" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#94a3b8" letter-spacing=".05em">OVERALL</text>
+          </svg>
+        </div>
+        <!-- Phase Breakdown -->
+        <div class="flex-1 pt-2">
+          <h2 class="text-lg font-bold text-slate-900 mb-4">Strategy Progress</h2>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <span class="text-sm text-slate-700 flex-1">Discovery</span>
+              <span class="font-code text-sm text-emerald-600 font-semibold">100%</span>
+              <span class="text-[10px] text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">COMPLETE</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-p"></div>
+              <span class="text-sm text-slate-900 font-semibold flex-1">Research</span>
+              <span class="font-code text-sm text-amber-600 font-semibold">45%</span>
+              <span class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-semibold">CURRENT</span>
+            </div>
+            <div class="flex items-center gap-3 opacity-40">
+              <div class="w-2.5 h-2.5 rounded-full bg-purple-400"></div>
+              <span class="text-sm text-slate-500 flex-1">Synthesis</span>
+              <span class="font-code text-sm text-slate-400">&mdash;</span>
+              <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="#94a3b8" stroke-width="1.2"/><path d="M5 7V5a3 3 0 016 0v2" stroke="#94a3b8" stroke-width="1.2"/></svg>
+            </div>
+            <div class="flex items-center gap-3 opacity-40">
+              <div class="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>
+              <span class="text-sm text-slate-500 flex-1">Bets</span>
+              <span class="font-code text-sm text-slate-400">&mdash;</span>
+              <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="#94a3b8" stroke-width="1.2"/><path d="M5 7V5a3 3 0 016 0v2" stroke="#94a3b8" stroke-width="1.2"/></svg>
+            </div>
+            <div class="flex items-center gap-3 opacity-30">
+              <div class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
+              <span class="text-sm text-slate-400 flex-1">Activate</span>
+              <span class="font-code text-sm text-slate-300">&mdash;</span>
+              <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="#cbd5e1" stroke-width="1.2"/><path d="M5 7V5a3 3 0 016 0v2" stroke="#cbd5e1" stroke-width="1.2"/></svg>
+            </div>
+            <div class="flex items-center gap-3 opacity-30">
+              <div class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+              <span class="text-sm text-slate-400 flex-1">Review</span>
+              <span class="font-code text-sm text-slate-300">&mdash;</span>
+              <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="#cbd5e1" stroke-width="1.2"/><path d="M5 7V5a3 3 0 016 0v2" stroke="#cbd5e1" stroke-width="1.2"/></svg>
+            </div>
+          </div>
+          <button class="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#fbbf24] px-5 py-2.5 text-sm font-semibold text-slate-900 transition-all hover:bg-[#f59e0b] hover:scale-105 hover:shadow-lg">
+            Continue Research
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10m-4-4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT COACHING (col-span-4) -->
+    <div class="col-span-4 bg-[#1a1f3a] rounded-2xl p-5 shadow-lg text-white fade-up delay-200 relative overflow-hidden">
+      <div class="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-[#fbbf24]/15 blur-2xl"></div>
+      <div class="relative">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center text-xs font-bold text-white">M</div>
+          <div>
+            <p class="text-xs text-slate-300">Coach Marcus</p>
+            <p class="text-[10px] text-slate-400">Last session: Mar 5</p>
+          </div>
+        </div>
+        <p class="text-sm font-semibold mb-1">Competitive landscape analysis</p>
+        <p class="text-xs text-slate-400 mb-4">Explored FinanceAI threat and pricing strategy options for enterprise segment.</p>
+        <a href="#" class="text-[#fbbf24] text-xs font-semibold hover:underline">Resume Session &rarr;</a>
+      </div>
+    </div>
+
+    <!-- TEAM ACTIVITY (col-span-4) -->
+    <div class="col-span-4 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 fade-up delay-300">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Team Activity</h3>
+      <div class="space-y-3">
+        <div class="flex items-start gap-2.5">
+          <div class="w-5 h-5 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[9px] font-bold text-rose-600">S</span></div>
+          <div>
+            <p class="text-xs text-slate-700"><span class="font-semibold">Sarah</span> updated OKRs</p>
+            <p class="text-[10px] text-slate-400">2h ago</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[9px] font-bold text-blue-600">J</span></div>
+          <div>
+            <p class="text-xs text-slate-700"><span class="font-semibold">James</span> commented on brief</p>
+            <p class="text-[10px] text-slate-400">5h ago</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <div class="w-5 h-5 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[9px] font-bold text-cyan-600">P</span></div>
+          <div>
+            <p class="text-xs text-slate-700"><span class="font-semibold">Priya</span> exported pack</p>
+            <p class="text-[10px] text-slate-400">1d ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW OF 4 SMALL CARDS -->
+    <!-- Signals -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border-l-4 border-cyan-500 fade-up delay-200">
+      <p class="font-code text-3xl font-bold text-cyan-600">14</p>
+      <p class="text-xs font-semibold text-slate-700 mt-1">Signals Logged</p>
+      <p class="text-[10px] text-red-500 font-semibold mt-1.5">2 high impact</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 fade-up delay-300">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Quick Actions</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="w-full h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-cyan-50 hover:border-cyan-200 transition-all" title="Log Signal">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="#0891b2" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="w-full h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-cyan-50 hover:border-cyan-200 transition-all" title="Review Assumptions">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M4 8l3 3 5-6" stroke="#0891b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="w-full h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-cyan-50 hover:border-cyan-200 transition-all" title="Export">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 10v3h10v-3M8 3v7m-3-3l3 3 3-3" stroke="#0891b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="w-full h-9 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-cyan-50 hover:border-cyan-200 transition-all" title="Coach">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H7l-3 2v-2a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#0891b2" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Exports -->
+    <div class="col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 fade-up delay-200">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Exports</p>
+      <p class="text-sm font-semibold text-slate-800 mb-3">3 Documents Ready</p>
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center"><span class="text-[9px] font-bold text-red-500">PDF</span></div>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center"><span class="text-[9px] font-bold text-blue-500">DOC</span></div>
+        <div class="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center"><span class="text-[9px] font-bold text-purple-500">PPT</span></div>
+      </div>
+      <a href="#" class="text-xs text-cyan-600 font-semibold hover:underline">Export All &rarr;</a>
+    </div>
+
+    <!-- Daily Prompt -->
+    <div class="col-span-3 bg-[#fbbf24]/10 rounded-2xl p-5 border border-[#fbbf24]/30 fade-up delay-300">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.5 3 3.5.5-2.5 2.5.6 3.5L8 9l-3.1 1.5.6-3.5L3 4.5 6.5 4 8 1z" fill="#fbbf24"/></svg>
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-700">Today's Prompt</span>
+      </div>
+      <p class="text-sm text-slate-800 font-medium leading-relaxed mb-3">"What's one assumption about your customers that you haven't validated yet?"</p>
+      <a href="#" class="text-xs text-amber-700 font-semibold hover:underline">Reflect &rarr;</a>
+    </div>
+
+  </div><!-- /bento grid -->
+</div>
+</div><!-- /s1 -->
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 2: INSIGHT CANVAS — MASONRY                        -->
+<!-- ========================================================= -->
+<div id="s2" class="scr">
+<div class="p-6">
+  <!-- Filter pills -->
+  <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-xl p-3 mb-5 flex items-center gap-2 shadow-sm fade-up">
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#fbbf24] text-slate-900">All</button>
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Provocations</button>
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Signals</button>
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Learning</button>
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Competitor</button>
+    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Bookmarked</button>
+  </div>
+
+  <!-- Masonry Grid -->
+  <div class="masonry fade-up delay-150">
+
+    <!-- Col 1 cards -->
+    <!-- Provocation -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-[#fbbf24]">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.5 3 3.5.5-2.5 2.5.6 3.5L8 9l-3.1 1.5.6-3.5L3 4.5 6.5 4 8 1z" fill="#fbbf24"/></svg>
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-600">Provocation</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 leading-relaxed mb-3">"What if your biggest competitor isn't who you think it is?"</p>
+      <p class="text-xs text-slate-500 mb-4">Consider non-traditional competitors entering from adjacent markets with AI-first approaches.</p>
+      <button class="text-xs font-semibold text-[#fbbf24] hover:text-[#f59e0b] transition-colors">Reflect &rarr;</button>
+    </div>
+
+    <!-- Market Signal HIGH -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-cyan-500">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-cyan-600">Market Signal</span>
+        <span class="text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">HIGH IMPACT</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 mb-2">EU AI Act Phase 2</p>
+      <p class="text-xs text-slate-500 leading-relaxed mb-2">New compliance requirements for AI-powered financial services effective Q3 2026. Significant implications for product roadmap and data handling practices.</p>
+      <p class="text-[10px] text-slate-400 mb-3">Source: Reuters &middot; Mar 6</p>
+      <button class="text-xs font-semibold text-cyan-600 hover:text-cyan-700 transition-colors">Analyze &rarr;</button>
+    </div>
+
+    <!-- Provocation 2 -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-[#fbbf24]">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.5 3 3.5.5-2.5 2.5.6 3.5L8 9l-3.1 1.5.6-3.5L3 4.5 6.5 4 8 1z" fill="#fbbf24"/></svg>
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-600">Provocation</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 leading-relaxed mb-3">"Is your product team structured for the strategy you're pursuing?"</p>
+      <button class="text-xs font-semibold text-[#fbbf24] hover:text-[#f59e0b] transition-colors">Discuss &rarr;</button>
+    </div>
+
+    <!-- Competitor Alert -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-purple-500">
+      <div class="flex items-center gap-1.5 mb-2">
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-purple-600">Competitor Alert</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 mb-2">FinanceAI Raises $50M</p>
+      <p class="text-xs text-slate-500 leading-relaxed mb-3">Series C funding to accelerate enterprise expansion in embedded finance. Led by Sequoia with participation from existing investors.</p>
+      <button class="text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors">Analyze with Coach &rarr;</button>
+    </div>
+
+    <!-- Micro-Learning -->
+    <div class="bg-[#1a1f3a] rounded-2xl p-5 shadow-lg text-white relative overflow-hidden">
+      <div class="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-[#fbbf24]/10 blur-2xl"></div>
+      <div class="relative">
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Micro-Learning</span>
+        <p class="text-sm font-semibold mt-2 mb-1">Strategic Pricing Models</p>
+        <span class="font-code text-[10px] text-[#fbbf24] bg-[#fbbf24]/15 px-2 py-0.5 rounded-full">2-min read</span>
+        <div class="mt-3 mb-3">
+          <div class="w-full h-1.5 rounded-full bg-white/10">
+            <div class="h-full w-[40%] rounded-full bg-[#fbbf24]"></div>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">40% complete</p>
+        </div>
+        <button class="text-xs font-semibold text-[#fbbf24] hover:text-[#f59e0b] transition-colors">Continue &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Strategic Question -->
+    <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200">
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-600">Strategic Question</span>
+      <p class="text-sm font-semibold text-slate-900 mt-2 leading-relaxed mb-3">"Have you validated your pricing assumptions with enterprise customers?"</p>
+      <button class="text-xs font-semibold text-amber-700 hover:text-amber-800 transition-colors">Explore &rarr;</button>
+    </div>
+
+    <!-- Market Signal MED -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-cyan-500">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-cyan-600">Market Signal</span>
+        <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">MEDIUM</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 mb-2">Open Banking API Standards Update</p>
+      <p class="text-xs text-slate-500 leading-relaxed mb-3">Updated standards for PSD3 compliance expected to simplify third-party integrations.</p>
+      <button class="text-xs font-semibold text-cyan-600 hover:text-cyan-700 transition-colors">Review &rarr;</button>
+    </div>
+
+    <!-- Bookmarked -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M4 2h8a1 1 0 011 1v11l-5-3-5 3V3a1 1 0 011-1z" fill="#fbbf24"/></svg>
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Bookmarked</span>
+      </div>
+      <p class="text-sm font-semibold text-slate-900 mb-1">Platform Strategy Guide</p>
+      <p class="text-xs text-slate-400">Harvard Business Review</p>
+      <a href="#" class="text-xs font-semibold text-cyan-600 hover:underline mt-2 inline-block">Open &nearr;</a>
+    </div>
+
+  </div><!-- /masonry -->
+</div>
+</div><!-- /s2 -->
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 3: COACH CORNER — SPLIT LAYOUT                     -->
+<!-- ========================================================= -->
+<div id="s3" class="scr">
+<div class="flex min-h-[calc(100vh-44px)]">
+
+  <!-- Left Column: Coach Roster -->
+  <div class="w-80 flex-shrink-0 p-6 border-r border-slate-200 bg-white/50 overflow-y-auto fade-up">
+    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">Your Coaches</h2>
+
+    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2 mt-2">Strategic Coaches</p>
+
+    <!-- Marcus (active) -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-[#fbbf24] shadow-sm mb-2 cursor-pointer">
+      <div class="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0 relative">
+        M
+        <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#fbbf24] border-2 border-white"></div>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Marcus</p>
+        <p class="text-[11px] text-slate-500">Strategy Advisor</p>
+      </div>
+    </div>
+
+    <!-- Elena -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 mb-2 cursor-pointer hover:border-cyan-200 hover:shadow-sm transition-all">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">E</div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Elena</p>
+        <p class="text-[11px] text-slate-500">Growth Strategist</p>
+      </div>
+    </div>
+
+    <!-- Richard -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 mb-2 cursor-pointer hover:border-cyan-200 hover:shadow-sm transition-all">
+      <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">R</div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Richard</p>
+        <p class="text-[11px] text-slate-500">Market Analyst</p>
+      </div>
+    </div>
+
+    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2 mt-5">Sparring Partners</p>
+
+    <!-- Priya -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 mb-2 cursor-pointer hover:border-cyan-200 hover:shadow-sm transition-all">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">P</div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Priya</p>
+        <p class="text-[11px] text-slate-500">Customer Expert</p>
+      </div>
+    </div>
+
+    <!-- Hana -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 mb-2 cursor-pointer hover:border-cyan-200 hover:shadow-sm transition-all">
+      <div class="w-10 h-10 rounded-xl bg-violet-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">H</div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Hana</p>
+        <p class="text-[11px] text-slate-500">Innovation Coach</p>
+      </div>
+    </div>
+
+    <!-- Kofi -->
+    <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 mb-2 cursor-pointer hover:border-cyan-200 hover:shadow-sm transition-all">
+      <div class="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">K</div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Kofi</p>
+        <p class="text-[11px] text-slate-500">Operations Advisor</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Selected Coach Detail -->
+  <div class="flex-1 p-6 overflow-y-auto">
+
+    <!-- Coach Profile Card -->
+    <div class="bg-[#1a1f3a] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden mb-5 fade-up delay-150">
+      <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-500/20 blur-3xl"></div>
+      <div class="absolute -left-4 -bottom-4 h-20 w-20 rounded-full bg-[#fbbf24]/10 blur-2xl"></div>
+      <div class="relative flex items-start gap-5">
+        <div class="w-20 h-20 rounded-2xl bg-indigo-500 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0 shadow-lg">M</div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold">Coach Marcus</h2>
+          <p class="text-sm text-slate-300 mb-3">Strategy Advisor</p>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="text-[10px] font-semibold bg-white/10 text-white/80 px-2.5 py-1 rounded-full">Territory Mapping</span>
+            <span class="text-[10px] font-semibold bg-white/10 text-white/80 px-2.5 py-1 rounded-full">Competitive Analysis</span>
+            <span class="text-[10px] font-semibold bg-white/10 text-white/80 px-2.5 py-1 rounded-full">Strategic Planning</span>
+            <span class="text-[10px] font-semibold bg-white/10 text-white/80 px-2.5 py-1 rounded-full">Market Entry</span>
+          </div>
+          <p class="font-code text-sm text-[#fbbf24]">12 sessions together</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation Banner -->
+    <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4 mb-5 flex items-start gap-3 fade-up delay-200">
+      <svg width="18" height="18" fill="none" viewBox="0 0 20 20" class="flex-shrink-0 mt-0.5"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.3L10 14.5 5.1 17l.9-5.3-4-3.9 5.5-.8L10 2z" fill="#0891b2"/></svg>
+      <div>
+        <p class="text-sm font-semibold text-slate-900">Best match for your strategic phase</p>
+        <p class="text-xs text-slate-600 mt-1 leading-relaxed">Marcus specializes in territory mapping and competitive analysis &mdash; exactly what you need in the Research phase.</p>
+      </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 fade-up delay-200">Recent Sessions</h3>
+    <div class="space-y-3 mb-6">
+      <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm fade-up delay-200">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">RESEARCH</span>
+          <span class="text-[10px] text-slate-400">Mar 5 &middot; 42 min</span>
+        </div>
+        <p class="text-sm font-semibold text-slate-900">Competitive Landscape Analysis</p>
+        <p class="text-xs text-slate-500 mt-1">Deep dive into FinanceAI positioning and pricing strategy implications.</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm fade-up delay-300">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">RESEARCH</span>
+          <span class="text-[10px] text-slate-400">Mar 2 &middot; 35 min</span>
+        </div>
+        <p class="text-sm font-semibold text-slate-900">Customer Territory Mapping</p>
+        <p class="text-xs text-slate-500 mt-1">Identified three key customer segments and validated pain point hierarchy.</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm fade-up delay-300">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">DISCOVERY</span>
+          <span class="text-[10px] text-slate-400">Feb 26 &middot; 28 min</span>
+        </div>
+        <p class="text-sm font-semibold text-slate-900">Strategic Baseline Review</p>
+        <p class="text-xs text-slate-500 mt-1">Reviewed uploaded materials and established strategic context for Meridian.</p>
+      </div>
+    </div>
+
+    <!-- Start Conversation CTA -->
+    <button class="w-full py-4 rounded-xl bg-[#fbbf24] text-slate-900 font-bold text-sm hover:bg-[#f59e0b] transition-all hover:shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 fade-up delay-300">
+      Start Conversation with Marcus
+      <svg width="18" height="18" fill="none" viewBox="0 0 16 16"><path d="M3 8h10m-4-4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+  </div>
+</div>
+</div><!-- /s3 -->
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 4: TEAM HUB — KANBAN + RIGHT PANEL                -->
+<!-- ========================================================= -->
+<div id="s4" class="scr">
+<div class="flex min-h-[calc(100vh-44px)]">
+
+  <!-- Main Area: Kanban -->
+  <div class="flex-1 p-6 overflow-y-auto">
+    <div class="flex items-center justify-between mb-5 fade-up">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">Team Hub</h1>
+        <p class="text-xs text-slate-500 mt-0.5">Meridian Financial Technologies &middot; 4 members</p>
+      </div>
+      <button class="inline-flex items-center gap-2 rounded-lg bg-[#fbbf24] px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-[#f59e0b] transition-all hover:shadow-md">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        New Artefact
+      </button>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="grid grid-cols-3 gap-4 fade-up delay-150">
+
+      <!-- Column 1: In Progress -->
+      <div>
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">In Progress</span>
+          <span class="font-code text-[10px] text-slate-400">2</span>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><path d="M3 3h10v10H3z" stroke="#f59e0b" stroke-width="1.5" rx="1"/><path d="M6 6h4M6 9h2" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Draft</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Q1 2026 OKRs</p>
+            <p class="text-xs text-slate-500 mb-3">Quarterly objectives and key results framework</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-[#2d3561] flex items-center justify-center"><span class="text-[8px] font-bold text-white">DK</span></div>
+                <span class="text-[10px] text-slate-400">Modified Mar 5</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><path d="M4 2h8l2 3-6 9-6-9 2-3z" stroke="#3b82f6" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">In Progress</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Build vs Buy &mdash; Payment Gateway</p>
+            <p class="text-xs text-slate-500 mb-3">Decision framework for payment infrastructure</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center"><span class="text-[8px] font-bold text-blue-600">JL</span></div>
+                <span class="text-[10px] text-slate-400">Modified Mar 6</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: In Review -->
+      <div>
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">In Review</span>
+          <span class="font-code text-[10px] text-slate-400">2</span>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><path d="M2 4h12v8H2z" stroke="#10b981" stroke-width="1.2" rx="1"/><path d="M5 7h6M5 10h3" stroke="#10b981" stroke-width="1" stroke-linecap="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded">Reviewing</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Product Vision Brief</p>
+            <p class="text-xs text-slate-500 mb-3">Team alignment document for product direction</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-rose-100 flex items-center justify-center"><span class="text-[8px] font-bold text-rose-600">SM</span></div>
+                <span class="text-[10px] text-slate-400">Modified Mar 4</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-purple-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#9333ea" stroke-width="1.2"/><path d="M5 6h6M5 8.5h6M5 11h4" stroke="#9333ea" stroke-width="1" stroke-linecap="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Pending Approval</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Board Presentation Q1</p>
+            <p class="text-xs text-slate-500 mb-3">Stakeholder pack for board review</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-[#2d3561] flex items-center justify-center"><span class="text-[8px] font-bold text-white">DK</span></div>
+                <span class="text-[10px] text-slate-400">Modified Mar 6</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: Active -->
+      <div>
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active</span>
+          <span class="font-code text-[10px] text-slate-400">2</span>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-cyan-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><path d="M4 8l3 3 5-6" stroke="#0891b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Active</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Product Guardrails v2</p>
+            <p class="text-xs text-slate-500 mb-3">6 guardrails defined &middot; Team aligned</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-cyan-100 flex items-center justify-center"><span class="text-[8px] font-bold text-cyan-600">PR</span></div>
+                <span class="text-[10px] text-slate-400">Modified Mar 3</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all cursor-grab">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center">
+                <svg width="12" height="12" fill="none" viewBox="0 0 16 16"><path d="M4 2h8l2 3-6 9-6-9 2-3z" stroke="#3b82f6" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Decided</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-900 mb-1">Market Entry &mdash; APAC</p>
+            <p class="text-xs text-slate-500 mb-3">Decision: Phased entry via Singapore hub</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-[#2d3561] flex items-center justify-center"><span class="text-[8px] font-bold text-white">DK</span></div>
+                <span class="text-[10px] text-slate-400">Modified Feb 28</span>
+              </div>
+              <a href="#" class="text-[10px] font-semibold text-cyan-600 hover:underline">Open &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /kanban -->
+  </div>
+
+  <!-- Right Panel -->
+  <div class="w-[280px] flex-shrink-0 border-l border-slate-200 bg-white p-5 overflow-y-auto">
+
+    <!-- Team Members -->
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Team Members</h3>
+    <div class="space-y-2.5 mb-4">
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="w-7 h-7 rounded-full bg-[#2d3561] flex items-center justify-center"><span class="text-[9px] font-bold text-white">DK</span></div>
+          <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white"></div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-900">David K. <span class="text-[10px] font-normal text-slate-400">(you)</span></p>
+          <p class="text-[10px] text-slate-400">CPO</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center"><span class="text-[9px] font-bold text-rose-600">SM</span></div>
+          <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white"></div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-900">Sarah M.</p>
+          <p class="text-[10px] text-slate-400">Product Lead</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center"><span class="text-[9px] font-bold text-blue-600">JL</span></div>
+          <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-slate-300 border-2 border-white"></div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-900">James L.</p>
+          <p class="text-[10px] text-slate-400">Engineering Lead</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <div class="w-7 h-7 rounded-full bg-cyan-100 flex items-center justify-center"><span class="text-[9px] font-bold text-cyan-600">PR</span></div>
+          <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white"></div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-900">Priya R.</p>
+          <p class="text-[10px] text-slate-400">Design Lead</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="w-full py-2 rounded-lg bg-[#fbbf24] text-xs font-semibold text-slate-900 hover:bg-[#f59e0b] transition-colors mb-2">Invite Member</button>
+    <a href="#" class="text-[11px] text-cyan-600 font-semibold hover:underline block text-center mb-6">Manage Team &rarr;</a>
+
+    <!-- Activity Feed -->
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Activity</h3>
+    <div class="space-y-3">
+      <div class="flex items-start gap-2">
+        <div class="w-4 h-4 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[7px] font-bold text-rose-600">S</span></div>
+        <div>
+          <p class="text-[11px] text-slate-700"><span class="font-semibold">Sarah</span> updated OKRs</p>
+          <p class="text-[10px] text-slate-400">2h ago</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <div class="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[7px] font-bold text-blue-600">J</span></div>
+        <div>
+          <p class="text-[11px] text-slate-700"><span class="font-semibold">James</span> commented on brief</p>
+          <p class="text-[10px] text-slate-400">5h ago</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <div class="w-4 h-4 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[7px] font-bold text-cyan-600">P</span></div>
+        <div>
+          <p class="text-[11px] text-slate-700"><span class="font-semibold">Priya</span> exported stakeholder pack</p>
+          <p class="text-[10px] text-slate-400">1d ago</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <div class="w-4 h-4 rounded-full bg-[#2d3561] flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-[7px] font-bold text-white">D</span></div>
+        <div>
+          <p class="text-[11px] text-slate-700"><span class="font-semibold">David</span> created board pack</p>
+          <p class="text-[10px] text-slate-400">2d ago</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /s4 -->
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 5: STRATEGY COCKPIT — APPLE FITNESS RINGS          -->
+<!-- ========================================================= -->
+<div id="s5" class="scr">
+<div class="flex min-h-[calc(100vh-44px)]">
+
+  <!-- Main Area -->
+  <div class="flex-1 p-6 overflow-y-auto">
+
+    <h1 class="text-xl font-bold text-slate-900 mb-1 fade-up">Strategy Cockpit</h1>
+    <p class="text-xs text-slate-500 mb-6 fade-up">Real-time health metrics for your product strategy</p>
+
+    <!-- Apple Fitness Rings -->
+    <div class="flex flex-col items-center mb-8 fade-up delay-150">
+      <svg width="280" height="280" viewBox="0 0 280 280">
+        <!-- Background tracks -->
+        <circle cx="140" cy="140" r="125" fill="none" stroke="#e2e8f0" stroke-width="14" opacity=".4"/>
+        <circle cx="140" cy="140" r="105" fill="none" stroke="#e2e8f0" stroke-width="14" opacity=".35"/>
+        <circle cx="140" cy="140" r="85" fill="none" stroke="#e2e8f0" stroke-width="14" opacity=".3"/>
+        <circle cx="140" cy="140" r="65" fill="none" stroke="#e2e8f0" stroke-width="14" opacity=".25"/>
+
+        <!-- Strategy Completeness 45%: r=125, C=785.4, offset=785.4*(1-0.45)=431.97 -->
+        <circle cx="140" cy="140" r="125" fill="none" stroke="#f59e0b" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="785.4" stroke-dashoffset="431.97" transform="rotate(-90 140 140)">
+          <animate attributeName="stroke-dashoffset" from="785.4" to="431.97" dur="1.2s" ease="ease-out" fill="freeze"/>
+        </circle>
+
+        <!-- Research Depth 67%: r=105, C=659.7, offset=659.7*(1-0.67)=217.7 -->
+        <circle cx="140" cy="140" r="105" fill="none" stroke="#0891b2" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="659.7" stroke-dashoffset="217.7" transform="rotate(-90 140 140)">
+          <animate attributeName="stroke-dashoffset" from="659.7" to="217.7" dur="1.2s" ease="ease-out" fill="freeze"/>
+        </circle>
+
+        <!-- Team Alignment 100%: r=85, C=534.1, offset=0 -->
+        <circle cx="140" cy="140" r="85" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="534.1" stroke-dashoffset="0" transform="rotate(-90 140 140)">
+          <animate attributeName="stroke-dashoffset" from="534.1" to="0" dur="1.2s" ease="ease-out" fill="freeze"/>
+        </circle>
+
+        <!-- Assumption Health 37.5%: r=65, C=408.4, offset=408.4*(1-0.375)=255.25 -->
+        <circle cx="140" cy="140" r="65" fill="none" stroke="#9333ea" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="408.4" stroke-dashoffset="255.25" transform="rotate(-90 140 140)">
+          <animate attributeName="stroke-dashoffset" from="408.4" to="255.25" dur="1.2s" ease="ease-out" fill="freeze"/>
+        </circle>
+
+        <!-- Center -->
+        <text x="140" y="135" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="600" fill="#1a1f3a">STRATEGY</text>
+        <text x="140" y="155" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="600" fill="#1a1f3a">HEALTH</text>
+      </svg>
+
+      <!-- Legend -->
+      <div class="flex items-center gap-6 mt-4">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+          <span class="text-xs text-slate-600">Strategy</span>
+          <span class="font-code text-xs font-semibold text-amber-600">45%</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-cyan-600"></div>
+          <span class="text-xs text-slate-600">Research</span>
+          <span class="font-code text-xs font-semibold text-cyan-600">67%</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+          <span class="text-xs text-slate-600">Team</span>
+          <span class="font-code text-xs font-semibold text-emerald-600">100%</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-purple-600"></div>
+          <span class="text-xs text-slate-600">Assumptions</span>
+          <span class="font-code text-xs font-semibold text-purple-600">37.5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Timeline -->
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4 fade-up delay-200">Activity Timeline</h3>
+    <div class="relative pl-6 mb-8 fade-up delay-200">
+      <div class="timeline-line"></div>
+
+      <!-- Today -->
+      <div class="mb-5">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-6 h-6 rounded-full bg-[#fbbf24] flex items-center justify-center -ml-[15px] z-10 shadow-sm">
+            <span class="text-[8px] font-bold text-slate-900">T</span>
+          </div>
+          <span class="text-xs font-semibold text-slate-900">Today</span>
+        </div>
+        <div class="space-y-2 ml-4">
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="timeline-dot" style="position:static"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">Logged market signal: <span class="font-semibold">AI regulation update</span></p>
+              <p class="text-[10px] text-slate-400 font-code">10:30 AM</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="timeline-dot" style="position:static"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">Validated assumption: <span class="font-semibold text-emerald-600">Mobile-first preference</span></p>
+              <p class="text-[10px] text-slate-400 font-code">9:15 AM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yesterday -->
+      <div class="mb-5">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center -ml-[15px] z-10 shadow-sm">
+            <span class="text-[8px] font-bold text-slate-600">Y</span>
+          </div>
+          <span class="text-xs font-semibold text-slate-700">Yesterday</span>
+        </div>
+        <div class="space-y-2 ml-4">
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="w-2 h-2 rounded-full bg-slate-300"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">Completed <span class="font-semibold">Company Territory</span> research</p>
+              <p class="text-[10px] text-slate-400 font-code">4:20 PM</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="w-2 h-2 rounded-full bg-slate-300"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">Coach session with <span class="font-semibold">Marcus</span></p>
+              <p class="text-[10px] text-slate-400 font-code">2:00 PM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mar 5 -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center -ml-[15px] z-10 shadow-sm">
+            <span class="text-[8px] font-bold text-slate-500">5</span>
+          </div>
+          <span class="text-xs font-semibold text-slate-600">Mar 5</span>
+        </div>
+        <div class="space-y-2 ml-4">
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="w-2 h-2 rounded-full bg-slate-300"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">Updated <span class="font-semibold">OKRs draft</span></p>
+              <p class="text-[10px] text-slate-400 font-code">11:00 AM</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+            <div class="relative mt-0.5"><div class="w-2 h-2 rounded-full bg-slate-300"></div></div>
+            <div class="flex-1">
+              <p class="text-xs text-slate-700">New competitor alert processed: <span class="font-semibold">FinanceAI</span></p>
+              <p class="text-[10px] text-slate-400 font-code">9:45 AM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assumption Health Table -->
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 fade-up delay-300">Assumption Health</h3>
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up delay-300">
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="border-b border-slate-100">
+            <th class="text-left py-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Assumption</th>
+            <th class="text-left py-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Status</th>
+            <th class="text-left py-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Last Tested</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+            <td class="py-3 px-4 text-slate-700 font-medium">Mobile-first preference</td>
+            <td class="py-3 px-4"><span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Validated</span></td>
+            <td class="py-3 px-4 text-slate-400 font-code">Mar 7</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+            <td class="py-3 px-4 text-slate-700 font-medium">Premium pricing tolerance</td>
+            <td class="py-3 px-4"><span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Untested</span></td>
+            <td class="py-3 px-4 text-slate-300">&mdash;</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+            <td class="py-3 px-4 text-slate-700 font-medium">API-first demand</td>
+            <td class="py-3 px-4"><span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Invalidated</span></td>
+            <td class="py-3 px-4 text-slate-400 font-code">Mar 5</td>
+          </tr>
+          <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+            <td class="py-3 px-4 text-slate-700 font-medium">ESG compliance need</td>
+            <td class="py-3 px-4"><span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Validated</span></td>
+            <td class="py-3 px-4 text-slate-400 font-code">Mar 4</td>
+          </tr>
+          <tr class="hover:bg-slate-50/50 transition-colors">
+            <td class="py-3 px-4 text-slate-700 font-medium">Self-serve onboarding</td>
+            <td class="py-3 px-4"><span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Untested</span></td>
+            <td class="py-3 px-4 text-slate-300">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Right Panel -->
+  <div class="w-[280px] flex-shrink-0 border-l border-slate-200 bg-white p-5 overflow-y-auto">
+
+    <!-- Next Review Date -->
+    <div class="bg-[#1a1f3a] rounded-2xl p-5 text-white mb-4 relative overflow-hidden">
+      <div class="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[#fbbf24]/15 blur-2xl"></div>
+      <div class="relative">
+        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Next Strategy Review</p>
+        <p class="font-code text-lg font-bold text-[#fbbf24]">Mar 15, 2026</p>
+        <p class="text-xs text-slate-300 mt-1">7 days away</p>
+      </div>
+    </div>
+
+    <!-- Strategy Version -->
+    <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm mb-4">
+      <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Strategy Version</p>
+      <p class="text-sm font-semibold text-slate-900">Current: <span class="font-code">v2.1</span></p>
+      <p class="text-[10px] text-slate-400 mt-1">Last updated Mar 5</p>
+      <a href="#" class="text-[11px] font-semibold text-cyan-600 hover:underline mt-2 inline-block">View Diff &rarr;</a>
+    </div>
+
+    <!-- Signal Summary -->
+    <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm mb-4">
+      <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-2">Signal Summary</p>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="flex items-center gap-1">
+          <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+          <span class="text-[10px] text-slate-500 ml-0.5">2 HIGH</span>
+        </div>
+        <div class="flex items-center gap-0.5">
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+          <span class="text-[10px] text-slate-500 ml-0.5">5 MED</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-0.5 mb-2">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+        <span class="text-[10px] text-slate-500 ml-0.5">7 LOW</span>
+      </div>
+      <p class="text-xs font-semibold text-slate-700">14 total signals</p>
+      <a href="#" class="text-[11px] font-semibold text-cyan-600 hover:underline mt-1 inline-block">View All &rarr;</a>
+    </div>
+
+    <!-- Export Actions -->
+    <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+      <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-3">Export Actions</p>
+      <div class="space-y-2">
+        <button class="w-full py-2.5 rounded-lg bg-[#fbbf24] text-xs font-semibold text-slate-900 hover:bg-[#f59e0b] transition-colors">Export PDF</button>
+        <button class="w-full py-2.5 rounded-lg bg-[#1a1f3a] text-xs font-semibold text-white hover:bg-[#2d3561] transition-colors">Export Word</button>
+        <button class="w-full py-2.5 rounded-lg border border-cyan-300 bg-white text-xs font-semibold text-slate-700 hover:bg-cyan-50 transition-colors">Board Summary</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /s5 -->
+
+
+</div><!-- /main content wrapper -->
+</div><!-- /padding-top wrapper -->
+
+<script>
+function S(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));
+  document.querySelector(`[data-t="${id}"]`).classList.add('act');
+  document.getElementById(id).querySelectorAll('.fade-up').forEach(el=>{
+    el.style.animation='none';el.offsetHeight;el.style.animation='';
+  });
+  // Close any open flyouts
+  document.querySelectorAll('.flyout').forEach(f=>f.classList.remove('show'));
+}
+function toggleFlyout(flyoutId){
+  var el=document.getElementById(flyoutId);
+  var wasOpen=el.classList.contains('show');
+  document.querySelectorAll('.flyout').forEach(f=>f.classList.remove('show'));
+  document.querySelectorAll('.rail-btn').forEach(b=>b.classList.remove('active'));
+  if(!wasOpen){
+    el.classList.add('show');
+    event.currentTarget.classList.add('active');
+  }
+}
+// Close flyouts when clicking outside
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.flyout')&&!e.target.closest('.rail-btn')){
+    document.querySelectorAll('.flyout').forEach(f=>f.classList.remove('show'));
+    document.querySelectorAll('.rail-btn').forEach(b=>b.classList.remove('active'));
+  }
+});
+</script>
+</body></html>
