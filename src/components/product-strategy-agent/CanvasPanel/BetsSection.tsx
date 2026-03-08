@@ -42,6 +42,7 @@ export function BetsSection({ conversation }: BetsSectionProps) {
   const [strategyDocument, setStrategyDocument] = useState<{ id: string; content: StrategyDocumentContent } | null>(null);
   const [showStrategyPreview, setShowStrategyPreview] = useState(false);
   const [isExportingStrategy, setIsExportingStrategy] = useState(false);
+  const [isExportingWord, setIsExportingWord] = useState(false);
   // Fetch bets data
   const fetchBets = useCallback(async () => {
     try {
@@ -248,6 +249,46 @@ export function BetsSection({ conversation }: BetsSectionProps) {
       alert('Failed to export strategy PDF. Please try again.');
     } finally {
       setIsExportingStrategy(false);
+    }
+  }, [conversation.id, strategyDocument]);
+
+  const handleExportStrategyWord = useCallback(async () => {
+    if (!strategyDocument) return;
+
+    setIsExportingWord(true);
+    try {
+      const response = await fetch('/api/product-strategy-agent/bets/strategy-document/export-docx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversation.id,
+          document_id: strategyDocument.id,
+        }),
+      });
+
+      if (!response.ok) {
+        alert('Failed to export strategy document as Word');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yy = String(now.getFullYear()).slice(-2);
+      a.download = `Product Strategy - ${dd}-${mm}-${yy}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Error exporting strategy as Word:', err);
+      alert('Failed to export strategy Word document. Please try again.');
+    } finally {
+      setIsExportingWord(false);
     }
   }, [conversation.id, strategyDocument]);
 
@@ -522,8 +563,10 @@ export function BetsSection({ conversation }: BetsSectionProps) {
           documentId={strategyDocument.id}
           conversationId={conversation.id}
           onExportPDF={handleExportStrategy}
+          onExportWord={handleExportStrategyWord}
           onClose={() => setShowStrategyPreview(false)}
           isExporting={isExportingStrategy}
+          isExportingWord={isExportingWord}
         />
       )}
     </div>

@@ -23,15 +23,19 @@ interface StrategyDocumentPreviewProps {
   documentId: string;
   conversationId: string;
   onExportPDF: () => void;
+  onExportWord?: () => void;
   onClose: () => void;
   isExporting: boolean;
+  isExportingWord?: boolean;
 }
 
 export function StrategyDocumentPreview({
   documentContent,
   onExportPDF,
+  onExportWord,
   onClose,
   isExporting,
+  isExportingWord = false,
 }: StrategyDocumentPreviewProps) {
   const [currentPage, setCurrentPage] = useState<PageKey>('vision');
 
@@ -171,10 +175,31 @@ export function StrategyDocumentPreview({
         <div className="px-6 py-4 border-t border-slate-200 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-3 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            className="px-6 py-3 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
           >
             Close
           </button>
+          {onExportWord && (
+            <button
+              onClick={onExportWord}
+              disabled={isExportingWord}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#1a1f3a] text-sm font-semibold text-white hover:bg-[#2d3561] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isExportingWord ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Exporting Word...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Export Word
+                </>
+              )}
+            </button>
+          )}
           <button
             onClick={onExportPDF}
             disabled={isExporting}
