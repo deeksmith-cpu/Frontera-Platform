@@ -285,6 +285,7 @@ export function ProductStrategyAgentInterface({
               <StrategyCanvas
                 conversationId={conversation?.id ?? null}
                 currentPhase={canvasViewPhase || currentPhase}
+                isReviewMode={!!canvasViewPhase && canvasViewPhase !== currentPhase}
               />
             )}
 
@@ -322,6 +323,7 @@ export function ProductStrategyAgentInterface({
                       conversationId={conversation?.id ?? null}
                       currentPhase={canvasViewPhase || currentPhase}
                       className="w-full !border-0"
+                      isReviewMode={!!canvasViewPhase && canvasViewPhase !== currentPhase}
                     />
                   </div>
                 </div>

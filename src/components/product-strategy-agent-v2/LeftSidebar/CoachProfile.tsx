@@ -12,7 +12,7 @@ interface CoachProfileProps {
 const PERSONA_DISPLAY: Record<PersonaId, { name: string; title: string; color: string }> = {
   marcus: { name: 'Marcus', title: 'The Strategic Navigator', color: 'indigo' },
   elena: { name: 'Elena', title: 'The Capability Builder', color: 'emerald' },
-  richard: { name: 'Richard', title: 'The Transformation Pragmatist', color: 'amber' },
+  richard: { name: 'Fin', title: 'The Transformation Pragmatist', color: 'amber' },
   'growth-architect': { name: 'Growth Architect', title: 'The Growth Architect', color: 'cyan' },
   'product-purist': { name: 'Product Purist', title: 'The Product Purist', color: 'violet' },
   'scale-navigator': { name: 'Scale Navigator', title: 'The Scale Navigator', color: 'rose' },

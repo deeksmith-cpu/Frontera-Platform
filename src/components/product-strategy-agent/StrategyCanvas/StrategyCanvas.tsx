@@ -20,6 +20,8 @@ interface StrategyCanvasProps {
   currentPhase: string;
   onResearchAreaClick?: (territory: string, areaId: string) => void;
   className?: string;
+  /** True when the user is viewing a completed phase (not the active one) */
+  isReviewMode?: boolean;
 }
 
 const PHASE_CONFIG: Record<string, { title: string; icon: typeof Compass; iconBg: string; iconColor: string }> = {
@@ -35,6 +37,7 @@ export function StrategyCanvas({
   conversationId,
   currentPhase,
   className = '',
+  isReviewMode = false,
 }: StrategyCanvasProps) {
   const phase = PHASE_CONFIG[currentPhase] || PHASE_CONFIG.discovery;
   const PhaseIcon = phase.icon;
@@ -48,10 +51,17 @@ export function StrategyCanvas({
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${phase.iconBg} flex-shrink-0`}>
           <PhaseIcon className={`w-3.5 h-3.5 ${phase.iconColor}`} />
         </div>
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Strategy Canvas
-          </h3>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Strategy Canvas
+            </h3>
+            {isReviewMode && (
+              <span className="text-[8px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-1.5 py-0.5 uppercase tracking-wider">
+                Reviewing
+              </span>
+            )}
+          </div>
           <p className="text-[10px] text-slate-400 mt-0.5">
             {phase.title}
           </p>

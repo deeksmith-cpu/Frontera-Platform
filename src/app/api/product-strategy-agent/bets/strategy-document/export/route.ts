@@ -251,8 +251,8 @@ function renderNarrativePage(
   pdf.text(`PAGE ${pageNumber}`, M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 4;
 
-  // Title with gold underline
-  pdf.fontSize(22).fillColor(C.navy).font('Helvetica-Bold');
+  // H1 title with gold underline
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text(title, M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 6;
   pdf.moveTo(M, currentY).lineTo(M + 120, currentY).strokeColor(C.gold).lineWidth(3).stroke();
@@ -270,7 +270,8 @@ function renderNarrativePage(
       return; // Let it overflow to auto-page — PDFKit handles this with bufferPages
     }
 
-    pdf.fontSize(14).fillColor(C.navy).font('Helvetica-Bold');
+    // H2
+    pdf.fontSize(16).fillColor(C.navy).font('Helvetica-Bold');
     pdf.text(secondaryTitle, M, currentY, { width: CONTENT_W });
     currentY = pdf.y + 4;
     pdf.moveTo(M, currentY).lineTo(M + 60, currentY).strokeColor(C.slate200).lineWidth(1).stroke();
@@ -306,7 +307,7 @@ function renderProse(pdf: PDFKit.PDFDocument, text: string, startY: number): num
       const restOfText = trimmed.substring(1);
 
       // Render drop cap character
-      pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+      pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
       pdf.text(firstChar, M, currentY - 2, { width: 22, continued: false });
       const dropCapBottom = pdf.y;
 
@@ -343,14 +344,14 @@ function renderAppendixPages(pdf: PDFKit.PDFDocument, appendix: NarrativeDocumen
   pdf.fontSize(9).fillColor(C.slate400).font('Helvetica');
   pdf.text('APPENDIX', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 4;
-  pdf.fontSize(22).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Supporting Data', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 6;
   pdf.moveTo(M, currentY).lineTo(M + 80, currentY).strokeColor(C.gold).lineWidth(3).stroke();
   currentY += 20;
 
-  // PTW Cascade
-  pdf.fontSize(14).fillColor(C.navy).font('Helvetica-Bold');
+  // PTW Cascade (H2)
+  pdf.fontSize(16).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Playing to Win Cascade', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 10;
 
@@ -395,7 +396,8 @@ function renderAppendixPages(pdf: PDFKit.PDFDocument, appendix: NarrativeDocumen
   currentY += colH + 16;
 
   // Portfolio Balance + DHM row
-  pdf.fontSize(14).fillColor(C.navy).font('Helvetica-Bold');
+  // H2
+  pdf.fontSize(16).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Portfolio Balance & DHM Coverage', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 10;
 
@@ -430,7 +432,8 @@ function renderAppendixPages(pdf: PDFKit.PDFDocument, appendix: NarrativeDocumen
   pdf.fontSize(9).fillColor(C.slate400).font('Helvetica');
   pdf.text('APPENDIX — BET DETAILS', M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 4;
-  pdf.fontSize(18).fillColor(C.navy).font('Helvetica-Bold');
+  // H2
+  pdf.fontSize(16).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text(`Strategic Bets (${appendix.selectedBets.length})`, M, currentY, { width: CONTENT_W });
   currentY = pdf.y + 16;
 
@@ -563,7 +566,7 @@ function drawCard(pdf: PDFKit.PDFDocument, x: number, y: number, w: number, h: n
 function drawStatBox(pdf: PDFKit.PDFDocument, x: number, y: number, w: number, value: string | number, label: string, accentColor: string) {
   drawCard(pdf, x, y, w, 70, C.white, C.slate200);
   pdf.rect(x, y, w, 4).fill(accentColor);
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text(String(value), x, y + 18, { width: w, align: 'center' });
   pdf.fontSize(9).fillColor(C.slate600).font('Helvetica');
   pdf.text(label.toUpperCase(), x, y + 50, { width: w, align: 'center' });
@@ -571,8 +574,8 @@ function drawStatBox(pdf: PDFKit.PDFDocument, x: number, y: number, w: number, v
 
 function drawSectionHeader(pdf: PDFKit.PDFDocument, title: string, y: number): number {
   pdf.rect(M, y, 4, 24).fill(C.gold);
-  pdf.fontSize(18).fillColor(C.navy).font('Helvetica-Bold');
-  pdf.text(title.toUpperCase(), M + 16, y + 3, { width: CONTENT_W - 16 });
+  pdf.fontSize(16).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.text(title, M + 16, y + 3, { width: CONTENT_W - 16 });
   return pdf.y + 20;
 }
 
@@ -644,14 +647,14 @@ function renderLegacyCover(pdf: PDFKit.PDFDocument, companyName: string, summary
   currentY = drawSectionHeader(pdf, 'Executive Summary', currentY);
 
   drawCard(pdf, M, currentY, CONTENT_W, 75, C.slate50, C.slate200);
-  pdf.fontSize(10).fillColor(C.slate600).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.slate600).font('Helvetica-Bold');
   pdf.text('COMPANY OVERVIEW', M + 16, currentY + 12, { width: CONTENT_W - 32 });
   pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
   pdf.text(truncateText(summary.companyOverview, 180), M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
   currentY += 88;
 
   drawCard(pdf, M, currentY, CONTENT_W, 65, C.cyan50, C.cyan200);
-  pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.cyan600).font('Helvetica-Bold');
   pdf.text('STRATEGIC INTENT', M + 16, currentY + 12, { width: CONTENT_W - 32 });
   pdf.fontSize(9).fillColor(C.slate700).font('Helvetica');
   pdf.text(truncateText(summary.strategicIntent, 150), M + 16, currentY + 28, { width: CONTENT_W - 32, lineGap: 2 });
@@ -661,7 +664,7 @@ function renderLegacyCover(pdf: PDFKit.PDFDocument, companyName: string, summary
   const cardHeight = 155;
 
   drawCard(pdf, M, currentY, colW, cardHeight, C.white, C.slate200);
-  pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('KEY FINDINGS', M + 12, currentY + 12, { width: colW - 24 });
   let findingY = currentY + 30;
   summary.keyFindings.slice(0, 3).forEach((finding, i) => {
@@ -673,7 +676,7 @@ function renderLegacyCover(pdf: PDFKit.PDFDocument, companyName: string, summary
   });
 
   drawCard(pdf, M + colW + 16, currentY, colW, cardHeight, C.white, C.slate200);
-  pdf.fontSize(10).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('TOP OPPORTUNITIES', M + colW + 28, currentY + 12, { width: colW - 24 });
   let oppY = currentY + 30;
   summary.topOpportunities.slice(0, 3).forEach((opp, i) => {
@@ -687,7 +690,7 @@ function renderLegacyCover(pdf: PDFKit.PDFDocument, companyName: string, summary
 
 function renderLegacyPTW(pdf: PDFKit.PDFDocument, cascade: LegacyDocumentContent['ptwCascade']) {
   let currentY = M;
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Playing to Win', M, currentY, { width: CONTENT_W });
   currentY = pdf.y;
   pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
@@ -695,7 +698,7 @@ function renderLegacyPTW(pdf: PDFKit.PDFDocument, cascade: LegacyDocumentContent
   currentY = pdf.y + 25;
 
   drawCard(pdf, M, currentY, CONTENT_W, 100, C.navy);
-  pdf.fontSize(10).fillColor(C.gold).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.gold).font('Helvetica-Bold');
   pdf.text('WINNING ASPIRATION', M + 20, currentY + 14, { width: CONTENT_W - 40 });
   pdf.fontSize(11).fillColor(C.white).font('Helvetica');
   pdf.text(truncateText(cascade.winningAspiration, 250), M + 20, currentY + 32, { width: CONTENT_W - 40, lineGap: 2 });
@@ -705,7 +708,7 @@ function renderLegacyPTW(pdf: PDFKit.PDFDocument, cascade: LegacyDocumentContent
   const wtpHeight = 200;
 
   drawCard(pdf, M, currentY, colW, wtpHeight, C.cyan50, C.cyan200);
-  pdf.fontSize(10).fillColor(C.cyan600).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.cyan600).font('Helvetica-Bold');
   pdf.text('WHERE TO PLAY', M + 14, currentY + 12, { width: colW - 28 });
   let itemY = currentY + 32;
   cascade.whereToPlay.slice(0, 4).forEach(wtp => {
@@ -717,7 +720,7 @@ function renderLegacyPTW(pdf: PDFKit.PDFDocument, cascade: LegacyDocumentContent
   });
 
   drawCard(pdf, M + colW + 16, currentY, colW, wtpHeight, C.emerald50, C.emerald600);
-  pdf.fontSize(10).fillColor(C.emerald600).font('Helvetica-Bold');
+  pdf.fontSize(12).fillColor(C.emerald600).font('Helvetica-Bold');
   pdf.text('HOW TO WIN', M + colW + 30, currentY + 12, { width: colW - 28 });
   itemY = currentY + 32;
   cascade.howToWin.slice(0, 4).forEach(htw => {
@@ -733,7 +736,7 @@ function renderLegacyBets(pdf: PDFKit.PDFDocument, bets: LegacyDocumentContent['
   let pageNum = startPageNum;
   let currentY = M;
 
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Strategic Bets', M, currentY, { width: CONTENT_W });
   currentY = pdf.y;
   pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
@@ -794,7 +797,7 @@ function renderLegacyBets(pdf: PDFKit.PDFDocument, bets: LegacyDocumentContent['
 
 function renderLegacyPortfolio(pdf: PDFKit.PDFDocument, portfolio: LegacyDocumentContent['portfolioView'], totalBets: number) {
   let currentY = M;
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Portfolio View', M, currentY, { width: CONTENT_W });
   currentY = pdf.y;
   pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');
@@ -833,7 +836,7 @@ function renderLegacyPortfolio(pdf: PDFKit.PDFDocument, portfolio: LegacyDocumen
 
 function renderLegacyNextSteps(pdf: PDFKit.PDFDocument, nextSteps: LegacyDocumentContent['nextSteps']) {
   let currentY = M;
-  pdf.fontSize(28).fillColor(C.navy).font('Helvetica-Bold');
+  pdf.fontSize(26).fillColor(C.navy).font('Helvetica-Bold');
   pdf.text('Next Steps', M, currentY, { width: CONTENT_W });
   currentY = pdf.y;
   pdf.fontSize(14).fillColor(C.slate500).font('Helvetica');

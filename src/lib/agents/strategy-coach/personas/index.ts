@@ -4,7 +4,7 @@
  * Strategic Coaches (original):
  * - Marcus: Market-led, data-driven, competitive focus
  * - Elena: People-centered, capability building, empowering
- * - Richard: Pragmatic, momentum-focused, turnaround specialist
+ * - Fin: Pragmatic, momentum-focused, turnaround specialist
  *
  * Expert Sparring Partners (UC2 — derived from 301 podcast transcripts):
  * - Growth Architect: PLG, funnels, loops, activation, retention
@@ -149,7 +149,7 @@ export const PERSONA_OPTIONS: readonly PersonaOption[] = [
   },
   {
     id: 'richard',
-    name: 'Richard',
+    name: 'Fin',
     title: 'The Transformation Pragmatist',
     tagline: "You've been here before. This time, let's make it stick.",
     bestFor: ['Turnaround situations', 'Post-failure recovery', 'Milestone-driven progress'],
@@ -221,11 +221,11 @@ export function recommendPersonaFromProfile(profile: {
     };
   }
 
-  // Directive, action-oriented, turnaround → Richard
+  // Directive, action-oriented, turnaround → Fin
   if (dm.includes('directive') || dm.includes('intuiti') || feedback.includes('direct')) {
     return {
       personaId: 'richard',
-      reasoning: 'Your action-oriented style matches Richard\'s pragmatic, momentum-focused coaching approach.',
+      reasoning: 'Your action-oriented style matches Fin\'s pragmatic, momentum-focused coaching approach.',
     };
   }
 

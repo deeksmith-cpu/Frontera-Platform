@@ -36,7 +36,6 @@ const RESEARCH_AREAS = [
       'What are your primary customer segments, and how do they differ in needs, behaviors, and value?',
       'How do customers currently discover, evaluate, and purchase solutions in your category?',
       'What decision-making criteria matter most to each segment (price, features, trust, speed, etc.)?',
-      'Which customer segments are growing, declining, or emerging in your market?',
     ],
   },
   {
@@ -47,7 +46,6 @@ const RESEARCH_AREAS = [
       'What are the most significant pain points customers experience with existing solutions (including yours)?',
       'What jobs-to-be-done are customers hiring products for, and where do current solutions fall short?',
       'What workarounds, hacks, or compromises do customers make to get their jobs done?',
-      'What emerging needs or latent desires are customers beginning to express?',
     ],
   },
   {
@@ -58,7 +56,6 @@ const RESEARCH_AREAS = [
       'How have customer expectations evolved in the past 2-3 years, and what trends are accelerating?',
       'What new alternatives or substitutes are customers considering that didn\'t exist before?',
       'How are customer acquisition costs, retention rates, and lifetime value trending in your category?',
-      'What external forces (technology, regulation, economics, culture) are reshaping customer needs?',
     ],
   },
 ];

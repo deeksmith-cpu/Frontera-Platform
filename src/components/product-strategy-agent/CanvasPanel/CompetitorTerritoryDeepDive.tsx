@@ -36,7 +36,6 @@ const RESEARCH_AREAS = [
       'Who are your top 3-5 direct competitors, and what makes them your primary competition?',
       'What are each competitor\'s core value propositions, and how do they differentiate?',
       'Where do competitors have clear advantages over your current offering?',
-      'What competitive moves or announcements have you observed in the past 12 months?',
     ],
   },
   {
@@ -47,7 +46,6 @@ const RESEARCH_AREAS = [
       'What non-traditional solutions do customers use to solve the same problems you address?',
       'What adjacent products or services are expanding into your market space?',
       'What emerging startups or disruptors are gaining traction with your target customers?',
-      'How might technology shifts (AI, automation, platforms) create new competitive threats?',
     ],
   },
   {
@@ -58,7 +56,6 @@ const RESEARCH_AREAS = [
       'What macroeconomic, regulatory, or industry trends are most impacting your market?',
       'How is the overall market size and growth trajectory evolving?',
       'What barriers to entry exist, and are they strengthening or weakening?',
-      'What emerging customer expectations or behaviors are changing competitive dynamics?',
     ],
   },
 ];

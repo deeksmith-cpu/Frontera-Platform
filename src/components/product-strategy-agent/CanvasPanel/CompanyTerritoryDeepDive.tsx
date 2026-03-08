@@ -37,7 +37,6 @@ const RESEARCH_AREAS = [
       'What are your organization\'s core competencies and differentiating capabilities?',
       'What key resources (technical, human, IP) do you control that competitors don\'t?',
       'What structural constraints limit your strategic freedom (legacy systems, contracts, regulations)?',
-      'Which capabilities are table stakes vs. truly differentiated in your market?',
     ],
   },
   {
@@ -48,7 +47,6 @@ const RESEARCH_AREAS = [
       'What is the current composition and skill distribution of your team?',
       'What technology stack and infrastructure do you have in place?',
       'What funding runway and burn rate define your strategic timeline?',
-      'What hiring constraints or talent gaps could impact execution?',
     ],
   },
   {
@@ -59,7 +57,6 @@ const RESEARCH_AREAS = [
       'What products/services comprise your current portfolio and how do they perform?',
       'Which products are growth drivers vs. legacy offerings?',
       'What is your current market position and competitive standing?',
-      'What gaps exist between your current portfolio and market opportunities?',
     ],
   },
 ];

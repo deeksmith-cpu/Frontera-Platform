@@ -1,11 +1,23 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ArrowRight, CheckCircle2, AlertTriangle } from 'lucide-react';
-import { ActivationSection } from '../CanvasPanel/ActivationSection';
+import { ActivationDashboard } from './ActivationDashboard';
 import type { Database } from '@/types/database';
 
 type Conversation = Database['public']['Tables']['conversations']['Row'];
+
+type ArtefactType = 'team_brief' | 'guardrails' | 'okr_cascade' | 'decision_framework' | 'stakeholder_pack';
+
+interface Artefact {
+  id: string;
+  title: string;
+  artefact_type: ArtefactType;
+  content: Record<string, unknown>;
+  audience: string | null;
+  created_at: string;
+  source_bet_id: string | null;
+}
 
 interface ActivationViewProps {
   conversation: Conversation;
@@ -15,6 +27,61 @@ interface ActivationViewProps {
 export function ActivationView({ conversation, onPhaseTransition }: ActivationViewProps) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [artefacts, setArtefacts] = useState<Artefact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState<string | null>(null);
+
+  // Load artefacts
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('/api/product-strategy-agent/activation');
+        if (res.ok) {
+          const data = await res.json();
+          setArtefacts(data.artefacts || []);
+        }
+      } catch (err) {
+        console.error('Failed to load artefacts:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  // Generate an artefact
+  const handleGenerate = useCallback(
+    async (type: ArtefactType, betId?: string, audience?: string) => {
+      const label = type === 'stakeholder_pack' ? `${type}_${audience}` : type;
+      setGenerating(label);
+      try {
+        const res = await fetch('/api/product-strategy-agent/activation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type,
+            conversationId: conversation.id,
+            betId,
+            audience,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.artefact) {
+            setArtefacts((prev) => [data.artefact, ...prev]);
+          }
+        } else {
+          const err = await res.json();
+          console.error('Generate failed:', err.error);
+        }
+      } catch (err) {
+        console.error('Generate error:', err);
+      } finally {
+        setGenerating(null);
+      }
+    },
+    [conversation.id]
+  );
 
   const handleContinueToReview = useCallback(async () => {
     setIsTransitioning(true);
@@ -28,13 +95,29 @@ export function ActivationView({ conversation, onPhaseTransition }: ActivationVi
     }
   }, [onPhaseTransition]);
 
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center gap-2.5 text-slate-600 text-sm">
+          <div className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
+          <span className="text-xs uppercase tracking-wide font-semibold">Loading activation artefacts...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="animate-entrance">
-        <ActivationSection conversation={conversation} />
+        <ActivationDashboard
+          conversationId={conversation.id}
+          artefacts={artefacts}
+          generating={generating}
+          onGenerate={handleGenerate}
+        />
 
         {/* Phase transition CTA */}
-        <div className="max-w-6xl mx-auto px-6 pb-8">
+        <div className="max-w-4xl mx-auto px-6 pb-8">
           <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 border border-emerald-200 rounded-2xl p-5 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />

@@ -103,7 +103,7 @@ You have gathered enough information. This response MUST be your final profiling
 
 DO THIS NOW (no exceptions):
 1. Write 2-3 warm sentences summarizing what you learned about ${name} — their role, goals, style, and what makes them tick.
-2. Explain which coaching persona you recommend (Marcus, Elena, or Richard) and WHY it fits them specifically.
+2. Explain which coaching persona you recommend (Marcus, Elena, or Fin) and WHY it fits them specifically.
 3. End your message with the JSON marker block below. Fill in ALL fields based on what you learned. Use "not discussed" for anything not covered.
 
 The marker block is REQUIRED — the system uses it to save the profile. Without it, the profile will not be saved and the user will be stuck. Do NOT ask any follow-up questions. Do NOT ask if they're ready. Just generate the summary and marker NOW.
@@ -116,7 +116,7 @@ You have covered all 5 dimensions. Your NEXT response MUST conclude the profilin
 
 DO THIS:
 1. Write 2-3 warm sentences summarizing what you learned about ${name}.
-2. Recommend a coaching persona (Marcus, Elena, or Richard) with specific reasoning.
+2. Recommend a coaching persona (Marcus, Elena, or Fin) with specific reasoning.
 3. End with the JSON marker block below. Fill in ALL fields. Use "not discussed" for gaps.
 
 Do NOT ask more questions. Do NOT ask "are you ready to move on?" — just generate the summary.
@@ -127,7 +127,7 @@ ${markerTemplate}`);
     sections.push(`PROFILE COMPLETION:
 When you have covered all 5 dimensions (or the user signals they want to wrap up), you MUST end the conversation by:
 1. Writing a warm summary paragraph addressed to the user
-2. Recommending a coaching persona (Marcus, Elena, or Richard)
+2. Recommending a coaching persona (Marcus, Elena, or Fin)
 3. Including the JSON marker block below as the VERY LAST thing in your message
 
 CRITICAL: Do NOT verbally recommend a coach and then ask follow-up questions. When you make the recommendation, you MUST include the marker in the SAME message. The marker is what triggers profile completion — without it, the conversation will not end.

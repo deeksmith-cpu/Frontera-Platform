@@ -1,7 +1,7 @@
 /**
  * Research Questions — Single Source of Truth
  *
- * All 9 research areas × 4 questions = 36 questions.
+ * All 9 research areas × 3 questions = 27 questions.
  * Used by:
  *  - System prompt (research coaching mode)
  *  - Research extractor (capture validation)
@@ -40,7 +40,6 @@ const COMPANY_AREAS: ResearchArea[] = [
       { index: 0, text: "What are your organization's core competencies and differentiating capabilities?" },
       { index: 1, text: "What key resources (technical, human, IP) do you control that competitors don't?" },
       { index: 2, text: 'What structural constraints limit your strategic freedom (legacy systems, contracts, regulations)?' },
-      { index: 3, text: 'Which capabilities are table stakes vs. truly differentiated in your market?' },
     ],
   },
   {
@@ -52,7 +51,6 @@ const COMPANY_AREAS: ResearchArea[] = [
       { index: 0, text: 'What is the current composition and skill distribution of your team?' },
       { index: 1, text: 'What technology stack and infrastructure do you have in place?' },
       { index: 2, text: 'What funding runway and burn rate define your strategic timeline?' },
-      { index: 3, text: 'What hiring constraints or talent gaps could impact execution?' },
     ],
   },
   {
@@ -64,7 +62,6 @@ const COMPANY_AREAS: ResearchArea[] = [
       { index: 0, text: 'What products/services comprise your current portfolio and how do they perform?' },
       { index: 1, text: 'Which products are growth drivers vs. legacy offerings?' },
       { index: 2, text: 'What is your current market position and competitive standing?' },
-      { index: 3, text: 'What gaps exist between your current portfolio and market opportunities?' },
     ],
   },
 ];
@@ -81,7 +78,6 @@ const CUSTOMER_AREAS: ResearchArea[] = [
       { index: 0, text: 'What are your primary customer segments, and how do they differ in needs, behaviors, and value?' },
       { index: 1, text: 'How do customers currently discover, evaluate, and purchase solutions in your category?' },
       { index: 2, text: 'What decision-making criteria matter most to each segment (price, features, trust, speed, etc.)?' },
-      { index: 3, text: 'Which customer segments are growing, declining, or emerging in your market?' },
     ],
   },
   {
@@ -93,7 +89,6 @@ const CUSTOMER_AREAS: ResearchArea[] = [
       { index: 0, text: 'What are the most significant pain points customers experience with existing solutions (including yours)?' },
       { index: 1, text: 'What jobs-to-be-done are customers hiring products for, and where do current solutions fall short?' },
       { index: 2, text: 'What workarounds, hacks, or compromises do customers make to get their jobs done?' },
-      { index: 3, text: 'What emerging needs or latent desires are customers beginning to express?' },
     ],
   },
   {
@@ -105,7 +100,6 @@ const CUSTOMER_AREAS: ResearchArea[] = [
       { index: 0, text: 'How have customer expectations evolved in the past 2-3 years, and what trends are accelerating?' },
       { index: 1, text: "What new alternatives or substitutes are customers considering that didn't exist before?" },
       { index: 2, text: 'How are customer acquisition costs, retention rates, and lifetime value trending in your category?' },
-      { index: 3, text: 'What external forces (technology, regulation, economics, culture) are reshaping customer needs?' },
     ],
   },
 ];
@@ -122,7 +116,6 @@ const COMPETITOR_AREAS: ResearchArea[] = [
       { index: 0, text: 'Who are your top 3-5 direct competitors, and what makes them your primary competition?' },
       { index: 1, text: 'What are each competitor\'s core value propositions, and how do they differentiate?' },
       { index: 2, text: 'Where do competitors have clear advantages over your current offering?' },
-      { index: 3, text: 'What competitive moves or announcements have you observed in the past 12 months?' },
     ],
   },
   {
@@ -134,7 +127,6 @@ const COMPETITOR_AREAS: ResearchArea[] = [
       { index: 0, text: 'What non-traditional solutions do customers use to solve the same problems you address?' },
       { index: 1, text: 'What adjacent products or services are expanding into your market space?' },
       { index: 2, text: 'What emerging startups or disruptors are gaining traction with your target customers?' },
-      { index: 3, text: 'How might technology shifts (AI, automation, platforms) create new competitive threats?' },
     ],
   },
   {
@@ -146,7 +138,6 @@ const COMPETITOR_AREAS: ResearchArea[] = [
       { index: 0, text: 'What macroeconomic, regulatory, or industry trends are most impacting your market?' },
       { index: 1, text: 'How is the overall market size and growth trajectory evolving?' },
       { index: 2, text: 'What barriers to entry exist, and are they strengthening or weakening?' },
-      { index: 3, text: 'What emerging customer expectations or behaviors are changing competitive dynamics?' },
     ],
   },
 ];

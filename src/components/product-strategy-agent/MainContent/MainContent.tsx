@@ -12,6 +12,7 @@ import { BetsView } from '../BetsView/BetsView';
 import { ActivationView } from '../ActivationView/ActivationView';
 import { ReviewView } from '../ReviewView/ReviewView';
 import { PhaseTabBar } from '../PhaseTabBar/PhaseTabBar';
+import { CompletedPhaseSummary } from '../CompletedPhaseSummary/CompletedPhaseSummary';
 import { getResearchArea } from '@/lib/agents/strategy-coach/research-questions';
 import { RESEARCH_AREAS } from '@/hooks/useResearchProgress';
 import type { Database } from '@/types/database';
@@ -76,21 +77,27 @@ export function MainContent({
   const displayPhase = viewingPhase || currentPhase;
   const isViewingOtherPhase = !!viewingPhase && viewingPhase !== currentPhase;
 
+  // Detect if the viewed phase is completed (user has progressed past it)
+  const PHASE_ORDER = ['discovery', 'research', 'synthesis', 'bets', 'activation', 'review'];
+  const currentIdx = PHASE_ORDER.indexOf(currentPhase);
+  const displayIdx = PHASE_ORDER.indexOf(displayPhase);
+  const isCompletedPhase = isViewingOtherPhase && displayIdx < currentIdx;
+
   // Determine what to show in the main area
   // Phases with dedicated views render directly (no orientation gate needed)
-  const showBets = displayPhase === 'bets';
-  const showActivation = displayPhase === 'activation';
-  const showReview = displayPhase === 'review';
-  const showSynthesis = displayPhase === 'synthesis';
+  const showBets = !isCompletedPhase && displayPhase === 'bets';
+  const showActivation = !isCompletedPhase && displayPhase === 'activation';
+  const showReview = !isCompletedPhase && displayPhase === 'review';
+  const showSynthesis = !isCompletedPhase && displayPhase === 'synthesis';
   const hasDedicatedView = showBets || showActivation || showReview || showSynthesis;
   // Only phases without dedicated views get orientation (discovery, research)
-  const hasOrientation = ['discovery', 'research'].includes(displayPhase);
+  const hasOrientation = !isCompletedPhase && ['discovery', 'research'].includes(displayPhase);
   // When viewing another phase, show orientation unless user dismissed it
   const showOrientation = hasOrientation && (isViewingOtherPhase
     ? !orientationDismissed[displayPhase]
     : !orientationDismissed[currentPhase] && !pinnedQuestion);
-  const showPinnedQuestion = displayPhase === 'research' && pinnedQuestion !== null;
-  const showChat = !hasDedicatedView && !showOrientation && !showPinnedQuestion;
+  const showPinnedQuestion = !isCompletedPhase && displayPhase === 'research' && pinnedQuestion !== null;
+  const showChat = !isCompletedPhase && !hasDedicatedView && !showOrientation && !showPinnedQuestion;
 
   // Discovery orientation is now shown to users (not auto-dismissed)
   // Users dismiss it by clicking Upload Materials, AI Research, or Start Chat
@@ -338,8 +345,19 @@ export function MainContent({
         gamification={gamification}
       />
 
+      {/* Completed phase summary — shown when viewing a phase the user has moved past */}
+      {isCompletedPhase && (
+        <CompletedPhaseSummary
+          phase={displayPhase}
+          conversationId={conversation.id}
+          currentPhase={currentPhase}
+          onReturnToActive={() => onPhaseClick(currentPhase)}
+          researchProgress={researchProgress}
+        />
+      )}
+
       {/* Main content area */}
-      {showOrientation && (
+      {!isCompletedPhase && showOrientation && (
         <OrientationView
           phase={displayPhase}
           conversationId={conversation.id}

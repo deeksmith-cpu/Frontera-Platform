@@ -16,7 +16,7 @@ Feature: Strategy Sparring Partners - Expert Persona Coaches
       | Name    | Title                         |
       | Marcus  | The Strategic Navigator       |
       | Elena   | The Capability Builder        |
-      | Richard | The Transformation Pragmatist |
+      | Fin     | The Transformation Pragmatist |
     And I should see the following personas grouped under "Expert Sparring Partners":
       | Name             | Title                |
       | Growth Architect | The Growth Architect |
