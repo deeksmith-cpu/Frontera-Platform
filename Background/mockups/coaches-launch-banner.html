@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontera — Meet Your Strategy Coaching Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a1f3a;
+      --gold: #fbbf24;
+      --gold-hover: #f59e0b;
+      --cyan: #06b6d4;
+      --bg: #0d1117;
+      --white-90: rgba(255,255,255,0.9);
+      --white-80: rgba(255,255,255,0.8);
+      --white-60: rgba(255,255,255,0.6);
+      --white-50: rgba(255,255,255,0.5);
+      --white-45: rgba(255,255,255,0.45);
+      --white-40: rgba(255,255,255,0.4);
+      --white-35: rgba(255,255,255,0.35);
+      --white-30: rgba(255,255,255,0.3);
+      --white-25: rgba(255,255,255,0.25);
+      --white-20: rgba(255,255,255,0.2);
+      --white-10: rgba(255,255,255,0.1);
+      --white-08: rgba(255,255,255,0.08);
+      --white-05: rgba(255,255,255,0.05);
+      --white-02: rgba(255,255,255,0.02);
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: white;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-display { font-family: 'Instrument Serif', Georgia, serif; }
+    .font-body { font-family: 'DM Sans', system-ui, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes expandLine {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out both; }
+    .animate-expand { animation: expandLine 1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+
+    .delay-200 { animation-delay: 200ms; }
+    .delay-400 { animation-delay: 400ms; }
+    .delay-500 { animation-delay: 500ms; }
+    .delay-600 { animation-delay: 600ms; }
+    .delay-700 { animation-delay: 700ms; }
+    .delay-1000 { animation-delay: 1000ms; }
+
+    /* Grain overlay */
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    }
+
+    /* Topographic background */
+    .topographic-bg {
+      background-image: url("data:image/svg+xml,%3Csvg width='600' height='600' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23fbbf24' stroke-width='0.6' opacity='0.04'%3E%3Cellipse cx='300' cy='300' rx='280' ry='200'/%3E%3Cellipse cx='300' cy='300' rx='240' ry='170'/%3E%3Cellipse cx='300' cy='300' rx='200' ry='140'/%3E%3Cellipse cx='300' cy='300' rx='160' ry='110'/%3E%3Cellipse cx='300' cy='300' rx='120' ry='80'/%3E%3Cellipse cx='300' cy='300' rx='80' ry='50'/%3E%3Cellipse cx='300' cy='300' rx='40' ry='25'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 800px;
+    }
+
+    /* Coach card */
+    .coach-card {
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 16px;
+      border: 1px solid;
+      overflow: hidden;
+      position: relative;
+    }
+    .coach-card:hover {
+      transform: translateY(-6px) scale(1.01);
+    }
+    .coach-card:hover .coach-glow {
+      opacity: 1 !important;
+    }
+    .coach-card:hover .coach-avatar {
+      transform: scale(1.08);
+    }
+
+    /* Utilities */
+    .section { position: relative; padding: 0 24px; }
+    .container { max-width: 1152px; margin: 0 auto; position: relative; }
+    .container-sm { max-width: 768px; margin: 0 auto; position: relative; }
+
+    .card-inner {
+      position: relative;
+      padding: 40px;
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+    }
+    @media (max-width: 768px) {
+      .card-inner { flex-direction: column; gap: 32px; padding: 32px; }
+    }
+
+    .avatar-col {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .coach-avatar {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.5s;
+    }
+    .coach-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .accent-dot {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .num-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--white-20);
+    }
+
+    .content-col { flex: 1; min-width: 0; }
+
+    .coach-name {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(28px, 4vw, 36px);
+      color: var(--white-90);
+      margin: 0;
+    }
+
+    .coach-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    .personality-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+      margin: 16px 0 20px;
+      border: 1px solid;
+    }
+
+    .coach-desc {
+      color: var(--white-45);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 640px;
+      font-size: 15px;
+    }
+
+    .coach-quote {
+      border-left: 2px solid;
+      padding-left: 16px;
+      margin-bottom: 24px;
+    }
+    .coach-quote p {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--white-60);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .info-grid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    @media (max-width: 768px) {
+      .info-grid, .info-grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .info-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white-25);
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .info-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+    .info-text {
+      font-size: 14px;
+      color: var(--white-40);
+    }
+    .info-para {
+      font-size: 14px;
+      color: var(--white-40);
+      line-height: 1.6;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--white-08);
+      background: var(--white-02);
+      color: var(--white-30);
+    }
+
+    .coach-glow {
+      position: absolute;
+      inset: -4px;
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.7s;
+      filter: blur(24px);
+      z-index: -1;
+    }
+
+    /* CTA avatars */
+    .cta-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .cta-avatar:hover {
+      transform: scale(1.25);
+    }
+    .cta-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 40px;
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    .cta-button:hover {
+      background: var(--gold-hover);
+      transform: scale(1.05);
+      box-shadow: 0 8px 32px rgba(251,191,36,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="grain-overlay"></div>
+
+  <!-- ================================================================== -->
+  <!-- HERO SECTION -->
+  <!-- ================================================================== -->
+  <section class="topographic-bg" style="position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:96px 24px;">
+    <!-- Background decorative elements -->
+    <div style="position:absolute; inset:0; overflow:hidden;">
+      <div class="animate-pulse-glow" style="position:absolute; top:25%; left:-128px; width:384px; height:384px; border-radius:50%; background:rgba(251,191,36,0.05); filter:blur(120px);"></div>
+      <div class="animate-pulse-glow delay-1000" style="position:absolute; bottom:25%; right:-128px; width:384px; height:384px; border-radius:50%; background:rgba(6,182,212,0.05); filter:blur(120px);"></div>
+      <div style="position:absolute; top:0; left:0; width:100%; height:1px; background:linear-gradient(to right, transparent, rgba(251,191,36,0.2), transparent);"></div>
+    </div>
+
+    <div style="position:relative; max-width:960px; margin:0 auto; text-align:center;">
+      <!-- Eyebrow -->
+      <div class="animate-fade-up">
+        <span class="font-mono" style="font-size:12px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(251,191,36,0.7); border:1px solid rgba(251,191,36,0.2); padding:8px 16px; border-radius:9999px; display:inline-block;">
+          Introducing
+        </span>
+      </div>
+
+      <!-- Main title -->
+      <h1 class="font-display animate-fade-up delay-200" style="font-size:clamp(3rem,8vw,7rem); line-height:0.9; margin-top:32px; margin-bottom:24px;">
+        <span style="display:block; color:rgba(255,255,255,0.9);">Your Strategy</span>
+        <span style="display:block; font-style:italic; color:#fbbf24;">Coaching Team</span>
+      </h1>
+
+      <!-- Divider -->
+      <div class="animate-fade-in delay-400" style="display:flex; justify-content:center; margin-bottom:32px;">
+        <div class="animate-expand delay-600" style="height:1px; width:128px; background:linear-gradient(to right, transparent, #fbbf24, transparent);"></div>
+      </div>
+
+      <!-- Subtitle -->
+      <p class="font-body animate-fade-up delay-500" style="font-size:clamp(16px,2vw,20px); color:rgba(255,255,255,0.5); max-width:640px; margin:0 auto; line-height:1.7;">
+        Six world-class AI coaching personas — each with distinct expertise,
+        personality, and strategic philosophy. Choose the voice that matches
+        your challenge.
+      </p>
+
+      <!-- Stats row -->
+      <div class="animate-fade-up delay-700" style="display:flex; align-items:center; justify-content:center; gap:48px; margin-top:64px;">
+        <div style="text-align:center;">
+          <div class="font-display" style="font-size:36px; color:#fbbf24;">3</div>
+          <div class="font-mono" style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-top:4px;">Strategic Coaches</div>
+        </div>
+        <div style="width:1px; height:48px; background:rgba(255,255,255,0.1);"></div>
+        <div style="text-align:center;">
+          <div class="font-display" style="font-size:36px; color:#06b6d4;">3</div>
+          <div class="font-mono" style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-top:4px;">Expert Sparring Partners</div>
+        </div>
+        <div style="width:1px; height:48px; background:rgba(255,255,255,0.1);"></div>
+        <div style="text-align:center;">
+          <div class="font-display" style="font-size:36px; color:rgba(255,255,255,0.8);">6</div>
+          <div class="font-mono" style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-top:4px;">Distinct Perspectives</div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="animate-float delay-1000" style="position:absolute; bottom:-48px; left:50%; transform:translateX(-50%);">
+        <div style="width:20px; height:32px; border:1px solid rgba(255,255,255,0.2); border-radius:9999px; display:flex; align-items:flex-start; justify-content:center; padding-top:6px;">
+          <div class="animate-pulse" style="width:4px; height:8px; background:rgba(251,191,36,0.5); border-radius:9999px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- STRATEGIC COACHES SECTION -->
+  <!-- ================================================================== -->
+  <section class="section" style="padding-top:128px; padding-bottom:128px;">
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, #0d1117, #111827, #0d1117);"></div>
+    <div style="position:absolute; top:0; left:0; width:100%; height:1px; background:linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);"></div>
+
+    <div class="container">
+      <!-- Section header -->
+      <div style="margin-bottom:80px;">
+        <span class="font-mono" style="font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(251,191,36,0.5);">01 / Strategic Coaches</span>
+        <h2 class="font-display" style="font-size:clamp(40px,5vw,60px); margin-top:16px; color:rgba(255,255,255,0.9);">
+          The <span style="font-style:italic; color:#fbbf24;">Originals</span>
+        </h2>
+        <p class="font-body" style="color:rgba(255,255,255,0.4); margin-top:16px; max-width:560px; font-size:18px; line-height:1.7;">
+          Three distinct coaching philosophies for your strategic journey.
+          Each brings a fundamentally different lens to your product transformation.
+        </p>
+      </div>
+
+      <!-- Marcus -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(99,102,241,0.25); margin-bottom:32px;">
+        <div class="coach-glow" style="background:rgba(99,102,241,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #6366f1;">
+              <img src="../../public/avatars/coaches/marcus.png" alt="Marcus">
+              <div class="accent-dot" style="background:#6366f1;"></div>
+            </div>
+            <span class="num-badge">01</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Marcus</h3>
+            <div class="coach-title" style="color:#6366f1;">The Strategic Navigator</div>
+            <div class="personality-badge" style="color:#6366f1; border-color:rgba(99,102,241,0.25); background:rgba(99,102,241,0.08);">Direct. Analytical. Evidence-driven.</div>
+            <p class="coach-desc">Marcus approaches every conversation with competitive intelligence and strategic clarity. With a background advising Fortune 500 companies on positioning and growth, he believes data drives decisions — not assumptions.</p>
+            <blockquote class="coach-quote" style="border-color:#6366f1;">
+              <p>&ldquo;Let's look at the evidence. What does the market actually tell us?&rdquo;</p>
+            </blockquote>
+            <div class="info-grid">
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#6366f1;"></div><span class="info-text">Data over assumptions</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#6366f1;"></div><span class="info-text">Defensible advantage</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#6366f1;"></div><span class="info-text">Quick, evidence-based pivots</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">Challenges your thinking with "What data supports this?" and always ties insights to measurable outcomes.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Market-led growth</span>
+              <span class="tag">Competitive positioning</span>
+              <span class="tag">Go-to-market strategy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Elena -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(16,185,129,0.25); margin-bottom:32px;">
+        <div class="coach-glow" style="background:rgba(16,185,129,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #10b981;">
+              <img src="../../public/avatars/coaches/elena.png" alt="Elena">
+              <div class="accent-dot" style="background:#10b981;"></div>
+            </div>
+            <span class="num-badge">02</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Elena</h3>
+            <div class="coach-title" style="color:#10b981;">The Capability Builder</div>
+            <div class="personality-badge" style="color:#10b981; border-color:rgba(16,185,129,0.25); background:rgba(16,185,129,0.08);">Warm. Empowering. Reflective.</div>
+            <p class="coach-desc">Elena believes transformation happens through people, not frameworks. Her background spans organisational psychology and product leadership — building high-performing teams from struggling groups.</p>
+            <blockquote class="coach-quote" style="border-color:#10b981;">
+              <p>&ldquo;You already have more capability than you realise. Let's unlock it together.&rdquo;</p>
+            </blockquote>
+            <div class="info-grid">
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#10b981;"></div><span class="info-text">People are the strategy</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#10b981;"></div><span class="info-text">Sustainable change from within</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#10b981;"></div><span class="info-text">Psychological safety enables breakthroughs</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">Asks reflective questions, celebrates progress, and connects every strategic move to the humans who will execute it.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Team empowerment</span>
+              <span class="tag">Capability development</span>
+              <span class="tag">Cultural change</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fin -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(245,158,11,0.25);">
+        <div class="coach-glow" style="background:rgba(245,158,11,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #f59e0b;">
+              <img src="../../public/avatars/coaches/fin.png" alt="Fin">
+              <div class="accent-dot" style="background:#f59e0b;"></div>
+            </div>
+            <span class="num-badge">03</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Fin</h3>
+            <div class="coach-title" style="color:#f59e0b;">The Transformation Pragmatist</div>
+            <div class="personality-badge" style="color:#f59e0b; border-color:rgba(245,158,11,0.25); background:rgba(245,158,11,0.08);">Pragmatic. Empathetic. Action-oriented.</div>
+            <p class="coach-desc">Fin understands transformation fatigue because he's lived it. His experience includes turning around failed initiatives, balancing empathy with directness, and building momentum from small wins.</p>
+            <blockquote class="coach-quote" style="border-color:#f59e0b;">
+              <p>&ldquo;You've been here before. This time, let's make it stick.&rdquo;</p>
+            </blockquote>
+            <div class="info-grid">
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#f59e0b;"></div><span class="info-text">Quick wins build momentum</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f59e0b;"></div><span class="info-text">Progress over perfection</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f59e0b;"></div><span class="info-text">Stakeholder confidence is earned through delivery</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">Asks "What can we do this week?" — celebrates progress, learns from setbacks, and never oversells.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Turnaround situations</span>
+              <span class="tag">Post-failure recovery</span>
+              <span class="tag">Milestone-driven progress</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- DIVIDER -->
+  <!-- ================================================================== -->
+  <section style="padding:96px 24px;">
+    <div class="container-sm" style="text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:24px; margin-bottom:32px;">
+        <div style="height:1px; flex:1; background:linear-gradient(to right, transparent, rgba(251,191,36,0.2));"></div>
+        <span class="font-mono" style="font-size:10px; letter-spacing:0.4em; text-transform:uppercase; color:rgba(251,191,36,0.4);">New Category</span>
+        <div style="height:1px; flex:1; background:linear-gradient(to left, transparent, rgba(251,191,36,0.2));"></div>
+      </div>
+      <h2 class="font-display" style="font-size:clamp(32px,5vw,48px); color:rgba(255,255,255,0.8);">
+        Built from <span style="font-style:italic; color:#06b6d4;">301 podcast transcripts</span>
+      </h2>
+      <p class="font-body" style="color:rgba(255,255,255,0.35); margin-top:16px; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7;">
+        We studied the world's best product leaders — their frameworks, their instincts,
+        their hard-won lessons — and distilled them into three expert sparring partners.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- EXPERT SPARRING PARTNERS SECTION -->
+  <!-- ================================================================== -->
+  <section class="section" style="padding-top:80px; padding-bottom:80px;">
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, #0d1117, #0c1525, #0d1117);"></div>
+
+    <div class="container">
+      <!-- Section header -->
+      <div style="margin-bottom:80px;">
+        <span class="font-mono" style="font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(6,182,212,0.5);">02 / Expert Sparring Partners</span>
+        <h2 class="font-display" style="font-size:clamp(40px,5vw,60px); margin-top:16px; color:rgba(255,255,255,0.9);">
+          The <span style="font-style:italic; color:#06b6d4;">Specialists</span>
+        </h2>
+        <p class="font-body" style="color:rgba(255,255,255,0.4); margin-top:16px; max-width:560px; font-size:18px; line-height:1.7;">
+          Deep domain expertise synthesised from the world's leading product thinkers.
+          Each persona channels the collective wisdom of industry pioneers.
+        </p>
+      </div>
+
+      <!-- Priya -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(6,182,212,0.25); margin-bottom:32px;">
+        <div class="coach-glow" style="background:rgba(6,182,212,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #06b6d4;">
+              <img src="../../public/avatars/coaches/priya.png" alt="Priya">
+              <div class="accent-dot" style="background:#06b6d4;"></div>
+            </div>
+            <span class="num-badge">04</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Priya</h3>
+            <div class="coach-title" style="color:#06b6d4;">The Growth Architect</div>
+            <div class="personality-badge" style="color:#06b6d4; border-color:rgba(6,182,212,0.25); background:rgba(6,182,212,0.08);">Systematic. Metrics-literate. Constructively impatient.</div>
+            <p class="coach-desc">Priya thinks in funnels, loops, and leverage points. She's built self-serve acquisition engines, optimised activation flows, and designed expansion revenue motions from scratch at companies scaling from early traction to dominance.</p>
+            <blockquote class="coach-quote" style="border-color:#06b6d4;">
+              <p>&ldquo;Growth is a system, not a series of hacks. Let's map your loops.&rdquo;</p>
+            </blockquote>
+            <div class="info-grid info-grid-3">
+              <div>
+                <span class="info-label">Inspired By</span>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Hila Qu</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Elena Verna</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Brian Balfour</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Casey Winters</span></div>
+              </div>
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Growth loops over hacks</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">The customer journey IS the product</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#06b6d4;"></div><span class="info-text">Metrics without segmentation are lies</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">Challenges vanity metrics with "That's a trailing indicator. What's the leading signal?" — and always pushes for experiment velocity.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Product-led growth</span>
+              <span class="tag">Activation &amp; retention</span>
+              <span class="tag">Growth experiments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hana -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(139,92,246,0.25); margin-bottom:32px;">
+        <div class="coach-glow" style="background:rgba(139,92,246,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #8b5cf6;">
+              <img src="../../public/avatars/coaches/hana.png" alt="Hana">
+              <div class="accent-dot" style="background:#8b5cf6;"></div>
+            </div>
+            <span class="num-badge">05</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Hana</h3>
+            <div class="coach-title" style="color:#8b5cf6;">The Product Purist</div>
+            <div class="personality-badge" style="color:#8b5cf6; border-color:rgba(139,92,246,0.25); background:rgba(139,92,246,0.08);">Concise. Craft-obsessed. Opinionated.</div>
+            <p class="coach-desc">Hana believes great products win through craft, speed, and opinionated design — not feature checklists or committee-driven roadmaps. She builds tools that power users love, where quality is the competitive moat.</p>
+            <blockquote class="coach-quote" style="border-color:#8b5cf6;">
+              <p>&ldquo;What is the core job this product does? Strip everything else.&rdquo;</p>
+            </blockquote>
+            <div class="info-grid info-grid-3">
+              <div>
+                <span class="info-label">Inspired By</span>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Nan Yu (Linear)</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Rahul Vohra (Superhuman)</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Jason Fried (Basecamp)</span></div>
+              </div>
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Speed is a feature</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Say no to most things</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#8b5cf6;"></div><span class="info-text">Taste matters — every pixel communicates values</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">States clear preferences and defends them. "I would not build that. Here's why." Allergic to bloat and feature creep.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Product craft</span>
+              <span class="tag">Speed &amp; focus</span>
+              <span class="tag">Opinionated design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kofi -->
+      <div class="coach-card" style="background:linear-gradient(135deg, rgba(244,63,94,0.08) 0%, rgba(13,17,23,0.95) 60%); border-color:rgba(244,63,94,0.25);">
+        <div class="coach-glow" style="background:rgba(244,63,94,0.3);"></div>
+        <div class="card-inner">
+          <div class="avatar-col">
+            <div class="coach-avatar" style="box-shadow:0 0 0 2px #f43f5e;">
+              <img src="../../public/avatars/coaches/kofi.png" alt="Kofi">
+              <div class="accent-dot" style="background:#f43f5e;"></div>
+            </div>
+            <span class="num-badge">06</span>
+          </div>
+          <div class="content-col">
+            <h3 class="coach-name">Kofi</h3>
+            <div class="coach-title" style="color:#f43f5e;">The Scale Navigator</div>
+            <div class="personality-badge" style="color:#f43f5e; border-color:rgba(244,63,94,0.25); background:rgba(244,63,94,0.08);">Pragmatic. Organizationally aware. Portfolio-minded.</div>
+            <p class="coach-desc">Kofi has lived through the messy, exhilarating process of scaling organizations from hundreds to thousands of people while keeping the product and culture from breaking. He knows that organizational design IS product strategy.</p>
+            <blockquote class="coach-quote" style="border-color:#f43f5e;">
+              <p>&ldquo;What got you here won't get you there. Let's navigate the next stage.&rdquo;</p>
+            </blockquote>
+            <div class="info-grid info-grid-3">
+              <div>
+                <span class="info-label">Inspired By</span>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Boz (Meta CTO)</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Claire Hughes Johnson (ex-Stripe)</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Camille Fournier</span></div>
+              </div>
+              <div>
+                <span class="info-label">Core Beliefs</span>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Org design IS product strategy</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Culture requires active investment</span></div>
+                <div class="info-item"><div class="info-dot" style="background:#f43f5e;"></div><span class="info-text">Decision speed degrades with headcount unless you fight it</span></div>
+              </div>
+              <div>
+                <span class="info-label">Coaching Style</span>
+                <p class="info-para">Direct about trade-offs: "You cannot have both. Which matters more right now?" Frames choices as portfolio allocation problems.</p>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag">Scaling organizations</span>
+              <span class="tag">Org design</span>
+              <span class="tag">Portfolio management</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- CTA SECTION -->
+  <!-- ================================================================== -->
+  <section class="topographic-bg" style="position:relative; padding:128px 24px;">
+    <div style="position:absolute; inset:0; overflow:hidden;">
+      <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:600px; border-radius:50%; background:rgba(251,191,36,0.03); filter:blur(200px);"></div>
+    </div>
+
+    <div class="container-sm" style="text-align:center;">
+      <span class="font-mono" style="font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(251,191,36,0.5); display:block; margin-bottom:24px;">
+        Ready to Begin?
+      </span>
+      <h2 class="font-display" style="font-size:clamp(40px,5vw,60px); color:rgba(255,255,255,0.9); margin-bottom:24px;">
+        Choose your <span style="font-style:italic; color:#fbbf24;">coach</span>
+      </h2>
+      <p class="font-body" style="color:rgba(255,255,255,0.4); font-size:18px; line-height:1.7; margin-bottom:48px; max-width:480px; margin-left:auto; margin-right:auto;">
+        Start your strategic coaching journey with the persona that matches your challenge,
+        your style, and your ambition.
+      </p>
+
+      <!-- Coach avatar row -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:48px;">
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #6366f1;" title="Marcus — The Strategic Navigator"><img src="../../public/avatars/coaches/marcus.png" alt="Marcus"></div>
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #10b981;" title="Elena — The Capability Builder"><img src="../../public/avatars/coaches/elena.png" alt="Elena"></div>
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #f59e0b;" title="Fin — The Transformation Pragmatist"><img src="../../public/avatars/coaches/fin.png" alt="Fin"></div>
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #06b6d4;" title="Priya — The Growth Architect"><img src="../../public/avatars/coaches/priya.png" alt="Priya"></div>
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #8b5cf6;" title="Hana — The Product Purist"><img src="../../public/avatars/coaches/hana.png" alt="Hana"></div>
+        <div class="cta-avatar" style="box-shadow:0 0 0 2px #f43f5e;" title="Kofi — The Scale Navigator"><img src="../../public/avatars/coaches/kofi.png" alt="Kofi"></div>
+      </div>
+
+      <a href="#" class="cta-button">
+        Start Your Strategy Journey
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+        </svg>
+      </a>
+
+      <!-- Footer -->
+      <div style="margin-top:96px; padding-top:32px; border-top:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+          <img src="../../public/avatars/coaches/marcus.png" alt="Frontera" style="width:28px; height:28px; border-radius:8px;">
+          <span class="font-body" style="font-size:14px; color:rgba(255,255,255,0.25);">Frontera Product Strategy Coach</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
