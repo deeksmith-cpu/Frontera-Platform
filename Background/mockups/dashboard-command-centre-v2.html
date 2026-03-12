@@ -1079,44 +1079,46 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
         <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-md ring-2 ring-[#fbbf24]/30">
           <img src="/avatars/coaches/marcus.png" alt="Coach Marcus" class="w-full h-full object-cover" />
         </div>
-        <!-- Coach Info -->
+        <!-- Coach Info + Next Topic -->
         <div class="flex-1">
           <div class="flex items-start justify-between">
             <div>
-              <h2 class="text-xl font-bold">Coach Marcus</h2>
-              <p class="text-sm text-slate-400 mt-0.5">The Strategic Navigator</p>
-              <p class="text-sm text-slate-300 mt-2 italic leading-relaxed">&ldquo;Let&rsquo;s look at the evidence. What does the market actually tell us?&rdquo;</p>
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold">Coach Marcus</h2>
+                <button class="inline-flex items-center gap-1 border border-white/20 text-slate-400 text-[10px] font-semibold px-2.5 py-1 rounded-full hover:bg-white/10 transition-colors">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                  Switch
+                </button>
+              </div>
+              <!-- Stats inline -->
+              <div class="flex items-center gap-4 mt-1.5">
+                <span class="text-[10px] text-slate-400"><span class="font-code font-bold text-slate-300">14</span> sessions</span>
+                <span class="text-white/20">&middot;</span>
+                <span class="text-[10px] text-slate-400"><span class="font-code font-bold text-slate-300">42 min</span> avg</span>
+                <span class="text-white/20">&middot;</span>
+                <span class="text-[10px] text-slate-400"><span class="font-code font-bold text-slate-300">8</span> insights</span>
+                <span class="text-white/20">&middot;</span>
+                <span class="text-[10px] text-slate-400">Top phase: <span class="font-code font-bold text-slate-300">Research</span></span>
+              </div>
             </div>
           </div>
-          <!-- Expertise Tags -->
-          <div class="flex flex-wrap gap-2 mt-3">
-            <span class="text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Market-led growth</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Competitive positioning</span>
-            <span class="text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-slate-300 px-2.5 py-1 rounded-full">Go-to-market</span>
-          </div>
-          <!-- Stats Row -->
-          <div class="flex items-center gap-4 mt-4">
-            <div class="bg-white/10 rounded-xl px-4 py-2.5 text-center">
-              <div class="font-code text-lg font-bold text-[#fbbf24]">14</div>
-              <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">Sessions</div>
+          <!-- Next Coaching Topic — integrated -->
+          <div class="mt-4 bg-white/[0.07] rounded-xl p-4 border border-white/10">
+            <div class="flex items-start gap-3">
+              <span class="text-lg mt-0.5">&#10024;</span>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] uppercase tracking-wider text-[#fbbf24] font-semibold">Next Coaching Topic</span>
+                  <span class="text-[9px] text-slate-500">Based on research gaps + market signals</span>
+                </div>
+                <h3 class="text-base font-bold text-white">Competitor Response Planning</h3>
+                <p class="text-sm text-slate-400 leading-relaxed mt-1">FinanceAI&rsquo;s $50M raise changes the competitive landscape. Your competitor territory has only 33% depth &mdash; a focused session here would strengthen your strategic bets significantly.</p>
+              </div>
+              <a href="/dashboard/product-strategy-agent?context=recommended-topic&topic=competitor-response" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#fbbf24] text-slate-900 text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#f59e0b] transition-all hover:shadow-lg hover:scale-105 mt-2">
+                Start Session
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
             </div>
-            <div class="bg-white/10 rounded-xl px-4 py-2.5 text-center">
-              <div class="font-code text-lg font-bold text-[#fbbf24]">42 min</div>
-              <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">Avg Length</div>
-            </div>
-            <div class="bg-white/10 rounded-xl px-4 py-2.5 text-center">
-              <div class="font-code text-lg font-bold text-[#fbbf24]">Research</div>
-              <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">Top Phase</div>
-            </div>
-            <div class="bg-white/10 rounded-xl px-4 py-2.5 text-center">
-              <div class="font-code text-lg font-bold text-[#fbbf24]">8</div>
-              <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">Insights</div>
-            </div>
-            <!-- Switch Coach button -->
-            <button class="ml-auto inline-flex items-center gap-1.5 border border-cyan-300/40 text-slate-300 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-              Switch Coach
-            </button>
           </div>
         </div>
       </div>
@@ -1243,30 +1245,11 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
     </div>
   </div>
 
-  <!-- Row 3: Next Coaching Topic + Interaction Modes (5:7 split) -->
-  <div class="grid grid-cols-12 gap-6 anim-fade anim-d3">
-    <!-- Left: Next Recommended Topic -->
-    <div class="col-span-5">
-      <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200 border-l-4 border-l-[#fbbf24] h-full flex flex-col">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="text-base">&#10024;</span>
-          <span class="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Next Coaching Topic</span>
-        </div>
-        <h3 class="text-base font-bold text-slate-900 mb-2">Competitor Response Planning</h3>
-        <p class="text-sm text-slate-600 leading-relaxed flex-1">&ldquo;FinanceAI&rsquo;s $50M raise changes the competitive landscape. Your competitor territory has only 33% depth &mdash; a focused session here would strengthen your strategic bets significantly.&rdquo;</p>
-        <p class="text-[10px] text-slate-500 mt-3 mb-4">Based on: Research gaps + recent market signals</p>
-        <a href="/dashboard/product-strategy-agent?context=recommended-topic&topic=competitor-response" class="inline-flex items-center justify-center gap-1.5 bg-[#fbbf24] text-slate-900 text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#f59e0b] transition-all hover:shadow-lg hover:scale-105">
-          Start This Session
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Right: Interact With Your Coaches -->
-    <div class="col-span-7">
+  <!-- Row 3: Interaction Modes (full-width) -->
+  <div class="anim-fade anim-d3">
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
         <h3 class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-4">Interact With Your Coaches</h3>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <!-- Debate -->
           <a href="/dashboard/product-strategy-agent?mode=debate" class="block p-4 rounded-xl border border-slate-100 bg-white hover:border-indigo-300 hover:shadow-lg transition-all duration-300 hover:scale-105 group">
             <div class="flex items-center gap-2 mb-2">
@@ -1371,7 +1354,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
           </a>
         </div>
       </div>
-    </div>
   </div>
 
 </div>
