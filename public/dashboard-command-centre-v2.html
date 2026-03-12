@@ -69,7 +69,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
 
     <!-- Coach -->
     <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2.5">
-      <div class="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">M</div>
+      <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+        <img src="/avatars/coaches/marcus.png" alt="Coach Marcus" class="w-full h-full object-cover" />
+      </div>
       <div>
         <p class="text-white text-xs font-semibold">Coach Marcus</p>
         <p class="text-slate-400 text-[10px]">Strategy Advisor</p>
@@ -563,7 +565,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
     <!-- Blind Spot Alert — contextual deep-link (R5) -->
     <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200">
       <div class="flex items-start gap-3">
-        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">M</div>
+        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+          <img src="/avatars/coaches/marcus.png" alt="Coach Marcus" class="w-full h-full object-cover" />
+        </div>
         <div>
           <div class="flex items-center gap-2 mb-1">
             <span class="text-[10px] uppercase tracking-wider text-amber-700 font-semibold">Blind Spot Alert</span>
@@ -1072,7 +1076,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
       <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#fbbf24]/20 blur-2xl"></div>
       <div class="relative flex items-start gap-5">
         <!-- Coach Avatar -->
-        <div class="w-24 h-24 rounded-2xl bg-indigo-500 flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 shadow-md">M</div>
+        <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-md ring-2 ring-[#fbbf24]/30">
+          <img src="/avatars/coaches/marcus.png" alt="Coach Marcus" class="w-full h-full object-cover" />
+        </div>
         <!-- Coach Info -->
         <div class="flex-1">
           <div class="flex items-start justify-between">
@@ -1268,7 +1274,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Debate</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Challenge your assumptions with a sparring partner</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-indigo-600">Priya, Hana</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/priya.png" alt="Priya" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/hana.png" alt="Hana" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-indigo-600">Priya, Hana</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">Challenge &rarr;</div>
           </a>
           <!-- Ideate -->
@@ -1278,7 +1291,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Ideate</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Brainstorm new approaches with creative prompts</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-amber-600">Elena, Kofi</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/elena.png" alt="Elena" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/kofi.png" alt="Kofi" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-amber-600">Elena, Kofi</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity">Brainstorm &rarr;</div>
           </a>
           <!-- Support -->
@@ -1288,7 +1308,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Support</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Get guidance on a specific challenge you&rsquo;re facing</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-emerald-600">Elena, Fin</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/elena.png" alt="Elena" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/fin.png" alt="Fin" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-emerald-600">Elena, Fin</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">Get Support &rarr;</div>
           </a>
           <!-- Analyse -->
@@ -1298,7 +1325,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Analyse</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Deep-dive into data and evidence for your strategy</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-cyan-600">Marcus, Priya</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/marcus.png" alt="Marcus" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/priya.png" alt="Priya" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-cyan-600">Marcus, Priya</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity">Analyse &rarr;</div>
           </a>
           <!-- Review -->
@@ -1308,7 +1342,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Review</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Get a critical review of your research or strategy draft</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-purple-600">Hana, Marcus</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/hana.png" alt="Hana" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/marcus.png" alt="Marcus" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-purple-600">Hana, Marcus</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">Request Review &rarr;</div>
           </a>
           <!-- Plan -->
@@ -1318,7 +1359,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f8fafc;ove
               <span class="text-sm font-bold text-slate-900">Plan</span>
             </div>
             <p class="text-xs text-slate-500 leading-relaxed mb-2">Map out next steps and priorities for your strategy</p>
-            <p class="text-[10px] text-slate-400">Best: <span class="font-semibold text-[#1a1f3a]">Fin, Kofi</span></p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">Best:</span>
+              <div class="flex -space-x-1.5">
+                <img src="/avatars/coaches/fin.png" alt="Fin" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+                <img src="/avatars/coaches/kofi.png" alt="Kofi" class="w-5 h-5 rounded-full ring-1 ring-white object-cover" />
+              </div>
+              <span class="text-[10px] font-semibold text-[#1a1f3a]">Fin, Kofi</span>
+            </div>
             <div class="mt-2 text-xs font-semibold text-[#1a1f3a] opacity-0 group-hover:opacity-100 transition-opacity">Plan Next &rarr;</div>
           </a>
         </div>
